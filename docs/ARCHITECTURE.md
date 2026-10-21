@@ -20,7 +20,7 @@ Numbers the AI *extracts* from user text (for example "₹12,000", "3 days earli
 Browser (HTML + htmx, no secrets)
    │  HTTPS, forms / htmx partial requests, CSRF token, signed session cookie
    ▼
-Vercel Function: FastAPI app (region bom1, Mumbai)
+Vercel Function: FastAPI app (region sin1, Singapore)
    ├── web/        routes, session, CSRF, rate limit, security headers, Jinja2 templates
    ├── services/   use cases: planning, change manager, alternatives
    ├── domain/     pure logic: budget, timeline, vendors, changes, catalog
@@ -28,7 +28,7 @@ Vercel Function: FastAPI app (region bom1, Mumbai)
    └── persistence/ SQLAlchemy repositories
         │                                  │
         ▼                                  ▼
-Neon Postgres (aws-ap-south-1)       Gemini API (primary) → Groq API (fallback)
+Neon Postgres (aws-ap-southeast-1)   Gemini API (primary) → Groq API (fallback)
 events, proposals, ai_cache,
 rate_limits
 Static assets: public/static/** served by Vercel CDN
@@ -50,7 +50,7 @@ Static assets: public/static/** served by Vercel CDN
 ## 4. Modules
 ```
 app/
-  index.py            Vercel entrypoint: `app = create_app()`
+  index.py            Vercel entrypoint (`[tool.vercel] entrypoint = "app.index:app"`): `app = create_app()`
   main.py             create_app(settings, llm_client=None, clock=None, repo=None): DI root
   config.py           Settings (pydantic-settings, SecretStr); fails fast if a prod secret is missing
   content/persona.py  Persona: copy, tone guidance for prompts, example presets (swappable)
@@ -61,7 +61,7 @@ app/
     budget.py         allocate, summarize, add_expense, reduce_to_total, scale_for_guests, shortfall
     timeline.py       due dates from offsets, shift_event_date, compress_overdue, sort
     vendors.py        book_by dates, status transitions, priority ordering
-    changes.py        ChangeOperation → apply to an immutable copy → Proposal (before/after diff, affected items)
+    changes.py        ChangeOperation (defined here) → apply to an immutable copy → Proposal (before/after diff, affected items)
     clock.py          Clock protocol + SystemClock (Asia/Kolkata)
     errors.py         ValidationError, InfeasibleChange, StaleProposal, NotFound
   ai/
@@ -69,7 +69,7 @@ app/
     providers/gemini.py, providers/groq.py
     chain.py          FallbackChain: timeouts, cooldowns, repair retry, ordering
     cache.py          AICache (in-memory LRU in front of the Postgres table)
-    schemas.py        PlanSuggestions, ChangeIntent, ChangeOperation, Alternatives
+    schemas.py        PlanSuggestions, ChangeIntent (reuses domain ChangeOperation), Alternatives
     prompts/          personalize.py, interpret_change.py, alternatives.py (SYSTEM, FEW_SHOTS, VERSION)
     guardrails.py     input normalization, data delimiting, post-validation (referenced IDs exist, bounds)
     fallbacks.py      deterministic, labelled non-AI outputs
@@ -158,7 +158,9 @@ Every AI result has a "How this was generated" `<details>` element. It shows the
    - Approve: if `plan.version == base_version`, write version + 1 and mark `approved`. Otherwise the proposal is `stale` and the user is asked to retry.
    - Reject: mark `rejected`; the plan is unchanged.
    - Approving twice is a no-op.
-4. **Alternatives**: only on user request, then (optionally) "Apply" creates a normal Proposal.
+4. **Alternatives**: only on user request (POST). They render inline below the shortfall alert, never in a modal. "Apply" (optional) creates a normal Proposal.
+
+**HTTP rule:** any route that calls the AI or changes data is `POST` (CSRF-protected), so crawlers, link previews and prefetching can never trigger AI calls or writes. Plain HTML forms cannot send `DELETE`, so deletions are `POST .../delete`. Every flow works as a normal form submission without JavaScript; htmx only enhances it.
 
 ## 8. Algorithms (pure, in `domain/`)
 - **Allocation**: total × normalized weights, then **largest-remainder** rounding to whole rupees, so the sum always equals the total exactly. O(n log n).
@@ -226,7 +228,8 @@ Every AI result has a "How this was generated" `<details>` element. It shows the
 - **Evals** (manual, never in CI): `evals/change_requests.jsonl` holds about 20 labelled requests; `scripts/run_evals.py` uses the dev key and reports the accuracy of interpretations.
 
 ## 14. Deployment and operations
-- Vercel project linked to GitHub `main`. Function region `bom1`; Neon `aws-ap-south-1`.
+- Vercel project linked to GitHub `main`. Function region `sin1` (Singapore), co-located with Neon `aws-ap-southeast-1` (Neon has no India region). Database round-trips matter more than browser distance; India to Singapore adds about 60–70 ms.
+- Static files: `public/static/**` is served by the Vercel CDN at `/static/**`. In development only, the app mounts `public/static` itself (Vercel says not to mount `public/` in production).
 - Environment variables:
   - `GEMINI_API_KEY`, `GROQ_API_KEY`, `DATABASE_URL`, `SESSION_SECRET`
   - `LLM_CHAIN`, `AI_RATE_LIMIT_PER_10MIN`, `AI_DAILY_SOFT_CAP`, `APP_ENV`
@@ -237,7 +240,7 @@ Every AI result has a "How this was generated" `<details>` element. It shows the
   - Jinja templates are bundled with the function
   - `public/static` is served by the CDN
   - uv/pyproject support (otherwise an exported `requirements.txt`)
-  - Region `bom1` on Hobby
+  - Region `sin1` on Hobby
   - The Neon connection
   - Measured cold start
 
