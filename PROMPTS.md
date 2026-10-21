@@ -24,3 +24,13 @@ The prompts the app itself sends to the LLM live in `app/ai/prompts/`.
   - `create_app()` factory with `/healthz` (never touches the database).
   - Vercel entrypoint `app.index:app`, region `sin1`, `maxDuration` 60.
 - **Next iteration:** Starlette's test client raised a deprecation warning, so `httpx2` was added as a dev dependency and tests now run with warnings treated as errors.
+
+## 2026-10-21: Neon connection and readiness check (SPIKE-C04)
+- **Tool / model:** Claude Code (Claude Opus 5.5).
+- **Prompt (summary):** "Start C04: Neon connection layer and /readyz."
+- **Outcome:**
+  - The engine uses NullPool through Neon's pooler, so idle serverless instances hold no connections. `postgresql://` URLs are mapped to psycopg 3.
+  - `/readyz` returns 503 without revealing why (no host, no credentials). `/healthz` stays database-free.
+  - Tests cover the failure paths.
+  - Checked live against the Neon `dev` branch: 200.
+- **Next iteration:** from a laptop in India, `/readyz` took 1.2–2.1 s because NullPool opens a new TLS connection per request. Re-measure from Vercel `sin1` (same region as Neon) before deciding whether a small pool is worth it on Fluid compute.
