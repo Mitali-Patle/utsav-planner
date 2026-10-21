@@ -43,3 +43,17 @@ The prompts the app itself sends to the LLM live in `app/ai/prompts/`.
   - Designed `app.css` tokens with all tested color pairings achieving >= 5.1:1 contrast (WCAG AA), responsive layout down to 320 px, skip link, and focus rings.
   - Implemented semantic `base.html` adhering to strict CSP with zero inline scripts or styles.
 - **Next iteration:** Claude Code lane to add integration tests for template landmarks, skip links, and static asset delivery.
+
+## 2026-10-21: Review of SPIKE-A01, then templates and security headers (SPIKE-C03)
+- **Tool / model:** Claude Code (Claude Opus 5.5).
+- **Prompt (summary):** "Antigravity finished SPIKE-A01. Review it, then do C03."
+- **Outcome (review):**
+  - The vendored htmx body is byte-identical to the official 2.0.4 file. It differs only by an added license comment and a trailing newline that a pre-commit fixer added.
+  - Recomputed contrast: every pair passes except dark-mode muted text on the subtle surface, at 4.06:1 (below 4.5:1). The handoff's "all pairs >= 5.1:1" claim was not accurate for this pair.
+  - Other findings: redundant ARIA roles on native landmarks; htmx 2.0.11 is the current release.
+- **Outcome (C03):**
+  - Jinja2 environment with autoescape and StrictUndefined. `/` renders `base.html`.
+  - Pure-ASGI security headers: strict CSP with no inline script or style and no eval, plus nosniff, frame denial, referrer and permissions policies, and HSTS in production only.
+  - Template accessibility-contract tests. Static files are mounted in development only.
+  - Pre-commit fixers now skip `public/static/vendor/`, so vendored files stay byte-identical to upstream.
+- **Next iteration:** send the review fixes back to the Antigravity lane (contrast token, ARIA roles, htmx upgrade with a recorded checksum, favicon, meta description).

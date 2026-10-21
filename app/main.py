@@ -8,7 +8,8 @@ from sqlalchemy import Engine
 
 from app.config import Settings, get_settings
 from app.persistence.db import make_engine
-from app.web.routes import health
+from app.web.routes import health, pages
+from app.web.security import SecurityHeadersMiddleware
 
 STATIC_DIR = Path(__file__).resolve().parent.parent / "public" / "static"
 
@@ -35,7 +36,9 @@ def create_app(settings: Settings | None = None, engine: Engine | None = None) -
     )
     app.state.settings = settings
     app.state.engine = engine
+    app.add_middleware(SecurityHeadersMiddleware, hsts=settings.is_production)
     app.include_router(health.router)
+    app.include_router(pages.router)
 
     if settings.app_env == "development" and STATIC_DIR.is_dir():
         # In production Vercel serves public/ from its CDN; mount it only for local runs.

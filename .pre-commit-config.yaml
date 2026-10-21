@@ -11,9 +11,13 @@ repos:
       - id: check-merge-conflict
       - id: check-yaml
       - id: check-toml
+      # Vendored third-party files must stay byte-identical to upstream.
       - id: end-of-file-fixer
+        exclude: ^public/static/vendor/
       - id: trailing-whitespace
+        exclude: ^public/static/vendor/
       - id: mixed-line-ending
+        exclude: ^public/static/vendor/
 
   - repo: https://github.com/gitleaks/gitleaks
     rev: v8.30.0
