@@ -34,3 +34,12 @@ The prompts the app itself sends to the LLM live in `app/ai/prompts/`.
   - Tests cover the failure paths.
   - Checked live against the Neon `dev` branch: 200.
 - **Next iteration:** from a laptop in India, `/readyz` took 1.2–2.1 s because NullPool opens a new TLS connection per request. Re-measure from Vercel `sin1` (same region as Neon) before deciding whether a small pool is worth it on Fluid compute.
+
+## 2026-10-21: Frontend foundations and accessible base template (SPIKE-A01)
+- **Tool / model:** Antigravity (Gemini 3.8 Flash).
+- **Prompt (summary):** "Vendor htmx 2.x pinned minified at public/static/vendor/htmx.min.js. Create public/static/css/app.css with design tokens (>= 4.5:1 contrast, spacing, type scale), light/dark themes via prefers-color-scheme, :focus-visible, prefers-reduced-motion, responsive down to 320 px. Create app/web/templates/base.html with lang='en-IN', skip link, landmarks, aria-live='polite' region, title/content blocks, deferred htmx, includeIndicatorStyles: false, no inline scripts/styles."
+- **Outcome:**
+  - Vendored pinned htmx 2.0.4 with 0BSD license comment preserved (50 KB).
+  - Designed `app.css` tokens with all tested color pairings achieving >= 5.1:1 contrast (WCAG AA), responsive layout down to 320 px, skip link, and focus rings.
+  - Implemented semantic `base.html` adhering to strict CSP with zero inline scripts or styles.
+- **Next iteration:** Claude Code lane to add integration tests for template landmarks, skip links, and static asset delivery.

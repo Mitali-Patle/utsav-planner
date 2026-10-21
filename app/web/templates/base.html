@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en-IN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="htmx-config" content='{"includeIndicatorStyles": false}'>
+  <title>{% block title %}Utsav Planner - AI Indian Event Planning{% endblock %}</title>
+  <link rel="stylesheet" href="/static/css/app.css">
+  <script src="/static/vendor/htmx.min.js" defer></script>
+  {% block head %}{% endblock %}
+</head>
+<body>
+  <a href="#main" class="skip-link">Skip to main content</a>
+
+  <header class="site-header" role="banner">
+    <div class="container">
+      <nav class="site-nav" role="navigation" aria-label="Main navigation">
+        <a href="/" class="site-brand" aria-label="Utsav Planner homepage">
+          <span>Utsav Planner</span>
+        </a>
+        <ul class="site-nav-links" role="list">
+          <li><a href="/">Home</a></li>
+        </ul>
+      </nav>
+    </div>
+  </header>
+
+  <div id="status-region" class="sr-only" aria-live="polite" aria-atomic="true"></div>
+
+  <main id="main" class="site-main" tabindex="-1">
+    <div class="container">
+      {% block content %}{% endblock %}
+    </div>
+  </main>
+
+  <footer class="site-footer" role="contentinfo">
+    <div class="container">
+      <p>&copy; Utsav Planner. Built for Indian celebrations.</p>
+    </div>
+  </footer>
+</body>
+</html>
