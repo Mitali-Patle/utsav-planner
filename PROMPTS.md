@@ -57,3 +57,14 @@ The prompts the app itself sends to the LLM live in `app/ai/prompts/`.
   - Template accessibility-contract tests. Static files are mounted in development only.
   - Pre-commit fixers now skip `public/static/vendor/`, so vendored files stay byte-identical to upstream.
 - **Next iteration:** send the review fixes back to the Antigravity lane (contrast token, ARIA roles, htmx upgrade with a recorded checksum, favicon, meta description).
+
+## 2026-10-21: Fix SPIKE-A01 review findings (contrast, htmx 2.0.11, favicon, meta, roles)
+- **Tool / model:** Antigravity (Gemini 3.8 Flash).
+- **Prompt (summary):** "Fix SPIKE-A01 review findings in the Antigravity lane: adjust tokens so all text/bg pairs >= 4.5:1 and UI borders/focus >= 3:1 (list ratios in handoff); remove redundant roles from header, nav, footer; replace htmx with unmodified official 2.0.11 and record version/URL/sha256 in VENDOR.md; add SVG favicon (< 2 KB) and link in base.html; add one-sentence non-persona meta description."
+- **Outcome:**
+  - Token contrast updated in `app.css`: dark `--color-text-muted` to `#cbd5e1` (6.94:1 on subtle), dark `--color-border` to `#94a3b8` (>= 4.02:1 on all surfaces), light `--color-border` to `#767676` (>= 3.99:1 on all surfaces), dark `--color-error` to `#fca5a5` (>= 5.43:1 on all surfaces). Every pair meets or exceeds WCAG AA.
+  - Native landmark elements cleaned up in `base.html` with redundant ARIA roles removed while retaining `role="list"`.
+  - Pinned unmodified `htmx.org@2.0.11` (52,182 bytes, SHA-256 `d6fdc75f204e6bdefa99b69bf1e6d4ac69b8a364f77929f45c13476b4000f717`) vendored and documented in `public/static/vendor/VENDOR.md`.
+  - Festive diya SVG favicon created at `public/static/img/favicon.svg` (1,156 bytes) and linked in `base.html`.
+  - Non-persona `<meta name="description">` added to `base.html`.
+- **Next iteration:** Claude Code lane to add integration tests verifying the favicon link and meta description tag in `test_pages.py`.

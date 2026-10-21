@@ -11,7 +11,7 @@
   --color-surface-subtle: #f3f0ea;
   --color-text: #1b1e23;
   --color-text-muted: #4b5563;
-  --color-border: #d1d5db;
+  --color-border: #767676;
   --color-border-subtle: #e5e7eb;
 
   /* Brand accents - Indian celebration palette (festive vermillion / saffron & deep teal) */
@@ -74,8 +74,8 @@
     --color-surface: #1f2937;
     --color-surface-subtle: #374151;
     --color-text: #f9fafb;
-    --color-text-muted: #9ca3af;
-    --color-border: #4b5563;
+    --color-text-muted: #cbd5e1;
+    --color-border: #94a3b8;
     --color-border-subtle: #374151;
 
     --color-primary: #fb923c;
@@ -88,7 +88,7 @@
     --color-focus: #a5b4fc;
     --color-success: #4ade80;
     --color-warning: #fcd34d;
-    --color-error: #f87171;
+    --color-error: #fca5a5;
     --color-error-bg: #450a0a;
     --color-error-border: #991b1b;
     --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.5);
