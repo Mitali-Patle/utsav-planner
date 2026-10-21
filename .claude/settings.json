@@ -1,0 +1,22 @@
+{
+  "permissions": {
+    "deny": [
+      "EnterWorktree",
+      "Bash(git worktree:*)",
+      "Bash(git branch:*)",
+      "Bash(git checkout -b:*)",
+      "Bash(git checkout -B:*)",
+      "Bash(git checkout --orphan:*)",
+      "Bash(git switch:*)",
+      "Bash(git push --force:*)",
+      "Bash(git push -f:*)",
+      "Bash(git push --force-with-lease:*)",
+      "Bash(git add -A:*)",
+      "Bash(git add --all:*)",
+      "Read(./.env)",
+      "Read(./.env.local)",
+      "Edit(./.env)",
+      "Bash(cat .env:*)"
+    ]
+  }
+}

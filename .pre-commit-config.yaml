@@ -1,0 +1,63 @@
+default_install_hook_types: [pre-commit, pre-push]
+default_stages: [pre-commit]
+
+repos:
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v6.0.0
+    hooks:
+      - id: check-added-large-files
+        args: ["--maxkb=500", "--enforce-all"]
+      - id: detect-private-key
+      - id: check-merge-conflict
+      - id: check-yaml
+      - id: check-toml
+      - id: end-of-file-fixer
+      - id: trailing-whitespace
+      - id: mixed-line-ending
+
+  - repo: https://github.com/gitleaks/gitleaks
+    rev: v8.30.0
+    hooks:
+      - id: gitleaks
+
+  - repo: https://github.com/astral-sh/ruff-pre-commit
+    rev: v0.17.1
+    hooks:
+      - id: ruff-check
+        args: ["--fix"]
+      - id: ruff-format
+
+  - repo: local
+    hooks:
+      - id: main-branch-only
+        name: work on main only
+        entry: scripts/hooks/check_branch.sh
+        language: script
+        pass_filenames: false
+        always_run: true
+        stages: [pre-commit, pre-push]
+      - id: forbid-env-files
+        name: never commit .env files
+        entry: ".env files must not be committed; only .env.example is allowed."
+        language: fail
+        files: '(^|/)\.env(\..+)?$'
+        exclude: '(^|/)\.env\.example$'
+      - id: agents-md-length
+        name: AGENTS.md stays under 10,000 characters
+        entry: python3 scripts/hooks/check_agents_md.py
+        language: system
+        files: '^AGENTS\.md$'
+        pass_filenames: false
+      - id: mypy
+        name: mypy (strict)
+        entry: uv run --frozen mypy app
+        language: system
+        files: '^app/.*\.py$'
+        pass_filenames: false
+      - id: repo-size
+        name: repository under 8 MB including history
+        entry: scripts/hooks/check_repo_size.sh
+        language: script
+        pass_filenames: false
+        always_run: true
+        stages: [pre-push]

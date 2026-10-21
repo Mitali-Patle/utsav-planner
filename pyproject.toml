@@ -1,0 +1,55 @@
+[project]
+name = "utsav-planner"
+version = "0.1.0"
+description = "GenAI planning assistant for Indian weddings, birthdays and community events."
+requires-python = ">=3.12,<3.13"
+license = "MIT"
+dependencies = []
+
+[dependency-groups]
+dev = [
+    "mypy>=2.4.0",
+    "pre-commit>=4.7.0",
+    "ruff>=0.17.1",
+]
+
+[tool.ruff]
+line-length = 100
+target-version = "py312"
+
+[tool.ruff.lint]
+select = [
+  "E", "W",   # pycodestyle
+  "F",        # pyflakes
+  "I",        # isort
+  "N",        # pep8-naming
+  "UP",       # pyupgrade
+  "B",        # bugbear
+  "S",        # bandit (security)
+  "SIM",      # simplify
+  "C4",       # comprehensions
+  "RET",      # return
+  "PTH",      # pathlib
+  "D",        # docstrings
+  "ANN",      # annotations
+  "PL",       # pylint
+  "RUF",      # ruff-specific
+]
+ignore = ["D105", "D107"]
+
+[tool.ruff.lint.pydocstyle]
+convention = "google"
+
+[tool.ruff.lint.per-file-ignores]
+"tests/**" = ["S101", "D", "ANN", "PLR2004"]
+"scripts/**" = ["T201"]
+
+[tool.mypy]
+python_version = "3.12"
+strict = true
+warn_unreachable = true
+plugins = ["pydantic.mypy"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = "-q --strict-markers"
