@@ -1,0 +1,51 @@
+# Secrets
+.env
+.env.*
+!.env.example
+
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+*.egg-info/
+build/
+dist/
+
+# Tool caches and reports
+.mypy_cache/
+.ruff_cache/
+.pytest_cache/
+.hypothesis/
+.coverage
+coverage.xml
+htmlcov/
+playwright-report/
+test-results/
+*.log
+
+# Local databases
+*.db
+*.sqlite
+*.sqlite3
+
+# Deploy and editor state
+.vercel/
+node_modules/
+.claude/settings.local.json
+.idea/
+.DS_Store
+
+# Media dumps (evidence lives outside the repo)
+*.mp4
+*.mov
+*.webm
+*.mkv
+*.gif
+*.png
+*.jpg
+*.jpeg
+!docs/img/*.png
+screenshots/
+recordings/
+evidence/
