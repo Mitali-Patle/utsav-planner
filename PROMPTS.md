@@ -68,3 +68,19 @@ The prompts the app itself sends to the LLM live in `app/ai/prompts/`.
   - Festive diya SVG favicon created at `public/static/img/favicon.svg` (1,156 bytes) and linked in `base.html`.
   - Non-persona `<meta name="description">` added to `base.html`.
 - **Next iteration:** Claude Code lane to add integration tests verifying the favicon link and meta description tag in `test_pages.py`.
+
+## 2026-10-21: Spike deploy and review of the Antigravity fixes
+- **Tool / model:** Claude Code (Claude Opus 5.5).
+- **Prompt (summary):** "Here are the Vercel URLs" → measure the spike. Then "Antigravity finished the review fixes" → review them.
+- **Outcome (deploy):**
+  - Production `https://utsav-planner.vercel.app` is public. Requests enter at the Mumbai edge and run in Singapore (`bom1::sin1`).
+  - Templates are bundled, `/static` is served from the CDN, and the CSP and HSTS headers are present.
+  - Warm timings from India: `/` about 0.24 s; `/readyz` 0.37–0.63 s (it was 1.2–2.1 s from the laptop), with one 5.4 s outlier.
+  - The team-scoped alias is behind Vercel SSO, so only the production URL is shared.
+- **Outcome (review):**
+  - htmx 2.0.11 is verified byte-identical to upstream.
+  - Recomputing every token pair from the CSS found one remaining text pair below 4.5:1: light `--color-success` on `--color-surface-subtle`, at 4.41:1. It is sent back to the Antigravity lane.
+- **Next iteration:**
+  - Tests for the meta description and icon, plus a checksum test that ties `htmx.min.js` to `VENDOR.md`.
+  - A `/favicon.ico` redirect.
+  - `vercel.json` headers for `/static` (nosniff, one-day cache for vendored files).

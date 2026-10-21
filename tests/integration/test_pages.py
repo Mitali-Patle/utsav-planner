@@ -24,6 +24,18 @@ def test_base_template_accessibility_contract(client: TestClient) -> None:
     assert 'aria-live="polite"' in html
 
 
+def test_base_template_has_description_and_icon(client: TestClient) -> None:
+    html = client.get("/").text
+    assert re.search(r'<meta name="description" content="[^"]{20,}">', html)
+    assert '<link rel="icon" type="image/svg+xml" href="/static/img/favicon.svg">' in html
+
+
+def test_favicon_ico_redirects_to_svg(client: TestClient) -> None:
+    response = client.get("/favicon.ico", follow_redirects=False)
+    assert response.status_code == 308
+    assert response.headers["location"] == "/static/img/favicon.svg"
+
+
 def test_base_template_has_no_inline_script_or_style(client: TestClient) -> None:
     html = client.get("/").text
     scripts = re.findall(r"<script\b[^>]*>", html)

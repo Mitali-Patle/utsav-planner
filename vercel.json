@@ -5,5 +5,19 @@
     "app/index.py": {
       "maxDuration": 60
     }
-  }
+  },
+  "headers": [
+    {
+      "source": "/static/(.*)",
+      "headers": [
+        { "key": "X-Content-Type-Options", "value": "nosniff" }
+      ]
+    },
+    {
+      "source": "/static/vendor/(.*)",
+      "headers": [
+        { "key": "Cache-Control", "value": "public, max-age=86400" }
+      ]
+    }
+  ]
 }
