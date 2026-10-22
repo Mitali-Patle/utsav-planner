@@ -84,3 +84,21 @@ The prompts the app itself sends to the LLM live in `app/ai/prompts/`.
   - Tests for the meta description and icon, plus a checksum test that ties `htmx.min.js` to `VENDOR.md`.
   - A `/favicon.ico` redirect.
   - `vercel.json` headers for `/static` (nosniff, one-day cache for vendored files).
+
+## 2026-10-22: Domain foundations, models and budget engine (CC-DOM-01, 02, 03, 05)
+- **Tool / model:** Claude Code (Claude Opus 5.5), plan-first; the developer approved the plan.
+- **Prompt (summary):** "Plan approved, but review it again and tell me if it can be improved." Then: "Fold them in and let's start."
+- **Self-review changed the plan before any code:**
+  - Text normalization must keep the zero-width joiner and non-joiner, which Indian scripts need. Only control characters and bidirectional overrides are stripped.
+  - Category weights are relative, not "must sum to 10,000", which broke when sub-events vary.
+  - `rebalance` returns a reason code for every category, so the preview can explain each number without an AI call.
+  - Increases follow the user's current proportions.
+  - Typed ids, tested docstring examples, 95 % branch-coverage gate, a reproducible Hypothesis profile, an immutability property, and error codes.
+- **Outcome:**
+  - Pure domain layer: clock, errors with codes, text normalization, INR formatting, exact largest-remainder splitting, frozen models with invariants, and the budget engine.
+  - Worked example verified: ₹15,000 → ₹12,000 keeping the cake gives catering ₹3,846, decor ₹2,308, cake ₹2,000, other ₹3,846.
+  - 145 tests, 99.86 % branch coverage. The property tests also passed a 5,000-example randomized run.
+- **Bugs caught along the way:**
+  - The editor wrote real bidirectional-control characters into `text.py` instead of `\u` escapes. Ruff (PLE2502) caught it, the file was fixed, and the repo was scanned clean. Tests now build such characters with `chr()`.
+  - One test expectation was wrong (proportional cuts don't reach a floor unless spare capacity is exhausted). The test was fixed, not the code.
+- **Next iteration:** CC-DOM-04 catalog (India-specific categories, tasks and vendor lead times), then timeline/vendors (DOM-06) and the change engine (DOM-07).

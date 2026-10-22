@@ -15,6 +15,7 @@ dependencies = [
     "pydantic-settings>=2.16.1",
     "python-multipart>=0.0.32",
     "sqlalchemy>=2.1.6",
+    "tzdata>=2026.5",
 ]
 
 [dependency-groups]
@@ -57,7 +58,7 @@ ignore = ["D105", "D107"]
 convention = "google"
 
 [tool.ruff.lint.per-file-ignores]
-"tests/**" = ["S101", "S105", "S106", "D", "ANN", "PLR2004"]
+"tests/**" = ["S101", "S105", "S106", "D", "ANN", "PLR2004", "PLR0913"]
 "scripts/**" = ["T201"]
 
 [tool.mypy]
@@ -67,9 +68,19 @@ warn_unreachable = true
 plugins = ["pydantic.mypy"]
 
 [tool.pytest.ini_options]
-testpaths = ["tests"]
+testpaths = ["tests", "app/domain"]
 pythonpath = ["."]
-addopts = "-q --strict-markers"
+addopts = "-q --strict-markers --doctest-modules"
+
+[tool.coverage.run]
+branch = true
+source = ["app"]
+omit = ["app/index.py"]
+
+[tool.coverage.report]
+fail_under = 95
+show_missing = true
+skip_covered = true
 
 [tool.vercel]
 entrypoint = "app.index:app"

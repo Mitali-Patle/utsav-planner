@@ -33,3 +33,9 @@ def test_hsts_only_in_production(client: TestClient) -> None:
     )
     response = TestClient(create_app(production)).get("/healthz")
     assert response.headers["Strict-Transport-Security"].startswith("max-age=")
+
+
+def test_non_http_scopes_pass_through(settings: Settings) -> None:
+    """Lifespan events go through the middleware untouched."""
+    with TestClient(create_app(settings)) as client:
+        assert client.get("/healthz").status_code == 200
