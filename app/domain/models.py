@@ -6,7 +6,7 @@ its own invariants whenever it is constructed: unique ids, valid category refere
 category allocations that add up exactly to the total budget.
 """
 
-from collections.abc import Iterable
+from collections.abc import Iterable, Iterator
 from datetime import date, timedelta
 from enum import StrEnum
 from typing import Annotated, NewType, Self
@@ -136,13 +136,29 @@ def next_id(prefix: str, existing: Iterable[str]) -> str:
         >>> next_id("task", [])
         'task-1'
     """
+    return next(id_sequence(prefix, existing))
+
+
+def id_sequence(prefix: str, existing: Iterable[str]) -> Iterator[str]:
+    """Yield fresh sequential ids for a prefix, continuing after those already used.
+
+    Generating n ids is O(n + existing), not O(n x existing).
+
+    Examples:
+        >>> sequence = id_sequence("task", ["task-2"])
+        >>> [next(sequence) for _ in range(3)]
+        ['task-3', 'task-4', 'task-5']
+    """
     marker = f"{prefix}-"
     numbers = [
         int(item.removeprefix(marker))
         for item in existing
         if item.startswith(marker) and item.removeprefix(marker).isdecimal()
     ]
-    return f"{marker}{max(numbers, default=0) + 1}"
+    number = max(numbers, default=0)
+    while True:
+        number += 1
+        yield f"{marker}{number}"
 
 
 class BudgetCategory(DomainModel):
@@ -200,6 +216,7 @@ class VendorItem(DomainModel):
     lead_days: int = Field(ge=0, le=MAX_LEAD_DAYS)
     book_by: date
     priority: int = Field(ge=1, le=MAX_PRIORITY)
+    urgent: bool = False
     why: Rationale | None = None
     notes: LongText = ""
 
@@ -298,6 +315,28 @@ class EventPlan(DomainModel):
         found = next((e for e in self.expenses if e.id == expense_id), None)
         if found is None:
             raise NotFoundError(f"No expense '{expense_id}' in this plan.")
+        return found
+
+    def task(self, task_id: TaskId) -> Task:
+        """Return a task by id.
+
+        Raises:
+            NotFoundError: If no task has this id.
+        """
+        found = next((t for t in self.tasks if t.id == task_id), None)
+        if found is None:
+            raise NotFoundError(f"No task '{task_id}' in this plan.")
+        return found
+
+    def vendor(self, vendor_id: VendorId) -> VendorItem:
+        """Return a vendor by id.
+
+        Raises:
+            NotFoundError: If no vendor has this id.
+        """
+        found = next((v for v in self.vendors if v.id == vendor_id), None)
+        if found is None:
+            raise NotFoundError(f"No vendor '{vendor_id}' in this plan.")
         return found
 
     def committed_inr(self, category_id: CategoryId) -> int:

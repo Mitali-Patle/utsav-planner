@@ -118,3 +118,16 @@ The prompts the app itself sends to the LLM live in `app/ai/prompts/`.
   - 187 tests, 99.88 % branch coverage.
 - **Self-correction:** the first docstring claimed wedding lead times were shortened "to fit the three-year window". That was wrong; the real reason is that many families plan within a few months. Corrected before commit.
 - **Next iteration:** DOM-06 (timeline and vendor dates, compression, book-now flags), then DOM-07 (change engine).
+
+## 2026-10-22: Timeline, vendors and the opening plan (CC-DOM-06)
+- **Tool / model:** Claude Code (Claude Opus 5.5).
+- **Prompt (summary):** "Write the plan for DOM-06 and DOM-07." The developer then asked, "Are we pre-defining the number of events, and where is GenAI?" and "We still handle last-minute changes, right?" Those questions added two items to the plan: custom budget categories (6) and automatic follow-up tasks for booked vendors (7).
+- **Outcome:**
+  - Deadlines are counted back from the event date. A deadline that has already passed becomes due today and is flagged as compressed.
+  - Vendor book-by dates come from lead times. Vendors past their window are flagged "book now", and the checklist is ordered by urgency.
+  - Moving the event date reschedules only open items (SPEC scenario 5).
+  - Vendor status changes are rule-checked.
+  - `draft_plan` builds a complete opening plan without AI. An event 10 days away gets compressed tasks and urgent vendors.
+  - 215 tests, 99.90 % branch coverage. The draft-plan property also passed a deep randomized run.
+- **Self-correction:** one assertion in the draft-plan test was always true (it checked a set against a union that already contained it). It was replaced with real checks before commit.
+- **Next iteration:** DOM-07, the change engine.
