@@ -184,12 +184,12 @@ def _invalid_expense(
     today: TodayDep,
     form: FormState,
 ) -> Response:
-    stored = services.planning.get(session, event_id)
     if is_htmx(request):
+        stored = services.planning.get(session, event_id)
         context = dashboard_context(stored, [], today, expense_form=form)
         return render(request, PLAN_AREA, context, status.HTTP_422_UNPROCESSABLE_CONTENT)
-    history = services.changes.history(session, event_id)
-    context = dashboard_context(stored, history, today, expense_form=form)
+    overview = services.changes.overview(session, event_id)
+    context = dashboard_context(overview.event, overview.history, today, expense_form=form)
     return render(request, "dashboard.html", context, status.HTTP_422_UNPROCESSABLE_CONTENT)
 
 

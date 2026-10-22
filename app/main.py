@@ -15,7 +15,7 @@ from app.persistence.repositories import RateLimiter
 from app.services import Services, build_services
 from app.web.errors import register_error_handlers
 from app.web.guard import RequestGuardMiddleware
-from app.web.limits import AIRateLimit
+from app.web.limits import AIRateLimit, EventCreationLimit
 from app.web.routes import changes, edits, events, health, pages
 from app.web.security import SecurityHeadersMiddleware
 from app.web.session import SESSION_MAX_AGE_S
@@ -59,9 +59,9 @@ def create_app(
     app.state.engine = engine
     app.state.services = services
     app.state.clock = clock
-    app.state.ai_limit = AIRateLimit(
-        RateLimiter(engine) if engine is not None else None, settings, secret.encode()
-    )
+    counters = RateLimiter(engine) if engine is not None else None
+    app.state.ai_limit = AIRateLimit(counters, settings, secret.encode())
+    app.state.create_limit = EventCreationLimit(counters, settings, secret.encode())
 
     # Added inner-first: the guard needs the session, and headers apply to every response.
     app.add_middleware(RequestGuardMiddleware)

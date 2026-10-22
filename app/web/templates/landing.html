@@ -10,7 +10,7 @@
   <h2 id="create-heading">Start a new plan</h2>
   {% if form.errors %}
   <div class="notice notice-error" role="alert">
-    <p>Please check the highlighted fields.</p>
+    {% if form.errors | length > 1 or not form.errors.get("form") %}<p>Please check the highlighted fields.</p>{% endif %}
     {% if form.errors.get("form") %}<p>{{ form.errors["form"] }}</p>{% endif %}
   </div>
   {% endif %}

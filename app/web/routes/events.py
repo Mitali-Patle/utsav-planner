@@ -10,12 +10,16 @@ from app.domain.catalog import CATALOG
 from app.domain.errors import InvalidInputError
 from app.domain.models import EventType
 from app.domain.planning import EventDetails
-from app.web.deps import AILimitDep, ServicesDep, SessionDep, TodayDep
+from app.web.deps import AILimitDep, CreateLimitDep, ServicesDep, SessionDep, TodayDep
 from app.web.responses import Notice, after_post, render
 from app.web.views import FormState, dashboard_context, form_errors, landing_context
 
 router = APIRouter(tags=["events"])
 
+TOO_MANY_EVENTS = (
+    "You've created many plans in a short time from this connection. "
+    "Please try again in an hour, or keep working on your existing plans below."
+)
 PERSONALIZED = Notice("Your plan has been personalized. Each AI suggestion says why.")
 FALLBACK = Notice(
     "The AI assistant is unavailable right now, so these are standard ideas (not AI-generated).",
@@ -34,6 +38,7 @@ def create_event(
     services: ServicesDep,
     session: SessionDep,
     today: TodayDep,
+    create_limit: CreateLimitDep,
     event_type: Annotated[str, Form()] = "",
     title: Annotated[str, Form()] = "",
     city: Annotated[str, Form()] = "",
@@ -61,6 +66,15 @@ def create_event(
     chosen = _sub_events_for(event_type, sub_events or [])
     try:
         details = EventDetails.model_validate({**values, "sub_events": chosen})
+        if not create_limit.allow(request):
+            return _invalid_form(
+                request,
+                services,
+                session,
+                today,
+                FormState(values, {"form": TOO_MANY_EVENTS}),
+                status.HTTP_429_TOO_MANY_REQUESTS,
+            )
         stored = services.planning.create_draft(session, details)
     except ValidationError as error:
         return _invalid_form(
@@ -83,9 +97,10 @@ def dashboard(
     request: Request, event_id: str, services: ServicesDep, session: SessionDep, today: TodayDep
 ) -> HTMLResponse:
     """The event dashboard."""
-    stored = services.planning.get(session, event_id)
-    history = services.changes.history(session, event_id)
-    return render(request, "dashboard.html", dashboard_context(stored, history, today))
+    overview = services.changes.overview(session, event_id)
+    return render(
+        request, "dashboard.html", dashboard_context(overview.event, overview.history, today)
+    )
 
 
 @router.post("/events/{event_id}/personalize", include_in_schema=False)
@@ -128,8 +143,13 @@ def _sub_events_for(event_type: str, submitted: list[str]) -> list[str]:
 
 
 def _invalid_form(
-    request: Request, services: ServicesDep, session: str, today: TodayDep, form: FormState
+    request: Request,
+    services: ServicesDep,
+    session: str,
+    today: TodayDep,
+    form: FormState,
+    status_code: int = status.HTTP_422_UNPROCESSABLE_CONTENT,
 ) -> HTMLResponse:
     events = services.planning.list_events(session)
     context = landing_context(events, form, today)
-    return render(request, "landing.html", context, status.HTTP_422_UNPROCESSABLE_CONTENT)
+    return render(request, "landing.html", context, status_code)

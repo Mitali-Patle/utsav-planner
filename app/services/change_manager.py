@@ -32,6 +32,10 @@ from app.persistence.repositories import (
 )
 from app.services.planning import ai_record
 
+OUT_OF_DATE = (
+    "This preview is out of date: a newer preview was made or the plan changed. "
+    "Ask for the change again."
+)
 DECIDED_ELSEWHERE = "This change was decided in another tab. Reload to see the latest plan."
 OFF_TOPIC_MESSAGE = "I can only help with changes to this event plan."
 EMPTY_REQUEST_MESSAGE = "Please describe the change you want to make."
@@ -59,6 +63,15 @@ class ChangeOutcome:
     unsaved: Proposal | None = None
     provenance: Provenance | None = None
     ai: Mapping[str, Any] | None = None
+    event: StoredEvent | None = None
+
+
+@dataclass(frozen=True)
+class Overview:
+    """What a dashboard shows: the event and its change history."""
+
+    event: StoredEvent
+    history: list[StoredProposal]
 
 
 class ApprovalStatus(StrEnum):
@@ -97,7 +110,7 @@ class ChangeManager:
         request = clean_user_text(text, MAX_REQUEST_CHARS)
         stored = self._load(session_id, event_id)
         if not request:
-            return ChangeOutcome(OutcomeKind.INVALID, EMPTY_REQUEST_MESSAGE)
+            return ChangeOutcome(OutcomeKind.INVALID, EMPTY_REQUEST_MESSAGE, event=stored)
 
         today = self._clock.today()
         result = self._ai.run(
@@ -110,10 +123,15 @@ class ChangeManager:
                 intent.clarification_question,
                 provenance=provenance,
                 ai=record,
+                event=stored,
             )
         if intent.status is IntentStatus.OFF_TOPIC:
             return ChangeOutcome(
-                OutcomeKind.OFF_TOPIC, OFF_TOPIC_MESSAGE, provenance=provenance, ai=record
+                OutcomeKind.OFF_TOPIC,
+                OFF_TOPIC_MESSAGE,
+                provenance=provenance,
+                ai=record,
+                event=stored,
             )
         if intent.status is IntentStatus.NEEDS_CLARIFICATION:
             return ChangeOutcome(
@@ -121,6 +139,7 @@ class ChangeManager:
                 intent.clarification_question,
                 provenance=provenance,
                 ai=record,
+                event=stored,
             )
         return self._propose(
             stored, request, intent_to_change_set(intent), ai_record(result), provenance
@@ -146,6 +165,8 @@ class ChangeManager:
         with self._db.transaction() as repos:
             stored = repos.events.get(event_id, session_id)
             pending = repos.proposals.get(proposal_id, event_id, lock=True)
+            if pending.status is ProposalStatus.STALE:
+                return ApprovalOutcome(ApprovalStatus.ALREADY_DECIDED, message=OUT_OF_DATE)
             if pending.status is not ProposalStatus.PENDING:
                 return ApprovalOutcome(
                     ApprovalStatus.ALREADY_DECIDED,
@@ -180,15 +201,15 @@ class ChangeManager:
             repos.proposals.get(proposal_id, event_id)
             return repos.proposals.decide(proposal_id, event_id, ProposalStatus.REJECTED)
 
-    def history(self, session_id: str, event_id: str) -> list[StoredProposal]:
-        """The event's change history, newest first.
+    def overview(self, session_id: str, event_id: str) -> Overview:
+        """The event and its change history (newest first), read in one transaction.
 
         Raises:
             NotFoundError: If the event does not exist or belongs to another session.
         """
         with self._db.transaction() as repos:
-            repos.events.get(event_id, session_id)
-            return repos.proposals.history(event_id)
+            event = repos.events.get(event_id, session_id)
+            return Overview(event, repos.proposals.history(event_id))
 
     def _load(self, session_id: str, event_id: str) -> StoredEvent:
         with self._db.transaction() as repos:
@@ -206,7 +227,9 @@ class ChangeManager:
         try:
             proposal = propose(stored.plan, change_set, self._clock.today())
         except (InvalidInputError, NotFoundError, InfeasibleChangeError) as error:
-            return ChangeOutcome(OutcomeKind.INVALID, error.message, provenance=provenance, ai=ai)
+            return ChangeOutcome(
+                OutcomeKind.INVALID, error.message, provenance=provenance, ai=ai, event=stored
+            )
         if proposal.feasible and not proposal.has_changes:
             return ChangeOutcome(
                 OutcomeKind.NOTHING_TO_CHANGE,
@@ -214,7 +237,10 @@ class ChangeManager:
                 unsaved=proposal,
                 provenance=provenance,
                 ai=ai,
+                event=stored,
             )
         with self._db.transaction() as repos:
             saved = repos.proposals.add(stored.id, request, intent, proposal)
-        return ChangeOutcome(OutcomeKind.PROPOSAL, proposal=saved, provenance=provenance, ai=ai)
+        return ChangeOutcome(
+            OutcomeKind.PROPOSAL, proposal=saved, provenance=provenance, ai=ai, event=stored
+        )

@@ -53,8 +53,8 @@ def request_change(
     if ai_limit.allow(request):
         outcome = services.changes.request_change(session, event_id, change_request)
     else:
-        services.planning.get(session, event_id)
-        outcome = ChangeOutcome(OutcomeKind.UNAVAILABLE, RATE_LIMITED)
+        stored = services.planning.get(session, event_id)
+        outcome = ChangeOutcome(OutcomeKind.UNAVAILABLE, RATE_LIMITED, event=stored)
     return _show_outcome(request, services, session, event_id, today, outcome)
 
 
@@ -216,7 +216,7 @@ def _show_outcome(
     outcome: ChangeOutcome,
     status_code: int = status.HTTP_200_OK,
 ) -> Response:
-    stored = services.planning.get(session, event_id)
+    stored = outcome.event or services.planning.get(session, event_id)
     categories = [(c.id, c.name) for c in stored.plan.categories]
     context = change_result_context(event_id, outcome, categories)
     if is_htmx(request):
@@ -238,7 +238,6 @@ def _dashboard(
     status_code: int = status.HTTP_200_OK,
 ) -> Response:
     """The full dashboard with an answer shown in place (no-JavaScript path)."""
-    stored = services.planning.get(session, event_id)
-    history = services.changes.history(session, event_id)
-    context = {**dashboard_context(stored, history, today), **extra}
+    overview = services.changes.overview(session, event_id)
+    context = {**dashboard_context(overview.event, overview.history, today), **extra}
     return render(request, "dashboard.html", context, status_code)

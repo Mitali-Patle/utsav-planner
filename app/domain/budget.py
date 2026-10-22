@@ -13,6 +13,7 @@ from pydantic import Field
 from app.domain.errors import InfeasibleChangeError, InvalidInputError, NotFoundError
 from app.domain.models import (
     MAX_BUDGET_INR,
+    MAX_EXPENSES,
     MIN_BUDGET_INR,
     BudgetCategory,
     CategoryId,
@@ -334,10 +335,15 @@ def add_expense(plan: EventPlan, draft: NewExpense) -> tuple[EventPlan, Expense]
 
     Raises:
         NotFoundError: If the category does not exist.
-        InvalidInputError: If the amount is out of range.
+        InvalidInputError: If the amount is out of range or the plan has the most expenses
+            allowed.
     """
     plan.category(draft.category_id)
     _check_expense_amount(draft.amount_inr, plan.total_budget_inr)
+    if len(plan.expenses) >= MAX_EXPENSES:
+        raise InvalidInputError(
+            f"A plan can have at most {MAX_EXPENSES} expenses.", code="too_many_expenses"
+        )
     expense = Expense(
         id=ExpenseId(next_id("exp", (e.id for e in plan.expenses))),
         **draft.model_dump(),

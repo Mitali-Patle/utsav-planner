@@ -15,6 +15,7 @@ from app.ai.client import Provenance
 from app.domain.budget import BudgetSummary, CategoryChange, ChangeReason, summarize
 from app.domain.catalog import CATALOG
 from app.domain.changes import Proposal, ScheduleChange
+from app.domain.clock import INDIA_TZ
 from app.domain.models import (
     CategoryId,
     EventPlan,
@@ -268,7 +269,7 @@ def history_row(stored: StoredProposal) -> dict[str, Any]:
     return {
         "request": stored.request_text,
         "status": stored.status.value,
-        "created": format_date(stored.created_at.date()),
+        "created": format_date(stored.created_at.astimezone(INDIA_TZ).date()),
     }
 
 

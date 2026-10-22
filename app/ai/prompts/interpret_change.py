@@ -8,7 +8,7 @@ from app.ai.prompts import GUARDRAILS
 from app.ai.schemas import AIChangeOperation, ChangeIntent, IntentStatus
 from app.domain.changes import ChangeKind
 
-VERSION = "interpret-change-v3"
+VERSION = "interpret-change-v4"
 
 SYSTEM = f"""\
 You turn a user's change request for an event plan into operations. You do not apply them;
@@ -68,7 +68,7 @@ _PLAN: dict[str, Any] = {
 _CAKE_ORDER = {
     "id": "exp-1",
     "category_id": "cake",
-    "label": "Cake order",
+    "label": "<<<Cake order>>>",
     "amount_inr": 1800,
     "protected": False,
 }

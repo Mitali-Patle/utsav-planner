@@ -2,7 +2,7 @@
 
 import asyncio
 import re
-from collections.abc import Iterator
+from collections.abc import Iterator, Sequence
 
 import pytest
 from fastapi import FastAPI, Request
@@ -16,10 +16,10 @@ from app.config import Settings
 from app.domain.errors import InvalidInputError, NotFoundError, StaleProposalError
 from app.main import create_app
 from app.persistence.db import make_engine
-from app.persistence.repositories import RateLimiter
+from app.persistence.repositories import Counter, RateLimiter
 from app.persistence.tables import metadata
 from app.web.guard import MAX_BODY_BYTES, RequestGuardMiddleware
-from app.web.limits import AIRateLimit, client_ip
+from app.web.limits import AIRateLimit, EventCreationLimit, client_ip
 from app.web.session import flash
 
 TOKEN = re.compile(r'"X-CSRF-Token": "([^"]+)"')
@@ -209,12 +209,27 @@ def test_ai_global_daily_cap(engine: Engine) -> None:
 
 def test_ai_limit_never_blocks_on_database_errors(engine: Engine) -> None:
     class BrokenLimiter:
-        def hit(self, bucket: str, *, limit: int, window_s: int) -> bool:
+        def hit_all(self, counters: Sequence[Counter]) -> bool:
             raise OperationalError("select", {}, Exception("down"))
 
     settings = Settings(_env_file=None, app_env="test")
     assert AIRateLimit(BrokenLimiter(), settings, b"s").allow(request_from("1.1.1.1"))
     assert AIRateLimit(None, settings, b"s").allow(request_from())
+
+
+def test_event_creation_limit_counts_per_client_and_never_blocks_on_errors(
+    engine: Engine,
+) -> None:
+    class BrokenLimiter:
+        def hit_all(self, counters: Sequence[Counter]) -> bool:
+            raise OperationalError("insert", {}, Exception("down"))
+
+    settings = Settings(_env_file=None, app_env="test", event_create_limit_per_hour=1)
+    limit = EventCreationLimit(RateLimiter(engine), settings, b"s")
+    assert [limit.allow(request_from("1.1.1.1")) for _ in range(2)] == [True, False]
+    assert limit.allow(request_from("2.2.2.2")), "another client has its own count"
+    assert EventCreationLimit(BrokenLimiter(), settings, b"s").allow(request_from())
+    assert EventCreationLimit(None, settings, b"s").allow(request_from())
 
 
 def test_client_ip_prefers_the_first_forwarded_address() -> None:

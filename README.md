@@ -129,8 +129,8 @@ Its run with prompt v2 passed 36/36 change requests and 5/5 personalizations bef
 free daily quota ran out; the rest is re-run after the quota resets.
 
 What the evals changed:
-- **Model order.** Groq was faster, more accurate and always answered, so it now goes
-  first, with Gemini as the backup.
+- **Model order.** Groq was faster and more accurate, and it answered every case until
+  its free daily quota ran out, so it now goes first, with Gemini as the backup.
 - **Prompt v2.** Gemini dropped the amount when adding an expense or budget line; a worked
   example fixed the expense case (it still drops it for one budget-line request, which Groq
   handles). The alternatives prompt now sizes cuts to the gap, after both models
@@ -153,6 +153,12 @@ Full results, every failure with its reason, and the run history:
   referrer policies; Jinja autoescaping, so model output is never rendered as HTML.
 - AI rate limits per hashed IP and a daily cap. Over the limit, the app answers with
   labelled standard suggestions instead of failing.
+- Bounded storage: new plans are limited per connection per hour, a plan holds at most 200
+  expenses and 200 tasks, a newer preview supersedes older ones, and each plan keeps its
+  latest 50 previews and decisions.
+- Text the user typed is quoted wherever it reaches a model, including expense labels and
+  custom budget lines, and approval locks the preview row so a concurrent reject cannot
+  race it.
 - CI scans the whole git history for secrets (gitleaks) and audits production dependencies
   (pip-audit). Actions are pinned to commit SHAs with a read-only token.
 
@@ -189,8 +195,10 @@ the tests, the browser tests and the security checks on every push.
   site), and about 6 s when Groq's per-minute quota is busy and Gemini answers instead.
 - One AI call per user action; answers are cached in memory and in Postgres; alternatives
   are only fetched when asked for.
-- Serverless-friendly database access: one short connection and transaction per request
-  through Neon's pooler, so idle functions hold nothing open.
+- Serverless-friendly database access: a few short transactions through Neon's pooler, so
+  idle functions hold nothing open. A dashboard needs one; a change request needs three
+  (the rate-limit counters, reading the plan, saving the preview), with the AI call
+  outside them. A test keeps these numbers from creeping up.
 - No JavaScript build: the page ships HTML, one stylesheet and htmx (52 KB, 17 KB
   compressed), served from Vercel's CDN.
 

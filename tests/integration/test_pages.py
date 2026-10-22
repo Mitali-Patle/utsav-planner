@@ -70,3 +70,10 @@ def test_static_files_served_in_development() -> None:
 
 def test_static_files_not_mounted_outside_development(client: TestClient) -> None:
     assert client.get("/static/css/app.css").status_code == 404
+
+
+def test_unknown_pages_get_the_friendly_html_page(client: TestClient) -> None:
+    response = client.get("/robots.txt")
+    assert response.status_code == 404
+    assert response.headers["content-type"].startswith("text/html")
+    assert "This page does not exist." in response.text

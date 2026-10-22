@@ -5,7 +5,7 @@ from datetime import UTC, date, datetime, timedelta
 from typing import Any, cast
 
 import pytest
-from sqlalchemy import Engine, select
+from sqlalchemy import Engine, event, select
 from sqlalchemy.dialects import postgresql
 
 from app.ai.cache import MemoryCache, TieredCache
@@ -13,6 +13,7 @@ from app.domain.changes import ChangeKind, ChangeOperation, ChangeSet, Proposal,
 from app.domain.errors import NotFoundError, StaleProposalError
 from app.persistence.db import make_engine
 from app.persistence.repositories import (
+    Counter,
     Database,
     ProposalRepository,
     ProposalStatus,
@@ -20,7 +21,7 @@ from app.persistence.repositories import (
     SqlCacheStore,
     owner_key,
 )
-from app.persistence.tables import events, metadata
+from app.persistence.tables import events, metadata, rate_limits
 from tests.factories import make_plan
 
 START = datetime(2026, 10, 22, 10, 0, tzinfo=UTC)
@@ -188,13 +189,43 @@ def test_proposals_are_scoped_to_their_event(db: Database) -> None:
         assert not repos.proposals.decide(stored.id, other.id, ProposalStatus.REJECTED)
 
 
-def test_history_is_newest_first(db: Database, now: Now) -> None:
+def test_history_lists_decided_changes_newest_first(db: Database, now: Now) -> None:
     with db.transaction() as repos:
         event = repos.events.create("s", make_plan())
         first = repos.proposals.add(event.id, "first", {}, a_proposal(12_000))
+        repos.proposals.decide(first.id, event.id, ProposalStatus.APPROVED)
         now.advance(minutes=1)
         second = repos.proposals.add(event.id, "second", {}, a_proposal(13_000))
+        repos.proposals.decide(second.id, event.id, ProposalStatus.REJECTED)
+        now.advance(minutes=1)
+        repos.proposals.add(event.id, "still pending", {}, a_proposal(14_000))
         assert [p.id for p in repos.proposals.history(event.id)] == [second.id, first.id]
+
+
+def test_a_newer_preview_makes_older_pending_ones_stale(db: Database, now: Now) -> None:
+    with db.transaction() as repos:
+        event = repos.events.create("s", make_plan())
+        older = repos.proposals.add(event.id, "older", {}, a_proposal(12_000))
+        now.advance(minutes=1)
+        newer = repos.proposals.add(event.id, "newer", {}, a_proposal(13_000))
+        assert repos.proposals.get(older.id, event.id).status is ProposalStatus.STALE
+        assert repos.proposals.get(newer.id, event.id).status is ProposalStatus.PENDING
+
+
+def test_each_event_keeps_only_its_newest_proposals(
+    db: Database, now: Now, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    """Bounded storage however many previews are made (review, 23 Oct)."""
+    monkeypatch.setattr("app.persistence.repositories.MAX_PROPOSALS_PER_EVENT", 2)
+    with db.transaction() as repos:
+        event = repos.events.create("s", make_plan())
+        made = []
+        for amount in (12_000, 13_000, 14_000):
+            made.append(repos.proposals.add(event.id, str(amount), {}, a_proposal(amount)))
+            now.advance(minutes=1)
+        with pytest.raises(NotFoundError):
+            repos.proposals.get(made[0].id, event.id)
+        assert repos.proposals.get(made[2].id, event.id).status is ProposalStatus.PENDING
 
 
 def test_request_text_is_capped(db: Database) -> None:
@@ -283,3 +314,18 @@ def test_approval_reads_the_proposal_with_a_row_lock_on_postgres() -> None:
         ProposalRepository(cast(Any, recorder)).get("p-1", "e-1", lock=True)
     compiled = str(recorder.statement.compile(dialect=cast(Any, postgresql.dialect)()))
     assert compiled.rstrip().endswith("FOR UPDATE")
+
+
+def test_hit_all_counts_in_order_in_one_transaction(engine: Engine) -> None:
+    """The per-client and daily counters share one transaction (review, 23 Oct)."""
+    begins = []
+    event.listen(engine, "begin", lambda _connection: begins.append(1))
+    limiter = RateLimiter(engine)
+    client, daily = Counter("client", 1, 600), Counter("daily", 10, 86_400)
+    assert limiter.hit_all([client, daily])
+    assert len(begins) == 1
+    assert not limiter.hit_all([client, daily]), "the client is over its limit"
+    assert limiter.hit_all([Counter("other", 1, 600), daily])
+    with engine.connect() as connection:
+        counts = dict(connection.execute(select(rate_limits.c.bucket, rate_limits.c.count)).all())
+    assert counts["daily"] == 2, "the refused request was not charged to the daily total"

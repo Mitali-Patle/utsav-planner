@@ -21,6 +21,8 @@ All notable changes to Utsav Planner will be documented in this file.
 - The new-event form reminds users that an AI model reads their preferences, so personal details should be left out.
 
 ### Changed
+- Pages load with less database work (one transaction for the dashboard, three for a change request).
+- New plans are limited per connection per hour, and a plan holds at most 200 expenses and 200 tasks.
 - Set one budget line's planned amount, in plain words ("put ₹10,000 into decorations") or with the change form; the other lines are rebalanced and the total stays exact.
 - Upgraded vendored htmx to official unmodified `htmx.org@2.0.11` without added headers (`public/static/vendor/htmx.min.js`).
 - Adjusted light and dark theme tokens in `public/static/css/app.css` to guarantee all text/background pairs achieve $\ge$ 4.5:1 contrast and UI borders / focus outlines achieve $\ge$ 3.0:1 contrast.
@@ -32,6 +34,9 @@ All notable changes to Utsav Planner will be documented in this file.
 - Change requests that add or update expenses and budget lines are understood more reliably, and money-saving suggestions are sized to the gap they need to close.
 
 ### Fixed
+- Only the newest preview of a change can be approved; older ones are marked out of date instead of staying "Pending" forever, and the history lists approved and rejected changes only.
+- History dates are shown in India time.
+- Unknown pages show the friendly error page instead of raw JSON.
 - When the AI was unavailable or busy, the standard ideas stayed forever; a "Personalize with AI" button now asks again, and a busy repeat no longer relabels AI ideas as standard ones.
 - A change that cannot fit the budget now says exactly how to make it fit (the extra total needed, or which protected lines to release) instead of offering savings that cannot help.
 - Change previews and money-saving suggestions now have their own "How this was generated" panel, like personalization.

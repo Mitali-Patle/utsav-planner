@@ -70,7 +70,11 @@ def quote(text: str, max_chars: int = MAX_REQUEST_CHARS) -> str:
 
 
 def plan_snapshot(plan: EventPlan) -> dict[str, Any]:
-    """Compact, id-centred view of a plan for prompts. Contains no secrets."""
+    """Compact, id-centred view of a plan for prompts. Contains no secrets.
+
+    Text the user typed (expense labels, custom line names) is quoted like any other user
+    text; catalog names are the app's own and stay as they are.
+    """
     return {
         "event_type": plan.event_type.value,
         "event_date": plan.event_date.isoformat(),
@@ -79,7 +83,7 @@ def plan_snapshot(plan: EventPlan) -> dict[str, Any]:
         "categories": [
             {
                 "id": c.id,
-                "name": c.name,
+                "name": quote(c.name) if c.custom else c.name,
                 "allocated_inr": c.allocated_inr,
                 "protected": c.protected,
             }
@@ -89,7 +93,7 @@ def plan_snapshot(plan: EventPlan) -> dict[str, Any]:
             {
                 "id": e.id,
                 "category_id": e.category_id,
-                "label": e.label,
+                "label": quote(e.label),
                 "amount_inr": e.amount_inr,
                 "protected": e.protected,
             }

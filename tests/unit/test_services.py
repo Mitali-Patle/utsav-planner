@@ -314,7 +314,7 @@ def test_change_outcomes(
     outcome = app.changes.request_change(ME, event.id, "some request")
     assert outcome.kind is kind
     assert outcome.message is not None and message in outcome.message
-    assert app.changes.history(ME, event.id) == []
+    assert app.changes.overview(ME, event.id).history == []
 
 
 def test_ai_outage_offers_the_form_instead(engine: Engine) -> None:
@@ -368,7 +368,9 @@ def test_approval_saves_a_new_version_and_logs_it(engine: Engine) -> None:
         event.version + 1,
         12_000,
     )
-    assert [p.status for p in app.changes.history(ME, event.id)] == [ProposalStatus.APPROVED]
+    assert [p.status for p in app.changes.overview(ME, event.id).history] == [
+        ProposalStatus.APPROVED
+    ]
     again = app.changes.approve(ME, event.id, proposal.id)
     assert again.status is ApprovalStatus.ALREADY_DECIDED
 
@@ -382,7 +384,9 @@ def test_reject_leaves_the_plan_unchanged(engine: Engine) -> None:
     assert app.changes.reject(ME, event.id, proposal.id)
     assert not app.changes.reject(ME, event.id, proposal.id)
     assert app.planning.get(ME, event.id).plan == event.plan
-    assert [p.status for p in app.changes.history(ME, event.id)] == [ProposalStatus.REJECTED]
+    assert [p.status for p in app.changes.overview(ME, event.id).history] == [
+        ProposalStatus.REJECTED
+    ]
 
 
 def test_proposal_made_stale_by_an_edit_is_refused(engine: Engine) -> None:
@@ -394,7 +398,7 @@ def test_proposal_made_stale_by_an_edit_is_refused(engine: Engine) -> None:
     app.edits.set_task_done(ME, event.id, TaskId("task-1"), done=True)
     outcome = app.changes.approve(ME, event.id, proposal.id)
     assert outcome.status is ApprovalStatus.STALE
-    assert app.changes.history(ME, event.id)[0].status is ProposalStatus.STALE
+    assert app.changes.overview(ME, event.id).history == [], "a stale preview is not history"
     assert app.planning.get(ME, event.id).plan.total_budget_inr == 15_000
 
 
@@ -440,7 +444,7 @@ def test_another_session_cannot_approve_or_reject(engine: Engine) -> None:
     with pytest.raises(NotFoundError):
         app.changes.reject(INTRUDER, event.id, proposal.id)
     with pytest.raises(NotFoundError):
-        app.changes.history(INTRUDER, event.id)
+        app.changes.overview(INTRUDER, event.id)
 
 
 # Direct edits

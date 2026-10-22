@@ -414,3 +414,14 @@ def test_estimated_savings(action: SavingAction, level: SavingLevel, expected: i
 
 def test_savings_round_down_to_whole_rupees() -> None:
     assert estimate_saving(999, SavingAction.REDUCE, SavingLevel.MEDIUM) == 249
+
+
+def test_a_plan_has_a_bounded_number_of_expenses(monkeypatch: pytest.MonkeyPatch) -> None:
+    """Stops one plan's stored JSON from growing without limit (review, 23 Oct)."""
+    plan, _ = add_expense(
+        make_plan(), NewExpense(category_id=DECOR, label="Lights", amount_inr=500)
+    )
+    monkeypatch.setattr("app.domain.budget.MAX_EXPENSES", 1)
+    with pytest.raises(InvalidInputError) as error:
+        add_expense(plan, NewExpense(category_id=DECOR, label="Flowers", amount_inr=500))
+    assert error.value.code == "too_many_expenses"

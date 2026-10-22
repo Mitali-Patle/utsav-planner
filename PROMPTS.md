@@ -415,3 +415,28 @@ The prompts the app itself sends to the LLM live in `app/ai/prompts/`.
   - Two new eval cases: English, and Hinglish "photography ka budget 1 lakh kar do".
   - `--retry-errors` now checks only the prompts of the tasks it retries, so the scheduled Groq retry is not blocked by this unrelated prompt bump.
   - The README no longer claims users can change every date; task and vendor dates follow the event date.
+- **Fixed next (review findings 8–14):**
+  - **Database work, measured with an engine `begin` listener:**
+
+    | Request | Before | After |
+    |---|---|---|
+    | Dashboard | 2 | 1 |
+    | Change (htmx) | 5 | 3 |
+    | Change (no JS) | 7 | 4 |
+    | Change form | 3 | 2 |
+
+    - `ChangeManager.overview()` reads the event and its history together.
+    - Outcomes carry the event they already loaded.
+    - The rate limiter's `hit_all` counts several counters in one transaction and stops at the first one over its limit, so a refused request is never charged to the daily total.
+    - A test pins the dashboard and change-request numbers.
+  - **Storage:** rather than charge every write an extra counter transaction, the actual growth paths are bounded:
+    - event creation is limited per hashed IP (default 20 an hour)
+    - at most 200 expenses and 200 tasks per plan
+    - a new preview makes older pending ones stale, which also ends "Pending forever"
+    - each event keeps its newest 50 proposals
+    - history shows only approved and rejected changes
+  - **Smaller fixes:**
+    - Expense labels and custom line names are quoted in prompts, and the prompt example now quotes its label too (`interpret-change-v4`).
+    - History dates are in India time.
+    - Unknown routes render the HTML error page.
+    - The README and ARCHITECTURE numbers now match `evals/RESULTS.md`.

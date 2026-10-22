@@ -49,6 +49,7 @@ from app.domain.models import (
     MAX_DAYS_AFTER,
     MAX_DAYS_AHEAD,
     MAX_GUESTS,
+    MAX_TASKS,
     BudgetCategory,
     CategoryId,
     CategoryRef,
@@ -663,6 +664,10 @@ def _add_tasks(
     )
     if not user_tasks and not change_tasks:
         return plan
+    if len(plan.tasks) + len(user_tasks) + len(change_tasks) > MAX_TASKS:
+        raise InvalidInputError(
+            f"A plan can have at most {MAX_TASKS} tasks.", code="too_many_tasks"
+        )
     return plan.with_changes(tasks=(*plan.tasks, *user_tasks, *change_tasks))
 
 

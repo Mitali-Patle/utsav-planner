@@ -8,7 +8,7 @@ from html.parser import HTMLParser
 import pytest
 from fastapi.testclient import TestClient
 from pydantic import BaseModel
-from sqlalchemy import Engine
+from sqlalchemy import Engine, event
 
 from app.ai.cache import MemoryCache
 from app.ai.chain import FallbackChain
@@ -88,8 +88,18 @@ def engine() -> Iterator[Engine]:
     engine.dispose()
 
 
-def client_for(engine: Engine, *answers: BaseModel | Exception, rate_limit: int = 20) -> TestClient:
-    settings = Settings(_env_file=None, app_env="test", ai_rate_limit_per_10min=rate_limit)
+def client_for(
+    engine: Engine,
+    *answers: BaseModel | Exception,
+    rate_limit: int = 20,
+    create_limit: int = 20,
+) -> TestClient:
+    settings = Settings(
+        _env_file=None,
+        app_env="test",
+        ai_rate_limit_per_10min=rate_limit,
+        event_create_limit_per_hour=create_limit,
+    )
     script = [a if isinstance(a, Exception) else a.model_dump_json() for a in answers]
     chain = FallbackChain([ScriptedProvider("gemini:fake", script)], MemoryCache())
     services = build_services(settings, engine, FixedClock(TODAY), ai=chain)
@@ -175,6 +185,19 @@ def test_new_event_opens_its_dashboard_with_personalization_pending(engine: Engi
     assert "Kids&#39; games" not in page.text
     assert_accessible(page.text)
     assert "Aarav&#39;s 8th birthday" in client.get("/").text, "listed under Your events"
+
+
+def test_creating_events_is_limited_per_client(engine: Engine) -> None:
+    """Event creation is the one way to grow storage without bound (review, 23 Oct)."""
+    client = client_for(engine, SUGGESTIONS, create_limit=1)
+    csrf = token(client)
+    first = client.post("/events", data=event_form(csrf), follow_redirects=False)
+    assert first.status_code == 303
+    second = client.post("/events", data=event_form(csrf), follow_redirects=False)
+    assert second.status_code == 429
+    assert "created many plans in a short time" in second.text
+    assert "Please check the highlighted fields" not in second.text
+    assert_accessible(second.text)
 
 
 def test_other_types_functions_are_ignored(engine: Engine) -> None:
@@ -288,18 +311,37 @@ def test_approving_twice_or_stale_is_refused(engine: Engine) -> None:
     first = proposal_id(
         client.post(f"{url}/changes", data={"csrf_token": csrf, "request": "a"}, headers=HTMX).text
     )
-    second = proposal_id(
-        client.post(f"{url}/changes", data={"csrf_token": csrf, "request": "b"}, headers=HTMX).text
-    )
     client.post(f"{url}/proposals/{first}/approve", data={"csrf_token": csrf}, headers=HTMX)
     again = client.post(f"{url}/proposals/{first}/approve", data={"csrf_token": csrf}, headers=HTMX)
     assert again.status_code == 409
     assert "already approved" in again.text
+
+    second = proposal_id(
+        client.post(
+            f"{url}/changes/form", data={"csrf_token": csrf, "guest_count": "45"}, headers=HTMX
+        ).text
+    )
+    client.post(f"{url}/tasks/task-1/done", data={"csrf_token": csrf}, headers=HTMX)
     stale = client.post(
         f"{url}/proposals/{second}/approve", data={"csrf_token": csrf}, headers=HTMX
     )
     assert stale.status_code == 409
     assert "changed after this preview" in stale.text
+
+
+def test_only_the_newest_preview_can_be_approved(engine: Engine) -> None:
+    client = client_for(engine, SUGGESTIONS, BUDGET_CUT, BUDGET_CUT)
+    csrf = token(client)
+    url = create(client, csrf)
+    older = proposal_id(
+        client.post(f"{url}/changes", data={"csrf_token": csrf, "request": "a"}, headers=HTMX).text
+    )
+    client.post(f"{url}/changes", data={"csrf_token": csrf, "request": "b"}, headers=HTMX)
+    response = client.post(
+        f"{url}/proposals/{older}/approve", data={"csrf_token": csrf}, headers=HTMX
+    )
+    assert response.status_code == 409
+    assert "This preview is out of date" in response.text
 
 
 def test_reject_leaves_the_plan_unchanged(engine: Engine) -> None:
@@ -625,3 +667,21 @@ def test_unknown_event_type_is_rejected(engine: Engine) -> None:
     page = client.post("/events", data=event_form(token(client), event_type="funeral"))
     assert page.status_code == 422
     assert "Choose the kind of event." in page.text
+
+
+def test_database_work_per_request_stays_small(engine: Engine) -> None:
+    """Each transaction is a new Neon connection in production (review, 23 Oct).
+
+    A change request needs three: the rate-limit counters, reading the plan, saving the
+    proposal; the AI call happens between them, outside any transaction.
+    """
+    client = client_for(engine, SUGGESTIONS, BUDGET_CUT)
+    csrf = token(client)
+    url = create(client, csrf)
+    begins: list[int] = []
+    event.listen(engine, "begin", lambda _connection: begins.append(1))
+    client.get(url)
+    assert len(begins) == 1, "the dashboard reads the plan and its history together"
+    begins.clear()
+    client.post(f"{url}/changes", data={"csrf_token": csrf, "request": "x"}, headers=HTMX)
+    assert len(begins) == 3

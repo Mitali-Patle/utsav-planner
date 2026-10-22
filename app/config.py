@@ -28,6 +28,7 @@ class Settings(BaseSettings):
     llm_chain: str = DEFAULT_LLM_CHAIN
     ai_rate_limit_per_10min: int = Field(default=20, ge=1, le=1000)
     ai_daily_soft_cap: int = Field(default=1500, ge=1)
+    event_create_limit_per_hour: int = Field(default=20, ge=1, le=1000)
 
     @property
     def is_production(self) -> bool:

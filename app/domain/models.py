@@ -31,6 +31,9 @@ MAX_DAYS_AFTER = 30
 MAX_LEAD_DAYS = 730
 MAX_PRIORITY = 50
 MAX_CUSTOM_CATEGORIES = 3
+# Bounds on what users can add, so one plan's stored JSON cannot grow without limit.
+MAX_EXPENSES = 200
+MAX_TASKS = 200
 SLUG_PATTERN = r"^[a-z][a-z0-9_-]{0,39}$"
 
 CategoryId = NewType("CategoryId", str)

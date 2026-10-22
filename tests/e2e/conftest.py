@@ -90,7 +90,12 @@ def base_url(tmp_path_factory: pytest.TempPathFactory) -> Iterator[str]:
     database: Path = tmp_path_factory.mktemp("e2e") / "app.db"
     engine = create_engine(f"sqlite:///{database}")
     metadata.create_all(engine)
-    settings = Settings(_env_file=None, app_env="development", ai_rate_limit_per_10min=1_000)
+    settings = Settings(
+        _env_file=None,
+        app_env="development",
+        ai_rate_limit_per_10min=1_000,
+        event_create_limit_per_hour=1_000,
+    )
     chain = FallbackChain([TaskAwareProvider("gemini:fake-e2e", ANSWERS)], MemoryCache())
     clock = FixedClock(TODAY)
     services = build_services(settings, engine, clock, ai=chain)

@@ -2,6 +2,7 @@
 
 from fastapi import FastAPI, Request
 from fastapi.responses import HTMLResponse
+from starlette.exceptions import HTTPException
 
 from app.domain.errors import DomainError, InvalidInputError, NotFoundError, StaleProposalError
 from app.web.templating import templates
@@ -12,6 +13,7 @@ STATUS_BY_ERROR: tuple[tuple[type[DomainError], int], ...] = (
     (InvalidInputError, 422),
 )
 DEFAULT_STATUS = 400
+NOT_FOUND = 404
 
 
 def is_htmx(request: Request) -> bool:
@@ -44,6 +46,18 @@ async def domain_error_handler(request: Request, error: Exception) -> HTMLRespon
     return render_error(request, message, status)
 
 
+async def http_error_handler(request: Request, error: Exception) -> HTMLResponse:
+    """Unknown pages and other HTTP errors get the same friendly page, not JSON."""
+    status = error.status_code if isinstance(error, HTTPException) else DEFAULT_STATUS
+    detail = error.detail if isinstance(error, HTTPException) else None
+    if status == NOT_FOUND:
+        return render_error(request, "This page does not exist.", status)
+    return render_error(
+        request, detail if isinstance(detail, str) else "Something went wrong.", status
+    )
+
+
 def register_error_handlers(app: FastAPI) -> None:
     """Install the handlers on the app."""
     app.add_exception_handler(DomainError, domain_error_handler)
+    app.add_exception_handler(HTTPException, http_error_handler)

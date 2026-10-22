@@ -14,7 +14,7 @@ from contextlib import contextmanager
 from dataclasses import dataclass
 from datetime import UTC, datetime, timedelta
 from enum import StrEnum
-from typing import Any
+from typing import Any, NamedTuple
 
 from sqlalchemy import Connection, Engine, Table, delete, func, insert, select, update
 from sqlalchemy.dialects import postgresql, sqlite
@@ -25,6 +25,7 @@ from app.domain.models import EventPlan
 from app.persistence.tables import ai_cache, events, proposals, rate_limits
 
 Now = Callable[[], datetime]
+MAX_PROPOSALS_PER_EVENT = 50
 PURGE_EVERY_WRITES = 50
 RATE_LIMIT_RETENTION = timedelta(days=2)
 
@@ -232,7 +233,20 @@ class ProposalRepository:
     def add(
         self, event_id: str, request_text: str, intent: Mapping[str, Any], proposal: Proposal
     ) -> StoredProposal:
-        """Save a pending proposal."""
+        """Save a pending proposal.
+
+        Older pending previews of the event become stale (only the newest preview can be
+        approved), and the event keeps its newest `MAX_PROPOSALS_PER_EVENT` proposals, so
+        storage stays bounded however many previews are made.
+        """
+        self._connection.execute(
+            update(proposals)
+            .where(
+                proposals.c.event_id == event_id,
+                proposals.c.status == ProposalStatus.PENDING.value,
+            )
+            .values(status=ProposalStatus.STALE.value, decided_at=self._now())
+        )
         stored = StoredProposal(
             id=uuid.uuid4().hex,
             event_id=event_id,
@@ -255,6 +269,15 @@ class ProposalRepository:
                 status=stored.status.value,
                 created_at=stored.created_at,
             )
+        )
+        newest = (
+            select(proposals.c.id)
+            .where(proposals.c.event_id == event_id)
+            .order_by(proposals.c.created_at.desc())
+            .limit(MAX_PROPOSALS_PER_EVENT)
+        )
+        self._connection.execute(
+            delete(proposals).where(proposals.c.event_id == event_id, proposals.c.id.not_in(newest))
         )
         return stored
 
@@ -297,10 +320,15 @@ class ProposalRepository:
         return result.rowcount == 1
 
     def history(self, event_id: str, limit: int = 20) -> list[StoredProposal]:
-        """An event's proposals, newest first."""
+        """An event's approved and rejected changes, newest first."""
         rows = self._connection.execute(
             select(proposals)
-            .where(proposals.c.event_id == event_id)
+            .where(
+                proposals.c.event_id == event_id,
+                proposals.c.status.in_(
+                    [ProposalStatus.APPROVED.value, ProposalStatus.REJECTED.value]
+                ),
+            )
             .order_by(proposals.c.created_at.desc())
             .limit(limit)
         ).all()
@@ -395,6 +423,14 @@ class SqlCacheStore:
                 connection.execute(delete(ai_cache).where(ai_cache.c.expires_at <= moment))
 
 
+class Counter(NamedTuple):
+    """One fixed-window limit: at most `limit` requests per `window_s` in `bucket`."""
+
+    bucket: str
+    limit: int
+    window_s: int
+
+
 class RateLimiter:
     """Fixed-window counters shared across function instances."""
 
@@ -415,22 +451,37 @@ class RateLimiter:
         Returns:
             True if the request is within the limit.
         """
+        return self.hit_all([Counter(bucket, limit, window_s)])
+
+    def hit_all(self, counters: Sequence[Counter]) -> bool:
+        """Count one request against several counters, in order, in one transaction.
+
+        Counting stops at the first counter over its limit, so a refused request is not
+        charged to the counters after it (for example, the app-wide daily total).
+
+        Returns:
+            True if the request is within every limit.
+        """
         moment = self._now()
-        window_start = int(moment.timestamp()) // window_s * window_s
-        statement = _upsert(
-            self._engine,
-            rate_limits,
-            {"bucket": bucket, "window_start": window_start, "count": 1},
-            keys=("bucket", "window_start"),
-            increment="count",
-        ).returning(rate_limits.c.count)
         with self._engine.begin() as connection:
-            count = connection.execute(statement).scalar_one()
+            within = True
+            for counter in counters:
+                window_start = int(moment.timestamp()) // counter.window_s * counter.window_s
+                statement = _upsert(
+                    self._engine,
+                    rate_limits,
+                    {"bucket": counter.bucket, "window_start": window_start, "count": 1},
+                    keys=("bucket", "window_start"),
+                    increment="count",
+                ).returning(rate_limits.c.count)
+                if connection.execute(statement).scalar_one() > counter.limit:
+                    within = False
+                    break
             self._writes += 1
             if self._writes % PURGE_EVERY_WRITES == 0:
                 oldest = int((moment - RATE_LIMIT_RETENTION).timestamp())
                 connection.execute(delete(rate_limits).where(rate_limits.c.window_start < oldest))
-        return bool(count <= limit)
+        return within
 
 
 def _upsert(
