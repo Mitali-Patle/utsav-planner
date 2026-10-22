@@ -258,3 +258,17 @@ The prompts the app itself sends to the LLM live in `app/ai/prompts/`.
   - `TaskSpec` carries an optional `why`.
   - 370 tests.
 - **Self-correction:** one test compared category weights, but emphasis scales every weight by 100, so the weights differ while the rupee allocations are identical. The test now compares allocations, which is what matters.
+
+## 2026-10-22: Services — the full loop (persistence part 3)
+- **Tool / model:** Claude Code (Claude Opus 5.5).
+- **Outcome:**
+  - `PlanningService.create_event`: draft, then AI personalization or the labelled fallback, then saved as version 1 with the AI record (answer and provenance). The AI call runs before the transaction opens.
+  - `ChangeManager`: `request_change` returns a proposal, clarification, off-topic, unavailable, invalid or nothing-to-change outcome. `propose_from_form` is the no-AI path. `approve` saves the new version and marks the proposal in one transaction. `reject` and `history` are also there.
+  - `PlanEditor` saves direct edits immediately. `AlternativesService`: the AI suggests and code prices each option; no AI call is made when within budget.
+  - `build_services` wires the providers, the tiered cache and the database.
+  - 392 tests, 99.88 % branch coverage. Scenarios 1, 6, 7, 12 and 13 are now covered through the services.
+- **Live loop on real systems (Neon dev, dev AI keys):**
+  - A Jaipur wedding was created with 5 ideas and 5 AI tasks (Gemini timed out and Groq answered).
+  - "20 more guests are confirmed, but keep photography as it is" became `adjust_guest_count` plus `protect`: guest-scaled categories went up, the rest were cut proportionally, and photography was kept.
+  - The approval saved version 2 with 170 guests, and the history shows it approved.
+- **Measured:** event creation took 20.4 s end to end when Gemini timed out first, which is too slow for a good first impression. To address in the web plan.
