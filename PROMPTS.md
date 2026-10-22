@@ -227,3 +227,15 @@ The prompts the app itself sends to the LLM live in `app/ai/prompts/`.
   - `docs/SPEC.md` adds F16–F18. The must-pass table names the real test files with an honest status (domain proven, route planned).
   - `AGENTS.md` handoff commands now match what is actually run.
 - **Found while checking the docs against reality:** pytest collected doctests only from `app/domain`, so four AI-layer doctests had never run. Added `app/ai` to `testpaths`; they pass (343 tests).
+
+## 2026-10-22: Persistence, part 1 — tables and repositories
+- **Tool / model:** Claude Code (Claude Opus 5.5). The plan was approved with all recommended decisions.
+- **Outcome:**
+  - Tables: `events`, `proposals` (the change history), `ai_cache` and `rate_limits`, using portable types.
+  - `EventRepository`: owner stored as a SHA-256 hash; ownership and version checks inside the SQL itself.
+  - `ProposalRepository`: a proposal can be decided only once.
+  - `SqlCacheStore` and `TieredCache` (memory, then Postgres), and a fixed-window `RateLimiter`. Expired rows are purged occasionally during writes.
+  - `scripts/init_db.py` created the tables on the Neon dev branch.
+  - 16 repository tests on SQLite.
+- **Live check on Neon (Postgres):** every repository path worked, including the dialect-specific insert-or-update and `RETURNING`.
+- **Measured from India:** a new connection per operation costs about 1.06 s, against 0.48 s with a reused pool. Pooling was rejected because idle pooled connections can keep Neon awake beyond its 100 free compute-hours. Proposed instead: one connection and one transaction per request, which also makes approval atomic.

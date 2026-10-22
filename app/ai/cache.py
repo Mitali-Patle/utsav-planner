@@ -76,3 +76,37 @@ class MemoryCache:
         self._entries.move_to_end(key)
         while len(self._entries) > self._max_entries:
             self._entries.popitem(last=False)
+
+
+class TieredCache:
+    """Fast per-instance cache in front of a shared store.
+
+    A hit in the shared store is copied into the fast cache for `refill_ttl_s` seconds.
+    """
+
+    def __init__(self, fast: CacheStore, shared: CacheStore, refill_ttl_s: int = 300) -> None:
+        """Combine two stores.
+
+        Args:
+            fast: Checked first (usually `MemoryCache`).
+            shared: Checked on a miss (usually the Postgres store).
+            refill_ttl_s: How long a shared hit stays in the fast cache.
+        """
+        self._fast = fast
+        self._shared = shared
+        self._refill_ttl_s = refill_ttl_s
+
+    def get(self, key: str) -> Mapping[str, Any] | None:
+        """Return the entry from the fast cache, else from the shared store."""
+        value = self._fast.get(key)
+        if value is not None:
+            return value
+        value = self._shared.get(key)
+        if value is not None:
+            self._fast.set(key, value, self._refill_ttl_s)
+        return value
+
+    def set(self, key: str, value: Mapping[str, Any], ttl_s: int) -> None:
+        """Store the entry in both caches."""
+        self._fast.set(key, value, ttl_s)
+        self._shared.set(key, value, ttl_s)
