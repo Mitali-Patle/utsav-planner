@@ -25,7 +25,8 @@ LEAK_WINDOW_WORDS = 8
 
 _NEGATION_BEFORE = re.compile(
     r"\b(no|not|never|without|avoid\w*|skip\w*|omit\w*|exclud\w*|remov\w*|leav\w* out|"
-    r"instead of|zero|swap\w*|replac\w*|free (?:of|from))\b",
+    r"instead of|zero|swap\w*|replac\w*|free (?:of|from)|ban\w*|eliminat\w*|prohibit\w*|"
+    r"phase\w* out)\b",
     re.IGNORECASE,
 )
 # Any dash: models often write "alcohol-free" with U+2010 or a non-breaking hyphen.

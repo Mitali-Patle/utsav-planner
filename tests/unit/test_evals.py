@@ -29,7 +29,7 @@ from evals.cases import (
     ChangeCase,
     PersonalizeCase,
 )
-from evals.report import all_runs, latest_runs, render
+from evals.report import all_runs, best_measurements, render
 from evals.run import (
     REJECTED,
     CaseResult,
@@ -314,33 +314,42 @@ def test_no_answer_is_an_error_not_a_wrong_answer() -> None:
     assert result.reasons[0].startswith("no AI answer: gemini:fake: rate_limited")
 
 
-def test_report_uses_the_latest_run_per_model(tmp_path: Path) -> None:
-    def result(case_id: str, passed: bool) -> CaseResult:
-        return CaseResult(
-            "change",
-            case_id,
-            passed,
-            False,
-            () if passed else ("wrong",),
-            {},
-            "m:1",
-            1200,
-            True,
-            ("m:1: ok",),
-            {},
-        )
-
-    older = save([result("a", False)], "m:1", tmp_path)
-    newer = older.with_name("9999-" + older.name)
-    newer.write_text(
-        older.read_text().replace('"passed": false', '"passed": true').replace('"wrong"', ""),
-        encoding="utf-8",
+def _result(case_id: str, *, passed: bool = True, error: bool = False) -> CaseResult:
+    reasons = ("no AI answer",) if error else () if passed else ("wrong",)
+    return CaseResult(
+        "change",
+        case_id,
+        passed and not error,
+        error,
+        reasons,
+        {},
+        "m:1",
+        1200,
+        not error,
+        ("m:1: ok",),
+        {},
     )
-    runs = latest_runs(tmp_path)
-    assert [r["file"] for r in runs] == [newer.name]
-    report = render(runs)
-    assert "| m:1 | change | 1/1 (100%) | 1/1 (100%) | 0 | 1.2 s | 1.2 s |" in report
-    assert json.loads(newer.read_text())["prompt_versions"]["interpret_change"]
+
+
+def _save_as(path_name: str, results: list[CaseResult], tmp_path: Path) -> None:
+    saved = save(results, "m:1", tmp_path)
+    saved.rename(saved.with_name(path_name))
+
+
+def test_report_uses_the_latest_mostly_answered_run_per_task(tmp_path: Path) -> None:
+    _save_as("1.json", [_result("a", passed=False)], tmp_path)
+    _save_as("2.json", [_result("a")], tmp_path)
+    _save_as("3.json", [_result("a", error=True)], tmp_path)
+    report = render(best_measurements(all_runs(tmp_path)), all_runs(tmp_path))
+    summary = report.split("## Failures")[0]
+    assert "| 1/1 (100%) | 1/1 (100%) | 0 | 1.2 s | 1.2 s |" in summary, "run 2, not the outage"
+    assert summary.count("| m:1 | change |") == 1
+
+
+def test_an_outage_run_is_used_only_when_nothing_better_exists(tmp_path: Path) -> None:
+    _save_as("1.json", [_result("a", error=True), _result("b")], tmp_path)
+    [measurement] = best_measurements(all_runs(tmp_path))
+    assert [r["case_id"] for r in measurement.results] == ["a", "b"]
 
 
 def test_rescore_applies_current_scoring_to_saved_answers(tmp_path: Path) -> None:
@@ -405,15 +414,10 @@ def test_rescore_reclassifies_rejected_answers_saved_as_errors(tmp_path: Path) -
 
 
 def test_history_lists_every_run_with_its_prompt_versions(tmp_path: Path) -> None:
-    def result(passed: bool) -> CaseResult:
-        return CaseResult("change", "a", passed, False, (), {}, "m:1", 900, True, (), {})
-
-    first = save([result(False)], "m:1", tmp_path)
-    first.rename(first.with_name("0000-" + first.name))
-    save([result(True)], "m:1", tmp_path)
-    report = render(latest_runs(tmp_path), all_runs(tmp_path))
-    assert "## Run history" in report
-    history = report.split("## Run history")[1]
+    _save_as("1.json", [_result("a", passed=False)], tmp_path)
+    _save_as("2.json", [_result("a")], tmp_path)
+    runs = all_runs(tmp_path)
+    history = render(best_measurements(runs), runs).split("## Run history")[1]
     ordered = (tasks.PERSONALIZE, tasks.INTERPRET_CHANGE, tasks.SUGGEST_ALTERNATIVES)
     versions = ", ".join(t.version.rsplit("-", 1)[-1] for t in ordered)
     assert f"| m:1 | {versions} | 0/1 | 0/0 | 0/0 | 0 |" in history
@@ -499,3 +503,13 @@ def test_a_set_line_must_land_on_the_exact_amount() -> None:
     assert score_change(case, right).passed
     total_instead = intent(op(ChangeKind.ADJUST_TOTAL_BUDGET, delta=10_000))
     assert not score_change(case, total_instead).passed
+
+
+def test_banning_or_eliminating_a_forbidden_item_is_respectful() -> None:
+    """Gemini 3.1's eco Ganeshotsav answer (eval run, 23 Oct), sentence by sentence."""
+    answer = ideas(
+        "Clay idol and reusable decor instead of thermocol",
+        "Eliminates plastic/thermocol waste with bamboo and fabric",
+        "Explicitly ban all plastic/thermocol usage in the contract",
+    )
+    assert score_personalize(PERSONALIZE["c-eco-ganesh"], answer, SYSTEM).passed

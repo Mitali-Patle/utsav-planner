@@ -1,0 +1,886 @@
+{
+ "model": "gemini:gemini-3.5-flash-lite",
+ "run_at": "2026-10-22T20:16:16+00:00",
+ "prompt_versions": {
+  "personalize": "personalize-v1",
+  "interpret_change": "interpret-change-v4",
+  "alternatives": "alternatives-v2"
+ },
+ "results": [
+  {
+   "task": "change",
+   "case_id": "b-budget-set",
+   "passed": false,
+   "error": true,
+   "reasons": [
+    "no AI answer: gemini:gemini-3.5-flash-lite: timeout"
+   ],
+   "metrics": {},
+   "provider": null,
+   "latency_ms": 10061,
+   "first_try_valid": false,
+   "attempts": [
+    "gemini:gemini-3.5-flash-lite: timeout"
+   ],
+   "answer": {
+    "status": "needs_clarification",
+    "clarification_question": "The assistant can't process requests right now. Please use the change form below.",
+    "operations": [],
+    "cut_priority": [],
+    "summary": "The request was not interpreted (not AI-generated)."
+   }
+  },
+  {
+   "task": "change",
+   "case_id": "b-budget-k",
+   "passed": false,
+   "error": true,
+   "reasons": [
+    "no AI answer: gemini:gemini-3.5-flash-lite: timeout"
+   ],
+   "metrics": {},
+   "provider": null,
+   "latency_ms": 9645,
+   "first_try_valid": false,
+   "attempts": [
+    "gemini:gemini-3.5-flash-lite: timeout"
+   ],
+   "answer": {
+    "status": "needs_clarification",
+    "clarification_question": "The assistant can't process requests right now. Please use the change form below.",
+    "operations": [],
+    "cut_priority": [],
+    "summary": "The request was not interpreted (not AI-generated)."
+   }
+  },
+  {
+   "task": "change",
+   "case_id": "b-budget-relative",
+   "passed": false,
+   "error": true,
+   "reasons": [
+    "no AI answer: gemini:gemini-3.5-flash-lite: timeout"
+   ],
+   "metrics": {},
+   "provider": null,
+   "latency_ms": 9742,
+   "first_try_valid": false,
+   "attempts": [
+    "gemini:gemini-3.5-flash-lite: timeout"
+   ],
+   "answer": {
+    "status": "needs_clarification",
+    "clarification_question": "The assistant can't process requests right now. Please use the change form below.",
+    "operations": [],
+    "cut_priority": [],
+    "summary": "The request was not interpreted (not AI-generated)."
+   }
+  },
+  {
+   "task": "change",
+   "case_id": "w-lakh",
+   "passed": false,
+   "error": true,
+   "reasons": [
+    "no AI answer: gemini:gemini-3.5-flash-lite: timeout"
+   ],
+   "metrics": {},
+   "provider": null,
+   "latency_ms": 9670,
+   "first_try_valid": false,
+   "attempts": [
+    "gemini:gemini-3.5-flash-lite: timeout"
+   ],
+   "answer": {
+    "status": "needs_clarification",
+    "clarification_question": "The assistant can't process requests right now. Please use the change form below.",
+    "operations": [],
+    "cut_priority": [],
+    "summary": "The request was not interpreted (not AI-generated)."
+   }
+  },
+  {
+   "task": "change",
+   "case_id": "w-indian-commas",
+   "passed": false,
+   "error": true,
+   "reasons": [
+    "no AI answer: gemini:gemini-3.5-flash-lite: timeout"
+   ],
+   "metrics": {},
+   "provider": null,
+   "latency_ms": 9818,
+   "first_try_valid": false,
+   "attempts": [
+    "gemini:gemini-3.5-flash-lite: timeout"
+   ],
+   "answer": {
+    "status": "needs_clarification",
+    "clarification_question": "The assistant can't process requests right now. Please use the change form below.",
+    "operations": [],
+    "cut_priority": [],
+    "summary": "The request was not interpreted (not AI-generated)."
+   }
+  },
+  {
+   "task": "change",
+   "case_id": "w-relative-lakh",
+   "passed": false,
+   "error": true,
+   "reasons": [
+    "no AI answer: gemini:gemini-3.5-flash-lite: timeout"
+   ],
+   "metrics": {},
+   "provider": null,
+   "latency_ms": 9975,
+   "first_try_valid": false,
+   "attempts": [
+    "gemini:gemini-3.5-flash-lite: timeout"
+   ],
+   "answer": {
+    "status": "needs_clarification",
+    "clarification_question": "The assistant can't process requests right now. Please use the change form below.",
+    "operations": [],
+    "cut_priority": [],
+    "summary": "The request was not interpreted (not AI-generated)."
+   }
+  },
+  {
+   "task": "change",
+   "case_id": "c-sponsor",
+   "passed": false,
+   "error": true,
+   "reasons": [
+    "no AI answer: gemini:gemini-3.5-flash-lite: timeout"
+   ],
+   "metrics": {},
+   "provider": null,
+   "latency_ms": 9923,
+   "first_try_valid": false,
+   "attempts": [
+    "gemini:gemini-3.5-flash-lite: timeout"
+   ],
+   "answer": {
+    "status": "needs_clarification",
+    "clarification_question": "The assistant can't process requests right now. Please use the change form below.",
+    "operations": [],
+    "cut_priority": [],
+    "summary": "The request was not interpreted (not AI-generated)."
+   }
+  },
+  {
+   "task": "change",
+   "case_id": "b-guests-more",
+   "passed": false,
+   "error": true,
+   "reasons": [
+    "no AI answer: gemini:gemini-3.5-flash-lite: timeout"
+   ],
+   "metrics": {},
+   "provider": null,
+   "latency_ms": 9848,
+   "first_try_valid": false,
+   "attempts": [
+    "gemini:gemini-3.5-flash-lite: timeout"
+   ],
+   "answer": {
+    "status": "needs_clarification",
+    "clarification_question": "The assistant can't process requests right now. Please use the change form below.",
+    "operations": [],
+    "cut_priority": [],
+    "summary": "The request was not interpreted (not AI-generated)."
+   }
+  },
+  {
+   "task": "change",
+   "case_id": "b-guests-set",
+   "passed": false,
+   "error": true,
+   "reasons": [
+    "no AI answer: gemini:gemini-3.5-flash-lite: timeout"
+   ],
+   "metrics": {},
+   "provider": null,
+   "latency_ms": 9745,
+   "first_try_valid": false,
+   "attempts": [
+    "gemini:gemini-3.5-flash-lite: timeout"
+   ],
+   "answer": {
+    "status": "needs_clarification",
+    "clarification_question": "The assistant can't process requests right now. Please use the change form below.",
+    "operations": [],
+    "cut_priority": [],
+    "summary": "The request was not interpreted (not AI-generated)."
+   }
+  },
+  {
+   "task": "change",
+   "case_id": "w-guests-more",
+   "passed": false,
+   "error": true,
+   "reasons": [
+    "no AI answer: gemini:gemini-3.5-flash-lite: timeout"
+   ],
+   "metrics": {},
+   "provider": null,
+   "latency_ms": 9537,
+   "first_try_valid": false,
+   "attempts": [
+    "gemini:gemini-3.5-flash-lite: timeout"
+   ],
+   "answer": {
+    "status": "needs_clarification",
+    "clarification_question": "The assistant can't process requests right now. Please use the change form below.",
+    "operations": [],
+    "cut_priority": [],
+    "summary": "The request was not interpreted (not AI-generated)."
+   }
+  },
+  {
+   "task": "change",
+   "case_id": "c-guests-about",
+   "passed": false,
+   "error": true,
+   "reasons": [
+    "no AI answer: gemini:gemini-3.5-flash-lite: unavailable"
+   ],
+   "metrics": {},
+   "provider": null,
+   "latency_ms": 193,
+   "first_try_valid": false,
+   "attempts": [
+    "gemini:gemini-3.5-flash-lite: unavailable"
+   ],
+   "answer": {
+    "status": "needs_clarification",
+    "clarification_question": "The assistant can't process requests right now. Please use the change form below.",
+    "operations": [],
+    "cut_priority": [],
+    "summary": "The request was not interpreted (not AI-generated)."
+   }
+  },
+  {
+   "task": "change",
+   "case_id": "b-date-week-later",
+   "passed": false,
+   "error": true,
+   "reasons": [
+    "no AI answer: gemini:gemini-3.5-flash-lite: unavailable"
+   ],
+   "metrics": {},
+   "provider": null,
+   "latency_ms": 18,
+   "first_try_valid": false,
+   "attempts": [
+    "gemini:gemini-3.5-flash-lite: unavailable"
+   ],
+   "answer": {
+    "status": "needs_clarification",
+    "clarification_question": "The assistant can't process requests right now. Please use the change form below.",
+    "operations": [],
+    "cut_priority": [],
+    "summary": "The request was not interpreted (not AI-generated)."
+   }
+  },
+  {
+   "task": "change",
+   "case_id": "b-date-set",
+   "passed": false,
+   "error": true,
+   "reasons": [
+    "no AI answer: gemini:gemini-3.5-flash-lite: timeout"
+   ],
+   "metrics": {},
+   "provider": null,
+   "latency_ms": 9729,
+   "first_try_valid": false,
+   "attempts": [
+    "gemini:gemini-3.5-flash-lite: timeout"
+   ],
+   "answer": {
+    "status": "needs_clarification",
+    "clarification_question": "The assistant can't process requests right now. Please use the change form below.",
+    "operations": [],
+    "cut_priority": [],
+    "summary": "The request was not interpreted (not AI-generated)."
+   }
+  },
+  {
+   "task": "change",
+   "case_id": "w-postpone",
+   "passed": false,
+   "error": true,
+   "reasons": [
+    "no AI answer: gemini:gemini-3.5-flash-lite: timeout"
+   ],
+   "metrics": {},
+   "provider": null,
+   "latency_ms": 8401,
+   "first_try_valid": false,
+   "attempts": [
+    "gemini:gemini-3.5-flash-lite: timeout"
+   ],
+   "answer": {
+    "status": "needs_clarification",
+    "clarification_question": "The assistant can't process requests right now. Please use the change form below.",
+    "operations": [],
+    "cut_priority": [],
+    "summary": "The request was not interpreted (not AI-generated)."
+   }
+  },
+  {
+   "task": "change",
+   "case_id": "b-protect-only",
+   "passed": false,
+   "error": true,
+   "reasons": [
+    "no AI answer: gemini:gemini-3.5-flash-lite: timeout"
+   ],
+   "metrics": {},
+   "provider": null,
+   "latency_ms": 9744,
+   "first_try_valid": false,
+   "attempts": [
+    "gemini:gemini-3.5-flash-lite: timeout"
+   ],
+   "answer": {
+    "status": "needs_clarification",
+    "clarification_question": "The assistant can't process requests right now. Please use the change form below.",
+    "operations": [],
+    "cut_priority": [],
+    "summary": "The request was not interpreted (not AI-generated)."
+   }
+  },
+  {
+   "task": "change",
+   "case_id": "b-guests-keep-cake",
+   "passed": false,
+   "error": true,
+   "reasons": [
+    "no AI answer: gemini:gemini-3.5-flash-lite: timeout"
+   ],
+   "metrics": {},
+   "provider": null,
+   "latency_ms": 9847,
+   "first_try_valid": false,
+   "attempts": [
+    "gemini:gemini-3.5-flash-lite: timeout"
+   ],
+   "answer": {
+    "status": "needs_clarification",
+    "clarification_question": "The assistant can't process requests right now. Please use the change form below.",
+    "operations": [],
+    "cut_priority": [],
+    "summary": "The request was not interpreted (not AI-generated)."
+   }
+  },
+  {
+   "task": "change",
+   "case_id": "w-cut-keep-two",
+   "passed": false,
+   "error": true,
+   "reasons": [
+    "no AI answer: gemini:gemini-3.5-flash-lite: timeout"
+   ],
+   "metrics": {},
+   "provider": null,
+   "latency_ms": 9675,
+   "first_try_valid": false,
+   "attempts": [
+    "gemini:gemini-3.5-flash-lite: timeout"
+   ],
+   "answer": {
+    "status": "needs_clarification",
+    "clarification_question": "The assistant can't process requests right now. Please use the change form below.",
+    "operations": [],
+    "cut_priority": [],
+    "summary": "The request was not interpreted (not AI-generated)."
+   }
+  },
+  {
+   "task": "change",
+   "case_id": "c-cut-keep-puja",
+   "passed": false,
+   "error": true,
+   "reasons": [
+    "no AI answer: gemini:gemini-3.5-flash-lite: timeout"
+   ],
+   "metrics": {},
+   "provider": null,
+   "latency_ms": 9711,
+   "first_try_valid": false,
+   "attempts": [
+    "gemini:gemini-3.5-flash-lite: timeout"
+   ],
+   "answer": {
+    "status": "needs_clarification",
+    "clarification_question": "The assistant can't process requests right now. Please use the change form below.",
+    "operations": [],
+    "cut_priority": [],
+    "summary": "The request was not interpreted (not AI-generated)."
+   }
+  },
+  {
+   "task": "change",
+   "case_id": "b-multi",
+   "passed": false,
+   "error": true,
+   "reasons": [
+    "no AI answer: gemini:gemini-3.5-flash-lite: timeout"
+   ],
+   "metrics": {},
+   "provider": null,
+   "latency_ms": 9876,
+   "first_try_valid": false,
+   "attempts": [
+    "gemini:gemini-3.5-flash-lite: timeout"
+   ],
+   "answer": {
+    "status": "needs_clarification",
+    "clarification_question": "The assistant can't process requests right now. Please use the change form below.",
+    "operations": [],
+    "cut_priority": [],
+    "summary": "The request was not interpreted (not AI-generated)."
+   }
+  },
+  {
+   "task": "change",
+   "case_id": "c-multi-date-guests",
+   "passed": false,
+   "error": true,
+   "reasons": [
+    "no AI answer: gemini:gemini-3.5-flash-lite: timeout"
+   ],
+   "metrics": {},
+   "provider": null,
+   "latency_ms": 9833,
+   "first_try_valid": false,
+   "attempts": [
+    "gemini:gemini-3.5-flash-lite: timeout"
+   ],
+   "answer": {
+    "status": "needs_clarification",
+    "clarification_question": "The assistant can't process requests right now. Please use the change form below.",
+    "operations": [],
+    "cut_priority": [],
+    "summary": "The request was not interpreted (not AI-generated)."
+   }
+  },
+  {
+   "task": "change",
+   "case_id": "b-add-line",
+   "passed": false,
+   "error": true,
+   "reasons": [
+    "no AI answer: gemini:gemini-3.5-flash-lite: timeout"
+   ],
+   "metrics": {},
+   "provider": null,
+   "latency_ms": 9724,
+   "first_try_valid": false,
+   "attempts": [
+    "gemini:gemini-3.5-flash-lite: timeout"
+   ],
+   "answer": {
+    "status": "needs_clarification",
+    "clarification_question": "The assistant can't process requests right now. Please use the change form below.",
+    "operations": [],
+    "cut_priority": [],
+    "summary": "The request was not interpreted (not AI-generated)."
+   }
+  },
+  {
+   "task": "change",
+   "case_id": "w-add-line",
+   "passed": false,
+   "error": true,
+   "reasons": [
+    "no AI answer: gemini:gemini-3.5-flash-lite: timeout"
+   ],
+   "metrics": {},
+   "provider": null,
+   "latency_ms": 9650,
+   "first_try_valid": false,
+   "attempts": [
+    "gemini:gemini-3.5-flash-lite: timeout"
+   ],
+   "answer": {
+    "status": "needs_clarification",
+    "clarification_question": "The assistant can't process requests right now. Please use the change form below.",
+    "operations": [],
+    "cut_priority": [],
+    "summary": "The request was not interpreted (not AI-generated)."
+   }
+  },
+  {
+   "task": "change",
+   "case_id": "b-add-expense",
+   "passed": false,
+   "error": true,
+   "reasons": [
+    "no AI answer: gemini:gemini-3.5-flash-lite: timeout"
+   ],
+   "metrics": {},
+   "provider": null,
+   "latency_ms": 9744,
+   "first_try_valid": false,
+   "attempts": [
+    "gemini:gemini-3.5-flash-lite: timeout"
+   ],
+   "answer": {
+    "status": "needs_clarification",
+    "clarification_question": "The assistant can't process requests right now. Please use the change form below.",
+    "operations": [],
+    "cut_priority": [],
+    "summary": "The request was not interpreted (not AI-generated)."
+   }
+  },
+  {
+   "task": "change",
+   "case_id": "b-add-task",
+   "passed": false,
+   "error": true,
+   "reasons": [
+    "no AI answer: gemini:gemini-3.5-flash-lite: timeout"
+   ],
+   "metrics": {},
+   "provider": null,
+   "latency_ms": 9745,
+   "first_try_valid": false,
+   "attempts": [
+    "gemini:gemini-3.5-flash-lite: timeout"
+   ],
+   "answer": {
+    "status": "needs_clarification",
+    "clarification_question": "The assistant can't process requests right now. Please use the change form below.",
+    "operations": [],
+    "cut_priority": [],
+    "summary": "The request was not interpreted (not AI-generated)."
+   }
+  },
+  {
+   "task": "change",
+   "case_id": "bx-update-expense",
+   "passed": false,
+   "error": true,
+   "reasons": [
+    "no AI answer: gemini:gemini-3.5-flash-lite: timeout"
+   ],
+   "metrics": {},
+   "provider": null,
+   "latency_ms": 9846,
+   "first_try_valid": false,
+   "attempts": [
+    "gemini:gemini-3.5-flash-lite: timeout"
+   ],
+   "answer": {
+    "status": "needs_clarification",
+    "clarification_question": "The assistant can't process requests right now. Please use the change form below.",
+    "operations": [],
+    "cut_priority": [],
+    "summary": "The request was not interpreted (not AI-generated)."
+   }
+  },
+  {
+   "task": "change",
+   "case_id": "bx-remove-expense",
+   "passed": false,
+   "error": true,
+   "reasons": [
+    "no AI answer: gemini:gemini-3.5-flash-lite: timeout"
+   ],
+   "metrics": {},
+   "provider": null,
+   "latency_ms": 9666,
+   "first_try_valid": false,
+   "attempts": [
+    "gemini:gemini-3.5-flash-lite: timeout"
+   ],
+   "answer": {
+    "status": "needs_clarification",
+    "clarification_question": "The assistant can't process requests right now. Please use the change form below.",
+    "operations": [],
+    "cut_priority": [],
+    "summary": "The request was not interpreted (not AI-generated)."
+   }
+  },
+  {
+   "task": "change",
+   "case_id": "b-set-line",
+   "passed": false,
+   "error": true,
+   "reasons": [
+    "no AI answer: gemini:gemini-3.5-flash-lite: timeout"
+   ],
+   "metrics": {},
+   "provider": null,
+   "latency_ms": 9825,
+   "first_try_valid": false,
+   "attempts": [
+    "gemini:gemini-3.5-flash-lite: timeout"
+   ],
+   "answer": {
+    "status": "needs_clarification",
+    "clarification_question": "The assistant can't process requests right now. Please use the change form below.",
+    "operations": [],
+    "cut_priority": [],
+    "summary": "The request was not interpreted (not AI-generated)."
+   }
+  },
+  {
+   "task": "change",
+   "case_id": "w-set-line-hinglish",
+   "passed": false,
+   "error": true,
+   "reasons": [
+    "no AI answer: gemini:gemini-3.5-flash-lite: timeout"
+   ],
+   "metrics": {},
+   "provider": null,
+   "latency_ms": 9847,
+   "first_try_valid": false,
+   "attempts": [
+    "gemini:gemini-3.5-flash-lite: timeout"
+   ],
+   "answer": {
+    "status": "needs_clarification",
+    "clarification_question": "The assistant can't process requests right now. Please use the change form below.",
+    "operations": [],
+    "cut_priority": [],
+    "summary": "The request was not interpreted (not AI-generated)."
+   }
+  },
+  {
+   "task": "change",
+   "case_id": "w-hinglish-budget",
+   "passed": false,
+   "error": true,
+   "reasons": [
+    "no AI answer: gemini:gemini-3.5-flash-lite: timeout"
+   ],
+   "metrics": {},
+   "provider": null,
+   "latency_ms": 9738,
+   "first_try_valid": false,
+   "attempts": [
+    "gemini:gemini-3.5-flash-lite: timeout"
+   ],
+   "answer": {
+    "status": "needs_clarification",
+    "clarification_question": "The assistant can't process requests right now. Please use the change form below.",
+    "operations": [],
+    "cut_priority": [],
+    "summary": "The request was not interpreted (not AI-generated)."
+   }
+  },
+  {
+   "task": "change",
+   "case_id": "w-hinglish-guests",
+   "passed": false,
+   "error": true,
+   "reasons": [
+    "no AI answer: gemini:gemini-3.5-flash-lite: timeout"
+   ],
+   "metrics": {},
+   "provider": null,
+   "latency_ms": 9957,
+   "first_try_valid": false,
+   "attempts": [
+    "gemini:gemini-3.5-flash-lite: timeout"
+   ],
+   "answer": {
+    "status": "needs_clarification",
+    "clarification_question": "The assistant can't process requests right now. Please use the change form below.",
+    "operations": [],
+    "cut_priority": [],
+    "summary": "The request was not interpreted (not AI-generated)."
+   }
+  },
+  {
+   "task": "change",
+   "case_id": "c-marathi-budget",
+   "passed": true,
+   "error": false,
+   "reasons": [],
+   "metrics": {},
+   "provider": "gemini:gemini-3.5-flash-lite",
+   "latency_ms": 4454,
+   "first_try_valid": true,
+   "attempts": [
+    "gemini:gemini-3.5-flash-lite: ok"
+   ],
+   "answer": {
+    "status": "ok",
+    "clarification_question": null,
+    "operations": [
+     {
+      "kind": "set_total_budget",
+      "amount_inr": 300000,
+      "category_id": null,
+      "expense_id": null,
+      "label": null,
+      "guest_count": null,
+      "days": null,
+      "delta": null,
+      "new_date": null
+     }
+    ],
+    "cut_priority": [],
+    "summary": "Set the total budget to 3 lakh."
+   }
+  },
+  {
+   "task": "change",
+   "case_id": "b-vague-cheaper",
+   "passed": true,
+   "error": false,
+   "reasons": [],
+   "metrics": {},
+   "provider": "gemini:gemini-3.5-flash-lite",
+   "latency_ms": 4356,
+   "first_try_valid": true,
+   "attempts": [
+    "gemini:gemini-3.5-flash-lite: ok"
+   ],
+   "answer": {
+    "status": "needs_clarification",
+    "clarification_question": "How much would you like to reduce the budget by, or which category should we cut?",
+    "operations": [],
+    "cut_priority": [],
+    "summary": "The user wants to reduce the cost of the event without specifying an amount or category."
+   }
+  },
+  {
+   "task": "change",
+   "case_id": "b-vague-more",
+   "passed": true,
+   "error": false,
+   "reasons": [],
+   "metrics": {},
+   "provider": "gemini:gemini-3.5-flash-lite",
+   "latency_ms": 3323,
+   "first_try_valid": true,
+   "attempts": [
+    "gemini:gemini-3.5-flash-lite: ok"
+   ],
+   "answer": {
+    "status": "needs_clarification",
+    "clarification_question": "How many more kids are coming?",
+    "operations": [],
+    "cut_priority": [],
+    "summary": "The user mentioned more kids might attend but did not specify a number."
+   }
+  },
+  {
+   "task": "change",
+   "case_id": "w-vague-decor",
+   "passed": true,
+   "error": false,
+   "reasons": [],
+   "metrics": {},
+   "provider": "gemini:gemini-3.5-flash-lite",
+   "latency_ms": 2372,
+   "first_try_valid": true,
+   "attempts": [
+    "gemini:gemini-3.5-flash-lite: ok"
+   ],
+   "answer": {
+    "status": "needs_clarification",
+    "clarification_question": "How much would you like to reduce the decor budget by?",
+    "operations": [],
+    "cut_priority": [],
+    "summary": "The user wants to reduce the decor budget but did not specify an amount."
+   }
+  },
+  {
+   "task": "change",
+   "case_id": "b-poem",
+   "passed": false,
+   "error": true,
+   "reasons": [
+    "no AI answer: gemini:gemini-3.5-flash-lite: timeout"
+   ],
+   "metrics": {},
+   "provider": null,
+   "latency_ms": 9736,
+   "first_try_valid": false,
+   "attempts": [
+    "gemini:gemini-3.5-flash-lite: timeout"
+   ],
+   "answer": {
+    "status": "needs_clarification",
+    "clarification_question": "The assistant can't process requests right now. Please use the change form below.",
+    "operations": [],
+    "cut_priority": [],
+    "summary": "The request was not interpreted (not AI-generated)."
+   }
+  },
+  {
+   "task": "change",
+   "case_id": "c-weather",
+   "passed": true,
+   "error": false,
+   "reasons": [],
+   "metrics": {},
+   "provider": "gemini:gemini-3.5-flash-lite",
+   "latency_ms": 1253,
+   "first_try_valid": true,
+   "attempts": [
+    "gemini:gemini-3.5-flash-lite: ok"
+   ],
+   "answer": {
+    "status": "off_topic",
+    "clarification_question": null,
+    "operations": [],
+    "cut_priority": [],
+    "summary": "The user is asking about the weather, which is not about this event plan."
+   }
+  },
+  {
+   "task": "change",
+   "case_id": "b-injection",
+   "passed": true,
+   "error": false,
+   "reasons": [],
+   "metrics": {},
+   "provider": "gemini:gemini-3.5-flash-lite",
+   "latency_ms": 2680,
+   "first_try_valid": true,
+   "attempts": [
+    "gemini:gemini-3.5-flash-lite: ok"
+   ],
+   "answer": {
+    "status": "off_topic",
+    "clarification_question": null,
+    "operations": [],
+    "cut_priority": [],
+    "summary": "The request is not about this event plan."
+   }
+  },
+  {
+   "task": "change",
+   "case_id": "b-fake-delimiters",
+   "passed": false,
+   "error": true,
+   "reasons": [
+    "no AI answer: gemini:gemini-3.5-flash-lite: timeout"
+   ],
+   "metrics": {},
+   "provider": null,
+   "latency_ms": 10228,
+   "first_try_valid": false,
+   "attempts": [
+    "gemini:gemini-3.5-flash-lite: timeout"
+   ],
+   "answer": {
+    "status": "needs_clarification",
+    "clarification_question": "The assistant can't process requests right now. Please use the change form below.",
+    "operations": [],
+    "cut_priority": [],
+    "summary": "The request was not interpreted (not AI-generated)."
+   }
+  }
+ ],
+ "rescored_at": "2026-10-22T20:18:17+00:00"
+}

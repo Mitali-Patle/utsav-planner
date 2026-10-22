@@ -442,3 +442,9 @@ The prompts the app itself sends to the LLM live in `app/ai/prompts/`.
     - The README and ARCHITECTURE numbers now match `evals/RESULTS.md`.
 - **History summary (SPEC F9):** each approved or rejected change lists what it did ("Total budget ₹15,000 → ₹12,000", "3 budget lines changed"), built from the stored proposal.
 - **Not fixed, left for the developer:** personalization swaps the whole plan area, so text typed into the add-expense form in the first second or two after creating a plan can be lost (the reviewer's suspicion; the window is the AI's answer time). The fix is to split the plan area into sections updated out of band. That is a template restructure in the design lane, so it was left rather than rushed overnight.
+
+## 2026-10-23 (01:30 IST): Night eval runs and a fairer report
+- **Tool / model:** Claude Code (Claude Opus 5.5), overnight.
+- **Gemini at night:** Google was still overloaded. Gemini 3.1 answered 10 of 56 cases and Gemini 3.5 answered 6 of 38. The runs are kept rather than deleted, because they can be completed later with `--retry-errors`.
+- **Report:** it now shows, for each model and task, the latest run in which at most 20% of cases got no answer. Outage runs no longer hide real measurements, and they stay in the run history. Rows name their run and prompt version.
+- **A third scorer false positive, found by reading the answer:** Gemini 3.1 wrote "reusable decor instead of thermocol", "eliminates plastic/thermocol waste" and "ban all plastic/thermocol usage". The negation list now includes ban, eliminate, prohibit and phase out, with a regression test built from those sentences. All saved runs were re-scored.
