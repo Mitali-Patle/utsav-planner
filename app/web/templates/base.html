@@ -11,7 +11,7 @@
   <script src="/static/vendor/htmx.min.js" defer></script>
   {% block head %}{% endblock %}
 </head>
-<body>
+<body hx-headers='{{ {"X-CSRF-Token": csrf_token} | tojson }}'>
   <a href="#main" class="skip-link">Skip to main content</a>
 
   <header class="site-header">
@@ -27,7 +27,9 @@
     </div>
   </header>
 
-  <div id="status-region" class="sr-only" aria-live="polite" aria-atomic="true"></div>
+  <div id="status-region" class="status-region" aria-live="polite" aria-atomic="true">
+    {% for item in flashes %}{% set kind = item.kind %}{% set message = item.message %}{% include "partials/notice.html" %}{% endfor %}
+  </div>
 
   <main id="main" class="site-main" tabindex="-1">
     <div class="container">

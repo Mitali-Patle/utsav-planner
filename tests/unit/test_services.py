@@ -31,15 +31,15 @@ from app.domain.budget import (
     SavingLevel,
 )
 from app.domain.changes import ChangeKind, ChangeOperation, ChangeSet
-from app.domain.errors import InvalidInputError, NotFoundError
+from app.domain.errors import InvalidInputError, NotFoundError, StaleProposalError
 from app.domain.models import BudgetImpact, CategoryId, EventType, TaskId, TaskSource, VendorStatus
 from app.domain.planning import EventDetails
 from app.persistence.db import make_engine
-from app.persistence.repositories import ProposalStatus
+from app.persistence.repositories import ProposalStatus, StoredEvent
 from app.persistence.tables import metadata
 from app.services import Services, build_services
 from app.services.change_manager import ApprovalStatus, OutcomeKind
-from app.services.planning import to_personalization
+from app.services.planning import PlanningService, to_personalization
 from tests.fakes import FixedClock, ScriptedProvider
 
 TODAY = date(2026, 10, 22)
@@ -121,6 +121,11 @@ def intent(*operations: AIChangeOperation, **overrides: object) -> ChangeIntent:
     return ChangeIntent.model_validate(values | overrides)
 
 
+def create(app: Services, **overrides: object) -> StoredEvent:
+    draft = app.planning.create_draft(ME, details(**overrides))
+    return app.planning.personalize(ME, draft.id)
+
+
 BUDGET_CUT = intent(
     AIChangeOperation(kind=ChangeKind.PROTECT, category_id="cake"),
     AIChangeOperation(kind=ChangeKind.SET_TOTAL_BUDGET, amount_inr=12_000),
@@ -132,9 +137,9 @@ BUDGET_CUT = intent(
 
 def test_event_is_personalized_by_ai_and_saved(engine: Engine) -> None:
     app = services(engine, SUGGESTIONS)
-    created = app.planning.create_event(ME, details())
+    created = create(app)
     plan = created.plan
-    assert created.version == 1
+    assert created.version == 2, "draft is version 1; personalization saves version 2"
     assert [i.title for i in plan.ideas] == ["Rocket launch corner"], "the empty idea was skipped"
     ai_task = next(t for t in plan.tasks if t.source is TaskSource.AI)
     assert (ai_task.title, ai_task.why) == ("Buy glow-in-the-dark stars", "Night sky effect.")
@@ -150,28 +155,26 @@ def test_event_is_personalized_by_ai_and_saved(engine: Engine) -> None:
 
 def test_event_is_still_created_when_the_ai_is_down(engine: Engine) -> None:
     outage = ProviderUnavailableError("503")
-    created = services(engine, outage, outage).planning.create_event(ME, details())
+    created = create(services(engine, outage, outage))
     assert created.ai is not None
     assert created.ai["provenance"]["fallback"] is True
     assert len(created.plan.ideas) == 3, "labelled catalog ideas"
 
 
 def test_off_topic_personalization_keeps_the_draft(engine: Engine) -> None:
-    created = services(
-        engine, PlanSuggestions(off_topic=True, summary_why="Not an event.")
-    ).planning.create_event(ME, details())
+    created = create(services(engine, PlanSuggestions(off_topic=True, summary_why="Not an event.")))
     assert created.plan.ideas == ()
 
 
 def test_invalid_event_details_are_rejected(engine: Engine) -> None:
     with pytest.raises(InvalidInputError):
-        services(engine).planning.create_event(ME, details(event_date=TODAY - timedelta(days=1)))
+        services(engine).planning.create_draft(ME, details(event_date=TODAY - timedelta(days=1)))
 
 
 def test_events_are_private_to_their_session(engine: Engine) -> None:
     """Scenario 12."""
     app = services(engine, SUGGESTIONS)
-    created = app.planning.create_event(ME, details())
+    created = create(app)
     with pytest.raises(NotFoundError):
         app.planning.get(INTRUDER, created.id)
     assert app.planning.list_events(INTRUDER) == []
@@ -180,12 +183,73 @@ def test_events_are_private_to_their_session(engine: Engine) -> None:
         app.changes.request_change(INTRUDER, created.id, "budget 12000")
 
 
+def test_draft_is_saved_at_once_without_ai(engine: Engine) -> None:
+    app = services(engine)
+    draft = app.planning.create_draft(ME, details())
+    assert (draft.version, draft.ai, draft.plan.ideas) == (1, None, ())
+    assert draft.plan.tasks and draft.plan.vendors
+
+
+def test_personalization_runs_once(engine: Engine) -> None:
+    app = services(engine, SUGGESTIONS)
+    first = create(app)
+    again = app.planning.personalize(ME, first.id)
+    assert again.version == first.version, "no second AI call, no new version"
+
+
+def test_personalization_after_an_edit_only_adds_ideas(engine: Engine) -> None:
+    app = services(engine, SUGGESTIONS)
+    draft = app.planning.create_draft(ME, details())
+    edited = app.edits.set_task_done(ME, draft.id, TaskId("task-1"), done=True)
+    personalized = app.planning.personalize(ME, draft.id)
+    assert [c.allocated_inr for c in personalized.plan.categories] == [
+        c.allocated_inr for c in edited.plan.categories
+    ]
+    assert personalized.plan.tasks == edited.plan.tasks
+    assert [i.title for i in personalized.plan.ideas] == ["Rocket launch corner"]
+
+
+def test_rate_limited_personalization_uses_the_labelled_fallback(engine: Engine) -> None:
+    app = services(engine)
+    draft = app.planning.create_draft(ME, details())
+    offline = app.planning.personalize(ME, draft.id, use_ai=False)
+    assert offline.ai is not None
+    assert offline.ai["provenance"]["fallback"] is True
+    assert offline.ai["provenance"]["attempts"] == []
+
+
+def test_edit_during_personalization_is_not_overwritten(engine: Engine) -> None:
+    """The user ticks a task while the AI is still thinking: their edit wins."""
+    holder: dict[str, Services] = {}
+
+    class EditingProvider:
+        name = "gemini:slow"
+
+        def generate(self, request: object) -> str:
+            app = holder["app"]
+            event = app.planning.list_events(ME)[0]
+            app.edits.set_task_done(ME, event.id, TaskId("task-1"), done=True)
+            return SUGGESTIONS.model_dump_json()
+
+    chain = FallbackChain([EditingProvider()], MemoryCache())
+    app = build_services(
+        Settings(_env_file=None, app_env="test"), engine, FixedClock(TODAY), ai=chain
+    )
+    holder["app"] = app
+    draft = app.planning.create_draft(ME, details())
+    personalized = app.planning.personalize(ME, draft.id)
+    assert personalized.version == 3
+    assert personalized.plan.task(TaskId("task-1")).done
+    assert [i.title for i in personalized.plan.ideas] == ["Rocket launch corner"]
+    assert not any(t.source is TaskSource.AI for t in personalized.plan.tasks)
+
+
 # Change requests
 
 
 def test_change_request_becomes_a_pending_proposal(engine: Engine) -> None:
     app = services(engine, SUGGESTIONS, BUDGET_CUT)
-    event = app.planning.create_event(ME, details())
+    event = create(app)
     outcome = app.changes.request_change(ME, event.id, "  budget dropped to 12k, keep the cake ")
     assert outcome.kind is OutcomeKind.PROPOSAL
     assert outcome.proposal is not None
@@ -194,7 +258,9 @@ def test_change_request_becomes_a_pending_proposal(engine: Engine) -> None:
     assert outcome.proposal.intent["provenance"]["provider"] == "gemini:fake"
     assert outcome.proposal.proposal.after is not None
     assert outcome.proposal.proposal.after.total_budget_inr == 12_000
-    assert app.planning.get(ME, event.id).version == 1, "nothing is saved before approval"
+    assert app.planning.get(ME, event.id).version == event.version, (
+        "nothing is saved before approval"
+    )
 
 
 @pytest.mark.parametrize(
@@ -217,7 +283,7 @@ def test_change_outcomes(
     engine: Engine, answer: ChangeIntent, kind: OutcomeKind, message: str
 ) -> None:
     app = services(engine, SUGGESTIONS, answer)
-    event = app.planning.create_event(ME, details())
+    event = create(app)
     outcome = app.changes.request_change(ME, event.id, "some request")
     assert outcome.kind is kind
     assert outcome.message is not None and message in outcome.message
@@ -227,7 +293,7 @@ def test_change_outcomes(
 def test_ai_outage_offers_the_form_instead(engine: Engine) -> None:
     outage = ProviderUnavailableError("503")
     app = services(engine, SUGGESTIONS, outage, outage)
-    event = app.planning.create_event(ME, details())
+    event = create(app)
     outcome = app.changes.request_change(ME, event.id, "budget 12000")
     assert outcome.kind is OutcomeKind.UNAVAILABLE
     assert outcome.provenance is not None and outcome.provenance.fallback
@@ -235,13 +301,13 @@ def test_ai_outage_offers_the_form_instead(engine: Engine) -> None:
 
 def test_empty_request_is_rejected_without_an_ai_call(engine: Engine) -> None:
     app = services(engine, SUGGESTIONS)
-    event = app.planning.create_event(ME, details())
+    event = create(app)
     assert app.changes.request_change(ME, event.id, "   ").kind is OutcomeKind.INVALID
 
 
 def test_repeated_change_has_nothing_to_change(engine: Engine) -> None:
     app = services(engine, SUGGESTIONS)
-    event = app.planning.create_event(ME, details())
+    event = create(app)
     app.edits.add_expense(
         ME, event.id, NewExpense(category_id=CategoryId("decor"), label="Balloons", amount_inr=500)
     )
@@ -265,13 +331,16 @@ def test_repeated_change_has_nothing_to_change(engine: Engine) -> None:
 def test_approval_saves_a_new_version_and_logs_it(engine: Engine) -> None:
     """Scenario 7."""
     app = services(engine, SUGGESTIONS, BUDGET_CUT)
-    event = app.planning.create_event(ME, details())
+    event = create(app)
     proposal = app.changes.request_change(ME, event.id, "budget 12k keep cake").proposal
     assert proposal is not None
     approved = app.changes.approve(ME, event.id, proposal.id)
     assert approved.status is ApprovalStatus.APPROVED
     assert approved.event is not None
-    assert (approved.event.version, approved.event.plan.total_budget_inr) == (2, 12_000)
+    assert (approved.event.version, approved.event.plan.total_budget_inr) == (
+        event.version + 1,
+        12_000,
+    )
     assert [p.status for p in app.changes.history(ME, event.id)] == [ProposalStatus.APPROVED]
     again = app.changes.approve(ME, event.id, proposal.id)
     assert again.status is ApprovalStatus.ALREADY_DECIDED
@@ -280,7 +349,7 @@ def test_approval_saves_a_new_version_and_logs_it(engine: Engine) -> None:
 def test_reject_leaves_the_plan_unchanged(engine: Engine) -> None:
     """Scenario 6."""
     app = services(engine, SUGGESTIONS, BUDGET_CUT)
-    event = app.planning.create_event(ME, details())
+    event = create(app)
     proposal = app.changes.request_change(ME, event.id, "budget 12k keep cake").proposal
     assert proposal is not None
     assert app.changes.reject(ME, event.id, proposal.id)
@@ -292,7 +361,7 @@ def test_reject_leaves_the_plan_unchanged(engine: Engine) -> None:
 def test_proposal_made_stale_by_an_edit_is_refused(engine: Engine) -> None:
     """Scenario 13."""
     app = services(engine, SUGGESTIONS, BUDGET_CUT)
-    event = app.planning.create_event(ME, details())
+    event = create(app)
     proposal = app.changes.request_change(ME, event.id, "budget 12k keep cake").proposal
     assert proposal is not None
     app.edits.set_task_done(ME, event.id, TaskId("task-1"), done=True)
@@ -304,7 +373,7 @@ def test_proposal_made_stale_by_an_edit_is_refused(engine: Engine) -> None:
 
 def test_infeasible_proposal_is_kept_but_cannot_be_approved(engine: Engine) -> None:
     app = services(engine, SUGGESTIONS)
-    event = app.planning.create_event(ME, details())
+    event = create(app)
     app.edits.protect_category(ME, event.id, CategoryId("catering"), protected=True)
     app.edits.protect_category(ME, event.id, CategoryId("venue"), protected=True)
     form = ChangeSet(
@@ -321,7 +390,7 @@ def test_infeasible_proposal_is_kept_but_cannot_be_approved(engine: Engine) -> N
 
 def test_another_session_cannot_approve_or_reject(engine: Engine) -> None:
     app = services(engine, SUGGESTIONS, BUDGET_CUT)
-    event = app.planning.create_event(ME, details())
+    event = create(app)
     proposal = app.changes.request_change(ME, event.id, "budget 12k").proposal
     assert proposal is not None
     with pytest.raises(NotFoundError):
@@ -338,7 +407,7 @@ def test_another_session_cannot_approve_or_reject(engine: Engine) -> None:
 def test_direct_edits_save_new_versions(engine: Engine) -> None:
     """Scenario 1 through the services: totals update after adding an expense."""
     app = services(engine, SUGGESTIONS)
-    event = app.planning.create_event(ME, details())
+    event = create(app)
     v2 = app.edits.add_expense(
         ME, event.id, NewExpense(category_id=CategoryId("cake"), label="Cake", amount_inr=1_800)
     )
@@ -349,7 +418,9 @@ def test_direct_edits_save_new_versions(engine: Engine) -> None:
     v5 = app.edits.set_vendor_status(ME, event.id, vendor.id, VendorStatus.CONTACTED)
     v6 = app.edits.protect_expense(ME, event.id, expense_id, protected=False)
     v7 = app.edits.remove_expense(ME, event.id, expense_id)
-    assert [v.version for v in (v2, v3, v4, v5, v6, v7)] == [2, 3, 4, 5, 6, 7]
+    assert [v.version for v in (v2, v3, v4, v5, v6, v7)] == list(
+        range(event.version + 1, event.version + 7)
+    )
     assert v3.plan.expenses[0].amount_inr == 2_000
     assert v5.plan.vendor(vendor.id).status is VendorStatus.CONTACTED
     assert v7.plan.expenses == ()
@@ -357,14 +428,14 @@ def test_direct_edits_save_new_versions(engine: Engine) -> None:
 
 def test_invalid_edits_are_rejected_and_nothing_is_saved(engine: Engine) -> None:
     app = services(engine, SUGGESTIONS)
-    event = app.planning.create_event(ME, details())
+    event = create(app)
     with pytest.raises(InvalidInputError):
         app.edits.add_expense(
             ME,
             event.id,
             NewExpense(category_id=CategoryId("cake"), label="Cake", amount_inr=50_000),
         )
-    assert app.planning.get(ME, event.id).version == 1
+    assert app.planning.get(ME, event.id).version == event.version
 
 
 # Alternatives
@@ -384,7 +455,7 @@ def test_alternatives_are_priced_by_code(engine: Engine) -> None:
         ],
     )
     app = services(engine, SUGGESTIONS, answer)
-    event = app.planning.create_event(ME, details())
+    event = create(app)
     app.edits.add_expense(
         ME,
         event.id,
@@ -401,7 +472,7 @@ def test_alternatives_are_priced_by_code(engine: Engine) -> None:
 
 def test_no_alternatives_needed_within_budget(engine: Engine) -> None:
     app = services(engine, SUGGESTIONS)
-    event = app.planning.create_event(ME, details())
+    event = create(app)
     view = app.alternatives.suggest(ME, event.id)
     assert (view.shortfall_inr, view.options, view.provenance) == (0, (), None)
 
@@ -420,3 +491,53 @@ def test_items_that_still_fail_validation_are_skipped() -> None:
     assert [t.title for t in personalization.tasks] == ["Book a magician"]
     assert personalization.ideas == ()
     assert personalization.vendor_notes == {}
+
+
+def test_concurrent_personalization_saves_only_once(engine: Engine) -> None:
+    """Two tabs personalize at once: the slower one sees the result and does not overwrite it."""
+    settings = Settings(_env_file=None, app_env="test")
+    other = build_services(
+        settings,
+        engine,
+        FixedClock(TODAY),
+        ai=FallbackChain(
+            [ScriptedProvider("groq:fast", [SUGGESTIONS.model_dump_json()])], MemoryCache()
+        ),
+    )
+    target: dict[str, str] = {}
+
+    class RacingProvider:
+        name = "gemini:slow"
+
+        def generate(self, request: object) -> str:
+            other.planning.personalize(ME, target["id"])
+            return SUGGESTIONS.model_dump_json()
+
+    app = build_services(
+        settings, engine, FixedClock(TODAY), ai=FallbackChain([RacingProvider()], MemoryCache())
+    )
+    target["id"] = app.planning.create_draft(ME, details()).id
+    result = app.planning.personalize(ME, target["id"])
+    assert result.version == 2
+    assert result.ai is not None
+    assert result.ai["provenance"]["provider"] == "groq:fast"
+
+
+def test_personalization_gives_up_if_the_plan_keeps_changing(
+    engine: Engine, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    app = services(engine, SUGGESTIONS)
+    draft = app.planning.create_draft(ME, details())
+    original_get = PlanningService.get
+    calls = {"n": 0}
+
+    def get_and_edit(self: PlanningService, session_id: str, event_id: str) -> StoredEvent:
+        stored = original_get(self, session_id, event_id)
+        calls["n"] += 1
+        task = TaskId(f"task-{calls['n']}")
+        app.edits.set_task_done(ME, event_id, task, done=True)
+        return stored
+
+    monkeypatch.setattr(PlanningService, "get", get_and_edit)
+    with pytest.raises(StaleProposalError):
+        app.planning.personalize(ME, draft.id)

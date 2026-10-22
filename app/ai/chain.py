@@ -144,6 +144,16 @@ class FallbackChain:
         logger.warning("ai %s: all providers failed, using fallback", task.name)
         return AIResult(task.fallback(context), self._provenance(run, None, fallback=True))
 
+    def offline[C, T: BaseModel](self, task: AITask[C, T], context: C) -> AIResult[T]:
+        """The task's labelled fallback, without calling any provider.
+
+        Used when a client is over its AI rate limit: the app keeps working, honestly labelled.
+        """
+        payload = task.build_payload(context)
+        started = self._clock()
+        run = _Run(task, context, payload, started, started)
+        return AIResult(task.fallback(context), self._provenance(run, None, fallback=True))
+
     def _try_provider[C, T: BaseModel](self, provider: Provider, run: _Run[C, T]) -> T | None:
         """Call one provider, with one repair attempt for an invalid answer."""
         messages = _conversation(run.task, run.payload)

@@ -272,3 +272,17 @@ The prompts the app itself sends to the LLM live in `app/ai/prompts/`.
   - "20 more guests are confirmed, but keep photography as it is" became `adjust_guest_count` plus `protect`: guest-scaled categories went up, the rest were cut proportionally, and photography was kept.
   - The approval saved version 2 with 170 guests, and the history shows it approved.
 - **Measured:** event creation took 20.4 s end to end when Gemini timed out first, which is too slow for a good first impression. To address in the web plan.
+
+## 2026-10-22: Web layer, part 1 — progressive personalization and request safety
+- **Tool / model:** Claude Code (Claude Opus 5.5). The developer approved the web plan with all recommended decisions.
+- **Outcome:**
+  - **Progressive personalization:** `create_event` is split into `create_draft` (instant, code-built, version 1) and `personalize`.
+    - `personalize` is idempotent and makes its AI call outside any transaction.
+    - It re-splits the budget only while the plan is untouched (`is_untouched`); otherwise it adds ideas only, so it never overwrites the user's edits.
+    - It retries once on a concurrent save. `chain.offline()` gives the labelled fallback when a client is rate-limited.
+  - **`RequestGuardMiddleware`:** a 32 KB body limit and a CSRF check on every unsafe request, done centrally so no route can forget them. The token comes from a header (htmx) or a form field, is compared in constant time, and the body is replayed to the app.
+  - **Sessions:** a signed 30-day cookie (HttpOnly, SameSite=Lax, Secure in production), a random session id and a CSRF token, plus one-time status messages.
+  - **`AIRateLimit`:** HMAC-hashed client address, per-client and global daily limits, behind a `CounterStore` protocol. It never blocks on database errors.
+  - **Errors:** friendly pages (404 not found, 409 stale, 422 invalid), or a fragment for htmx. The CSRF token is set on `<body>` via `hx-headers`, with no inline script.
+  - 418 tests, 99.64 % branch coverage. New tests include a two-tab personalization race, "the user's edit wins over the AI", and the guard replaying the request body.
+- **Note (lane exception, approved):** Claude Code wrote the first plain templates (`error.html`, `partials/notice.html`) and edited `base.html` (the CSRF header and the status messages). Antigravity owns the design pass.

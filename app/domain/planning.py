@@ -5,6 +5,7 @@ suggestions that the services layer has already validated and converted to domai
 so this module never depends on the AI layer.
 """
 
+from collections.abc import Sequence
 from datetime import date
 
 from pydantic import Field
@@ -28,6 +29,7 @@ from app.domain.models import (
     ShortText,
     Slug,
     TaskSource,
+    VendorStatus,
     evolve,
     id_sequence,
     validate_event_date,
@@ -103,10 +105,10 @@ def personalize_plan(plan: EventPlan, personalization: Personalization, today: d
         The personalized plan (same version; it has not been saved yet).
 
     Raises:
-        ValueError: If the plan already has expenses or protected categories.
+        ValueError: If the plan is no longer untouched (see `is_untouched`).
         NotFoundError: If an emphasis refers to an unknown category.
     """
-    if plan.expenses or any(c.protected for c in plan.categories):
+    if not is_untouched(plan):
         raise ValueError("personalize_plan expects a freshly drafted plan")
     categories = allocate(
         apply_emphasis(plan.categories, personalization.emphasis), plan.total_budget_inr
@@ -118,6 +120,34 @@ def personalize_plan(plan: EventPlan, personalization: Personalization, today: d
         existing_ids=[t.id for t in plan.tasks],
         source=TaskSource.AI,
     )
+    vendors = tuple(
+        evolve(v, why=personalization.vendor_notes[v.vendor_type])
+        if v.vendor_type in personalization.vendor_notes
+        else v
+        for v in plan.vendors
+    )
+    return add_ideas(
+        plan.with_changes(categories=categories, tasks=(*plan.tasks, *new_tasks), vendors=vendors),
+        personalization.ideas,
+    )
+
+
+def is_untouched(plan: EventPlan) -> bool:
+    """Whether a plan is still exactly as drafted: no expenses, nothing protected, no ticks.
+
+    Personalization may only re-split the budget and add tasks on an untouched plan, so the
+    AI can never overwrite the user's own work.
+    """
+    return not (
+        plan.expenses
+        or any(c.protected for c in plan.categories)
+        or any(t.done for t in plan.tasks)
+        or any(v.status is not VendorStatus.TODO for v in plan.vendors)
+    )
+
+
+def add_ideas(plan: EventPlan, ideas: Sequence[IdeaSpec]) -> EventPlan:
+    """Append ideas with fresh ids, leaving everything else as it is."""
     idea_ids = id_sequence("idea", (i.id for i in plan.ideas))
     new_ideas = tuple(
         Idea(
@@ -128,17 +158,6 @@ def personalize_plan(plan: EventPlan, personalization: Personalization, today: d
             budget_impact=idea.budget_impact,
             why=idea.why,
         )
-        for idea in personalization.ideas
+        for idea in ideas
     )
-    vendors = tuple(
-        evolve(v, why=personalization.vendor_notes[v.vendor_type])
-        if v.vendor_type in personalization.vendor_notes
-        else v
-        for v in plan.vendors
-    )
-    return plan.with_changes(
-        categories=categories,
-        tasks=(*plan.tasks, *new_tasks),
-        vendors=vendors,
-        ideas=(*plan.ideas, *new_ideas),
-    )
+    return plan.with_changes(ideas=(*plan.ideas, *new_ideas))

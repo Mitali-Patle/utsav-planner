@@ -233,6 +233,8 @@ def test_tiered_cache_refills_the_fast_tier(engine: Engine, now: Now) -> None:
     tiered = TieredCache(fast, shared)
     assert tiered.get("k") == {"v": 1}
     assert fast.get("k") == {"v": 1}
+    shared.set("k", {"v": 99}, ttl_s=600)
+    assert tiered.get("k") == {"v": 1}, "served from the fast tier"
     tiered.set("n", {"v": 2}, ttl_s=600)
     assert (fast.get("n"), shared.get("n")) == ({"v": 2}, {"v": 2})
     assert tiered.get("missing") is None

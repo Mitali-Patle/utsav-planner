@@ -1,4 +1,4 @@
-"""Use case: create an event — draft by code, personalize by AI, save as version 1."""
+"""Use case: create an event — a code-built draft first, then AI personalization."""
 
 import logging
 from typing import Any
@@ -13,11 +13,21 @@ from app.ai.tasks import PERSONALIZE
 from app.domain.budget import Emphasis
 from app.domain.catalog import IdeaSpec, TaskSpec
 from app.domain.clock import Clock
+from app.domain.errors import StaleProposalError
 from app.domain.models import CategoryId
-from app.domain.planning import EventDetails, Personalization, draft_plan, personalize_plan
+from app.domain.planning import (
+    EventDetails,
+    Personalization,
+    add_ideas,
+    draft_plan,
+    is_untouched,
+    personalize_plan,
+)
 from app.persistence.repositories import Database, StoredEvent
 
 logger = logging.getLogger(__name__)
+
+SAVE_ATTEMPTS = 2
 
 
 class PlanningService:
@@ -39,27 +49,64 @@ class PlanningService:
         self._clock = clock
         self._tone = tone
 
-    def create_event(self, session_id: str, details: EventDetails) -> StoredEvent:
-        """Draft a plan, personalize it with AI (or the labelled fallback) and save it.
-
-        The AI call happens before the database transaction opens, so no connection is
-        held while waiting for a model.
+    def create_draft(self, session_id: str, details: EventDetails) -> StoredEvent:
+        """Save the complete, code-built opening plan straight away (no AI call).
 
         Raises:
             InvalidInputError: If the event date or sub-events are invalid.
         """
-        today = self._clock.today()
-        draft = draft_plan(details, today)
-        result = self._ai.run(
-            PERSONALIZE, PersonalizeContext(plan=draft, today=today, tone=self._tone)
-        )
-        plan = (
-            draft
-            if result.value.off_topic
-            else personalize_plan(draft, to_personalization(result.value), today)
-        )
+        draft = draft_plan(details, self._clock.today())
         with self._db.transaction() as repos:
-            return repos.events.create(session_id, plan, ai=ai_record(result))
+            return repos.events.create(session_id, draft)
+
+    def personalize(self, session_id: str, event_id: str, *, use_ai: bool = True) -> StoredEvent:
+        """Tailor a saved plan with AI, once.
+
+        Idempotent: a plan that already has a personalization record is returned unchanged.
+        While the plan is untouched, the AI may re-split the budget and add tasks, vendor
+        notes and ideas; once the user has started editing, only ideas are added, so the AI
+        never overwrites the user's work. The AI call happens outside any transaction.
+
+        Args:
+            session_id: Owner's session.
+            event_id: Event to personalize.
+            use_ai: False when the client is over its AI rate limit; the labelled fallback
+                is used without calling a model.
+
+        Raises:
+            NotFoundError: If the event does not exist or belongs to another session.
+        """
+        stored = self.get(session_id, event_id)
+        if stored.ai is not None:
+            return stored
+        today = self._clock.today()
+        context = PersonalizeContext(plan=stored.plan, today=today, tone=self._tone)
+        result = (
+            self._ai.run(PERSONALIZE, context) if use_ai else self._ai.offline(PERSONALIZE, context)
+        )
+        personalization = (
+            Personalization() if result.value.off_topic else to_personalization(result.value)
+        )
+        for _ in range(SAVE_ATTEMPTS):
+            plan = (
+                personalize_plan(stored.plan, personalization, today)
+                if is_untouched(stored.plan)
+                else add_ideas(stored.plan, personalization.ideas)
+            )
+            try:
+                with self._db.transaction() as repos:
+                    return repos.events.save(
+                        event_id,
+                        session_id,
+                        plan,
+                        expected_version=stored.version,
+                        ai=ai_record(result),
+                    )
+            except StaleProposalError:
+                stored = self.get(session_id, event_id)
+                if stored.ai is not None:
+                    return stored
+        raise StaleProposalError("The plan kept changing while it was being personalized.")
 
     def get(self, session_id: str, event_id: str) -> StoredEvent:
         """Load one of this session's events.
