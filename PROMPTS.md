@@ -217,3 +217,13 @@ The prompts the app itself sends to the LLM live in `app/ai/prompts/`.
   - For alternatives, Gemini timed out, its second model was skipped, and Groq answered (11.3 s total).
 - 339 tests, 99.95 % branch coverage.
 - **Next iteration:** persistence (Postgres cache and plans), services, web routes, then the UI.
+
+## 2026-10-22: Docs sync
+- **Tool / model:** Claude Code (Claude Opus 5.5).
+- **Prompt (summary):** "Do the docs sync first, then the persistence plan."
+- **Outcome:**
+  - `docs/ARCHITECTURE.md` is v1.1, matched to the code. Every not-yet-built item is marked **(planned)**, so the doc never claims more than exists.
+  - It now records the measured numbers (cold start, prompt sizes, the Gemini 10 s minimum), the real module map, and the decisions made since v1: protect field change, `adjust_*` operations, custom budget lines, follow-up tasks, the contingency rule, the circuit breaker and same-vendor skip.
+  - `docs/SPEC.md` adds F16–F18. The must-pass table names the real test files with an honest status (domain proven, route planned).
+  - `AGENTS.md` handoff commands now match what is actually run.
+- **Found while checking the docs against reality:** pytest collected doctests only from `app/domain`, so four AI-layer doctests had never run. Added `app/ai` to `testpaths`; they pass (343 tests).
