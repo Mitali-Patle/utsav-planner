@@ -358,3 +358,15 @@ button, .button {
 .button-secondary:hover {
   background-color: var(--color-secondary-hover);
 }
+
+/* Behaviour: required by docs/UI_CONTRACT.md; restyle freely but keep these rules.
+   htmx's own indicator styles are off (CSP has no inline styles), so a busy message
+   is hidden until htmx marks it as in flight. */
+.htmx-indicator {
+  display: none;
+}
+
+.htmx-indicator.htmx-request,
+.htmx-request .htmx-indicator {
+  display: block;
+}

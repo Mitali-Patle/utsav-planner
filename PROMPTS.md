@@ -300,3 +300,16 @@ The prompts the app itself sends to the LLM live in `app/ai/prompts/`.
   - Four test expectations were wrong: HTML escaping of literal text versus variables, the exact stale-proposal wording, and a fake that raised `AssertionError` instead of a provider outage.
   - A file patch silently did not apply after ruff reformatted its target, so the file was rewritten whole.
   - Two route "noqa" shortcuts were replaced by a documented per-folder lint exemption for FastAPI handlers.
+
+## 2026-10-22: Production go-live and web layer, part 3 — the UI contract
+- **Tool / model:** Claude Code (Claude Opus 5.5).
+- **Prompt (short):** the developer created the tables on the production database; push web part 2, verify the live site, then write the UI contract for Antigravity's design pass.
+- **Outcome:**
+  - **Live check on the production URL** (scripted HTTP, real AI): create 303 in 0.5 s, personalize labelled "Suggested by AI", plain-language change previewed with the protected line kept, approve produced version 3 and a history entry; a POST without a CSRF token got 403; a second browser session got 404 for the same event; the session cookie is `Secure; HttpOnly; SameSite=Lax`.
+  - **Provider latency:** Gemini 3.5 Flash-Lite was degraded that afternoon (10–17 s and 504s even for a tiny prompt; 3.1 Flash-Lite answered in 5–7 s). The fallback chain kept every live answer AI-generated; one burst of seven smoke-test calls hit Groq's per-minute limit and got a labelled fallback. The chain order was left unchanged, pending more data.
+  - **`docs/UI_CONTRACT.md`:** endpoints and what each returns with and without htmx, fixed ids and swap targets, the data each template receives, accessibility and CSP rules, honesty labels, CSS hooks, and the tests that guard them.
+  - **`tests/unit/test_stylesheet.py`:** guards the CSS rules that behaviour and accessibility depend on, so a redesign cannot silently drop them.
+- **Bugs found:**
+  - Writing the contract showed that the busy message was always visible: htmx's built-in indicator styles are off because the CSP forbids inline styles, and nothing else hid it. A three-rule CSS block now hides it until a request is in flight (small lane exception in `public/static/`, recorded here).
+  - Alternatives said "Interpreted by AI"; they now say "Suggested by AI", with a test.
+- **Self-corrections:** the first contract draft stated the wrong date format and said 403 and 413 render `error.html`; both were checked against the code and corrected before commit.

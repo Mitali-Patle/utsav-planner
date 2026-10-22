@@ -356,6 +356,7 @@ def test_infeasible_change_offers_priced_alternatives(engine: Engine) -> None:
     )
     assert "Paper decor" in options.text
     assert "saves about ₹" in options.text
+    assert "Suggested by AI" in options.text
 
 
 # Direct edits

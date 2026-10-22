@@ -432,13 +432,13 @@ def alternatives_context(event_id: str, view: AlternativesView) -> dict[str, Any
             }
             for o in view.options
         ],
-        "ai_note": _ai_note(view.provenance) if view.provenance else None,
+        "ai_note": _ai_note(view.provenance, "Suggested") if view.provenance else None,
     }
 
 
-def _ai_note(provenance: Provenance) -> str:
+def _ai_note(provenance: Provenance, verb: str = "Interpreted") -> str:
     """One honest line on where an answer came from."""
     if provenance.fallback:
         return "Standard suggestions (not AI-generated)."
     source = "cached answer from " if provenance.cached else ""
-    return f"Interpreted by AI ({source}{provenance.provider}, {provenance.latency_ms} ms)."
+    return f"{verb} by AI ({source}{provenance.provider}, {provenance.latency_ms} ms)."
