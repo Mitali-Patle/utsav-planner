@@ -29,7 +29,7 @@ from evals.cases import (
     PersonalizeCase,
 )
 from evals.report import latest_runs, render
-from evals.run import CaseResult, run_cases, save, select_cases
+from evals.run import CaseResult, rescore, run_cases, save, select_cases
 from evals.scoring import score_alternatives, score_change, score_personalize
 from tests.fakes import ScriptedProvider, TaskAwareProvider
 
@@ -331,3 +331,39 @@ def test_report_uses_the_latest_run_per_model(tmp_path: Path) -> None:
     report = render(runs)
     assert "| m:1 | change | 1/1 (100%) | 1/1 (100%) | 0 | 1.2 s | 1.2 s |" in report
     assert json.loads(newer.read_text())["prompt_versions"]["interpret_change"]
+
+
+def test_rescore_applies_current_scoring_to_saved_answers(tmp_path: Path) -> None:
+    answer = intent(op(ChangeKind.SET_TOTAL_BUDGET, amount_inr=50_000)).model_dump(mode="json")
+    stale = CaseResult(
+        "change",
+        "b-budget-set",
+        False,
+        False,
+        ("old bug",),
+        {},
+        "m:1",
+        900,
+        True,
+        ("m:1: ok",),
+        answer,
+    )
+    failed = CaseResult(
+        "change",
+        "b-guests-set",
+        False,
+        True,
+        ("no AI answer",),
+        {},
+        None,
+        0,
+        False,
+        ("m:1: timeout",),
+        {},
+    )
+    path = save([stale, failed], "m:1", tmp_path)
+    assert [(r.passed, r.reasons) for r in rescore(path)] == [
+        (True, ()),
+        (False, ("no AI answer",)),
+    ]
+    assert "rescored_at" in json.loads(path.read_text())

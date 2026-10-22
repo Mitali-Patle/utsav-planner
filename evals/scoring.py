@@ -27,7 +27,8 @@ _NEGATION_BEFORE = re.compile(
     r"\b(no|not|without|avoid\w*|skip\w*|exclud\w*|instead of|zero|swap\w*|replac\w*|free of)\b",
     re.IGNORECASE,
 )
-_NEGATION_AFTER = re.compile(r"^(-|\s)?free\b", re.IGNORECASE)
+# Any dash: models often write "alcohol-free" with U+2010 or a non-breaking hyphen.
+_NEGATION_AFTER = re.compile(r"^[\s\-\u2010-\u2015]?free\b", re.IGNORECASE)
 _CLAUSE_END = re.compile(r"[.;!?:]")
 
 
@@ -47,6 +48,8 @@ def mentions_positively(text: str, term: str) -> bool:
         >>> mentions_positively("Serve a Jain thali without onion or garlic.", "garlic")
         False
         >>> mentions_positively("Alcohol-free mocktails at the sangeet.", "alcohol")
+        False
+        >>> mentions_positively("A dry, alcohol\u2010free feast.", "alcohol")
         False
         >>> mentions_positively("Eggless cake; a garlic naan station.", "garlic")
         True

@@ -16,7 +16,7 @@ import logging
 import re
 import time
 from collections.abc import Callable, Sequence
-from dataclasses import asdict, dataclass
+from dataclasses import asdict, dataclass, replace
 from datetime import UTC, datetime
 from pathlib import Path
 from typing import Any
@@ -28,6 +28,7 @@ from app.ai.chain import FallbackChain
 from app.ai.client import AIResult, AttemptOutcome, Provider
 from app.ai.contexts import AlternativesContext, ChangeContext, PersonalizeContext
 from app.ai.providers import build_providers
+from app.ai.schemas import Alternatives, ChangeIntent, PlanSuggestions
 from app.ai.tasks import INTERPRET_CHANGE, PERSONALIZE, SUGGEST_ALTERNATIVES
 from app.config import Settings
 from app.domain.budget import summarize
@@ -150,6 +151,39 @@ def run_cases(
     return results
 
 
+def rescore(path: Path) -> list[CaseResult]:
+    """Score the saved answers in a results file again with the current scoring code.
+
+    The answers are not changed and no model is called; use this after fixing a scoring
+    bug. Results with no AI answer stay as they were.
+    """
+    document: dict[str, Any] = json.loads(path.read_text(encoding="utf-8"))
+    cases = {(task, case.id): case for task in TASKS for case in select_cases(task)}
+    updated = []
+    for saved in document["results"]:
+        result = CaseResult(
+            **{**saved, "reasons": tuple(saved["reasons"]), "attempts": tuple(saved["attempts"])}
+        )
+        if not result.error:
+            verdict = _score_saved(cases[(result.task, result.case_id)], result.answer)
+            result = replace(
+                result, passed=verdict.passed, reasons=verdict.reasons, metrics=verdict.metrics
+            )
+        updated.append(result)
+    document["results"] = [asdict(r) for r in updated]
+    document["rescored_at"] = datetime.now(UTC).isoformat(timespec="seconds")
+    path.write_text(json.dumps(document, indent=1, ensure_ascii=False) + "\n", encoding="utf-8")
+    return updated
+
+
+def _score_saved(case: Case, answer: dict[str, Any]) -> Verdict:
+    if isinstance(case, ChangeCase):
+        return score_change(case, ChangeIntent.model_validate(answer))
+    if isinstance(case, PersonalizeCase):
+        return score_personalize(case, PlanSuggestions.model_validate(answer), PERSONALIZE.system)
+    return score_alternatives(case, Alternatives.model_validate(answer))
+
+
 def select_cases(task: str, only: Sequence[str] = ()) -> list[Case]:
     """Cases for a task (or all tasks), optionally limited to the given ids."""
     groups: dict[str, Sequence[Case]] = {
@@ -182,12 +216,19 @@ def save(results: Sequence[CaseResult], model: str, directory: Path = RESULTS_DI
 def main(argv: Sequence[str] | None = None) -> int:
     """Command-line entry point."""
     parser = argparse.ArgumentParser(description=__doc__.splitlines()[0] if __doc__ else None)
-    parser.add_argument("--model", required=True, help="provider:model, or 'chain'")
+    parser.add_argument("--model", help="provider:model, or 'chain'")
+    parser.add_argument("--rescore", type=Path, help="re-score a saved results file instead")
     parser.add_argument("--task", choices=(*TASKS, "all"), default="all")
     parser.add_argument("--only", default="", help="comma-separated case ids")
     parser.add_argument("--pause", type=float, default=5.0, help="seconds between calls")
     args = parser.parse_args(argv)
     logging.basicConfig(level=logging.INFO, format="%(message)s")
+    if args.rescore:
+        rescored = rescore(args.rescore)
+        logger.info("%d/%d passed after re-scoring", sum(r.passed for r in rescored), len(rescored))
+        return 0
+    if not args.model:
+        parser.error("--model is required unless --rescore is given")
 
     settings = Settings()
     if args.model != "chain":

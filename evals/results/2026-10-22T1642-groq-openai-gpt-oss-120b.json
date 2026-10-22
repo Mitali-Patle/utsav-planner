@@ -1,0 +1,3130 @@
+{
+ "model": "groq:openai/gpt-oss-120b",
+ "run_at": "2026-10-22T16:42:01+00:00",
+ "prompt_versions": {
+  "personalize": "personalize-v1",
+  "interpret_change": "interpret-change-v1",
+  "alternatives": "alternatives-v1"
+ },
+ "results": [
+  {
+   "task": "change",
+   "case_id": "b-budget-set",
+   "passed": true,
+   "error": false,
+   "reasons": [],
+   "metrics": {},
+   "provider": "groq:openai/gpt-oss-120b",
+   "latency_ms": 1013,
+   "first_try_valid": true,
+   "attempts": [
+    "groq:openai/gpt-oss-120b: ok"
+   ],
+   "answer": {
+    "status": "ok",
+    "clarification_question": null,
+    "operations": [
+     {
+      "kind": "set_total_budget",
+      "amount_inr": 50000,
+      "category_id": null,
+      "expense_id": null,
+      "label": null,
+      "guest_count": null,
+      "days": null,
+      "delta": null,
+      "new_date": null
+     }
+    ],
+    "cut_priority": [],
+    "summary": "Reduce the total budget to 50,000 rupees."
+   }
+  },
+  {
+   "task": "change",
+   "case_id": "b-budget-k",
+   "passed": true,
+   "error": false,
+   "reasons": [],
+   "metrics": {},
+   "provider": "groq:openai/gpt-oss-120b",
+   "latency_ms": 1088,
+   "first_try_valid": true,
+   "attempts": [
+    "groq:openai/gpt-oss-120b: ok"
+   ],
+   "answer": {
+    "status": "ok",
+    "clarification_question": null,
+    "operations": [
+     {
+      "kind": "set_total_budget",
+      "amount_inr": 45000,
+      "category_id": null,
+      "expense_id": null,
+      "label": null,
+      "guest_count": null,
+      "days": null,
+      "delta": null,
+      "new_date": null
+     }
+    ],
+    "cut_priority": [],
+    "summary": "Update the total budget to 45,000."
+   }
+  },
+  {
+   "task": "change",
+   "case_id": "b-budget-relative",
+   "passed": true,
+   "error": false,
+   "reasons": [],
+   "metrics": {},
+   "provider": "groq:openai/gpt-oss-120b",
+   "latency_ms": 1106,
+   "first_try_valid": true,
+   "attempts": [
+    "groq:openai/gpt-oss-120b: ok"
+   ],
+   "answer": {
+    "status": "ok",
+    "clarification_question": null,
+    "operations": [
+     {
+      "kind": "adjust_total_budget",
+      "amount_inr": null,
+      "category_id": null,
+      "expense_id": null,
+      "label": null,
+      "guest_count": null,
+      "days": null,
+      "delta": 10000,
+      "new_date": null
+     }
+    ],
+    "cut_priority": [],
+    "summary": "Increase the total budget by 10,000 as provided by grandparents."
+   }
+  },
+  {
+   "task": "change",
+   "case_id": "w-lakh",
+   "passed": true,
+   "error": false,
+   "reasons": [],
+   "metrics": {},
+   "provider": "groq:openai/gpt-oss-120b",
+   "latency_ms": 1821,
+   "first_try_valid": true,
+   "attempts": [
+    "groq:openai/gpt-oss-120b: ok"
+   ],
+   "answer": {
+    "status": "ok",
+    "clarification_question": null,
+    "operations": [
+     {
+      "kind": "set_total_budget",
+      "amount_inr": 1200000,
+      "category_id": null,
+      "expense_id": null,
+      "label": null,
+      "guest_count": null,
+      "days": null,
+      "delta": null,
+      "new_date": null
+     }
+    ],
+    "cut_priority": [],
+    "summary": "Update the total budget to 12 lakh."
+   }
+  },
+  {
+   "task": "change",
+   "case_id": "w-indian-commas",
+   "passed": true,
+   "error": false,
+   "reasons": [],
+   "metrics": {},
+   "provider": "groq:openai/gpt-oss-120b",
+   "latency_ms": 1103,
+   "first_try_valid": true,
+   "attempts": [
+    "groq:openai/gpt-oss-120b: ok"
+   ],
+   "answer": {
+    "status": "ok",
+    "clarification_question": null,
+    "operations": [
+     {
+      "kind": "set_total_budget",
+      "amount_inr": 1850000,
+      "category_id": null,
+      "expense_id": null,
+      "label": null,
+      "guest_count": null,
+      "days": null,
+      "delta": null,
+      "new_date": null
+     }
+    ],
+    "cut_priority": [],
+    "summary": "Increase the total budget to 18,50,000."
+   }
+  },
+  {
+   "task": "change",
+   "case_id": "w-relative-lakh",
+   "passed": true,
+   "error": false,
+   "reasons": [],
+   "metrics": {},
+   "provider": "groq:openai/gpt-oss-120b",
+   "latency_ms": 1417,
+   "first_try_valid": true,
+   "attempts": [
+    "groq:openai/gpt-oss-120b: ok"
+   ],
+   "answer": {
+    "status": "ok",
+    "clarification_question": null,
+    "operations": [
+     {
+      "kind": "adjust_total_budget",
+      "amount_inr": null,
+      "category_id": null,
+      "expense_id": null,
+      "label": null,
+      "guest_count": null,
+      "days": null,
+      "delta": 250000,
+      "new_date": null
+     }
+    ],
+    "cut_priority": [],
+    "summary": "Increase the total budget by 2.5 lakh as both families contribute."
+   }
+  },
+  {
+   "task": "change",
+   "case_id": "c-sponsor",
+   "passed": true,
+   "error": false,
+   "reasons": [],
+   "metrics": {},
+   "provider": "groq:openai/gpt-oss-120b",
+   "latency_ms": 1097,
+   "first_try_valid": true,
+   "attempts": [
+    "groq:openai/gpt-oss-120b: ok"
+   ],
+   "answer": {
+    "status": "ok",
+    "clarification_question": null,
+    "operations": [
+     {
+      "kind": "adjust_total_budget",
+      "amount_inr": null,
+      "category_id": null,
+      "expense_id": null,
+      "label": null,
+      "guest_count": null,
+      "days": null,
+      "delta": 50000,
+      "new_date": null
+     }
+    ],
+    "cut_priority": [],
+    "summary": "Increase the total budget by 50,000 due to a sponsor contribution."
+   }
+  },
+  {
+   "task": "change",
+   "case_id": "b-guests-more",
+   "passed": true,
+   "error": false,
+   "reasons": [],
+   "metrics": {},
+   "provider": "groq:openai/gpt-oss-120b",
+   "latency_ms": 932,
+   "first_try_valid": true,
+   "attempts": [
+    "groq:openai/gpt-oss-120b: ok"
+   ],
+   "answer": {
+    "status": "ok",
+    "clarification_question": null,
+    "operations": [
+     {
+      "kind": "adjust_guest_count",
+      "amount_inr": null,
+      "category_id": null,
+      "expense_id": null,
+      "label": null,
+      "guest_count": null,
+      "days": null,
+      "delta": 10,
+      "new_date": null
+     }
+    ],
+    "cut_priority": [],
+    "summary": "Add 10 more kids to the guest count."
+   }
+  },
+  {
+   "task": "change",
+   "case_id": "b-guests-set",
+   "passed": true,
+   "error": false,
+   "reasons": [],
+   "metrics": {},
+   "provider": "groq:openai/gpt-oss-120b",
+   "latency_ms": 1719,
+   "first_try_valid": true,
+   "attempts": [
+    "groq:openai/gpt-oss-120b: ok"
+   ],
+   "answer": {
+    "status": "ok",
+    "clarification_question": null,
+    "operations": [
+     {
+      "kind": "set_guest_count",
+      "amount_inr": null,
+      "category_id": null,
+      "expense_id": null,
+      "label": null,
+      "guest_count": 35,
+      "days": null,
+      "delta": null,
+      "new_date": null
+     }
+    ],
+    "cut_priority": [],
+    "summary": "Update the guest count to the final headcount of 35."
+   }
+  },
+  {
+   "task": "change",
+   "case_id": "w-guests-more",
+   "passed": true,
+   "error": false,
+   "reasons": [],
+   "metrics": {},
+   "provider": "groq:openai/gpt-oss-120b",
+   "latency_ms": 1322,
+   "first_try_valid": true,
+   "attempts": [
+    "groq:openai/gpt-oss-120b: ok"
+   ],
+   "answer": {
+    "status": "ok",
+    "clarification_question": null,
+    "operations": [
+     {
+      "kind": "adjust_guest_count",
+      "amount_inr": null,
+      "category_id": null,
+      "expense_id": null,
+      "label": null,
+      "guest_count": null,
+      "days": null,
+      "delta": 50,
+      "new_date": null
+     }
+    ],
+    "cut_priority": [],
+    "summary": "Add 50 guests from the groom's side."
+   }
+  },
+  {
+   "task": "change",
+   "case_id": "c-guests-about",
+   "passed": true,
+   "error": false,
+   "reasons": [],
+   "metrics": {},
+   "provider": "groq:openai/gpt-oss-120b",
+   "latency_ms": 1504,
+   "first_try_valid": true,
+   "attempts": [
+    "groq:openai/gpt-oss-120b: ok"
+   ],
+   "answer": {
+    "status": "ok",
+    "clarification_question": null,
+    "operations": [
+     {
+      "kind": "adjust_guest_count",
+      "amount_inr": null,
+      "category_id": null,
+      "expense_id": null,
+      "label": null,
+      "guest_count": null,
+      "days": null,
+      "delta": 200,
+      "new_date": null
+     }
+    ],
+    "cut_priority": [],
+    "summary": "Increase the expected guest count to about 600."
+   }
+  },
+  {
+   "task": "change",
+   "case_id": "b-date-week-later",
+   "passed": true,
+   "error": false,
+   "reasons": [],
+   "metrics": {},
+   "provider": "groq:openai/gpt-oss-120b",
+   "latency_ms": 1202,
+   "first_try_valid": true,
+   "attempts": [
+    "groq:openai/gpt-oss-120b: ok"
+   ],
+   "answer": {
+    "status": "ok",
+    "clarification_question": null,
+    "operations": [
+     {
+      "kind": "shift_date_days",
+      "amount_inr": null,
+      "category_id": null,
+      "expense_id": null,
+      "label": null,
+      "guest_count": null,
+      "days": 7,
+      "delta": null,
+      "new_date": null
+     }
+    ],
+    "cut_priority": [],
+    "summary": "Move the party date one week later."
+   }
+  },
+  {
+   "task": "change",
+   "case_id": "b-date-set",
+   "passed": true,
+   "error": false,
+   "reasons": [],
+   "metrics": {},
+   "provider": "groq:openai/gpt-oss-120b",
+   "latency_ms": 1009,
+   "first_try_valid": true,
+   "attempts": [
+    "groq:openai/gpt-oss-120b: ok"
+   ],
+   "answer": {
+    "status": "ok",
+    "clarification_question": null,
+    "operations": [
+     {
+      "kind": "set_date",
+      "amount_inr": null,
+      "category_id": null,
+      "expense_id": null,
+      "label": null,
+      "guest_count": null,
+      "days": null,
+      "delta": null,
+      "new_date": "2026-12-05"
+     }
+    ],
+    "cut_priority": [],
+    "summary": "Change the event date to 5 December."
+   }
+  },
+  {
+   "task": "change",
+   "case_id": "w-postpone",
+   "passed": true,
+   "error": false,
+   "reasons": [],
+   "metrics": {},
+   "provider": "groq:openai/gpt-oss-120b",
+   "latency_ms": 1416,
+   "first_try_valid": true,
+   "attempts": [
+    "groq:openai/gpt-oss-120b: ok"
+   ],
+   "answer": {
+    "status": "ok",
+    "clarification_question": null,
+    "operations": [
+     {
+      "kind": "shift_date_days",
+      "amount_inr": null,
+      "category_id": null,
+      "expense_id": null,
+      "label": null,
+      "guest_count": null,
+      "days": 10,
+      "delta": null,
+      "new_date": null
+     }
+    ],
+    "cut_priority": [],
+    "summary": "Postpone the wedding by 10 days due to the muhurat."
+   }
+  },
+  {
+   "task": "change",
+   "case_id": "b-protect-only",
+   "passed": true,
+   "error": false,
+   "reasons": [],
+   "metrics": {},
+   "provider": "groq:openai/gpt-oss-120b",
+   "latency_ms": 1202,
+   "first_try_valid": true,
+   "attempts": [
+    "groq:openai/gpt-oss-120b: ok"
+   ],
+   "answer": {
+    "status": "ok",
+    "clarification_question": null,
+    "operations": [
+     {
+      "kind": "protect",
+      "amount_inr": null,
+      "category_id": "photography",
+      "expense_id": null,
+      "label": null,
+      "guest_count": null,
+      "days": null,
+      "delta": null,
+      "new_date": null
+     }
+    ],
+    "cut_priority": [],
+    "summary": "Keep the photography budget unchanged."
+   }
+  },
+  {
+   "task": "change",
+   "case_id": "b-guests-keep-cake",
+   "passed": true,
+   "error": false,
+   "reasons": [],
+   "metrics": {},
+   "provider": "groq:openai/gpt-oss-120b",
+   "latency_ms": 1311,
+   "first_try_valid": true,
+   "attempts": [
+    "groq:openai/gpt-oss-120b: ok"
+   ],
+   "answer": {
+    "status": "ok",
+    "clarification_question": null,
+    "operations": [
+     {
+      "kind": "adjust_guest_count",
+      "amount_inr": null,
+      "category_id": null,
+      "expense_id": null,
+      "label": null,
+      "guest_count": null,
+      "days": null,
+      "delta": -5,
+      "new_date": null
+     },
+     {
+      "kind": "protect",
+      "amount_inr": null,
+      "category_id": "cake",
+      "expense_id": null,
+      "label": null,
+      "guest_count": null,
+      "days": null,
+      "delta": null,
+      "new_date": null
+     }
+    ],
+    "cut_priority": [],
+    "summary": "Reduce the guest count by 5 and keep the cake budget unchanged."
+   }
+  },
+  {
+   "task": "change",
+   "case_id": "w-cut-keep-two",
+   "passed": true,
+   "error": false,
+   "reasons": [],
+   "metrics": {},
+   "provider": "groq:openai/gpt-oss-120b",
+   "latency_ms": 1205,
+   "first_try_valid": true,
+   "attempts": [
+    "groq:openai/gpt-oss-120b: ok"
+   ],
+   "answer": {
+    "status": "ok",
+    "clarification_question": null,
+    "operations": [
+     {
+      "kind": "protect",
+      "amount_inr": null,
+      "category_id": "photography",
+      "expense_id": null,
+      "label": null,
+      "guest_count": null,
+      "days": null,
+      "delta": null,
+      "new_date": null
+     },
+     {
+      "kind": "protect",
+      "amount_inr": null,
+      "category_id": "attire_makeup",
+      "expense_id": null,
+      "label": null,
+      "guest_count": null,
+      "days": null,
+      "delta": null,
+      "new_date": null
+     },
+     {
+      "kind": "adjust_total_budget",
+      "amount_inr": null,
+      "category_id": null,
+      "expense_id": null,
+      "label": null,
+      "guest_count": null,
+      "days": null,
+      "delta": -100000,
+      "new_date": null
+     }
+    ],
+    "cut_priority": [],
+    "summary": "Reduce the total budget by 1 lakh while keeping photography and attire unchanged."
+   }
+  },
+  {
+   "task": "change",
+   "case_id": "c-cut-keep-puja",
+   "passed": true,
+   "error": false,
+   "reasons": [],
+   "metrics": {},
+   "provider": "groq:openai/gpt-oss-120b",
+   "latency_ms": 1208,
+   "first_try_valid": true,
+   "attempts": [
+    "groq:openai/gpt-oss-120b: ok"
+   ],
+   "answer": {
+    "status": "ok",
+    "clarification_question": null,
+    "operations": [
+     {
+      "kind": "protect",
+      "amount_inr": null,
+      "category_id": "puja_rituals",
+      "expense_id": null,
+      "label": null,
+      "guest_count": null,
+      "days": null,
+      "delta": null,
+      "new_date": null
+     },
+     {
+      "kind": "protect",
+      "amount_inr": null,
+      "category_id": "prasad_catering",
+      "expense_id": null,
+      "label": null,
+      "guest_count": null,
+      "days": null,
+      "delta": null,
+      "new_date": null
+     },
+     {
+      "kind": "set_total_budget",
+      "amount_inr": 200000,
+      "category_id": null,
+      "expense_id": null,
+      "label": null,
+      "guest_count": null,
+      "days": null,
+      "delta": null,
+      "new_date": null
+     }
+    ],
+    "cut_priority": [],
+    "summary": "Reduce the total budget to 2 lakh while keeping puja and prasad allocations unchanged."
+   }
+  },
+  {
+   "task": "change",
+   "case_id": "b-multi",
+   "passed": true,
+   "error": false,
+   "reasons": [],
+   "metrics": {},
+   "provider": "groq:openai/gpt-oss-120b",
+   "latency_ms": 1210,
+   "first_try_valid": true,
+   "attempts": [
+    "groq:openai/gpt-oss-120b: ok"
+   ],
+   "answer": {
+    "status": "ok",
+    "clarification_question": null,
+    "operations": [
+     {
+      "kind": "set_total_budget",
+      "amount_inr": 50000,
+      "category_id": null,
+      "expense_id": null,
+      "label": null,
+      "guest_count": null,
+      "days": null,
+      "delta": null,
+      "new_date": null
+     },
+     {
+      "kind": "adjust_guest_count",
+      "amount_inr": null,
+      "category_id": null,
+      "expense_id": null,
+      "label": null,
+      "guest_count": null,
+      "days": null,
+      "delta": 5,
+      "new_date": null
+     },
+     {
+      "kind": "protect",
+      "amount_inr": null,
+      "category_id": "cake",
+      "expense_id": null,
+      "label": null,
+      "guest_count": null,
+      "days": null,
+      "delta": null,
+      "new_date": null
+     },
+     {
+      "kind": "protect",
+      "amount_inr": null,
+      "category_id": "return_gifts",
+      "expense_id": null,
+      "label": null,
+      "guest_count": null,
+      "days": null,
+      "delta": null,
+      "new_date": null
+     }
+    ],
+    "cut_priority": [],
+    "summary": "Reduce the budget to 50,000, add 5 kids, and keep the cake and return gifts unchanged."
+   }
+  },
+  {
+   "task": "change",
+   "case_id": "c-multi-date-guests",
+   "passed": true,
+   "error": false,
+   "reasons": [],
+   "metrics": {},
+   "provider": "groq:openai/gpt-oss-120b",
+   "latency_ms": 899,
+   "first_try_valid": true,
+   "attempts": [
+    "groq:openai/gpt-oss-120b: ok"
+   ],
+   "answer": {
+    "status": "ok",
+    "clarification_question": null,
+    "operations": [
+     {
+      "kind": "shift_date_days",
+      "amount_inr": null,
+      "category_id": null,
+      "expense_id": null,
+      "label": null,
+      "guest_count": null,
+      "days": -2,
+      "delta": null,
+      "new_date": null
+     },
+     {
+      "kind": "adjust_guest_count",
+      "amount_inr": null,
+      "category_id": null,
+      "expense_id": null,
+      "label": null,
+      "guest_count": null,
+      "days": null,
+      "delta": -100,
+      "new_date": null
+     }
+    ],
+    "cut_priority": [],
+    "summary": "Move the event two days earlier and reduce the guest count by one hundred."
+   }
+  },
+  {
+   "task": "change",
+   "case_id": "b-add-line",
+   "passed": true,
+   "error": false,
+   "reasons": [],
+   "metrics": {},
+   "provider": "groq:openai/gpt-oss-120b",
+   "latency_ms": 893,
+   "first_try_valid": true,
+   "attempts": [
+    "groq:openai/gpt-oss-120b: ok"
+   ],
+   "answer": {
+    "status": "ok",
+    "clarification_question": null,
+    "operations": [
+     {
+      "kind": "add_category",
+      "amount_inr": 5000,
+      "category_id": null,
+      "expense_id": null,
+      "label": "Magician",
+      "guest_count": null,
+      "days": null,
+      "delta": null,
+      "new_date": null
+     }
+    ],
+    "cut_priority": [],
+    "summary": "Add a new budget line for a magician costing 5,000 rupees."
+   }
+  },
+  {
+   "task": "change",
+   "case_id": "w-add-line",
+   "passed": true,
+   "error": false,
+   "reasons": [],
+   "metrics": {},
+   "provider": "groq:openai/gpt-oss-120b",
+   "latency_ms": 1010,
+   "first_try_valid": true,
+   "attempts": [
+    "groq:openai/gpt-oss-120b: ok"
+   ],
+   "answer": {
+    "status": "ok",
+    "clarification_question": null,
+    "operations": [
+     {
+      "kind": "add_category",
+      "amount_inr": 25000,
+      "category_id": null,
+      "expense_id": null,
+      "label": "Ghodi for the baraat",
+      "guest_count": null,
+      "days": null,
+      "delta": null,
+      "new_date": null
+     }
+    ],
+    "cut_priority": [],
+    "summary": "Add a new budget line for a ghodi costing 25,000."
+   }
+  },
+  {
+   "task": "change",
+   "case_id": "b-add-expense",
+   "passed": true,
+   "error": false,
+   "reasons": [],
+   "metrics": {},
+   "provider": "groq:openai/gpt-oss-120b",
+   "latency_ms": 1209,
+   "first_try_valid": true,
+   "attempts": [
+    "groq:openai/gpt-oss-120b: ok"
+   ],
+   "answer": {
+    "status": "ok",
+    "clarification_question": null,
+    "operations": [
+     {
+      "kind": "add_expense",
+      "amount_inr": 8000,
+      "category_id": "catering",
+      "expense_id": null,
+      "label": "Advance payment",
+      "guest_count": null,
+      "days": null,
+      "delta": null,
+      "new_date": null
+     }
+    ],
+    "cut_priority": [],
+    "summary": "Record the ₹8,000 advance paid to the caterer as an expense."
+   }
+  },
+  {
+   "task": "change",
+   "case_id": "b-add-task",
+   "passed": true,
+   "error": false,
+   "reasons": [],
+   "metrics": {},
+   "provider": "groq:openai/gpt-oss-120b",
+   "latency_ms": 1198,
+   "first_try_valid": true,
+   "attempts": [
+    "groq:openai/gpt-oss-120b: ok"
+   ],
+   "answer": {
+    "status": "ok",
+    "clarification_question": null,
+    "operations": [
+     {
+      "kind": "add_task",
+      "amount_inr": null,
+      "category_id": null,
+      "expense_id": null,
+      "label": "order the jungle balloons",
+      "guest_count": null,
+      "days": 14,
+      "delta": null,
+      "new_date": null
+     }
+    ],
+    "cut_priority": [],
+    "summary": "Add a reminder to order the jungle balloons 14 days before the event."
+   }
+  },
+  {
+   "task": "change",
+   "case_id": "bx-update-expense",
+   "passed": true,
+   "error": false,
+   "reasons": [],
+   "metrics": {},
+   "provider": "groq:openai/gpt-oss-120b",
+   "latency_ms": 1318,
+   "first_try_valid": true,
+   "attempts": [
+    "groq:openai/gpt-oss-120b: ok"
+   ],
+   "answer": {
+    "status": "ok",
+    "clarification_question": null,
+    "operations": [
+     {
+      "kind": "update_expense",
+      "amount_inr": 18000,
+      "category_id": null,
+      "expense_id": "exp-1",
+      "label": null,
+      "guest_count": null,
+      "days": null,
+      "delta": null,
+      "new_date": null
+     }
+    ],
+    "cut_priority": [],
+    "summary": "Increase the hall advance expense to 18,000."
+   }
+  },
+  {
+   "task": "change",
+   "case_id": "bx-remove-expense",
+   "passed": true,
+   "error": false,
+   "reasons": [],
+   "metrics": {},
+   "provider": "groq:openai/gpt-oss-120b",
+   "latency_ms": 1615,
+   "first_try_valid": true,
+   "attempts": [
+    "groq:openai/gpt-oss-120b: ok"
+   ],
+   "answer": {
+    "status": "ok",
+    "clarification_question": null,
+    "operations": [
+     {
+      "kind": "remove_expense",
+      "amount_inr": null,
+      "category_id": null,
+      "expense_id": "exp-1",
+      "label": null,
+      "guest_count": null,
+      "days": null,
+      "delta": null,
+      "new_date": null
+     }
+    ],
+    "cut_priority": [],
+    "summary": "Cancel the hall advance expense as it has been refunded."
+   }
+  },
+  {
+   "task": "change",
+   "case_id": "w-hinglish-budget",
+   "passed": true,
+   "error": false,
+   "reasons": [],
+   "metrics": {},
+   "provider": "groq:openai/gpt-oss-120b",
+   "latency_ms": 1108,
+   "first_try_valid": true,
+   "attempts": [
+    "groq:openai/gpt-oss-120b: ok"
+   ],
+   "answer": {
+    "status": "ok",
+    "clarification_question": null,
+    "operations": [
+     {
+      "kind": "set_total_budget",
+      "amount_inr": 1300000,
+      "category_id": null,
+      "expense_id": null,
+      "label": null,
+      "guest_count": null,
+      "days": null,
+      "delta": null,
+      "new_date": null
+     }
+    ],
+    "cut_priority": [],
+    "summary": "Set the total wedding budget to 13 lakh rupees."
+   }
+  },
+  {
+   "task": "change",
+   "case_id": "w-hinglish-guests",
+   "passed": true,
+   "error": false,
+   "reasons": [],
+   "metrics": {},
+   "provider": "groq:openai/gpt-oss-120b",
+   "latency_ms": 1617,
+   "first_try_valid": true,
+   "attempts": [
+    "groq:openai/gpt-oss-120b: ok"
+   ],
+   "answer": {
+    "status": "ok",
+    "clarification_question": null,
+    "operations": [
+     {
+      "kind": "adjust_guest_count",
+      "amount_inr": null,
+      "category_id": null,
+      "expense_id": null,
+      "label": null,
+      "guest_count": null,
+      "days": null,
+      "delta": -20,
+      "new_date": null
+     }
+    ],
+    "cut_priority": [],
+    "summary": "Reduce the guest count by 20."
+   }
+  },
+  {
+   "task": "change",
+   "case_id": "c-marathi-budget",
+   "passed": true,
+   "error": false,
+   "reasons": [],
+   "metrics": {},
+   "provider": "groq:openai/gpt-oss-120b",
+   "latency_ms": 1422,
+   "first_try_valid": true,
+   "attempts": [
+    "groq:openai/gpt-oss-120b: ok"
+   ],
+   "answer": {
+    "status": "ok",
+    "clarification_question": null,
+    "operations": [
+     {
+      "kind": "set_total_budget",
+      "amount_inr": 300000,
+      "category_id": null,
+      "expense_id": null,
+      "label": null,
+      "guest_count": null,
+      "days": null,
+      "delta": null,
+      "new_date": null
+     }
+    ],
+    "cut_priority": [],
+    "summary": "Increase the total budget to 3 lakh."
+   }
+  },
+  {
+   "task": "change",
+   "case_id": "b-vague-cheaper",
+   "passed": true,
+   "error": false,
+   "reasons": [],
+   "metrics": {},
+   "provider": "groq:openai/gpt-oss-120b",
+   "latency_ms": 993,
+   "first_try_valid": true,
+   "attempts": [
+    "groq:openai/gpt-oss-120b: ok"
+   ],
+   "answer": {
+    "status": "needs_clarification",
+    "clarification_question": "Do you want to set a new total budget amount or specify which categories to cut first?",
+    "operations": [],
+    "cut_priority": [],
+    "summary": "User wants to reduce overall cost but did not specify how."
+   }
+  },
+  {
+   "task": "change",
+   "case_id": "b-vague-more",
+   "passed": true,
+   "error": false,
+   "reasons": [],
+   "metrics": {},
+   "provider": "groq:openai/gpt-oss-120b",
+   "latency_ms": 1003,
+   "first_try_valid": true,
+   "attempts": [
+    "groq:openai/gpt-oss-120b: ok"
+   ],
+   "answer": {
+    "status": "needs_clarification",
+    "clarification_question": "How many additional kids are expected to attend?",
+    "operations": [],
+    "cut_priority": [],
+    "summary": "User indicates possible extra kids but does not specify the number."
+   }
+  },
+  {
+   "task": "change",
+   "case_id": "w-vague-decor",
+   "passed": true,
+   "error": false,
+   "reasons": [],
+   "metrics": {},
+   "provider": "groq:openai/gpt-oss-120b",
+   "latency_ms": 1005,
+   "first_try_valid": true,
+   "attempts": [
+    "groq:openai/gpt-oss-120b: ok"
+   ],
+   "answer": {
+    "status": "needs_clarification",
+    "clarification_question": "By how much would you like to reduce the decor allocation (amount in INR)?",
+    "operations": [],
+    "cut_priority": [],
+    "summary": "User wants to lower the decor budget but did not specify the amount."
+   }
+  },
+  {
+   "task": "change",
+   "case_id": "b-poem",
+   "passed": true,
+   "error": false,
+   "reasons": [],
+   "metrics": {},
+   "provider": "groq:openai/gpt-oss-120b",
+   "latency_ms": 1208,
+   "first_try_valid": true,
+   "attempts": [
+    "groq:openai/gpt-oss-120b: ok"
+   ],
+   "answer": {
+    "status": "off_topic",
+    "clarification_question": null,
+    "operations": [],
+    "cut_priority": [],
+    "summary": "The request is not about this event plan."
+   }
+  },
+  {
+   "task": "change",
+   "case_id": "c-weather",
+   "passed": true,
+   "error": false,
+   "reasons": [],
+   "metrics": {},
+   "provider": "groq:openai/gpt-oss-120b",
+   "latency_ms": 1108,
+   "first_try_valid": true,
+   "attempts": [
+    "groq:openai/gpt-oss-120b: ok"
+   ],
+   "answer": {
+    "status": "off_topic",
+    "clarification_question": null,
+    "operations": [],
+    "cut_priority": [],
+    "summary": "The user asks about weather, which is not related to the event plan."
+   }
+  },
+  {
+   "task": "change",
+   "case_id": "b-injection",
+   "passed": true,
+   "error": false,
+   "reasons": [],
+   "metrics": {},
+   "provider": "groq:openai/gpt-oss-120b",
+   "latency_ms": 901,
+   "first_try_valid": true,
+   "attempts": [
+    "groq:openai/gpt-oss-120b: ok"
+   ],
+   "answer": {
+    "status": "off_topic",
+    "clarification_question": null,
+    "operations": [],
+    "cut_priority": [],
+    "summary": "The request asks to reveal system prompt and set an arbitrary budget, which is not about the event plan."
+   }
+  },
+  {
+   "task": "change",
+   "case_id": "b-fake-delimiters",
+   "passed": true,
+   "error": false,
+   "reasons": [],
+   "metrics": {},
+   "provider": "groq:openai/gpt-oss-120b",
+   "latency_ms": 1311,
+   "first_try_valid": true,
+   "attempts": [
+    "groq:openai/gpt-oss-120b: ok"
+   ],
+   "answer": {
+    "status": "needs_clarification",
+    "clarification_question": "Do you want to remove all budget categories except the cake, or set their allocations to zero?",
+    "operations": [],
+    "cut_priority": [],
+    "summary": "User wants to keep the cake but delete every budget line."
+   }
+  },
+  {
+   "task": "personalize",
+   "case_id": "w-bengali",
+   "passed": true,
+   "error": false,
+   "reasons": [],
+   "metrics": {
+    "ideas": 5.0
+   },
+   "provider": "groq:openai/gpt-oss-120b",
+   "latency_ms": 3463,
+   "first_try_valid": true,
+   "attempts": [
+    "groq:openai/gpt-oss-120b: ok"
+   ],
+   "answer": {
+    "off_topic": false,
+    "summary_why": "Blend Bengali traditions with a Jaipur venue, focusing on fish‐centric reception and alpana décor while balancing the large guest count and budget.",
+    "ideas": [
+     {
+      "title": "Alpana‐style floor art",
+      "description": "Hire an artist to paint traditional Bengali alpana motifs on the mandap floor and reception stage using natural pigments.",
+      "category_id": "decor",
+      "budget_impact": "adds",
+      "why": "Meets the alpana preference and creates a unique visual centerpiece."
+     },
+     {
+      "title": "Fish feast at reception",
+      "description": "Feature a live ‘Machher Jhol’ station with Bengali fish curry, served in eco‐friendly banana leaves.",
+      "category_id": "catering",
+      "budget_impact": "adds",
+      "why": "Fish is a must and the station adds authenticity while controlling portion waste."
+     },
+     {
+      "title": "Bengali sweet bar",
+      "description": "Set up a self‐serve table with mishti doi, rosogolla, and sandesh for guests to enjoy throughout the evening.",
+      "category_id": "catering",
+      "budget_impact": "neutral",
+      "why": "Traditional sweets complement the Bengali theme without large extra cost."
+     },
+     {
+      "title": "Traditional folk performances",
+      "description": "Book a Baul or Rabindra Sangeet troupe for a short cultural interlude during the sangeet.",
+      "category_id": "music",
+      "budget_impact": "adds",
+      "why": "Adds cultural depth and aligns with Bengali roots."
+     },
+     {
+      "title": "Reusable decor elements",
+      "description": "Use fabric drapes, wooden frames and bamboo arches that can be repurposed for post‐wedding events.",
+      "category_id": "decor",
+      "budget_impact": "saves",
+      "why": "Keeps costs down and fits the eco‐friendly vibe."
+     }
+    ],
+    "budget_emphasis": [
+     {
+      "category_id": "catering",
+      "direction": "increase",
+      "strength": "medium",
+      "why": "Fish dishes and sweet bar are core to the Bengali experience."
+     },
+     {
+      "category_id": "decor",
+      "direction": "increase",
+      "strength": "small",
+      "why": "Alpana art and reusable pieces require modest extra spend."
+     },
+     {
+      "category_id": "music",
+      "direction": "increase",
+      "strength": "small",
+      "why": "Live folk act enhances cultural authenticity."
+     },
+     {
+      "category_id": "transport",
+      "direction": "decrease",
+      "strength": "small",
+      "why": "Many guests are local; focus on group shuttles rather than individual cars."
+     }
+    ],
+    "extra_tasks": [
+     {
+      "title": "Confirm fish sourcing and quality standards with caterer",
+      "category_id": "catering",
+      "days_before_event": 30,
+      "why": "Ensures fresh fish for the reception menu."
+     },
+     {
+      "title": "Arrange a rehearsal for alpana floor art on mandap",
+      "category_id": "decor",
+      "days_before_event": 20,
+      "why": "Avoids last‐minute issues with pigments or floor prep."
+     },
+     {
+      "title": "Book a backup power generator for live music and sound system",
+      "category_id": "music",
+      "days_before_event": 15,
+      "why": "February evenings in Jaipur can have unexpected outages."
+     },
+     {
+      "title": "Schedule a tasting for Bengali fish dishes and sweets",
+      "category_id": "catering",
+      "days_before_event": 25,
+      "why": "Ensures flavors meet expectations before final menu lock."
+     },
+     {
+      "title": "Plan a coordinated dress code (traditional Bengali attire) for guests",
+      "category_id": "attire_makeup",
+      "days_before_event": 40,
+      "why": "Helps guests blend with the theme and simplifies styling."
+     }
+    ],
+    "vendor_notes": [
+     {
+      "vendor_type": "venue",
+      "why": "Ask if they allow floor painting and have a flat surface suitable for alpana."
+     },
+     {
+      "vendor_type": "pandit",
+      "why": "Confirm inclusion of Bengali rites (e.g., saat paak) within the ceremony schedule."
+     },
+     {
+      "vendor_type": "caterer",
+      "why": "Discuss fish procurement, halal certification if needed, and eco‐friendly serving ware."
+     },
+     {
+      "vendor_type": "photographer",
+      "why": "Request coverage of alpana details and fish station for storytelling shots."
+     },
+     {
+      "vendor_type": "decorator",
+      "why": "Ensure they can source natural pigments and create reusable alpana designs."
+     },
+     {
+      "vendor_type": "music",
+      "why": "Check availability of a Baul troupe and compatibility with DJ setup."
+     }
+    ]
+   }
+  },
+  {
+   "task": "personalize",
+   "case_id": "w-tamil-veg",
+   "passed": true,
+   "error": false,
+   "reasons": [],
+   "metrics": {
+    "ideas": 5.0
+   },
+   "provider": "groq:openai/gpt-oss-120b",
+   "latency_ms": 3562,
+   "first_try_valid": true,
+   "attempts": [
+    "groq:openai/gpt-oss-120b: ok"
+   ],
+   "answer": {
+    "off_topic": false,
+    "summary_why": "Focus on Tamil Brahmin rituals, vegetarian banana‐leaf catering and authentic nadaswaram music while balancing a large guest count and February weather in Jaipur.",
+    "ideas": [
+     {
+      "title": "Banana‐leaf banquet with eco‐friendly décor",
+      "description": "Serve the pure‐vegetarian feast on banana leaves and use reusable terracotta pots, brass lamps and flower garlands instead of disposable items.",
+      "category_id": "catering",
+      "budget_impact": "neutral",
+      "why": "Meets the dietary preference and reduces plastic waste, fitting the Tamil Brahmin tradition."
+     },
+     {
+      "title": "Nadaswaram live ensemble for all functions",
+      "description": "Hire a professional nadaswaram troupe that can play during haldi, mehendi, sangeet, ceremony and reception.",
+      "category_id": "music",
+      "budget_impact": "adds",
+      "why": "Authentic sound is essential for a Tamil Brahmin wedding and creates continuity across events."
+     },
+     {
+      "title": "Heritage venue with on‐site accommodation",
+      "description": "Choose a heritage palace or haveli that offers guest rooms, reducing transport costs and adding grandeur.",
+      "category_id": "venue",
+      "budget_impact": "neutral",
+      "why": "Jaipur’s heritage sites suit a large guest list and minimize separate lodging logistics."
+     },
+     {
+      "title": "Traditional kolam welcome at each entrance",
+      "description": "Commission a kolam artist to create rice‐flour designs at venue entrances and mandap.",
+      "category_id": "decor",
+      "budget_impact": "saves",
+      "why": "Low‐cost, culturally resonant décor that enhances the Tamil vibe."
+     },
+     {
+      "title": "Pre‐wedding ritual rehearsal with key family",
+      "description": "Schedule a brief walk‐through of haldi, mehendi and mandap setups a week before the wedding.",
+      "category_id": "rituals",
+      "budget_impact": "neutral",
+      "why": "Ensures smooth timing and avoids last‐minute hiccups for complex rituals."
+     }
+    ],
+    "budget_emphasis": [
+     {
+      "category_id": "catering",
+      "direction": "increase",
+      "strength": "medium",
+      "why": "Banana‐leaf service and high‐quality vegetarian fare are core to the wedding theme."
+     },
+     {
+      "category_id": "music",
+      "direction": "increase",
+      "strength": "small",
+      "why": "Live nadaswaram musicians are a priority for authenticity."
+     },
+     {
+      "category_id": "decor",
+      "direction": "decrease",
+      "strength": "small",
+      "why": "Use simple kolams and terracotta, reducing spend on elaborate floral installations."
+     },
+     {
+      "category_id": "transport",
+      "direction": "decrease",
+      "strength": "small",
+      "why": "On‐site accommodation cuts the need for extensive shuttle services."
+     }
+    ],
+    "extra_tasks": [
+     {
+      "title": "Confirm availability of a nadaswaram troupe for all five functions",
+      "category_id": "music",
+      "days_before_event": 30,
+      "why": "Secures the specialized musicians well ahead of the busy February schedule."
+     },
+     {
+      "title": "Arrange a dry‐run of banana‐leaf plating with the caterer",
+      "category_id": "catering",
+      "days_before_event": 20,
+      "why": "Ensures smooth service for 250 guests and avoids spills on the day."
+     },
+     {
+      "title": "Book a backup power generator for indoor lighting and sound",
+      "category_id": "venue",
+      "days_before_event": 45,
+      "why": "February nights in Jaipur can be chilly; reliable power is crucial for music and lighting."
+     },
+     {
+      "title": "Order custom kolam stencils and rice‐flour supplies",
+      "category_id": "decor",
+      "days_before_event": 15,
+      "why": "Prevents last‐minute sourcing and keeps the décor authentic."
+     },
+     {
+      "title": "Create a detailed ritual timeline with the pandit and share with all vendors",
+      "category_id": "rituals",
+      "days_before_event": 10,
+      "why": "Coordinates multiple functions and ensures everyone follows the Tamil Brahmin protocol."
+     }
+    ],
+    "vendor_notes": [
+     {
+      "vendor_type": "venue",
+      "why": "Ask if the hall has a covered mandap area and on‐site rooms for out‐of‐town guests."
+     },
+     {
+      "vendor_type": "pandit",
+      "why": "Confirm he can conduct all five functions and provide Tamil Brahmin puja items."
+     },
+     {
+      "vendor_type": "caterer",
+      "why": "Request a menu trial featuring banana‐leaf plating and verify pure‐vegetarian sourcing."
+     },
+     {
+      "vendor_type": "photographer",
+      "why": "Ensure they have experience capturing kolam details and low‐light nadaswaram performances."
+     },
+     {
+      "vendor_type": "decorator",
+      "why": "Discuss using terracotta, brass and rice‐flour kolam to keep décor eco‐friendly."
+     },
+     {
+      "vendor_type": "music",
+      "why": "Ask for a sample recording of the nadaswaram ensemble and their ability to play across all events."
+     }
+    ]
+   }
+  },
+  {
+   "task": "personalize",
+   "case_id": "w-punjabi",
+   "passed": true,
+   "error": false,
+   "reasons": [],
+   "metrics": {
+    "ideas": 4.0
+   },
+   "provider": "groq:openai/gpt-oss-120b",
+   "latency_ms": 2939,
+   "first_try_valid": true,
+   "attempts": [
+    "groq:openai/gpt-oss-120b: ok"
+   ],
+   "answer": {
+    "off_topic": false,
+    "summary_why": "Focus on Punjabi energy, February weather in Jaipur and the large guest count, while keeping key spend areas balanced.",
+    "ideas": [
+     {
+      "title": "Punjabi Bhangra Stage",
+      "description": "Set up a dedicated dance floor with a live dhol band, vibrant drapes and LED backdrops for the sangeet.",
+      "category_id": "music",
+      "budget_impact": "adds",
+      "why": "Bhangra is central to a Punjabi sangeet and creates a memorable vibe."
+     },
+     {
+      "title": "Winter Warmth Decor",
+      "description": "Incorporate warm gold, maroon and deep green floral arrangements with heaters for outdoor evening events.",
+      "category_id": "decor",
+      "budget_impact": "neutral",
+      "why": "February nights in Jaipur can be chilly; comfortable guests enjoy the celebration longer."
+     },
+     {
+      "title": "Family-Style Buffet with Live Counters",
+      "description": "Offer live Punjabi tandoor, chaat and lassi stations alongside a seated buffet.",
+      "category_id": "catering",
+      "budget_impact": "adds",
+      "why": "Live stations enhance the Punjabi experience and manage the large crowd efficiently."
+     },
+     {
+      "title": "Eco-Friendly Invitation Suite",
+      "description": "Print invitations on recycled paper with a rustic pink border and include QR codes for RSVPs.",
+      "category_id": "invitations",
+      "budget_impact": "saves",
+      "why": "Reduces plastic waste and streamlines guest tracking for a 250‐person wedding."
+     }
+    ],
+    "budget_emphasis": [
+     {
+      "category_id": "music",
+      "direction": "increase",
+      "strength": "medium",
+      "why": "Live dhol and bhangra performers are the heart of the Punjabi sangeet."
+     },
+     {
+      "category_id": "catering",
+      "direction": "increase",
+      "strength": "small",
+      "why": "Quality Punjabi cuisine and live stations are guest expectations."
+     },
+     {
+      "category_id": "decor",
+      "direction": "decrease",
+      "strength": "small",
+      "why": "Focus on selective floral pieces and reusable drapes saves on excess decor."
+     }
+    ],
+    "extra_tasks": [
+     {
+      "title": "Confirm heater rentals and power backup for outdoor evenings",
+      "category_id": "venue",
+      "days_before_event": 30,
+      "why": "February evenings can be cold; guests need warmth."
+     },
+     {
+      "title": "Arrange a backup indoor venue for mehendi in case of unexpected rain",
+      "category_id": "venue",
+      "days_before_event": 45,
+      "why": "Weather in Jaipur can be unpredictable."
+     },
+     {
+      "title": "Schedule a joint rehearsal with dhol band, DJ and choreographer",
+      "category_id": "music",
+      "days_before_event": 14,
+      "why": "Ensures timing and transitions flow smoothly during sangeet."
+     },
+     {
+      "title": "Finalize seating plan for haldi and mehendi with family clusters",
+      "category_id": "rituals",
+      "days_before_event": 20,
+      "why": "Large guest list needs clear arrangement for comfort and rituals."
+     },
+     {
+      "title": "Create a digital playlist of Punjabi classics for background during reception",
+      "category_id": "music",
+      "days_before_event": 10,
+      "why": "Keeps the Punjabi mood alive between live performances."
+     }
+    ],
+    "vendor_notes": [
+     {
+      "vendor_type": "venue",
+      "why": "Ask about indoor hall capacity, heater provision and parking for 250 guests."
+     },
+     {
+      "vendor_type": "music",
+      "why": "Confirm live dhol availability, sound system specs and backup generators."
+     },
+     {
+      "vendor_type": "caterer",
+      "why": "Request sample of tandoor dishes and discuss live station logistics."
+     },
+     {
+      "vendor_type": "decorator",
+      "why": "Discuss reusable drapes, gold accents and heater placement for comfort."
+     },
+     {
+      "vendor_type": "photographer",
+      "why": "Ensure they have experience with high-energy bhangra shoots and low-light indoor settings."
+     },
+     {
+      "vendor_type": "mehendi_artist",
+      "why": "Ask for Punjabi motifs and a quick‐dry formula for large groups."
+     }
+    ]
+   }
+  },
+  {
+   "task": "personalize",
+   "case_id": "w-jain",
+   "passed": true,
+   "error": false,
+   "reasons": [],
+   "metrics": {
+    "ideas": 5.0
+   },
+   "provider": "groq:openai/gpt-oss-120b",
+   "latency_ms": 3572,
+   "first_try_valid": true,
+   "attempts": [
+    "groq:openai/gpt-oss-120b: ok"
+   ],
+   "answer": {
+    "off_topic": false,
+    "summary_why": "Focus on Jain dietary rules, sunset dinner ambience, and Jaipur winter weather while balancing a large guest count and budget.",
+    "ideas": [
+     {
+      "title": "Sunset open‐air dinner under canopies",
+      "description": "Arrange low‐heat lanterns and transparent canopies for a breezy evening meal on the venue lawn.",
+      "category_id": "decor",
+      "budget_impact": "adds",
+      "why": "Creates the requested sunset vibe and works well in February’s cool Jaipur climate."
+     },
+     {
+      "title": "Jain‐friendly banquet menu",
+      "description": "Include paneer tikka, dal makhani (no onion/garlic), seasonal vegetables, and sweet dishes with dry fruits.",
+      "category_id": "catering",
+      "budget_impact": "neutral",
+      "why": "Meets strict Jain restrictions without extra specialty costs."
+     },
+     {
+      "title": "Eco‐friendly floral arches with marigold & rose",
+      "description": "Use locally sourced marigold and roses for mandap and stage, avoiding synthetic flowers.",
+      "category_id": "decor",
+      "budget_impact": "saves",
+      "why": "Local flowers are cheaper and align with sustainable preferences."
+     },
+     {
+      "title": "Live classical music for sangeet",
+      "description": "Hire a small folk ensemble (e.g., Rajasthani singers with dholak) instead of a full band.",
+      "category_id": "music",
+      "budget_impact": "saves",
+      "why": "Adds cultural flavor and fits the budget better than a large DJ/band setup."
+     },
+     {
+      "title": "Digital RSVP with meal preference tick box",
+      "description": "Use a QR‐code linked form to capture guest count and Jain menu choices.",
+      "category_id": "invitations",
+      "budget_impact": "saves",
+      "why": "Reduces printed cards and helps avoid catering errors."
+     }
+    ],
+    "budget_emphasis": [
+     {
+      "category_id": "catering",
+      "direction": "increase",
+      "strength": "small",
+      "why": "Jain menu requires careful ingredient sourcing; a modest buffer avoids last‐minute changes."
+     },
+     {
+      "category_id": "decor",
+      "direction": "decrease",
+      "strength": "small",
+      "why": "Local flower choices keep costs low while delivering richness."
+     },
+     {
+      "category_id": "music",
+      "direction": "decrease",
+      "strength": "medium",
+      "why": "A folk ensemble provides ambiance at a lower cost than a full orchestra."
+     },
+     {
+      "category_id": "contingency",
+      "direction": "increase",
+      "strength": "small",
+      "why": "Large guest list and multiple functions merit a modest safety net."
+     }
+    ],
+    "extra_tasks": [
+     {
+      "title": "Confirm Jain‐compliant kitchen staff and ingredient sourcing",
+      "category_id": "catering",
+      "days_before_event": 30,
+      "why": "Ensures no onion, garlic, or root vegetables are used."
+     },
+     {
+      "title": "Arrange heated blankets or portable heaters for outdoor sunset dinner",
+      "category_id": "venue",
+      "days_before_event": 20,
+      "why": "February nights in Jaipur can be chilly for guests."
+     },
+     {
+      "title": "Schedule a dry‐run of sunset lighting and sound at the venue",
+      "category_id": "music",
+      "days_before_event": 15,
+      "why": "Guarantees ambience aligns with the planned sunset timing."
+     },
+     {
+      "title": "Create a vegetarian Jain menu card with ingredient list for each dish",
+      "category_id": "catering",
+      "days_before_event": 10,
+      "why": "Helps guests verify compliance and reduces confusion."
+     },
+     {
+      "title": "Organise a backup indoor space for ceremony in case of unexpected cold",
+      "category_id": "venue",
+      "days_before_event": 5,
+      "why": "Provides contingency for weather fluctuations."
+     }
+    ],
+    "vendor_notes": [
+     {
+      "vendor_type": "venue",
+      "why": "Ask about open‐lawn space, canopy support, and availability of heating equipment."
+     },
+     {
+      "vendor_type": "pandit",
+      "why": "Confirm they are experienced with Jain rites and the sunset ceremony timing."
+     },
+     {
+      "vendor_type": "caterer",
+      "why": "Request a detailed Jain menu, ingredient list, and a tasting session without prohibited items."
+     },
+     {
+      "vendor_type": "decorator",
+      "why": "Emphasise local marigold/rose supply and reusable canopy structures."
+     },
+     {
+      "vendor_type": "music",
+      "why": "Check if the folk ensemble can perform both sangeet and background dinner music."
+     },
+     {
+      "vendor_type": "transport",
+      "why": "Ensure vehicles have space for heated blankets and can shuttle guests between hotel and venue in winter."
+     }
+    ]
+   }
+  },
+  {
+   "task": "personalize",
+   "case_id": "w-dry-eco",
+   "passed": true,
+   "error": false,
+   "reasons": [],
+   "metrics": {
+    "ideas": 4.0
+   },
+   "provider": "groq:openai/gpt-oss-120b",
+   "latency_ms": 3414,
+   "first_try_valid": true,
+   "attempts": [
+    "groq:openai/gpt-oss-120b: ok"
+   ],
+   "answer": {
+    "off_topic": false,
+    "summary_why": "Focus on a dry, plastic‐free celebration in Jaipur with elegant reusable decor and reliable rain‐proof logistics.",
+    "ideas": [
+     {
+      "title": "Eco‐friendly dry décor",
+      "description": "Use fabric drapes, jute ribbons, clay diyas and fresh marigold garlands instead of plastic garlands and balloons.",
+      "category_id": "decor",
+      "budget_impact": "neutral",
+      "why": "Matches zero‐plastic wish and looks regal for a Jaipur wedding."
+     },
+     {
+      "title": "Indoor marquee for outdoor functions",
+      "description": "Set up a sturdy, clear‐top marquee for haldi, mehendi and sangeet to keep everything dry.",
+      "category_id": "venue",
+      "budget_impact": "adds",
+      "why": "February can have unexpected showers; a marquee safeguards the schedule."
+     },
+     {
+      "title": "Live traditional music with nadaswaram & folk band",
+      "description": "Hire a nadaswaram player for ceremony and a folk band for sangeet, avoiding a DJ that needs extra sound equipment.",
+      "category_id": "music",
+      "budget_impact": "neutral",
+      "why": "Fits cultural vibe and reduces extra electronic gear that could be damaged by humidity."
+     },
+     {
+      "title": "Reusable cutlery & biodegradable plates",
+      "description": "Serve food on stainless steel cutlery and palm‐leaf plates.",
+      "category_id": "catering",
+      "budget_impact": "saves",
+      "why": "Eliminates plastic waste while staying within budget."
+     }
+    ],
+    "budget_emphasis": [
+     {
+      "category_id": "venue",
+      "direction": "increase",
+      "strength": "small",
+      "why": "Marquee and backup indoor space add a modest cost but protect against rain."
+     },
+     {
+      "category_id": "decor",
+      "direction": "decrease",
+      "strength": "small",
+      "why": "Reusable fabric and natural flowers cost less than synthetic décor."
+     },
+     {
+      "category_id": "catering",
+      "direction": "increase",
+      "strength": "small",
+      "why": "Higher quality vegetarian menu for a dry, alcohol‐free feast."
+     }
+    ],
+    "extra_tasks": [
+     {
+      "title": "Confirm marquee dimensions and ventilation requirements",
+      "category_id": "venue",
+      "days_before_event": 30,
+      "why": "Ensures space fits all functions and stays comfortable."
+     },
+     {
+      "title": "Source biodegradable plate and cutlery suppliers",
+      "category_id": "catering",
+      "days_before_event": 45,
+      "why": "Locks in eco‐friendly tableware well before the wedding."
+     },
+     {
+      "title": "Arrange a rain‐watch schedule and on‐site backup power for sound",
+      "category_id": "music",
+      "days_before_event": 20,
+      "why": "Keeps music uninterrupted if weather turns."
+     },
+     {
+      "title": "Create a plastic‐free waste segregation plan with the venue",
+      "category_id": "decor",
+      "days_before_event": 15,
+      "why": "Helps achieve zero‐plastic goal during the event."
+     },
+     {
+      "title": "Organise a rehearsal for the mandap setup inside the marquee",
+      "category_id": "rituals",
+      "days_before_event": 10,
+      "why": "Checks flow and ensures all ritual items stay dry."
+     }
+    ],
+    "vendor_notes": [
+     {
+      "vendor_type": "venue",
+      "why": "Ask about indoor marquee options, drainage, and permission for reusable décor."
+     },
+     {
+      "vendor_type": "pandit",
+      "why": "Confirm that all ritual items can be placed inside the marquee without compromising sanctity."
+     },
+     {
+      "vendor_type": "caterer",
+      "why": "Request a fully vegetarian, dry‐food menu and confirm use of biodegradable serving ware."
+     },
+     {
+      "vendor_type": "decorator",
+      "why": "Insist on fabric drapes, jute, and fresh flowers; ask for a sample of reusable décor pieces."
+     },
+     {
+      "vendor_type": "music",
+      "why": "Ask for acoustic setups that work under a marquee and a backup generator."
+     },
+     {
+      "vendor_type": "invitation_printer",
+      "why": "Choose seed‐paper or recycled paper invites to align with zero‐plastic theme."
+     }
+    ]
+   }
+  },
+  {
+   "task": "personalize",
+   "case_id": "b-jungle",
+   "passed": true,
+   "error": false,
+   "reasons": [],
+   "metrics": {
+    "ideas": 5.0
+   },
+   "provider": "groq:openai/gpt-oss-120b",
+   "latency_ms": 3634,
+   "first_try_valid": true,
+   "attempts": [
+    "groq:openai/gpt-oss-120b: ok"
+   ],
+   "answer": {
+    "off_topic": false,
+    "summary_why": "Focus on a vibrant jungle theme that delights 5‐year‐olds while keeping the November weather in mind and staying within a comfortable budget.",
+    "ideas": [
+     {
+      "title": "Jungle canopy decor",
+      "description": "Green fabric drapes, paper vines, and cardboard animal cut‐outs create a forest feel.",
+      "category_id": "decor",
+      "budget_impact": "neutral",
+      "why": "Matches the jungle theme and can be reused for future parties."
+     },
+     {
+      "title": "Savanna snack bar",
+      "description": "Serve finger foods like mini kebabs, fruit skewers, and ‘animal‐shaped’ samosas on a rustic wooden board.",
+      "category_id": "catering",
+      "budget_impact": "saves",
+      "why": "Simple, kid‐friendly Indian snacks cost less than elaborate platters."
+     },
+     {
+      "title": "Animal‐mask making station",
+      "description": "Provide paper plates, paints, and elastic bands for kids to create their own jungle masks.",
+      "category_id": "entertainment",
+      "budget_impact": "saves",
+      "why": "Low‐cost activity that doubles as a party favor."
+     },
+     {
+      "title": "Jungle photo booth",
+      "description": "Set up a backdrop of trees and props like binoculars and plush animals.",
+      "category_id": "photography",
+      "budget_impact": "neutral",
+      "why": "Creates memorable pictures without hiring extra staff."
+     },
+     {
+      "title": "Eco‐friendly return gifts",
+      "description": "Mini plant pots with soil and a seed packet, wrapped in kraft paper.",
+      "category_id": "return_gifts",
+      "budget_impact": "saves",
+      "why": "Fits the theme, is reusable, and avoids plastic."
+     }
+    ],
+    "budget_emphasis": [
+     {
+      "category_id": "entertainment",
+      "direction": "increase",
+      "strength": "small",
+      "why": "Games and activities are the core of a 5‐year‐old's birthday."
+     },
+     {
+      "category_id": "decor",
+      "direction": "decrease",
+      "strength": "small",
+      "why": "DIY jungle decor keeps costs low while looking great."
+     },
+     {
+      "category_id": "contingency",
+      "direction": "increase",
+      "strength": "medium",
+      "why": "November weather can be unpredictable; a modest buffer helps."
+     }
+    ],
+    "extra_tasks": [
+     {
+      "title": "Confirm indoor backup space for games",
+      "category_id": "venue",
+      "days_before_event": 5,
+      "why": "Even in November, sudden rain in Indore could affect outdoor activities."
+     },
+     {
+      "title": "Order jungle‐themed cake topper",
+      "category_id": "cake",
+      "days_before_event": 7,
+      "why": "Adds a personalized touch without extra cost."
+     },
+     {
+      "title": "Arrange a small sound system for music and announcements",
+      "category_id": "entertainment",
+      "days_before_event": 10,
+      "why": "Keeps kids engaged and helps coordinate games."
+     },
+     {
+      "title": "Create a simple schedule of games and timings",
+      "category_id": null,
+      "days_before_event": 3,
+      "why": "Helps the entertainer stay on track and parents know what's coming."
+     },
+     {
+      "title": "Prepare a quick first‐aid kit and allergy list",
+      "category_id": null,
+      "days_before_event": 2,
+      "why": "Ensures safety for a larger group of young children."
+     }
+    ],
+    "vendor_notes": [
+     {
+      "vendor_type": "venue",
+      "why": "Ask if the space has a covered area or can be quickly converted indoors for rain."
+     },
+     {
+      "vendor_type": "caterer",
+      "why": "Confirm kid‐friendly menu and ability to serve buffet style on low tables."
+     },
+     {
+      "vendor_type": "entertainer",
+      "why": "Request an animal‐themed storytelling or puppet show that works inside."
+     },
+     {
+      "vendor_type": "decorator",
+      "why": "Emphasize reusable jungle elements and minimal plastic usage."
+     },
+     {
+      "vendor_type": "photographer",
+      "why": "Ask for a quick photo booth setup and a few candid shots of the games."
+     },
+     {
+      "vendor_type": "cake_shop",
+      "why": "Discuss a jungle‐patterned cake with natural colors and no edible glitter."
+     }
+    ]
+   }
+  },
+  {
+   "task": "personalize",
+   "case_id": "b-sixtieth",
+   "passed": true,
+   "error": false,
+   "reasons": [],
+   "metrics": {
+    "ideas": 5.0
+   },
+   "provider": "groq:openai/gpt-oss-120b",
+   "latency_ms": 3256,
+   "first_try_valid": true,
+   "attempts": [
+    "groq:openai/gpt-oss-120b: ok"
+   ],
+   "answer": {
+    "off_topic": false,
+    "summary_why": "Blend Aarav’s fun birthday with Dad’s milestone by weaving classic Hindi nostalgia into games, music and decor, while staying within a comfortable budget.",
+    "ideas": [
+     {
+      "title": "Retro Hindi Karaoke Corner",
+      "description": "Set up a small stage with a mic and a playlist of old Hindi songs for family sing‐alongs.",
+      "category_id": "entertainment",
+      "budget_impact": "adds",
+      "why": "Honors Dad’s 60th while keeping kids engaged with simple lyrics."
+     },
+     {
+      "title": "Dual‐theme décor – Balloon garlands + vintage record frames",
+      "description": "Mix colorful birthday balloons with framed retro record covers and Hindi lyric posters.",
+      "category_id": "decor",
+      "budget_impact": "neutral",
+      "why": "Celebrates both ages without needing separate decor sets."
+     },
+     {
+      "title": "Mini “Mithai” bar for kids and adults",
+      "description": "Serve bite‐size Indian sweets in small paper cups for kids and larger platters for adults.",
+      "category_id": "catering",
+      "budget_impact": "saves",
+      "why": "Combines birthday treats and traditional festive sweets in one cost‐effective setup."
+     },
+     {
+      "title": "Personalised thank‐you cards with a family photo",
+      "description": "Print simple cards featuring a group photo and a short note from Aarav and Dad.",
+      "category_id": "return_gifts",
+      "budget_impact": "saves",
+      "why": "Adds a heartfelt touch and replaces pricier gift bags."
+     },
+     {
+      "title": "Indoor treasure hunt with Hindi riddles",
+      "description": "Create clues using simple Hindi verses leading to small prizes.",
+      "category_id": "entertainment",
+      "budget_impact": "neutral",
+      "why": "Engages kids and lets elders join in the cultural element."
+     }
+    ],
+    "budget_emphasis": [
+     {
+      "category_id": "entertainment",
+      "direction": "increase",
+      "strength": "small",
+      "why": "Games and karaoke are the core of the celebration for both generations."
+     },
+     {
+      "category_id": "catering",
+      "direction": "decrease",
+      "strength": "small",
+      "why": "A combined mithai bar reduces duplicate food costs."
+     },
+     {
+      "category_id": "decor",
+      "direction": "decrease",
+      "strength": "small",
+      "why": "Reuse vintage items you already own, saving on new decor."
+     }
+    ],
+    "extra_tasks": [
+     {
+      "title": "Finalize Hindi song playlist and test audio equipment",
+      "category_id": "entertainment",
+      "days_before_event": 7,
+      "why": "Ensures clear sound for both kids and adults."
+     },
+     {
+      "title": "Arrange a backup indoor space in case of unexpected weather",
+      "category_id": "venue",
+      "days_before_event": 5,
+      "why": "November can be chilly in Indore; indoor comfort matters."
+     },
+     {
+      "title": "Prepare simple clue cards for the treasure hunt",
+      "category_id": "entertainment",
+      "days_before_event": 3,
+      "why": "Allows time to proofread Hindi verses and print them."
+     },
+     {
+      "title": "Coordinate with the photographer for group photo timing",
+      "category_id": "photography",
+      "days_before_event": 2,
+      "why": "Captures both birthday and dad’s milestone together."
+     },
+     {
+      "title": "Purchase extra batteries and spare microphones",
+      "category_id": "entertainment",
+      "days_before_event": 1,
+      "why": "Prevents technical glitches during karaoke."
+     }
+    ],
+    "vendor_notes": [
+     {
+      "vendor_type": "venue",
+      "why": "Ask if they can provide a small stage and basic sound system for karaoke."
+     },
+     {
+      "vendor_type": "caterer",
+      "why": "Request a mixed menu of kid‐friendly snacks and traditional sweets to fit both themes."
+     },
+     {
+      "vendor_type": "entertainer",
+      "why": "Check if they can host the treasure hunt and assist with karaoke cues."
+     },
+     {
+      "vendor_type": "decorator",
+      "why": "Inquire about using existing vintage record frames to keep costs low."
+     },
+     {
+      "vendor_type": "photographer",
+      "why": "Confirm they can capture candid moments during games and the sing‐along."
+     },
+     {
+      "vendor_type": "cake_shop",
+      "why": "Discuss a half‐birthday cake for Aarav and a small slice for Dad’s celebration."
+     }
+    ]
+   }
+  },
+  {
+   "task": "personalize",
+   "case_id": "b-tight-home",
+   "passed": true,
+   "error": false,
+   "reasons": [],
+   "metrics": {
+    "ideas": 5.0
+   },
+   "provider": "groq:openai/gpt-oss-120b",
+   "latency_ms": 4585,
+   "first_try_valid": true,
+   "attempts": [
+    "groq:openai/gpt-oss-120b: ok"
+   ],
+   "answer": {
+    "off_topic": false,
+    "summary_why": "Focus on low‐cost home setup, DIY decor and games, while allocating just enough for food and a modest photographer.",
+    "ideas": [
+     {
+      "title": "DIY cardboard superhero backdrop",
+      "description": "Create a large superhero scene with painted cardboard and reusable cut‐outs for photo ops.",
+      "category_id": "decor",
+      "budget_impact": "saves",
+      "why": "Home‐made decor eliminates rental costs and fits a tight budget."
+     },
+     {
+      "title": "Homemade snack bar",
+      "description": "Prepare simple items like samosa bites, popcorn, and fruit skewers instead of a full catered menu.",
+      "category_id": "catering",
+      "budget_impact": "saves",
+      "why": "Cooking at home reduces expense and allows portion control for 40 kids."
+     },
+     {
+      "title": "Prize‐packed treasure hunt",
+      "description": "Organize a treasure‐hunt game using inexpensive toys and stickers as prizes.",
+      "category_id": "entertainment",
+      "budget_impact": "neutral",
+      "why": "Games are the core of a 5‐year‐old’s party and can be done without extra cost."
+     },
+     {
+      "title": "Digital photo collage",
+      "description": "Ask guests to send photos via WhatsApp; compile a collage to print as a keepsake.",
+      "category_id": "photography",
+      "budget_impact": "saves",
+      "why": "Avoids a pricey photographer while still preserving memories."
+     },
+     {
+      "title": "Eco‐friendly return gift bags",
+      "description": "Fill reusable cloth pouches with crayons and a small storybook.",
+      "category_id": "return_gifts",
+      "budget_impact": "saves",
+      "why": "Reusable bags cut down on plastic and can be bought in bulk cheaply."
+     }
+    ],
+    "budget_emphasis": [
+     {
+      "category_id": "catering",
+      "direction": "increase",
+      "strength": "small",
+      "why": "Food is the biggest cost for 40 guests; a modest upgrade ensures kids are satisfied."
+     },
+     {
+      "category_id": "decor",
+      "direction": "decrease",
+      "strength": "medium",
+      "why": "DIY decor saves a lot and fits the home venue."
+     },
+     {
+      "category_id": "photography",
+      "direction": "decrease",
+      "strength": "small",
+      "why": "A digital collage replaces a professional shoot, freeing budget for other needs."
+     }
+    ],
+    "extra_tasks": [
+     {
+      "title": "Create a detailed game schedule with timings",
+      "category_id": "entertainment",
+      "days_before_event": 7,
+      "why": "Keeps kids engaged and helps the entertainer coordinate."
+     },
+     {
+      "title": "Purchase bulk disposable plates and cutlery (biodegradable)",
+      "category_id": "catering",
+      "days_before_event": 5,
+      "why": "Ensures enough serving items without extra rentals."
+     },
+     {
+      "title": "Prepare a backup indoor play area in case of weather changes",
+      "category_id": "venue",
+      "days_before_event": 3,
+      "why": "November can be chilly; indoor space keeps the party smooth."
+     },
+     {
+      "title": "Send a reminder to parents about the dress code (comfortable, no shoes inside)",
+      "category_id": null,
+      "days_before_event": 2,
+      "why": "Helps maintain a clean home environment."
+     },
+     {
+      "title": "Collect all digital photos from guests and create the collage",
+      "category_id": "photography",
+      "days_before_event": 1,
+      "why": "Finalizes the keepsake before the event ends."
+     }
+    ],
+    "vendor_notes": [
+     {
+      "vendor_type": "venue",
+      "why": "Confirm that the home space can accommodate 40 guests safely and discuss any parking limits."
+     },
+     {
+      "vendor_type": "caterer",
+      "why": "Ask for a simple kid‐friendly menu with per‐plate pricing to stay within budget."
+     },
+     {
+      "vendor_type": "entertainer",
+      "why": "Request a flexible game host who can adapt activities to indoor spaces."
+     },
+     {
+      "vendor_type": "decorator",
+      "why": "If used, specify a preference for reusable or recyclable materials."
+     },
+     {
+      "vendor_type": "photographer",
+      "why": "Negotiate a short‐hour package for candid shots only, or propose a digital‐only delivery."
+     },
+     {
+      "vendor_type": "cake_shop",
+      "why": "Order a modest two‐tier cake with simple icing to control cost."
+     }
+    ]
+   }
+  },
+  {
+   "task": "personalize",
+   "case_id": "c-eco-ganesh",
+   "passed": true,
+   "error": false,
+   "reasons": [],
+   "metrics": {
+    "ideas": 4.0
+   },
+   "provider": "groq:openai/gpt-oss-120b",
+   "latency_ms": 3154,
+   "first_try_valid": true,
+   "attempts": [
+    "groq:openai/gpt-oss-120b: ok"
+   ],
+   "answer": {
+    "off_topic": false,
+    "summary_why": "Focus on eco‐friendly choices that suit a large December Ganeshotsav in Pune while keeping the community spirit alive.",
+    "ideas": [
+     {
+      "title": "Zero‐plastic serving",
+      "description": "Use banana leaves or reusable stainless steel plates for the community meal.",
+      "category_id": "prasad_catering",
+      "budget_impact": "saves",
+      "why": "Reduces waste and aligns with the eco‐friendly theme, plus leaf plates are inexpensive in Pune."
+     },
+     {
+      "title": "Solar‐powered sound & lighting",
+      "description": "Rent solar LED lights and a battery‐backed PA system for evening programs.",
+      "category_id": "sound_lighting",
+      "budget_impact": "adds",
+      "why": "Cuts electricity use and showcases a green initiative; initial cost is modest for the budget."
+     },
+     {
+      "title": "Community compost bins",
+      "description": "Place labelled compost bins for organic waste and partner with a local composting unit.",
+      "category_id": "cleanup",
+      "budget_impact": "neutral",
+      "why": "Ensures waste is managed sustainably and engages volunteers in the green mission."
+     },
+     {
+      "title": "Live cultural storytelling",
+      "description": "Invite local storytellers to narrate Ganesh legends using minimal props.",
+      "category_id": "cultural_program",
+      "budget_impact": "saves",
+      "why": "Low‐cost entertainment that reinforces tradition and fits the eco‐theme."
+     }
+    ],
+    "budget_emphasis": [
+     {
+      "category_id": "pandal_venue",
+      "direction": "decrease",
+      "strength": "small",
+      "why": "A simple bamboo‐frame pandal with cloth drapes costs less than elaborate structures."
+     },
+     {
+      "category_id": "decor",
+      "direction": "increase",
+      "strength": "small",
+      "why": "Hand‐crafted flower garlands and reusable fabric backdrops enhance the green vibe."
+     },
+     {
+      "category_id": "cleanup",
+      "direction": "increase",
+      "strength": "medium",
+      "why": "Proper segregation, composting and post‐event waste disposal need extra resources."
+     }
+    ],
+    "extra_tasks": [
+     {
+      "title": "Confirm solar power vendor and arrange backup generator",
+      "category_id": "sound_lighting",
+      "days_before_event": 10,
+      "why": "December evenings can be cloudy; backup ensures uninterrupted programs."
+     },
+     {
+      "title": "Organise a clay‐idol making workshop for volunteers",
+      "category_id": "puja_rituals",
+      "days_before_event": 20,
+      "why": "Engages the community and guarantees the idol meets eco standards."
+     },
+     {
+      "title": "Distribute reusable water bottles to volunteers and guests",
+      "category_id": "cleanup",
+      "days_before_event": 5,
+      "why": "Cuts single‐use plastic and supports the green message."
+     },
+     {
+      "title": "Arrange a post‐event tree‐planting drive for leftover compost",
+      "category_id": "volunteers_logistics",
+      "days_before_event": 1,
+      "why": "Turns waste into community benefit and reinforces sustainability."
+     }
+    ],
+    "vendor_notes": [
+     {
+      "vendor_type": "pandal_contractor",
+      "why": "Ask for bamboo frames, jute fabric, and reusable decor; verify they can dismantle and recycle materials."
+     },
+     {
+      "vendor_type": "idol_maker",
+      "why": "Confirm the clay is natural, non‐toxic, and that the idol will be immersed in a biodegradable pot."
+     },
+     {
+      "vendor_type": "sound_lighting",
+      "why": "Inquire about solar LED options, battery backup duration, and minimal cabling to keep the site tidy."
+     },
+     {
+      "vendor_type": "decorator",
+      "why": "Request locally sourced flowers and fabric drapes that can be reused for next year’s celebrations."
+     },
+     {
+      "vendor_type": "caterer",
+      "why": "Ensure they can serve on banana leaves or reusable plates and separate vegetarian and non‐vegetarian waste."
+     },
+     {
+      "vendor_type": "waste_management",
+      "why": "Ask for separate bins for compost, recyclables, and landfill; confirm they provide a post‐event waste audit."
+     }
+    ]
+   }
+  },
+  {
+   "task": "personalize",
+   "case_id": "c-durga",
+   "passed": true,
+   "error": false,
+   "reasons": [],
+   "metrics": {
+    "ideas": 5.0
+   },
+   "provider": "groq:openai/gpt-oss-120b",
+   "latency_ms": 3828,
+   "first_try_valid": true,
+   "attempts": [
+    "groq:openai/gpt-oss-120b: ok"
+   ],
+   "answer": {
+    "off_topic": false,
+    "summary_why": "Focus on a Bengali‐style eco‐friendly Ganeshotsav that balances cultural authenticity, crowd comfort and waste‐free practices.",
+    "ideas": [
+     {
+      "title": "Bengali Durga‐Puja style pandal",
+      "description": "Use bamboo framing, jute drapes and terracotta motifs; add a small dhunuchi dance stage.",
+      "category_id": "decor",
+      "budget_impact": "neutral",
+      "why": "Matches the society's cultural preference and uses low‐cost, reusable materials."
+     },
+     {
+      "title": "Community bhog with biodegradable plates",
+      "description": "Serve traditional bhog on banana leaves or compostable plates.",
+      "category_id": "prasad_catering",
+      "budget_impact": "saves",
+      "why": "Eco‐friendly serving reduces plastic waste and aligns with the green theme."
+     },
+     {
+      "title": "Volunteer‐run waste segregation stations",
+      "description": "Color‐coded bins for wet, dry and recyclable waste with signage.",
+      "category_id": "cleanup",
+      "budget_impact": "saves",
+      "why": "Keeps cleanup costs low and promotes sustainability among 400 guests."
+     },
+     {
+      "title": "Rain‐ready sound & lighting canopy",
+      "description": "Portable canopies over speakers and lights to protect from December showers.",
+      "category_id": "sound_lighting",
+      "budget_impact": "adds",
+      "why": "Pune can have unexpected rain; protects equipment and avoids last‐minute rentals."
+     },
+     {
+      "title": "Live Bengali folk performances",
+      "description": "Invite a local Baul group for dhunuchi dance and bhajan sessions.",
+      "category_id": "cultural_program",
+      "budget_impact": "adds",
+      "why": "Enhances cultural authenticity and engages the community."
+     }
+    ],
+    "budget_emphasis": [
+     {
+      "category_id": "decor",
+      "direction": "decrease",
+      "strength": "small",
+      "why": "Reusable bamboo & jute cut down material cost."
+     },
+     {
+      "category_id": "prasad_catering",
+      "direction": "increase",
+      "strength": "small",
+      "why": "Quality bhog and extra portions for 400 people ensure satisfaction."
+     },
+     {
+      "category_id": "sound_lighting",
+      "direction": "increase",
+      "strength": "small",
+      "why": "Rain‐proof canopies and backup generators add reliability."
+     },
+     {
+      "category_id": "cleanup",
+      "direction": "decrease",
+      "strength": "small",
+      "why": "Volunteer‐run segregation reduces paid waste‐management fees."
+     }
+    ],
+    "extra_tasks": [
+     {
+      "title": "Finalize dhunuchi dance floor safety layout",
+      "category_id": "cultural_program",
+      "days_before_event": 7,
+      "why": "Ensures clear egress and fire‐safety for the dance area."
+     },
+     {
+      "title": "Arrange a backup generator for sound system",
+      "category_id": "sound_lighting",
+      "days_before_event": 10,
+      "why": "December evenings may have power fluctuations."
+     },
+     {
+      "title": "Coordinate with local NGOs for compost collection",
+      "category_id": "cleanup",
+      "days_before_event": 14,
+      "why": "Supports zero‐waste goal for the community meal."
+     },
+     {
+      "title": "Print multilingual (Marathi & Bengali) signage for rituals",
+      "category_id": "puja_rituals",
+      "days_before_event": 5,
+      "why": "Helps all residents follow the puja schedule smoothly."
+     },
+     {
+      "title": "Conduct a brief volunteer safety briefing",
+      "category_id": "volunteers_logistics",
+      "days_before_event": 2,
+      "why": "Prepares volunteers for crowd control and first‐aid basics."
+     }
+    ],
+    "vendor_notes": [
+     {
+      "vendor_type": "pandal_contractor",
+      "why": "Confirm bamboo & jute material options and request a reusable structure for next year."
+     },
+     {
+      "vendor_type": "idol_maker",
+      "why": "Ask for eco‐friendly clay idol with a simple transport crate to reduce breakage."
+     },
+     {
+      "vendor_type": "decorator",
+      "why": "Discuss Bengali motifs, terracotta pots and reusable flower arrangements."
+     },
+     {
+      "vendor_type": "caterer",
+      "why": "Ensure bhog menu uses banana leaves and confirm portion sizes for 400 guests."
+     },
+     {
+      "vendor_type": "waste_management",
+      "why": "Ask for separate collection of compostable, recyclable and landfill waste."
+     }
+    ]
+   }
+  },
+  {
+   "task": "personalize",
+   "case_id": "c-garba",
+   "passed": true,
+   "error": false,
+   "reasons": [],
+   "metrics": {
+    "ideas": 5.0
+   },
+   "provider": "groq:openai/gpt-oss-120b",
+   "latency_ms": 3296,
+   "first_try_valid": true,
+   "attempts": [
+    "groq:openai/gpt-oss-120b: ok"
+   ],
+   "answer": {
+    "off_topic": false,
+    "summary_why": "Blend Ganeshotsav rituals with a Navratri garba night, keeping eco‐friendly practices and crowd comfort for 400 guests in Pune.",
+    "ideas": [
+     {
+      "title": "Garba floor on the pandal stage",
+      "description": "Lay a portable, reusable wooden floor on the stage and provide dandiya sticks made of bamboo.",
+      "category_id": "cultural_program",
+      "budget_impact": "neutral",
+      "why": "Allows kids and elders to enjoy garba after the puja without renting a separate hall."
+     },
+     {
+      "title": "Eco‐friendly prasad packaging",
+      "description": "Serve modak and bhakri in banana leaves or reusable stainless steel containers.",
+      "category_id": "prasad_catering",
+      "budget_impact": "saves",
+      "why": "Reduces plastic waste, aligns with the green theme and is cost‐effective for large numbers."
+     },
+     {
+      "title": "Community lanterns for lighting",
+      "description": "Use LED lanterns powered by solar banks instead of conventional floodlights.",
+      "category_id": "sound_lighting",
+      "budget_impact": "adds",
+      "why": "Creates a festive ambience for garba night and supports the sustainability goal."
+     },
+     {
+      "title": "Live streaming of puja",
+      "description": "Set up a single camera and stream the rituals to a screen for elders who prefer to sit inside.",
+      "category_id": "puja_rituals",
+      "budget_impact": "neutral",
+      "why": "Keeps senior citizens comfortable during the loud garba segment while still participating."
+     },
+     {
+      "title": "Volunteer ‘Green Squad’ for waste segregation",
+      "description": "Assign small teams with color‐coded bins for compost, recyclables, and dry waste.",
+      "category_id": "cleanup",
+      "budget_impact": "saves",
+      "why": "Leverages community spirit, cuts professional waste‐management fees and ensures proper disposal."
+     }
+    ],
+    "budget_emphasis": [
+     {
+      "category_id": "decor",
+      "direction": "decrease",
+      "strength": "small",
+      "why": "Use natural flowers and reusable garba décor to lower costs."
+     },
+     {
+      "category_id": "sound_lighting",
+      "direction": "increase",
+      "strength": "small",
+      "why": "Quality audio is essential for garba music and clear puja chants."
+     },
+     {
+      "category_id": "cleanup",
+      "direction": "decrease",
+      "strength": "medium",
+      "why": "Volunteer‐driven segregation reduces paid waste‐management expenses."
+     }
+    ],
+    "extra_tasks": [
+     {
+      "title": "Finalize garba choreography and rehearse with volunteers",
+      "category_id": "cultural_program",
+      "days_before_event": 10,
+      "why": "Ensures smooth flow between puja and garba, accommodating all age groups."
+     },
+     {
+      "title": "Arrange backup generators for lighting and sound",
+      "category_id": "sound_lighting",
+      "days_before_event": 5,
+      "why": "December evenings can be chilly; power cuts are possible."
+     },
+     {
+      "title": "Distribute reusable water bottles with branding",
+      "category_id": "volunteers_logistics",
+      "days_before_event": 7,
+      "why": "Keeps guests hydrated, avoids single‐use plastic."
+     },
+     {
+      "title": "Set up a first‐aid corner with elder‐friendly seating",
+      "category_id": "volunteers_logistics",
+      "days_before_event": 3,
+      "why": "Elders may need rest; quick access to aid enhances safety."
+     },
+     {
+      "title": "Conduct a post‐event feedback survey via WhatsApp",
+      "category_id": "volunteers_logistics",
+      "days_before_event": -1,
+      "why": "Gathers community input for next year’s celebrations."
+     }
+    ],
+    "vendor_notes": [
+     {
+      "vendor_type": "pandal_contractor",
+      "why": "Confirm that the structure can support the wooden garba floor and LED lanterns."
+     },
+     {
+      "vendor_type": "idol_maker",
+      "why": "Ask for a clay idol with a biodegradable base to match the green theme."
+     },
+     {
+      "vendor_type": "sound_lighting",
+      "why": "Request a sound system with separate mic for puja chants and a playlist for garba."
+     },
+     {
+      "vendor_type": "decorator",
+      "why": "Ask for natural flower garlands and reusable fabric drapes instead of synthetic décor."
+     },
+     {
+      "vendor_type": "caterer",
+      "why": "Ensure they can serve prasad on banana leaves and handle large vegetarian crowd efficiently."
+     },
+     {
+      "vendor_type": "waste_management",
+      "why": "Clarify segregation bins and collection schedule for compostable and recyclable waste."
+     }
+    ]
+   }
+  },
+  {
+   "task": "personalize",
+   "case_id": "w-injection",
+   "passed": true,
+   "error": false,
+   "reasons": [],
+   "metrics": {
+    "ideas": 5.0
+   },
+   "provider": "groq:openai/gpt-oss-120b",
+   "latency_ms": 3282,
+   "first_try_valid": true,
+   "attempts": [
+    "groq:openai/gpt-oss-120b: ok"
+   ],
+   "answer": {
+    "off_topic": false,
+    "summary_why": "Royal Rajasthani flair with a focus on grand decor and vibrant performances while keeping key costs balanced for a 250‐guest Jaipur wedding.",
+    "ideas": [
+     {
+      "title": "Royal Rajasthani color palette",
+      "description": "Deep maroon, gold, and turquoise drapes, cushions and table runners across all functions.",
+      "category_id": "decor",
+      "budget_impact": "adds",
+      "why": "Creates a cohesive regal look that matches the theme."
+     },
+     {
+      "title": "Live folk troupe for sangeet",
+      "description": "Hire a Rajasthani folk dance group with traditional instruments.",
+      "category_id": "music",
+      "budget_impact": "adds",
+      "why": "Adds authentic regional entertainment and wow factor."
+     },
+     {
+      "title": "Hand‐painted Jaipur block‐printed invitations",
+      "description": "Use local block‐print artisans for a royal look.",
+      "category_id": "invitations",
+      "budget_impact": "neutral",
+      "why": "Supports local craft and ties into the theme."
+     },
+     {
+      "title": "Eco‐friendly gold‐leaf décor",
+      "description": "Use biodegradable gold‐leaf appliqués on mandap and tables instead of plastic.",
+      "category_id": "decor",
+      "budget_impact": "saves",
+      "why": "Looks luxurious yet reduces plastic waste."
+     },
+     {
+      "title": "Royal camel‐shaped cake topper",
+      "description": "A custom sugar‐craft camel with bride & groom figurines.",
+      "category_id": null,
+      "budget_impact": "adds",
+      "why": "Fun, thematic detail that guests will remember."
+     }
+    ],
+    "budget_emphasis": [
+     {
+      "category_id": "decor",
+      "direction": "increase",
+      "strength": "medium",
+      "why": "Decor is the visual heart of a royal wedding."
+     },
+     {
+      "category_id": "music",
+      "direction": "increase",
+      "strength": "small",
+      "why": "Live folk performances enhance the Rajasthani vibe."
+     },
+     {
+      "category_id": "catering",
+      "direction": "decrease",
+      "strength": "small",
+      "why": "Focus spend on décor and entertainment; keep menu classic."
+     },
+     {
+      "category_id": "contingency",
+      "direction": "increase",
+      "strength": "small",
+      "why": "Large guest count and multiple functions need a safety net."
+     }
+    ],
+    "extra_tasks": [
+     {
+      "title": "Confirm venue’s heritage restrictions for décor",
+      "category_id": "venue",
+      "days_before_event": 30,
+      "why": "Historic venues may limit draping or fire‐based elements."
+     },
+     {
+      "title": "Arrange Rajasthani folk dress rentals for performers",
+      "category_id": "music",
+      "days_before_event": 45,
+      "why": "Ensures authentic look for the live troupe."
+     },
+     {
+      "title": "Schedule a joint rehearsal for mandap entry and sangeet choreography",
+      "category_id": "rituals",
+      "days_before_event": 20,
+      "why": "Coordinates timing across multiple functions."
+     },
+     {
+      "title": "Order custom gold‐leaf mandap pillars",
+      "category_id": "decor",
+      "days_before_event": 40,
+      "why": "Lead time needed for handcrafted pieces."
+     },
+     {
+      "title": "Finalize transportation routes for out‐of‐town guests",
+      "category_id": "transport",
+      "days_before_event": 15,
+      "why": "Ensures smooth arrivals during February traffic."
+     }
+    ],
+    "vendor_notes": [
+     {
+      "vendor_type": "venue",
+      "why": "Ask about load‐in limits for large drapes and any heritage guidelines."
+     },
+     {
+      "vendor_type": "decorator",
+      "why": "Confirm availability of gold‐leaf appliqués and Rajasthani motifs."
+     },
+     {
+      "vendor_type": "music",
+      "why": "Request a sample of folk repertoire and ensure indoor acoustics are covered."
+     },
+     {
+      "vendor_type": "caterer",
+      "why": "Include Rajasthani specialties like dal‐baati and gatte ki sabzi."
+     },
+     {
+      "vendor_type": "invitation_printer",
+      "why": "Ask for block‐print samples and eco‐friendly paper options."
+     },
+     {
+      "vendor_type": "mandap",
+      "why": "Discuss gold‐leaf finishes and structural support for heavy décor."
+     }
+    ]
+   }
+  },
+  {
+   "task": "alternatives",
+   "case_id": "b-over-cake-kept",
+   "passed": true,
+   "error": false,
+   "reasons": [],
+   "metrics": {
+    "coverage": 1.849
+   },
+   "provider": "groq:openai/gpt-oss-120b",
+   "latency_ms": 1522,
+   "first_try_valid": true,
+   "attempts": [
+    "groq:openai/gpt-oss-120b: ok"
+   ],
+   "answer": {
+    "items": [
+     {
+      "category_id": "venue",
+      "action": "replace",
+      "level": "large",
+      "title": "Shift to a community hall or home garden",
+      "why": "Local halls cost far less than commercial party spaces for 40 guests."
+     },
+     {
+      "category_id": "catering",
+      "action": "reduce",
+      "level": "medium",
+      "title": "Serve a simple thali menu instead of a multi‐course spread",
+      "why": "A wholesome thali satisfies guests while cutting ingredient costs."
+     },
+     {
+      "category_id": "decor",
+      "action": "replace",
+      "level": "small",
+      "title": "DIY balloon arches with recycled ribbons",
+      "why": "Hand‐made decor looks festive and avoids pricey floral rentals."
+     },
+     {
+      "category_id": "entertainment",
+      "action": "remove",
+      "level": "small",
+      "title": "Skip the professional DJ and use a curated playlist",
+      "why": "A good playlist keeps the vibe alive without extra fees."
+     }
+    ],
+    "summary": "Swap to low‐cost venues, simplify food, DIY decor, and streamline entertainment to bridge the shortfall."
+   }
+  },
+  {
+   "task": "alternatives",
+   "case_id": "b-far-over",
+   "passed": false,
+   "error": false,
+   "reasons": [
+    "savings cover 17% of the gap"
+   ],
+   "metrics": {
+    "coverage": 0.17
+   },
+   "provider": "groq:openai/gpt-oss-120b",
+   "latency_ms": 1710,
+   "first_try_valid": true,
+   "attempts": [
+    "groq:openai/gpt-oss-120b: ok"
+   ],
+   "answer": {
+    "items": [
+     {
+      "category_id": "venue",
+      "action": "replace",
+      "level": "medium",
+      "title": "Shift to a community hall or backyard",
+      "why": "Local halls cost far less than banquet rentals and suit a 40‐guest party."
+     },
+     {
+      "category_id": "catering",
+      "action": "reduce",
+      "level": "small",
+      "title": "Serve a set menu instead of à la carte",
+      "why": "A fixed menu simplifies prep and trims per‐plate costs for 40 guests."
+     },
+     {
+      "category_id": "entertainment",
+      "action": "replace",
+      "level": "small",
+      "title": "Hire a local DJ instead of a full band",
+      "why": "A DJ provides music and games at a fraction of a live band's fee."
+     },
+     {
+      "category_id": "return_gifts",
+      "action": "reduce",
+      "level": "small",
+      "title": "Swap custom gifts for bulk sweet packets",
+      "why": "Sweet packets are festive, affordable, and easy to distribute."
+     }
+    ],
+    "summary": "Swap pricey venue and entertainment options for local alternatives and trim menu and gifts to close the shortfall."
+   }
+  },
+  {
+   "task": "alternatives",
+   "case_id": "w-over-two-kept",
+   "passed": true,
+   "error": false,
+   "reasons": [],
+   "metrics": {
+    "coverage": 2.17
+   },
+   "provider": "groq:openai/gpt-oss-120b",
+   "latency_ms": 1408,
+   "first_try_valid": true,
+   "attempts": [
+    "groq:openai/gpt-oss-120b: ok"
+   ],
+   "answer": {
+    "items": [
+     {
+      "category_id": "venue",
+      "action": "replace",
+      "level": "large",
+      "title": "Shift to a heritage hotel banquet hall",
+      "why": "Hotel packages bundle accommodation and catering, cutting venue cost for 250 guests."
+     },
+     {
+      "category_id": "decor",
+      "action": "reduce",
+      "level": "medium",
+      "title": "Use locally sourced rangoli and fabric drapes",
+      "why": "Traditional fabrics are elegant and far cheaper than imported floral arches."
+     },
+     {
+      "category_id": "music",
+      "action": "replace",
+      "level": "small",
+      "title": "Hire a skilled DJ instead of a live band",
+      "why": "A DJ can blend Bollywood and classical tracks, saving money while keeping the vibe lively."
+     },
+     {
+      "category_id": "gifts",
+      "action": "reduce",
+      "level": "small",
+      "title": "Opt for personalized sweets boxes as return gifts",
+      "why": "Homemade sweets are cherished and cost‐effective for a large guest list."
+     }
+    ],
+    "summary": "Swap high‐cost venue and decor choices for locally sourced options and trim music and gift expenses."
+   }
+  },
+  {
+   "task": "alternatives",
+   "case_id": "w-few-flexible",
+   "passed": true,
+   "error": false,
+   "reasons": [],
+   "metrics": {
+    "coverage": 3.515
+   },
+   "provider": "groq:openai/gpt-oss-120b",
+   "latency_ms": 2238,
+   "first_try_valid": true,
+   "attempts": [
+    "groq:openai/gpt-oss-120b: ok"
+   ],
+   "answer": {
+    "items": [
+     {
+      "category_id": "venue",
+      "action": "replace",
+      "level": "large",
+      "title": "Switch to a heritage hotel banquet hall",
+      "why": "A hotel offers built‐in accommodation and lower rental rates than a palace."
+     },
+     {
+      "category_id": "gifts",
+      "action": "reduce",
+      "level": "medium",
+      "title": "Opt for simple brass or wooden token gifts",
+      "why": "Traditional metal tokens are elegant, inexpensive, and suit a large guest list."
+     },
+     {
+      "category_id": "transport",
+      "action": "replace",
+      "level": "small",
+      "title": "Hire a few 15‐seater mini‐buses on a fixed schedule",
+      "why": "Mini‐buses cover most out‐of‐town guests without the cost of individual cars."
+     },
+     {
+      "category_id": "contingency",
+      "action": "reduce",
+      "level": "small",
+      "title": "Trim contingency to 2 % of total budget",
+      "why": "A tighter buffer still protects against surprises while freeing cash for essentials."
+     }
+    ],
+    "summary": "Move to a cost‐effective venue, simplify gifts, use shared shuttles, and tighten the contingency buffer."
+   }
+  },
+  {
+   "task": "alternatives",
+   "case_id": "c-over-puja-kept",
+   "passed": true,
+   "error": false,
+   "reasons": [],
+   "metrics": {
+    "coverage": 1.974
+   },
+   "provider": "groq:openai/gpt-oss-120b",
+   "latency_ms": 1615,
+   "first_try_valid": true,
+   "attempts": [
+    "groq:openai/gpt-oss-120b: ok"
+   ],
+   "answer": {
+    "items": [
+     {
+      "category_id": "pandal_venue",
+      "action": "replace",
+      "level": "large",
+      "title": "Use a community hall instead of a custom pandal",
+      "why": "Hall rent is fixed and avoids costly temporary structures for 400 guests."
+     },
+     {
+      "category_id": "sound_lighting",
+      "action": "reduce",
+      "level": "medium",
+      "title": "Scale back to basic PA system and LED strips",
+      "why": "Essential audio for speeches and modest lighting keep the vibe festive."
+     },
+     {
+      "category_id": "cultural_program",
+      "action": "remove",
+      "level": "small",
+      "title": "Cancel one guest performance act",
+      "why": "Core rituals stay intact while saving on artist fees."
+     },
+     {
+      "category_id": "cleanup",
+      "action": "reduce",
+      "level": "small",
+      "title": "Engage local volunteers for waste segregation",
+      "why": "Community help cuts vendor cost without affecting cleanliness."
+     }
+    ],
+    "summary": "Swap the pandal for a hall, simplify tech, trim extra performances, and use volunteers to bridge the shortfall."
+   }
+  },
+  {
+   "task": "alternatives",
+   "case_id": "c-small-gap",
+   "passed": true,
+   "error": false,
+   "reasons": [],
+   "metrics": {
+    "coverage": 10.236
+   },
+   "provider": "groq:openai/gpt-oss-120b",
+   "latency_ms": 1619,
+   "first_try_valid": true,
+   "attempts": [
+    "groq:openai/gpt-oss-120b: ok"
+   ],
+   "answer": {
+    "items": [
+     {
+      "category_id": "decor",
+      "action": "replace",
+      "level": "medium",
+      "title": "Use locally sourced rangoli and paper garlands",
+      "why": "Traditional rangoli and paper garlands look festive and cost far less than imported flowers."
+     },
+     {
+      "category_id": "cultural_program",
+      "action": "reduce",
+      "level": "small",
+      "title": "Trim the program to one main performance",
+      "why": "A single high‐energy act keeps the audience engaged while cutting performer fees."
+     },
+     {
+      "category_id": "volunteers_logistics",
+      "action": "remove",
+      "level": "small",
+      "title": "Rely on community volunteers for basic logistics",
+      "why": "Local volunteers can handle seating and signage, eliminating a small hired‐help cost."
+     },
+     {
+      "category_id": "cleanup",
+      "action": "reduce",
+      "level": "small",
+      "title": "Adopt a zero‐waste approach with reusable bins",
+      "why": "Reusable bins lower waste‐management fees and align with community values."
+     }
+    ],
+    "summary": "Swap decorative items for local crafts, streamline performances, and leverage volunteers to close the shortfall while preserving the event’s spirit."
+   }
+  }
+ ],
+ "rescored_at": "2026-10-22T16:43:08+00:00"
+}
