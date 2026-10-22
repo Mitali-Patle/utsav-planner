@@ -1,0 +1,16 @@
+<div class="alternatives">
+  {% if alts.shortfall %}<p>To close a gap of {{ alts.shortfall }}:</p>{% endif %}
+  <p>{{ alts.summary }}</p>
+  {% if alts.ai_note %}<p class="ai-note">{{ alts.ai_note }}</p>{% endif %}
+  {% if alts.options %}
+  <ul>
+    {% for o in alts.options %}
+    <li>
+      <h4>{{ o.title }}</h4>
+      <p>{{ o.category }}: saves about {{ o.saving }}{% if o.shortfall_after %}, still {{ o.shortfall_after }} short{% else %}, closes the gap{% endif %}.</p>
+      <p class="why">Why: {{ o.why }}</p>
+    </li>
+    {% endfor %}
+  </ul>
+  {% endif %}
+</div>

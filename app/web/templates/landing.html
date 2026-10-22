@@ -1,0 +1,69 @@
+{% extends "base.html" %}
+{% from "macros.html" import field, csrf %}
+{% block title %}Plan your celebration - Utsav Planner{% endblock %}
+{% block content %}
+<h1>Plan your celebration</h1>
+<p class="lede">Weddings, birthdays and community events: a budget, a timeline and a vendor
+  checklist built in seconds, then tailored by AI, with a reason for every suggestion.</p>
+
+<section aria-labelledby="create-heading">
+  <h2 id="create-heading">Start a new plan</h2>
+  {% if form.errors %}
+  <div class="notice notice-error" role="alert">
+    <p>Please check the highlighted fields.</p>
+    {% if form.errors.get("form") %}<p>{{ form.errors["form"] }}</p>{% endif %}
+  </div>
+  {% endif %}
+  <form method="post" action="/events" class="create-form" novalidate>
+    {{ csrf(csrf_token) }}
+    <fieldset{% if form.errors.get("event_type") %} aria-describedby="f-event_type-error"{% endif %}>
+      <legend>What are you planning?</legend>
+      {% for value, label in event_types %}
+      <div class="choice">
+        <input type="radio" id="type-{{ value }}" name="event_type" value="{{ value }}"{% if form.values.get("event_type") == value %} checked{% endif %} required>
+        <label for="type-{{ value }}">{{ label }}</label>
+      </div>
+      {% endfor %}
+      {% if form.errors.get("event_type") %}<p id="f-event_type-error" class="field-error">Choose the kind of event.</p>{% endif %}
+    </fieldset>
+
+    {{ field(form, "title", "Event name", attrs={"maxlength": "80", "required": "required", "autocomplete": "off"}) }}
+    {{ field(form, "city", "City", attrs={"maxlength": "60", "required": "required", "autocomplete": "address-level2"}) }}
+    {{ field(form, "event_date", "Event date", type="date", attrs={"min": today, "required": "required"}) }}
+    {{ field(form, "guest_count", "Number of guests", type="number", attrs={"min": "1", "max": "5000", "inputmode": "numeric", "required": "required"}) }}
+    {{ field(form, "total_budget_inr", "Total budget in rupees", type="number", hint="Whole rupees, from ₹1,000.", attrs={"min": "1000", "inputmode": "numeric", "required": "required"}) }}
+    {{ field(form, "preferences", "Preferences (optional)", type="textarea", hint="Theme, food, culture, anything that matters. Up to 500 characters.", attrs={"maxlength": "500", "rows": "3"}) }}
+
+    <fieldset>
+      <legend>Functions to include (optional)</legend>
+      <p class="field-hint">Only the functions for the event type you chose are used.</p>
+      {% for group in sub_events %}
+      <fieldset class="sub-events">
+        <legend>{{ group.label }}</legend>
+        {% for value, label in group.options %}
+        <div class="choice">
+          <input type="checkbox" id="sub-{{ group.event_type }}-{{ value }}" name="sub_events" value="{{ value }}"{% if value in form.values.get("sub_events", []) %} checked{% endif %}>
+          <label for="sub-{{ group.event_type }}-{{ value }}">{{ label }}</label>
+        </div>
+        {% endfor %}
+      </fieldset>
+      {% endfor %}
+    </fieldset>
+
+    <button type="submit">Create my plan</button>
+  </form>
+</section>
+
+<section aria-labelledby="events-heading">
+  <h2 id="events-heading">Your events</h2>
+  {% if events %}
+  <ul class="event-list">
+    {% for event in events %}
+    <li><a href="/events/{{ event.id }}">{{ event.title }}</a> <span>{{ event.type_label }}, {{ event.date }}</span></li>
+    {% endfor %}
+  </ul>
+  {% else %}
+  <p>No events yet. Your plans are private to this browser.</p>
+  {% endif %}
+</section>
+{% endblock %}

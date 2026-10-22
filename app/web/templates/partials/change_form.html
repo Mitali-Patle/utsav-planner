@@ -1,0 +1,18 @@
+{% from "macros.html" import csrf %}
+<form method="post" action="/events/{{ event_id }}/changes/form" class="change-form"
+      hx-post="/events/{{ event_id }}/changes/form" hx-target="#change-result" hx-swap="innerHTML">
+  {{ csrf(csrf_token) }}
+  <p>Fill in only what changes. You'll see a preview before anything is saved.</p>
+  <div class="field"><label for="cf-total">New total budget in rupees</label>
+    <input id="cf-total" name="total_budget_inr" type="number" min="1000" inputmode="numeric"></div>
+  <div class="field"><label for="cf-guests">New number of guests</label>
+    <input id="cf-guests" name="guest_count" type="number" min="1" max="5000" inputmode="numeric"></div>
+  <div class="field"><label for="cf-shift">Move the event by this many days (negative is earlier)</label>
+    <input id="cf-shift" name="shift_days" type="number" inputmode="numeric"></div>
+  <div class="field"><label for="cf-protect">Keep this budget line as it is</label>
+    <select id="cf-protect" name="protect_category">
+      <option value="">None</option>
+      {% for value, label in categories_for_select %}<option value="{{ value }}">{{ label }}</option>{% endfor %}
+    </select></div>
+  <button type="submit">Preview the change</button>
+</form>

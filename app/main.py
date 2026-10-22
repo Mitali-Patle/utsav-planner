@@ -16,7 +16,7 @@ from app.services import Services, build_services
 from app.web.errors import register_error_handlers
 from app.web.guard import RequestGuardMiddleware
 from app.web.limits import AIRateLimit
-from app.web.routes import health, pages
+from app.web.routes import changes, edits, events, health, pages
 from app.web.security import SecurityHeadersMiddleware
 from app.web.session import SESSION_MAX_AGE_S
 
@@ -43,6 +43,7 @@ def create_app(
         The configured application.
     """
     settings = settings or get_settings()
+    clock = clock or SystemClock()
     if engine is None and settings.database_url is not None:
         engine = make_engine(settings.database_url.get_secret_value())
     app = FastAPI(
@@ -52,11 +53,12 @@ def create_app(
         openapi_url=None if settings.is_production else "/openapi.json",
     )
     if services is None and engine is not None:
-        services = build_services(settings, engine, clock or SystemClock())
+        services = build_services(settings, engine, clock)
     secret = _session_secret(settings)
     app.state.settings = settings
     app.state.engine = engine
     app.state.services = services
+    app.state.clock = clock
     app.state.ai_limit = AIRateLimit(
         RateLimiter(engine) if engine is not None else None, settings, secret.encode()
     )
@@ -73,8 +75,8 @@ def create_app(
     )
     app.add_middleware(SecurityHeadersMiddleware, hsts=settings.is_production)
     register_error_handlers(app)
-    app.include_router(health.router)
-    app.include_router(pages.router)
+    for router in (health.router, pages.router, events.router, edits.router, changes.router):
+        app.include_router(router)
 
     if settings.app_env == "development" and STATIC_DIR.is_dir():
         # In production Vercel serves public/ from its CDN; mount it only for local runs.

@@ -286,3 +286,17 @@ The prompts the app itself sends to the LLM live in `app/ai/prompts/`.
   - **Errors:** friendly pages (404 not found, 409 stale, 422 invalid), or a fragment for htmx. The CSRF token is set on `<body>` via `hx-headers`, with no inline script.
   - 418 tests, 99.64 % branch coverage. New tests include a two-tab personalization race, "the user's edit wins over the AI", and the guard replaying the request body.
 - **Note (lane exception, approved):** Claude Code wrote the first plain templates (`error.html`, `partials/notice.html`) and edited `base.html` (the CSRF header and the status messages). Antigravity owns the design pass.
+
+## 2026-10-22/23: Web layer, part 2 — routes, view models and plain templates
+- **Tool / model:** Claude Code (Claude Opus 5.5). Resumed after a usage-limit pause, from the state saved in memory.
+- **Outcome:**
+  - **Routes:** landing; create event (instant draft, then 303); dashboard; progressive personalization; direct edits (expenses, protection, tasks, vendors); the Change Manager (plain-language request, a no-AI form, approve, reject); priced alternatives. Every route works as a plain form and as htmx.
+  - **`views.py`:** all formatting and labels in tested Python, including reason labels for every budget change and an honest one-line AI note ("Interpreted by AI (provider, ms)" or "Standard suggestions (not AI-generated)").
+  - **htmx:** configured to swap 404/409/422 so errors stay visible with correct status codes; error notices go to the live region via `HX-Retarget`.
+  - **Plain semantic templates** (approved lane exception): a field macro wires labels, hints and errors (`aria-describedby`, `aria-invalid`); every table has a caption and `scope`; buttons carry screen-reader names; the "How this was generated" panel shows the payload sent and the validated answer.
+  - 449 tests. 31 web-flow tests run through HTTP with and without JavaScript, including scenarios 9 and 12 and an automated audit of every page and fragment: every control labelled, unique ids, named buttons, one `h1`.
+- **Bug found by the tests:** an empty expense label showed Pydantic's internal wording, "Value should have at least 1 item after validation, not 0". Validation errors now map to plain messages by error type ("This field is required.", "Must be at least 1.", "Enter a whole number.").
+- **Self-corrections:**
+  - Four test expectations were wrong: HTML escaping of literal text versus variables, the exact stale-proposal wording, and a fake that raised `AssertionError` instead of a provider outage.
+  - A file patch silently did not apply after ruff reformatted its target, so the file was rewritten whole.
+  - Two route "noqa" shortcuts were replaced by a documented per-folder lint exemption for FastAPI handlers.

@@ -1,0 +1,13 @@
+<details class="ai-panel">
+  <summary>How this was generated</summary>
+  <dl>
+    <div><dt>Model</dt><dd>{{ ai.provider }}{% if ai.fallback %} (standard suggestions, not AI-generated){% endif %}</dd></div>
+    <div><dt>Prompt version</dt><dd>{{ ai.prompt_version }} (<a href="https://github.com/Mitali-Patle/utsav-planner/tree/main/app/ai/prompts">see the prompts</a>)</dd></div>
+    <div><dt>Time taken</dt><dd>{{ ai.latency_ms }} ms{% if ai.cached %} (cached){% endif %}</dd></div>
+    {% if ai.attempts %}<div><dt>Attempts</dt><dd>{{ ai.attempts | join(", ") }}</dd></div>{% endif %}
+  </dl>
+  <h3>What was sent</h3>
+  <pre><code>{{ ai.request | tojson(indent=2) }}</code></pre>
+  <h3>What came back (after validation)</h3>
+  <pre><code>{{ ai.response | tojson(indent=2) }}</code></pre>
+</details>

@@ -46,7 +46,12 @@ class AlternativesService:
         self._ai = ai
 
     def suggest(
-        self, session_id: str, event_id: str, shortfall_inr: int | None = None
+        self,
+        session_id: str,
+        event_id: str,
+        shortfall_inr: int | None = None,
+        *,
+        use_ai: bool = True,
     ) -> AlternativesView:
         """Suggest ways to close a shortfall.
 
@@ -55,6 +60,7 @@ class AlternativesService:
             event_id: Event with the shortfall.
             shortfall_inr: Shortfall of a proposed change; defaults to the plan's own
                 overspending.
+            use_ai: False when the client is over its AI rate limit (labelled fallback).
 
         Returns:
             Priced options. No AI call is made when there is nothing to close.
@@ -68,8 +74,11 @@ class AlternativesService:
         if shortfall <= 0:
             return AlternativesView(0, WITHIN_BUDGET_MESSAGE, (), None)
 
-        result = self._ai.run(
-            SUGGEST_ALTERNATIVES, AlternativesContext(plan=plan, shortfall_inr=shortfall)
+        context = AlternativesContext(plan=plan, shortfall_inr=shortfall)
+        result = (
+            self._ai.run(SUGGEST_ALTERNATIVES, context)
+            if use_ai
+            else self._ai.offline(SUGGEST_ALTERNATIVES, context)
         )
         options = []
         for item in result.value.items:

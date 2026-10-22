@@ -1,0 +1,9 @@
+{% if history %}
+<ol class="history">
+  {% for item in history %}
+  <li><span class="history-status">{{ item.status | capitalize }}</span> on {{ item.created }}: &ldquo;{{ item.request }}&rdquo;</li>
+  {% endfor %}
+</ol>
+{% else %}
+<p>No changes yet. Changes you approve or reject appear here.</p>
+{% endif %}

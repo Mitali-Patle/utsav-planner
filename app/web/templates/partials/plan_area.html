@@ -1,0 +1,181 @@
+{% from "macros.html" import field, csrf %}
+<div id="plan-area">
+{% if notice %}<div id="status-region" hx-swap-oob="innerHTML"><p class="notice notice-{{ notice.kind }}" role="status">{{ notice.message }}</p></div>{% endif %}
+
+{% if personalization_pending %}
+<section id="personalization" aria-labelledby="personalize-heading"
+         hx-post="/events/{{ event.id }}/personalize" hx-trigger="load" hx-target="#plan-area" hx-swap="outerHTML">
+  <h2 id="personalize-heading">Personalizing your plan</h2>
+  <p>Your plan below is already complete. The AI is now tailoring it to your event; this can take up to 10 seconds.</p>
+  <form method="post" action="/events/{{ event.id }}/personalize">
+    {{ csrf(csrf_token) }}
+    <button type="submit">Personalize with AI</button>
+  </form>
+</section>
+{% endif %}
+
+<section id="ideas" aria-labelledby="ideas-heading">
+  <h2 id="ideas-heading">Ideas for your event</h2>
+  {% if ai and ai.fallback %}<p class="label-not-ai">Standard ideas (not AI-generated).</p>{% elif ai %}<p class="label-ai">Suggested by AI, each with a reason.</p>{% endif %}
+  {% if ideas %}
+  <ul class="ideas">
+    {% for idea in ideas %}
+    <li><h3>{{ idea.title }}</h3><p>{{ idea.description }}</p><p class="why">Why: {{ idea.why }}</p></li>
+    {% endfor %}
+  </ul>
+  {% elif not personalization_pending %}<p>No ideas yet.</p>{% endif %}
+  {% if ai %}{% include "partials/ai_panel.html" %}{% endif %}
+</section>
+
+<section id="budget" aria-labelledby="budget-heading">
+  <h2 id="budget-heading">Budget</h2>
+  <dl class="summary">
+    <div><dt>Total</dt><dd>{{ plan.summary.total }}</dd></div>
+    <div><dt>Spent</dt><dd>{{ plan.summary.spent }}</dd></div>
+    <div><dt>Remaining</dt><dd>{{ plan.summary.remaining }}</dd></div>
+    <div><dt>Per guest</dt><dd>{{ plan.summary.per_guest }}</dd></div>
+  </dl>
+  {% if plan.summary.shortfall %}
+  <div class="notice notice-error" role="alert">
+    <p>You are over budget by {{ plan.summary.shortfall }}.</p>
+    <form method="post" action="/events/{{ event.id }}/alternatives"
+          hx-post="/events/{{ event.id }}/alternatives" hx-target="#plan-alternatives" hx-swap="innerHTML">
+      {{ csrf(csrf_token) }}<button type="submit">Suggest ways to save</button>
+    </form>
+    <div id="plan-alternatives"></div>
+  </div>
+  {% endif %}
+  <table>
+    <caption>Budget lines</caption>
+    <thead><tr><th scope="col">Line</th><th scope="col">Planned</th><th scope="col">Spent</th><th scope="col">Left</th><th scope="col">Protect</th></tr></thead>
+    <tbody>
+      {% for row in plan.categories %}
+      <tr>
+        <th scope="row">{{ row.name }}</th>
+        <td>{{ row.allocated }}</td>
+        <td>{{ row.spent }}</td>
+        <td>{{ row.remaining }}{% if row.overspent %} <span class="badge badge-error">over by {{ row.overspent }}</span>{% endif %}</td>
+        <td>
+          <form method="post" action="/events/{{ event.id }}/categories/{{ row.id }}/{{ 'unprotect' if row.protected else 'protect' }}"
+                hx-post="/events/{{ event.id }}/categories/{{ row.id }}/{{ 'unprotect' if row.protected else 'protect' }}" hx-target="#plan-area" hx-swap="outerHTML">
+            {{ csrf(csrf_token) }}
+            <button type="submit" aria-pressed="{{ 'true' if row.protected else 'false' }}">{{ 'Protected' if row.protected else 'Protect' }}<span class="sr-only"> {{ row.name }}</span></button>
+          </form>
+        </td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</section>
+
+<section id="expenses" aria-labelledby="expenses-heading">
+  <h2 id="expenses-heading">Expenses</h2>
+  {% if plan.expenses %}
+  <table>
+    <caption>Committed and paid amounts</caption>
+    <thead><tr><th scope="col">Expense</th><th scope="col">Line</th><th scope="col">Amount</th><th scope="col">Actions</th></tr></thead>
+    <tbody>
+      {% for e in plan.expenses %}
+      <tr>
+        <th scope="row">{{ e.label }}{% if e.protected %} <span class="badge">protected</span>{% endif %}</th>
+        <td>{{ e.category }}</td>
+        <td>{{ e.amount }}</td>
+        <td class="actions">
+          {% if not e.protected %}
+          <form method="post" action="/events/{{ event.id }}/expenses/{{ e.id }}/update"
+                hx-post="/events/{{ event.id }}/expenses/{{ e.id }}/update" hx-target="#plan-area" hx-swap="outerHTML">
+            {{ csrf(csrf_token) }}
+            <label for="amount-{{ e.id }}">New amount for {{ e.label }}</label>
+            <input id="amount-{{ e.id }}" name="amount_inr" type="number" min="1" inputmode="numeric" value="{{ e.amount_inr }}">
+            <button type="submit">Update<span class="sr-only"> {{ e.label }}</span></button>
+          </form>
+          <form method="post" action="/events/{{ event.id }}/expenses/{{ e.id }}/delete"
+                hx-post="/events/{{ event.id }}/expenses/{{ e.id }}/delete" hx-target="#plan-area" hx-swap="outerHTML">
+            {{ csrf(csrf_token) }}<button type="submit">Remove<span class="sr-only"> {{ e.label }}</span></button>
+          </form>
+          {% endif %}
+          <form method="post" action="/events/{{ event.id }}/expenses/{{ e.id }}/{{ 'unprotect' if e.protected else 'protect' }}"
+                hx-post="/events/{{ event.id }}/expenses/{{ e.id }}/{{ 'unprotect' if e.protected else 'protect' }}" hx-target="#plan-area" hx-swap="outerHTML">
+            {{ csrf(csrf_token) }}
+            <button type="submit" aria-pressed="{{ 'true' if e.protected else 'false' }}">{{ 'Unprotect' if e.protected else 'Protect' }}<span class="sr-only"> {{ e.label }}</span></button>
+          </form>
+        </td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+  {% else %}<p>No expenses yet.</p>{% endif %}
+
+  <h3 id="add-expense-heading">Add an expense</h3>
+  {% if expense_form.errors %}<p class="notice notice-error" role="alert">Please check the highlighted fields.</p>{% endif %}
+  <form method="post" action="/events/{{ event.id }}/expenses" aria-labelledby="add-expense-heading" novalidate
+        hx-post="/events/{{ event.id }}/expenses" hx-target="#plan-area" hx-swap="outerHTML">
+    {{ csrf(csrf_token) }}
+    <div class="field{{ ' field-invalid' if expense_form.errors.get('category_id') else '' }}">
+      <label for="x-category_id">Budget line</label>
+      <select id="x-category_id" name="category_id"{% if expense_form.errors.get('category_id') %} aria-invalid="true" aria-describedby="x-category_id-error"{% endif %}>
+        {% for value, label in categories_for_select %}
+        <option value="{{ value }}"{% if expense_form.values.get('category_id') == value %} selected{% endif %}>{{ label }}</option>
+        {% endfor %}
+      </select>
+      {% if expense_form.errors.get('category_id') %}<p id="x-category_id-error" class="field-error">{{ expense_form.errors['category_id'] }}</p>{% endif %}
+    </div>
+    {{ field(expense_form, "label", "What is it?", prefix="x", attrs={"maxlength": "80", "required": "required"}) }}
+    {{ field(expense_form, "amount_inr", "Amount in rupees", type="number", prefix="x", attrs={"min": "1", "inputmode": "numeric", "required": "required"}) }}
+    <div class="choice">
+      <input type="checkbox" id="x-protected" name="protected" value="on"{% if expense_form.values.get('protected') %} checked{% endif %}>
+      <label for="x-protected">Protect this expense (changes will keep it as it is)</label>
+    </div>
+    <button type="submit">Add expense</button>
+  </form>
+</section>
+
+<section id="timeline" aria-labelledby="timeline-heading">
+  <h2 id="timeline-heading">Timeline</h2>
+  <ol class="tasks">
+    {% for t in plan.tasks %}
+    <li class="{{ 'done' if t.done else '' }}">
+      <span class="task-title">{{ t.title }}</span>
+      <span class="task-due">by {{ t.due }}</span>
+      {% if t.overdue %}<span class="badge badge-error">overdue</span>{% elif t.compressed and not t.done %}<span class="badge badge-warning">due now</span>{% endif %}
+      <span class="badge{{ ' badge-ai' if t.ai else '' }}">{{ t.source }}</span>
+      {% if t.why %}<p class="why">Why: {{ t.why }}</p>{% endif %}
+      <form method="post" action="/events/{{ event.id }}/tasks/{{ t.id }}/{{ 'undone' if t.done else 'done' }}"
+            hx-post="/events/{{ event.id }}/tasks/{{ t.id }}/{{ 'undone' if t.done else 'done' }}" hx-target="#plan-area" hx-swap="outerHTML">
+        {{ csrf(csrf_token) }}
+        <button type="submit" aria-pressed="{{ 'true' if t.done else 'false' }}">{{ 'Done' if t.done else 'Mark done' }}<span class="sr-only">: {{ t.title }}</span></button>
+      </form>
+    </li>
+    {% endfor %}
+  </ol>
+</section>
+
+<section id="vendors" aria-labelledby="vendors-heading">
+  <h2 id="vendors-heading">Vendor checklist</h2>
+  <table>
+    <caption>Vendors to book, most urgent first</caption>
+    <thead><tr><th scope="col">Priority</th><th scope="col">Vendor</th><th scope="col">Book by</th><th scope="col">Status</th></tr></thead>
+    <tbody>
+      {% for v in plan.vendors %}
+      <tr>
+        <td>{{ v.priority }}</td>
+        <th scope="row">{{ v.name }}{% if v.why %}<p class="why">Why: {{ v.why }}</p>{% endif %}</th>
+        <td>{{ v.book_by }}{% if v.urgent and v.status != 'booked' %} <span class="badge badge-warning">book now</span>{% endif %}</td>
+        <td>
+          <form method="post" action="/events/{{ event.id }}/vendors/{{ v.id }}/status"
+                hx-post="/events/{{ event.id }}/vendors/{{ v.id }}/status" hx-target="#plan-area" hx-swap="outerHTML">
+            {{ csrf(csrf_token) }}
+            <label for="status-{{ v.id }}">Status of {{ v.name }}</label>
+            <select id="status-{{ v.id }}" name="status">
+              <option value="{{ v.status }}" selected>{{ v.status_label }}</option>
+              {% for value, label in v.next %}<option value="{{ value }}">{{ label }}</option>{% endfor %}
+            </select>
+            <button type="submit">Save<span class="sr-only"> status of {{ v.name }}</span></button>
+          </form>
+        </td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</section>
+</div>

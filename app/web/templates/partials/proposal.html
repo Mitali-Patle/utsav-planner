@@ -1,0 +1,48 @@
+{% from "macros.html" import csrf %}
+<div class="proposal">
+  <p>You asked: &ldquo;{{ proposal.request }}&rdquo;</p>
+  {% if not proposal.feasible %}
+  <p class="notice notice-error" role="alert">This change needs {{ proposal.shortfall }} more than the budget allows, so it can't be approved as it is.</p>
+  {% endif %}
+  {% if proposal.fields %}
+  <ul class="field-changes">{% for f in proposal.fields %}<li>{{ f.label }}: {{ f.before }} &rarr; {{ f.after }}</li>{% endfor %}</ul>
+  {% endif %}
+  {% if proposal.budget %}
+  <table>
+    <caption>Budget lines that change</caption>
+    <thead><tr><th scope="col">Line</th><th scope="col">Before</th><th scope="col">After</th><th scope="col">Why</th></tr></thead>
+    <tbody>{% for b in proposal.budget %}
+      <tr><th scope="row">{{ b.name }}</th><td>{{ b.before }}</td><td>{{ b.after }}</td><td>{{ b.reason }}{% if b.overcommitted %}; already spent {{ b.overcommitted }} more than this{% endif %}</td></tr>
+    {% endfor %}</tbody>
+  </table>
+  {% endif %}
+  {% if proposal.expenses %}<h4>Expenses</h4><ul>{% for e in proposal.expenses %}<li>{{ e.label }}: {{ e.action }}{% if e.before %}, was {{ e.before }}{% endif %}{% if e.after %}, now {{ e.after }}{% endif %}</li>{% endfor %}</ul>{% endif %}
+  {% if proposal.tasks %}<h4>Deadlines that move</h4><ul>{% for t in proposal.tasks %}<li>{{ t.title }}: {{ t.before }} &rarr; {{ t.after }}{% if t.flagged %} (due now){% endif %}</li>{% endfor %}</ul>{% endif %}
+  {% if proposal.vendors %}<h4>Booking dates that move</h4><ul>{% for v in proposal.vendors %}<li>{{ v.title }}: {{ v.before }} &rarr; {{ v.after }}{% if v.flagged %} (book now){% endif %}</li>{% endfor %}</ul>{% endif %}
+  {% if proposal.new_tasks %}<h4>New tasks</h4><ul>{% for t in proposal.new_tasks %}<li>{{ t.title }}, by {{ t.due }} ({{ t.source }})</li>{% endfor %}</ul>{% endif %}
+  {% if proposal.skipped %}<h4>Left out</h4><ul>{% for s in proposal.skipped %}<li>{{ s.label }}: {{ 'already in your plan' if s.reason == 'duplicate' else 'it is protected' }}</li>{% endfor %}</ul>{% endif %}
+  {% if proposal.protected_kept %}<p>Kept as they are: {{ proposal.protected_kept | join(", ") }}.</p>{% endif %}
+  {% if proposal.summary_after %}<p>Budget after the change: total {{ proposal.summary_after.total }}, spent {{ proposal.summary_after.spent }}, remaining {{ proposal.summary_after.remaining }}{% if proposal.summary_after.shortfall %}, over by {{ proposal.summary_after.shortfall }}{% endif %}.</p>{% endif %}
+
+  {% if proposal.status == "pending" %}
+  <div class="proposal-actions">
+    {% if proposal.feasible %}
+    <form method="post" action="/events/{{ event_id }}/proposals/{{ proposal.id }}/approve"
+          hx-post="/events/{{ event_id }}/proposals/{{ proposal.id }}/approve" hx-target="#change-result" hx-swap="innerHTML">
+      {{ csrf(csrf_token) }}<button type="submit">Approve this change</button>
+    </form>
+    {% else %}
+    <form method="post" action="/events/{{ event_id }}/alternatives"
+          hx-post="/events/{{ event_id }}/alternatives" hx-target="#alternatives-{{ proposal.id }}" hx-swap="innerHTML">
+      {{ csrf(csrf_token) }}<input type="hidden" name="proposal_id" value="{{ proposal.id }}">
+      <button type="submit">Suggest ways to close the gap</button>
+    </form>
+    {% endif %}
+    <form method="post" action="/events/{{ event_id }}/proposals/{{ proposal.id }}/reject"
+          hx-post="/events/{{ event_id }}/proposals/{{ proposal.id }}/reject">
+      {{ csrf(csrf_token) }}<button type="submit">Reject</button>
+    </form>
+  </div>
+  <div id="alternatives-{{ proposal.id }}"></div>
+  {% endif %}
+</div>

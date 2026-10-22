@@ -167,6 +167,16 @@ class ChangeManager:
             repos.proposals.get(proposal_id, event_id)
             return repos.proposals.decide(proposal_id, event_id, ProposalStatus.REJECTED)
 
+    def get_proposal(self, session_id: str, event_id: str, proposal_id: str) -> StoredProposal:
+        """Load one proposal of this session's event.
+
+        Raises:
+            NotFoundError: If the event or proposal does not exist or is not this session's.
+        """
+        with self._db.transaction() as repos:
+            repos.events.get(event_id, session_id)
+            return repos.proposals.get(proposal_id, event_id)
+
     def history(self, session_id: str, event_id: str) -> list[StoredProposal]:
         """The event's change history, newest first.
 

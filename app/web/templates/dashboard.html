@@ -1,0 +1,48 @@
+{% extends "base.html" %}
+{% from "macros.html" import csrf %}
+{% block title %}{{ event.title }} - Utsav Planner{% endblock %}
+{% block content %}
+<header class="event-header">
+  <h1>{{ event.title }}</h1>
+  <p>{{ event.type_label }} in {{ event.city }} on {{ event.date }} &middot; {{ event.guests }} guests &middot;
+    {% if event.days_left > 0 %}{{ event.days_left }} days to go{% elif event.days_left == 0 %}today{% else %}{{ -event.days_left }} days ago{% endif %}</p>
+  {% if event.preferences %}<p class="preferences">Your preferences: {{ event.preferences }}</p>{% endif %}
+</header>
+
+{% include "partials/plan_area.html" %}
+
+<section id="change-manager" aria-labelledby="change-heading">
+  <h2 id="change-heading">Change something</h2>
+  <p>Describe a change in your own words, for example "Budget dropped to ₹12,000, keep the cake" or
+    "10 more guests are coming". You'll see exactly what changes before anything is saved.</p>
+  <form method="post" action="/events/{{ event.id }}/changes"
+        hx-post="/events/{{ event.id }}/changes" hx-target="#change-result" hx-swap="innerHTML"
+        hx-indicator="#change-busy" hx-disabled-elt="find button">
+    {{ csrf(csrf_token) }}
+    <label for="change-request">Your change</label>
+    <textarea id="change-request" name="request" rows="2" maxlength="300" required></textarea>
+    <button type="submit">Preview the change</button>
+    <p id="change-busy" class="htmx-indicator" role="status">Interpreting your request. This can take up to 10 seconds.</p>
+  </form>
+  <div id="change-result">
+    {% if change_result %}{% set result = change_result %}{% include "partials/change_result.html" %}{% endif %}
+  </div>
+  <details class="change-form-toggle">
+    <summary>Or use the change form (works without AI)</summary>
+    {% set event_id = event.id %}
+    {% include "partials/change_form.html" %}
+  </details>
+</section>
+
+<section id="history" aria-labelledby="history-heading">
+  <h2 id="history-heading">Change history</h2>
+  {% include "partials/history.html" %}
+</section>
+
+{% if alternatives %}
+<section aria-labelledby="alternatives-page-heading">
+  <h2 id="alternatives-page-heading">Ways to close the gap</h2>
+  {% set alts = alternatives %}{% include "partials/alternatives.html" %}
+</section>
+{% endif %}
+{% endblock %}

@@ -22,12 +22,17 @@ def is_htmx(request: Request) -> bool:
 def render_error(request: Request, message: str, status_code: int) -> HTMLResponse:
     """An error page, or a notice fragment for htmx requests."""
     template = "partials/notice.html" if is_htmx(request) else "error.html"
-    return templates.TemplateResponse(
+    response = templates.TemplateResponse(
         request,
         template,
         {"kind": "error", "message": message, "status_code": status_code},
         status_code=status_code,
     )
+    if is_htmx(request):
+        # Show the notice in the live region, whatever the form targeted.
+        response.headers["HX-Retarget"] = "#status-region"
+        response.headers["HX-Reswap"] = "innerHTML"
+    return response
 
 
 async def domain_error_handler(request: Request, error: Exception) -> HTMLResponse:
