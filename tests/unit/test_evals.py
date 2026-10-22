@@ -28,8 +28,16 @@ from evals.cases import (
     ChangeCase,
     PersonalizeCase,
 )
-from evals.report import latest_runs, render
-from evals.run import REJECTED, CaseResult, rescore, run_cases, save, select_cases
+from evals.report import all_runs, latest_runs, render
+from evals.run import (
+    REJECTED,
+    CaseResult,
+    rescore,
+    retry_errors,
+    run_cases,
+    save,
+    select_cases,
+)
 from evals.scoring import score_alternatives, score_change, score_personalize
 from tests.fakes import ScriptedProvider, TaskAwareProvider
 
@@ -392,3 +400,69 @@ def test_rescore_reclassifies_rejected_answers_saved_as_errors(tmp_path: Path) -
     )
     [result] = rescore(save([saved], "gemini:x", tmp_path))
     assert (result.passed, result.error, result.reasons) == (False, False, (REJECTED,))
+
+
+def test_history_lists_every_run_with_its_prompt_versions(tmp_path: Path) -> None:
+    def result(passed: bool) -> CaseResult:
+        return CaseResult("change", "a", passed, False, (), {}, "m:1", 900, True, (), {})
+
+    first = save([result(False)], "m:1", tmp_path)
+    first.rename(first.with_name("0000-" + first.name))
+    save([result(True)], "m:1", tmp_path)
+    report = render(latest_runs(tmp_path), all_runs(tmp_path))
+    assert "## Run history" in report
+    history = report.split("## Run history")[1]
+    assert "| m:1 | v1, v2, v2 | 0/1 | 0/0 | 0/0 | 0 |" in history
+    assert "| m:1 | v1, v2, v2 | 1/1 | 0/0 | 0/0 | 0 |" in history
+
+
+def test_retry_errors_reruns_only_unanswered_cases(tmp_path: Path) -> None:
+    answered = CaseResult(
+        "change", "b-budget-set", True, False, (), {}, "m:1", 900, True, ("m:1: ok",), {}
+    )
+    cut_off = CaseResult(
+        "change",
+        "b-guests-set",
+        False,
+        True,
+        ("no AI answer",),
+        {},
+        None,
+        0,
+        False,
+        ("m:1: rate_limited",),
+        {},
+    )
+    path = save([answered, cut_off], "m:1", tmp_path)
+    guests = intent(op(ChangeKind.SET_GUEST_COUNT, guest_count=35)).model_dump_json()
+    model = ScriptedProvider("m:1", [guests])
+    updated = retry_errors(path, [model])
+    assert [(r.case_id, r.passed, r.error) for r in updated] == [
+        ("b-budget-set", True, False),
+        ("b-guests-set", True, False),
+    ]
+    assert len(model.requests) == 1, "the answered case is not asked again"
+    assert "retried_at" in json.loads(path.read_text())
+
+
+def test_retry_errors_refuses_a_run_made_with_other_prompts(tmp_path: Path) -> None:
+    path = save([], "m:1", tmp_path)
+    document = json.loads(path.read_text())
+    document["prompt_versions"]["interpret_change"] = "interpret-change-v0"
+    path.write_text(json.dumps(document))
+    with pytest.raises(ValueError, match="prompts changed"):
+        retry_errors(path, [])
+
+
+def test_a_negated_preference_still_counts_as_reflected() -> None:
+    """Gemini wrote "zero plastic decor" for a zero-plastic wedding (eval run, 22 Oct)."""
+    answer = ideas("Zero-plastic decor", "Mocktail counter", "Potted plant favours")
+    assert score_personalize(PERSONALIZE["w-dry-eco"], answer, SYSTEM).passed
+
+
+def test_omitting_forbidden_food_is_respectful() -> None:
+    """Gemini wrote "strictly omit onion, garlic and root vegetables" (eval run, 22 Oct)."""
+    answer = ideas(
+        "Jain tasting", "Dishes strictly omit onion, garlic and root vegetables", "Sunset pheras"
+    )
+    assert score_personalize(PERSONALIZE["w-jain"], answer, SYSTEM).passed

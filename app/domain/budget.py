@@ -84,7 +84,7 @@ class SavingLevel(StrEnum):
     LARGE = "large"
 
 
-_SAVING_PERCENT: Mapping[SavingLevel, int] = {
+SAVING_PERCENT: Mapping[SavingLevel, int] = {
     SavingLevel.SMALL: 10,
     SavingLevel.MEDIUM: 25,
     SavingLevel.LARGE: 50,
@@ -104,7 +104,7 @@ def estimate_saving(allocated_inr: int, action: SavingAction, level: SavingLevel
         >>> estimate_saving(3_000, SavingAction.REMOVE, SavingLevel.SMALL)
         3000
     """
-    percent = _WHOLE if action is SavingAction.REMOVE else _SAVING_PERCENT[level]
+    percent = _WHOLE if action is SavingAction.REMOVE else SAVING_PERCENT[level]
     return allocated_inr * percent // _WHOLE
 
 

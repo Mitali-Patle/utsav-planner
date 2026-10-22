@@ -1,6 +1,7 @@
 """AI tasks: prompts, guardrails, fallbacks, and the full loop from model answer to proposal."""
 
 import json
+import re
 from datetime import date, timedelta
 from typing import Any
 
@@ -34,6 +35,7 @@ from app.ai.schemas import (
 )
 from app.ai.tasks import INTERPRET_CHANGE, PERSONALIZE, SUGGEST_ALTERNATIVES
 from app.domain.budget import (
+    SAVING_PERCENT,
     EmphasisDirection,
     EmphasisStrength,
     NewExpense,
@@ -102,7 +104,7 @@ def change_context(request: str = "keep the cake, budget 12000") -> ChangeContex
 @pytest.mark.parametrize("task", ALL_TASKS, ids=lambda t: t.name)
 def test_prompts_carry_the_guardrails_and_valid_examples(task: Any) -> None:
     assert GUARDRAILS in task.system
-    assert task.version.endswith("-v1")
+    assert re.fullmatch(r"[a-z-]+-v[0-9]+", task.version)
     for _, answer in task.few_shots:
         assert task.output.model_validate_json(answer.model_dump_json()) == answer
 
@@ -121,9 +123,11 @@ def test_interpret_examples_convert_to_valid_change_sets() -> None:
         if answer.status is IntentStatus.OK:
             change_set = intent_to_change_set(answer)
             categories = {c["id"] for c in payload["plan"]["categories"]}
+            expenses = {e["id"] for e in payload["plan"]["expenses"]}
             assert all(
                 op.category_id in categories for op in change_set.operations if op.category_id
             )
+            assert all(op.expense_id in expenses for op in change_set.operations if op.expense_id)
 
 
 @pytest.mark.parametrize(
@@ -408,3 +412,25 @@ def test_personalization_is_salvaged_through_the_chain() -> None:
     )
     assert not result.provenance.fallback
     assert result.value.ideas[0].category_id is None
+
+
+def test_alternatives_prompt_states_the_saving_the_app_will_compute() -> None:
+    for level, percent in SAVING_PERCENT.items():
+        assert f"{level.value} about {percent}%" in SUGGEST_ALTERNATIVES.system
+
+
+def test_interpret_examples_show_amounts_for_every_amount_kind() -> None:
+    """Some models omit amount_inr on kinds no example shows (eval finding, 22 Oct)."""
+    shown = {
+        op.kind
+        for _, answer in interpret_change.FEW_SHOTS
+        for op in answer.operations
+        if op.amount_inr is not None
+    }
+    amount_kinds = {
+        ChangeKind.SET_TOTAL_BUDGET,
+        ChangeKind.ADD_EXPENSE,
+        ChangeKind.UPDATE_EXPENSE,
+        ChangeKind.ADD_CATEGORY,
+    }
+    assert amount_kinds <= shown

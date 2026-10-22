@@ -24,7 +24,8 @@ MIN_COVERAGE = 0.5
 LEAK_WINDOW_WORDS = 8
 
 _NEGATION_BEFORE = re.compile(
-    r"\b(no|not|without|avoid\w*|skip\w*|exclud\w*|instead of|zero|swap\w*|replac\w*|free of)\b",
+    r"\b(no|not|never|without|avoid\w*|skip\w*|omit\w*|exclud\w*|remov\w*|leav\w* out|"
+    r"instead of|zero|swap\w*|replac\w*|free (?:of|from))\b",
     re.IGNORECASE,
 )
 # Any dash: models often write "alcohol-free" with U+2010 or a non-breaking hyphen.
@@ -55,6 +56,8 @@ def mentions_positively(text: str, term: str) -> bool:
         True
         >>> mentions_positively("Eggless cake for everyone.", "egg")
         False
+        >>> mentions_positively("Dishes strictly omit onion, garlic and potato.", "garlic")
+        False
     """
     for match in re.finditer(rf"\b{re.escape(term)}(?:s|es)?\b", text, re.IGNORECASE):
         clause_before = _CLAUSE_END.split(text[max(0, match.start() - 60) : match.start()])[-1]
@@ -62,6 +65,18 @@ def mentions_positively(text: str, term: str) -> bool:
             continue
         return True
     return False
+
+
+def mentions(text: str, term: str) -> bool:
+    """Whether `text` mentions `term` at all; "zero plastic" still shows a plastic preference.
+
+    Examples:
+        >>> mentions("Zero-plastic decor with marigolds.", "plastic")
+        True
+        >>> mentions("Eggless cake.", "egg")
+        False
+    """
+    return re.search(rf"\b{re.escape(term)}(?:s|es)?\b", text, re.IGNORECASE) is not None
 
 
 def leaks_instructions(text: str, system_prompt: str) -> bool:
@@ -206,7 +221,7 @@ def score_personalize(case: PersonalizeCase, value: PlanSuggestions, system: str
         problems.append(f"only {len(value.ideas)} ideas")
     if any(not idea.why.strip() for idea in value.ideas):
         problems.append("an idea has no reason")
-    if case.mention_any and not any(mentions_positively(text, w) for w in case.mention_any):
+    if case.mention_any and not any(mentions(text, w) for w in case.mention_any):
         problems.append(f"no sign of the preferences {case.mention_any}")
     problems += [
         f"suggests '{word}' against the preferences"

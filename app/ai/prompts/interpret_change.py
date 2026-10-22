@@ -8,7 +8,7 @@ from app.ai.prompts import GUARDRAILS
 from app.ai.schemas import AIChangeOperation, ChangeIntent, IntentStatus
 from app.domain.changes import ChangeKind
 
-VERSION = "interpret-change-v1"
+VERSION = "interpret-change-v2"
 
 SYSTEM = f"""\
 You turn a user's change request for an event plan into operations. You do not apply them;
@@ -63,11 +63,20 @@ _PLAN: dict[str, Any] = {
 }
 
 
-def _example(request: str) -> dict[str, Any]:
+_CAKE_ORDER = {
+    "id": "exp-1",
+    "category_id": "cake",
+    "label": "Cake order",
+    "amount_inr": 1800,
+    "protected": False,
+}
+
+
+def _example(request: str, plan: dict[str, Any] = _PLAN) -> dict[str, Any]:
     return {
         "task": "interpret_change",
         "today": "2026-10-22",
-        "plan": _PLAN,
+        "plan": plan,
         "request": f"<<<{request}>>>",
     }
 
@@ -91,6 +100,35 @@ FEW_SHOTS: tuple[tuple[dict[str, Any], ChangeIntent], ...] = (
             operations=[AIChangeOperation(kind=ChangeKind.ADJUST_GUEST_COUNT, delta=10)],
             cut_priority=["decor"],
             summary="Add 10 guests and take any extra cost from decorations first.",
+        ),
+    ),
+    (
+        # v2: some models dropped amount_inr on these kinds until an example showed it.
+        _example(
+            "The cake order now costs 2,200, we paid a 3,000 advance to the decorator, "
+            "and add a line for a mehendi artist, 2,500",
+            {**_PLAN, "expenses": [_CAKE_ORDER]},
+        ),
+        ChangeIntent(
+            status=IntentStatus.OK,
+            operations=[
+                AIChangeOperation(
+                    kind=ChangeKind.UPDATE_EXPENSE, expense_id="exp-1", amount_inr=2200
+                ),
+                AIChangeOperation(
+                    kind=ChangeKind.ADD_EXPENSE,
+                    category_id="decor",
+                    label="Decorator advance",
+                    amount_inr=3000,
+                ),
+                AIChangeOperation(
+                    kind=ChangeKind.ADD_CATEGORY, label="Mehendi artist", amount_inr=2500
+                ),
+            ],
+            summary=(
+                "Update the cake order, record the decorator advance and add a budget line "
+                "for a mehendi artist."
+            ),
         ),
     ),
     (

@@ -358,3 +358,17 @@ The prompts the app itself sends to the LLM live in `app/ai/prompts/`.
   - **Gemini 3.1 Flash-Lite:** the run was discarded. Google went back to 503 "high demand" right after the health check, and 51 of 54 calls got no answer, so the run measured the outage, not the model. It will be rerun.
   - **Root cause of the three Gemini 3.5 rejections:** it left out `amount_inr` on add_category, add_expense and update_expense, even after the repair message named the missing field. The prompt lists the field, but no few-shot example shows one of those operations, and Gemini follows the examples' shape more literally than Groq. This makes it a prompt v2 candidate (one worked add_expense example).
 - **Runner fix:** an answer the guardrails rejected twice was being counted as "no answer", like an outage. It is the model's failure, so it now counts as a failed answer, and `--rescore` reclassifies old files.
+
+## 2026-10-22 (night): Prompt v2, before and after
+- **Tool / model:** Claude Code (Claude Opus 5.5). The developer approved prompt v2 ("do A now") and the Groq-first chain ("do B"), then let the work continue overnight without further approval.
+- **Changes:**
+  - `interpret-change-v2`: one worked example with update_expense, add_expense and add_category, each carrying `amount_inr`. A test now fails if any amount-bearing kind lacks an example; it was shown to fail on v1.
+  - `alternatives-v2`: states what small, medium, large and remove free up, built from the domain's own `SAVING_PERCENT` so prompt and code cannot drift, and asks for options that reach the shortfall or say plainly that they cannot.
+- **Results, passed out of answered** (`evals/RESULTS.md`, run history):
+  - Groq: change requests 36/36 again, personalization 5/5. Its free daily quota (200K tokens) ran out at case 41, because the morning run, the v2 run and live traffic share it; alternatives v2 is re-run with `--retry-errors` after the reset.
+  - Gemini 3.5: change requests 24/26 (v1: 28/31); the expense case is fixed, but it still drops `amount_inr` for "add a line for a ghodi for the baraat, ₹25,000", even after the repair message. Known limitation; Groq handles it. Alternatives 4/5 (v1: 4/6).
+  - Gemini 3.1: discarded again; 47 of 54 calls hit Google's 503 "high demand".
+- **Scorer bugs found by reading the answers, not the totals:** "strictly omit onion, garlic…" was a negation the checker did not know; "zero plastic decor" was a preference mention the checker threw away because "zero" counts as a negation. Preferences now count any mention; forbidden items keep negation handling. Both have regression tests built from the real answers.
+- **Report fix:** the summary divided by all cases, which made Groq's quota cut-off look like 0/6 alternatives. It now shows passed out of answered, with no-answer cases in their own column.
+- **Tooling:** `--retry-errors FILE` re-runs only the unanswered cases of a run, if its prompt versions still match.
+- **Operational lesson:** a Groq eval running at the same time as live traffic used up the shared per-minute quota, and live change previews fell back from Groq (1.1 s) to Gemini (about 6 s). Groq evals are not to be run while evaluators may be using the app.

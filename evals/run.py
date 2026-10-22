@@ -177,25 +177,71 @@ def rescore(path: Path) -> list[CaseResult]:
     bug. Results with no AI answer stay as they were, except that answers the guardrails
     rejected twice are counted as the model's failure rather than as no answer.
     """
-    document: dict[str, Any] = json.loads(path.read_text(encoding="utf-8"))
-    cases = {(task, case.id): case for task in TASKS for case in select_cases(task)}
-    updated = []
-    for saved in document["results"]:
-        result = CaseResult(
-            **{**saved, "reasons": tuple(saved["reasons"]), "attempts": tuple(saved["attempts"])}
-        )
-        if result.error and rejected(result.attempts):
-            result = replace(result, error=False, reasons=(REJECTED,))
-        elif not result.error and result.reasons != (REJECTED,):
-            verdict = _score_saved(cases[(result.task, result.case_id)], result.answer)
-            result = replace(
-                result, passed=verdict.passed, reasons=verdict.reasons, metrics=verdict.metrics
-            )
-        updated.append(result)
-    document["results"] = [asdict(r) for r in updated]
-    document["rescored_at"] = datetime.now(UTC).isoformat(timespec="seconds")
-    path.write_text(json.dumps(document, indent=1, ensure_ascii=False) + "\n", encoding="utf-8")
+    document, results = _load(path)
+    cases = _all_cases()
+    updated = [_rescored(result, cases) for result in results]
+    _write(path, document, updated, "rescored_at")
     return updated
+
+
+def _rescored(result: CaseResult, cases: dict[tuple[str, str], Case]) -> CaseResult:
+    if result.error and rejected(result.attempts):
+        return replace(result, error=False, reasons=(REJECTED,))
+    if result.error or result.reasons == (REJECTED,):
+        return result
+    verdict = _score_saved(cases[(result.task, result.case_id)], result.answer)
+    return replace(result, passed=verdict.passed, reasons=verdict.reasons, metrics=verdict.metrics)
+
+
+def retry_errors(
+    path: Path,
+    providers: Sequence[Provider],
+    *,
+    pause_s: float = 0.0,
+    sleep: Callable[[float], None] = time.sleep,
+) -> list[CaseResult]:
+    """Run again only the cases of a results file that got no answer, and update the file.
+
+    Use it when a quota or outage cut a run short. The prompts must be the versions the run
+    used, so every answer in the file stays comparable.
+
+    Raises:
+        ValueError: If the prompts changed since the run.
+    """
+    document, results = _load(path)
+    if document["prompt_versions"] != _prompt_versions():
+        raise ValueError("the prompts changed since this run; start a new run instead")
+    cases = _all_cases()
+    todo = [cases[(r.task, r.case_id)] for r in results if r.error]
+    fresh = {
+        (r.task, r.case_id): r for r in run_cases(todo, providers, pause_s=pause_s, sleep=sleep)
+    }
+    updated = [fresh.get((r.task, r.case_id), r) for r in results]
+    _write(path, document, updated, "retried_at")
+    return updated
+
+
+def _load(path: Path) -> tuple[dict[str, Any], list[CaseResult]]:
+    document: dict[str, Any] = json.loads(path.read_text(encoding="utf-8"))
+    results = [
+        CaseResult(**{**r, "reasons": tuple(r["reasons"]), "attempts": tuple(r["attempts"])})
+        for r in document["results"]
+    ]
+    return document, results
+
+
+def _write(path: Path, document: dict[str, Any], results: Sequence[CaseResult], stamp: str) -> None:
+    document["results"] = [asdict(r) for r in results]
+    document[stamp] = datetime.now(UTC).isoformat(timespec="seconds")
+    path.write_text(json.dumps(document, indent=1, ensure_ascii=False) + "\n", encoding="utf-8")
+
+
+def _all_cases() -> dict[tuple[str, str], Case]:
+    return {(task, case.id): case for task in TASKS for case in select_cases(task)}
+
+
+def _prompt_versions() -> dict[str, str]:
+    return {t.name: t.version for t in (PERSONALIZE, INTERPRET_CHANGE, SUGGEST_ALTERNATIVES)}
 
 
 def _score_saved(case: Case, answer: dict[str, Any]) -> Verdict:
@@ -226,9 +272,7 @@ def save(results: Sequence[CaseResult], model: str, directory: Path = RESULTS_DI
     document = {
         "model": model,
         "run_at": run_at.isoformat(timespec="seconds"),
-        "prompt_versions": {
-            t.name: t.version for t in (PERSONALIZE, INTERPRET_CHANGE, SUGGEST_ALTERNATIVES)
-        },
+        "prompt_versions": _prompt_versions(),
         "results": [asdict(r) for r in results],
     }
     path.write_text(json.dumps(document, indent=1, ensure_ascii=False) + "\n", encoding="utf-8")
@@ -240,6 +284,9 @@ def main(argv: Sequence[str] | None = None) -> int:
     parser = argparse.ArgumentParser(description=__doc__.splitlines()[0] if __doc__ else None)
     parser.add_argument("--model", help="provider:model, or 'chain'")
     parser.add_argument("--rescore", type=Path, help="re-score a saved results file instead")
+    parser.add_argument(
+        "--retry-errors", type=Path, help="re-run only the unanswered cases of a results file"
+    )
     parser.add_argument("--task", choices=(*TASKS, "all"), default="all")
     parser.add_argument("--only", default="", help="comma-separated case ids")
     parser.add_argument("--pause", type=float, default=5.0, help="seconds between calls")
@@ -249,6 +296,8 @@ def main(argv: Sequence[str] | None = None) -> int:
         rescored = rescore(args.rescore)
         logger.info("%d/%d passed after re-scoring", sum(r.passed for r in rescored), len(rescored))
         return 0
+    if args.retry_errors:
+        args.model = json.loads(args.retry_errors.read_text(encoding="utf-8"))["model"]
     if not args.model:
         parser.error("--model is required unless --rescore is given")
 
@@ -260,6 +309,10 @@ def main(argv: Sequence[str] | None = None) -> int:
         logger.error("no provider available for %s (is its API key in .env?)", args.model)
         return 2
 
+    if args.retry_errors:
+        retried = retry_errors(args.retry_errors, providers, pause_s=args.pause)
+        logger.info("%d/%d passed after retrying", sum(r.passed for r in retried), len(retried))
+        return 0
     only = tuple(filter(None, args.only.split(",")))
     results = run_cases(select_cases(args.task, only), providers, pause_s=args.pause)
     path = save(results, settings.llm_chain if args.model == "chain" else args.model)
