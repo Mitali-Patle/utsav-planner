@@ -1,18 +1,22 @@
 """Repositories: the only code that reads and writes tables.
 
 Ownership and versions are enforced inside the SQL statements themselves, so a request can
-never read another session's event or overwrite a newer version of a plan.
+never read another session's event or overwrite a newer version of a plan. Event and
+proposal repositories run inside one transaction per request (`Database.transaction`); the
+AI cache and rate limiter use their own short connections, because they are used while an
+AI call is in progress and a transaction must never stay open during one.
 """
 
 import hashlib
 import uuid
-from collections.abc import Callable, Mapping, Sequence
+from collections.abc import Callable, Iterator, Mapping, Sequence
+from contextlib import contextmanager
 from dataclasses import dataclass
 from datetime import UTC, datetime, timedelta
 from enum import StrEnum
 from typing import Any
 
-from sqlalchemy import Engine, Table, delete, func, insert, select, update
+from sqlalchemy import Connection, Engine, Table, delete, func, insert, select, update
 from sqlalchemy.dialects import postgresql, sqlite
 
 from app.domain.changes import Proposal
@@ -59,16 +63,20 @@ class StoredEvent:
 
 
 class EventRepository:
-    """Events, always scoped to their owner's session."""
+    """Events, always scoped to their owner's session.
 
-    def __init__(self, engine: Engine, now: Now = utc_now) -> None:
+    Works inside a caller's transaction (see `Database.transaction`), so several reads and
+    writes share one connection and commit or roll back together.
+    """
+
+    def __init__(self, connection: Connection, now: Now = utc_now) -> None:
         """Create the repository.
 
         Args:
-            engine: Database engine.
+            connection: Connection with an open transaction.
             now: Clock (injectable for tests).
         """
-        self._engine = engine
+        self._connection = connection
         self._now = now
 
     def create(
@@ -81,18 +89,17 @@ class EventRepository:
         """
         event_id = uuid.uuid4().hex
         moment = self._now()
-        with self._engine.begin() as connection:
-            connection.execute(
-                insert(events).values(
-                    id=event_id,
-                    owner=owner_key(session_id),
-                    version=plan.version,
-                    plan=plan.model_dump(mode="json"),
-                    ai=dict(ai) if ai is not None else None,
-                    created_at=moment,
-                    updated_at=moment,
-                )
+        self._connection.execute(
+            insert(events).values(
+                id=event_id,
+                owner=owner_key(session_id),
+                version=plan.version,
+                plan=plan.model_dump(mode="json"),
+                ai=dict(ai) if ai is not None else None,
+                created_at=moment,
+                updated_at=moment,
             )
+        )
         return StoredEvent(event_id, plan.version, plan, ai, moment)
 
     def get(self, event_id: str, session_id: str) -> StoredEvent:
@@ -101,35 +108,24 @@ class EventRepository:
         Raises:
             NotFoundError: If it does not exist or belongs to another session.
         """
-        with self._engine.connect() as connection:
-            row = connection.execute(
-                select(
-                    events.c.id, events.c.version, events.c.plan, events.c.ai, events.c.updated_at
-                ).where(events.c.id == event_id, events.c.owner == owner_key(session_id))
-            ).one_or_none()
+        row = self._connection.execute(
+            select(*_EVENT_COLUMNS).where(
+                events.c.id == event_id, events.c.owner == owner_key(session_id)
+            )
+        ).one_or_none()
         if row is None:
             raise NotFoundError("This event does not exist or is not yours.")
-        return StoredEvent(
-            row.id, row.version, EventPlan.model_validate(row.plan), row.ai, _as_utc(row.updated_at)
-        )
+        return _event_from_row(row)
 
     def list_for(self, session_id: str, limit: int = 20) -> list[StoredEvent]:
         """This session's events, most recently updated first."""
-        with self._engine.connect() as connection:
-            rows = connection.execute(
-                select(
-                    events.c.id, events.c.version, events.c.plan, events.c.ai, events.c.updated_at
-                )
-                .where(events.c.owner == owner_key(session_id))
-                .order_by(events.c.updated_at.desc())
-                .limit(limit)
-            ).all()
-        return [
-            StoredEvent(
-                r.id, r.version, EventPlan.model_validate(r.plan), r.ai, _as_utc(r.updated_at)
-            )
-            for r in rows
-        ]
+        rows = self._connection.execute(
+            select(*_EVENT_COLUMNS)
+            .where(events.c.owner == owner_key(session_id))
+            .order_by(events.c.updated_at.desc())
+            .limit(limit)
+        ).all()
+        return [_event_from_row(row) for row in rows]
 
     def save(
         self,
@@ -167,33 +163,35 @@ class EventRepository:
         if ai is not None:
             values["ai"] = dict(ai)
         owner = owner_key(session_id)
-        with self._engine.begin() as connection:
-            result = connection.execute(
-                update(events)
-                .where(
-                    events.c.id == event_id,
-                    events.c.owner == owner,
-                    events.c.version == expected_version,
-                )
-                .values(**values)
+        result = self._connection.execute(
+            update(events)
+            .where(
+                events.c.id == event_id,
+                events.c.owner == owner,
+                events.c.version == expected_version,
             )
-            if result.rowcount == 0:
-                exists = connection.execute(
-                    select(func.count()).where(events.c.id == event_id, events.c.owner == owner)
-                ).scalar_one()
-                if not exists:
-                    raise NotFoundError("This event does not exist or is not yours.")
-                raise StaleProposalError(
-                    "The plan was changed somewhere else. Please reload and try again."
-                )
-            stored_ai = (
-                ai
-                if ai is not None
-                else connection.execute(
-                    select(events.c.ai).where(events.c.id == event_id)
-                ).scalar_one()
+            .values(**values)
+            .returning(events.c.ai)
+        ).one_or_none()
+        if result is None:
+            exists = self._connection.execute(
+                select(func.count()).where(events.c.id == event_id, events.c.owner == owner)
+            ).scalar_one()
+            if not exists:
+                raise NotFoundError("This event does not exist or is not yours.")
+            raise StaleProposalError(
+                "The plan was changed somewhere else. Please reload and try again."
             )
-        return StoredEvent(event_id, new_version, new_plan, stored_ai, moment)
+        return StoredEvent(event_id, new_version, new_plan, result.ai, moment)
+
+
+_EVENT_COLUMNS = (events.c.id, events.c.version, events.c.plan, events.c.ai, events.c.updated_at)
+
+
+def _event_from_row(row: Any) -> StoredEvent:  # noqa: ANN401 - SQLAlchemy row
+    return StoredEvent(
+        row.id, row.version, EventPlan.model_validate(row.plan), row.ai, _as_utc(row.updated_at)
+    )
 
 
 class ProposalStatus(StrEnum):
@@ -221,11 +219,14 @@ class StoredProposal:
 
 
 class ProposalRepository:
-    """Change proposals and their history. Callers check event ownership first."""
+    """Change proposals and their history, inside the caller's transaction.
 
-    def __init__(self, engine: Engine, now: Now = utc_now) -> None:
+    Callers check event ownership first (through `EventRepository.get`).
+    """
+
+    def __init__(self, connection: Connection, now: Now = utc_now) -> None:
         """Create the repository."""
-        self._engine = engine
+        self._connection = connection
         self._now = now
 
     def add(
@@ -243,19 +244,18 @@ class ProposalRepository:
             created_at=self._now(),
             decided_at=None,
         )
-        with self._engine.begin() as connection:
-            connection.execute(
-                insert(proposals).values(
-                    id=stored.id,
-                    event_id=event_id,
-                    base_version=stored.base_version,
-                    request_text=stored.request_text,
-                    intent=stored.intent,
-                    proposal=proposal.model_dump(mode="json"),
-                    status=stored.status.value,
-                    created_at=stored.created_at,
-                )
+        self._connection.execute(
+            insert(proposals).values(
+                id=stored.id,
+                event_id=event_id,
+                base_version=stored.base_version,
+                request_text=stored.request_text,
+                intent=stored.intent,
+                proposal=proposal.model_dump(mode="json"),
+                status=stored.status.value,
+                created_at=stored.created_at,
             )
+        )
         return stored
 
     def get(self, proposal_id: str, event_id: str) -> StoredProposal:
@@ -264,12 +264,9 @@ class ProposalRepository:
         Raises:
             NotFoundError: If it does not belong to this event.
         """
-        with self._engine.connect() as connection:
-            row = connection.execute(
-                select(proposals).where(
-                    proposals.c.id == proposal_id, proposals.c.event_id == event_id
-                )
-            ).one_or_none()
+        row = self._connection.execute(
+            select(proposals).where(proposals.c.id == proposal_id, proposals.c.event_id == event_id)
+        ).one_or_none()
         if row is None:
             raise NotFoundError("This change proposal does not exist.")
         return _proposal_from_row(row)
@@ -281,27 +278,25 @@ class ProposalRepository:
             True if this call made the decision; False if it was already decided (so an
             approval can never be applied twice).
         """
-        with self._engine.begin() as connection:
-            result = connection.execute(
-                update(proposals)
-                .where(
-                    proposals.c.id == proposal_id,
-                    proposals.c.event_id == event_id,
-                    proposals.c.status == ProposalStatus.PENDING.value,
-                )
-                .values(status=status.value, decided_at=self._now())
+        result = self._connection.execute(
+            update(proposals)
+            .where(
+                proposals.c.id == proposal_id,
+                proposals.c.event_id == event_id,
+                proposals.c.status == ProposalStatus.PENDING.value,
             )
+            .values(status=status.value, decided_at=self._now())
+        )
         return result.rowcount == 1
 
     def history(self, event_id: str, limit: int = 20) -> list[StoredProposal]:
         """An event's proposals, newest first."""
-        with self._engine.connect() as connection:
-            rows = connection.execute(
-                select(proposals)
-                .where(proposals.c.event_id == event_id)
-                .order_by(proposals.c.created_at.desc())
-                .limit(limit)
-            ).all()
+        rows = self._connection.execute(
+            select(proposals)
+            .where(proposals.c.event_id == event_id)
+            .order_by(proposals.c.created_at.desc())
+            .limit(limit)
+        ).all()
         return [_proposal_from_row(row) for row in rows]
 
 
@@ -317,6 +312,37 @@ def _proposal_from_row(row: Any) -> StoredProposal:  # noqa: ANN401 - SQLAlchemy
         created_at=_as_utc(row.created_at),
         decided_at=_as_utc(row.decided_at) if row.decided_at else None,
     )
+
+
+@dataclass(frozen=True)
+class Repositories:
+    """Repositories sharing one connection and transaction."""
+
+    events: EventRepository
+    proposals: ProposalRepository
+
+
+class Database:
+    """Opens one connection and one transaction per unit of work.
+
+    Everything done inside `transaction()` commits together, or rolls back together on any
+    error, so (for example) saving a new plan version and marking its proposal approved can
+    never half-happen. The connection is closed afterwards: nothing stays open to keep the
+    serverless database awake.
+    """
+
+    def __init__(self, engine: Engine, now: Now = utc_now) -> None:
+        """Create the unit-of-work factory."""
+        self._engine = engine
+        self._now = now
+
+    @contextmanager
+    def transaction(self) -> Iterator[Repositories]:
+        """Repositories bound to a single new transaction."""
+        with self._engine.begin() as connection:
+            yield Repositories(
+                EventRepository(connection, self._now), ProposalRepository(connection, self._now)
+            )
 
 
 class SqlCacheStore:

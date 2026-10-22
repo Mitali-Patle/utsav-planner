@@ -239,3 +239,12 @@ The prompts the app itself sends to the LLM live in `app/ai/prompts/`.
   - 16 repository tests on SQLite.
 - **Live check on Neon (Postgres):** every repository path worked, including the dialect-specific insert-or-update and `RETURNING`.
 - **Measured from India:** a new connection per operation costs about 1.06 s, against 0.48 s with a reused pool. Pooling was rejected because idle pooled connections can keep Neon awake beyond its 100 free compute-hours. Proposed instead: one connection and one transaction per request, which also makes approval atomic.
+
+## 2026-10-22: Unit of work (option C)
+- **Tool / model:** Claude Code (Claude Opus 5.5). The developer chose option C (one connection and one transaction per request) over the current per-call connections or a reused pool.
+- **Outcome:**
+  - `Database.transaction()` gives event and proposal repositories that share one connection and transaction. It commits on success and rolls back on any error.
+  - The AI cache and rate limiter keep their own short connections, so no transaction stays open during an AI call.
+  - `save` now uses `UPDATE … RETURNING`.
+- **Tests:** a new test proves a failed approval changes nothing (360 tests).
+- **Live on Neon:** an atomic approval (save version 2 and mark the proposal approved) took 1.43 s from India in one connection, compared with about 3.2 s for three separate connections. Rollback, stale and ownership checks were verified on Postgres.

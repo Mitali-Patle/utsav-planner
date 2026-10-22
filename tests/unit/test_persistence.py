@@ -11,8 +11,7 @@ from app.domain.changes import ChangeKind, ChangeOperation, ChangeSet, Proposal,
 from app.domain.errors import NotFoundError, StaleProposalError
 from app.persistence.db import make_engine
 from app.persistence.repositories import (
-    EventRepository,
-    ProposalRepository,
+    Database,
     ProposalStatus,
     RateLimiter,
     SqlCacheStore,
@@ -58,120 +57,147 @@ def a_proposal(total: int = 12_000) -> Proposal:
 # Events
 
 
-def test_event_round_trip(engine: Engine, now: Now) -> None:
-    repo = EventRepository(engine, now)
+@pytest.fixture
+def db(engine: Engine, now: Now) -> Database:
+    return Database(engine, now)
+
+
+def test_event_round_trip(db: Database) -> None:
     plan = make_plan()
-    created = repo.create("session-a", plan, ai={"provider": "gemini:x"})
-    loaded = repo.get(created.id, "session-a")
+    with db.transaction() as repos:
+        created = repos.events.create("session-a", plan, ai={"provider": "gemini:x"})
+    with db.transaction() as repos:
+        loaded = repos.events.get(created.id, "session-a")
     assert (loaded.plan, loaded.version, loaded.ai) == (plan, 1, {"provider": "gemini:x"})
     assert loaded.updated_at == START
 
 
-def test_session_ids_are_stored_hashed(engine: Engine) -> None:
-    EventRepository(engine).create("session-a", make_plan())
+def test_session_ids_are_stored_hashed(db: Database, engine: Engine) -> None:
+    with db.transaction() as repos:
+        repos.events.create("session-a", make_plan())
     with engine.connect() as connection:
         stored = connection.execute(select(events.c.owner)).scalar_one()
     assert stored == owner_key("session-a")
     assert "session-a" not in stored
 
 
-def test_another_session_cannot_read_or_save_the_event(engine: Engine) -> None:
+def test_another_session_cannot_read_or_save_the_event(db: Database) -> None:
     """Must-pass scenario 12 at the storage level."""
-    repo = EventRepository(engine)
-    created = repo.create("session-a", make_plan())
-    with pytest.raises(NotFoundError):
-        repo.get(created.id, "session-b")
-    with pytest.raises(NotFoundError):
-        repo.save(created.id, "session-b", make_plan(), expected_version=1)
-    assert repo.list_for("session-b") == []
+    with db.transaction() as repos:
+        created = repos.events.create("session-a", make_plan())
+    with db.transaction() as repos:
+        with pytest.raises(NotFoundError):
+            repos.events.get(created.id, "session-b")
+        with pytest.raises(NotFoundError):
+            repos.events.save(created.id, "session-b", make_plan(), expected_version=1)
+        assert repos.events.list_for("session-b") == []
 
 
-def test_save_bumps_the_version_and_keeps_ai_unless_replaced(engine: Engine, now: Now) -> None:
-    repo = EventRepository(engine, now)
-    created = repo.create("s", make_plan(), ai={"summary": "first"})
+def test_save_bumps_the_version_and_keeps_ai_unless_replaced(db: Database, now: Now) -> None:
+    with db.transaction() as repos:
+        created = repos.events.create("s", make_plan(), ai={"summary": "first"})
     now.advance(minutes=5)
-    saved = repo.save(created.id, "s", make_plan(guest_count=40), expected_version=1)
-    assert (saved.version, saved.plan.version, saved.ai) == (2, 2, {"summary": "first"})
-    loaded = repo.get(created.id, "s")
-    assert (loaded.version, loaded.plan.guest_count, loaded.updated_at) == (
-        2,
-        40,
-        START + timedelta(minutes=5),
-    )
-    replaced = repo.save(created.id, "s", loaded.plan, expected_version=2, ai={"summary": "second"})
+    with db.transaction() as repos:
+        saved = repos.events.save(created.id, "s", make_plan(guest_count=40), expected_version=1)
+        assert (saved.version, saved.plan.version, saved.ai) == (2, 2, {"summary": "first"})
+        loaded = repos.events.get(created.id, "s")
+        assert (loaded.version, loaded.plan.guest_count) == (2, 40)
+        assert loaded.updated_at == START + timedelta(minutes=5)
+        replaced = repos.events.save(
+            created.id, "s", loaded.plan, expected_version=2, ai={"summary": "second"}
+        )
     assert replaced.ai == {"summary": "second"}
 
 
-def test_saving_an_old_version_is_refused(engine: Engine) -> None:
+def test_saving_an_old_version_is_refused(db: Database) -> None:
     """Two tabs approving at once: the second one is stale (scenario 13)."""
-    repo = EventRepository(engine)
-    created = repo.create("s", make_plan())
-    repo.save(created.id, "s", make_plan(), expected_version=1)
-    with pytest.raises(StaleProposalError):
-        repo.save(created.id, "s", make_plan(), expected_version=1)
+    with db.transaction() as repos:
+        created = repos.events.create("s", make_plan())
+    with db.transaction() as repos:
+        repos.events.save(created.id, "s", make_plan(), expected_version=1)
+    with db.transaction() as repos, pytest.raises(StaleProposalError):
+        repos.events.save(created.id, "s", make_plan(), expected_version=1)
 
 
-def test_list_is_newest_first(engine: Engine, now: Now) -> None:
-    repo = EventRepository(engine, now)
-    first = repo.create("s", make_plan())
-    now.advance(minutes=1)
-    second = repo.create("s", make_plan())
-    assert [e.id for e in repo.list_for("s")] == [second.id, first.id]
+def test_a_failed_unit_of_work_changes_nothing(db: Database) -> None:
+    """Saving a version and deciding its proposal commit together or not at all."""
+    with db.transaction() as repos:
+        created = repos.events.create("s", make_plan())
+        stored = repos.proposals.add(created.id, "budget 12k", {}, a_proposal())
+    with pytest.raises(RuntimeError), db.transaction() as repos:
+        repos.events.save(created.id, "s", make_plan(guest_count=99), expected_version=1)
+        repos.proposals.decide(stored.id, created.id, ProposalStatus.APPROVED)
+        raise RuntimeError("crash before commit")
+    with db.transaction() as repos:
+        assert repos.events.get(created.id, "s").version == 1
+        assert repos.proposals.get(stored.id, created.id).status is ProposalStatus.PENDING
 
 
-def test_unknown_event_is_not_found(engine: Engine) -> None:
-    with pytest.raises(NotFoundError):
-        EventRepository(engine).get("missing", "s")
+def test_list_is_newest_first(db: Database, now: Now) -> None:
+    with db.transaction() as repos:
+        first = repos.events.create("s", make_plan())
+        now.advance(minutes=1)
+        second = repos.events.create("s", make_plan())
+        assert [e.id for e in repos.events.list_for("s")] == [second.id, first.id]
+
+
+def test_unknown_event_is_not_found(db: Database) -> None:
+    with db.transaction() as repos, pytest.raises(NotFoundError):
+        repos.events.get("missing", "s")
 
 
 # Proposals
 
 
-def test_proposal_round_trip_and_single_decision(engine: Engine, now: Now) -> None:
-    event = EventRepository(engine, now).create("s", make_plan())
-    repo = ProposalRepository(engine, now)
+def test_proposal_round_trip_and_single_decision(db: Database, now: Now) -> None:
     proposal = a_proposal()
-    stored = repo.add(event.id, "budget 12k", {"status": "ok"}, proposal)
-    loaded = repo.get(stored.id, event.id)
+    with db.transaction() as repos:
+        event = repos.events.create("s", make_plan())
+        stored = repos.proposals.add(event.id, "budget 12k", {"status": "ok"}, proposal)
+    with db.transaction() as repos:
+        loaded = repos.proposals.get(stored.id, event.id)
     assert (loaded.proposal, loaded.status, loaded.request_text) == (
         proposal,
         ProposalStatus.PENDING,
         "budget 12k",
     )
     now.advance(seconds=30)
-    assert repo.decide(stored.id, event.id, ProposalStatus.APPROVED)
-    assert not repo.decide(stored.id, event.id, ProposalStatus.APPROVED), (
-        "approving twice is refused"
-    )
-    decided = repo.get(stored.id, event.id)
+    with db.transaction() as repos:
+        assert repos.proposals.decide(stored.id, event.id, ProposalStatus.APPROVED)
+    with db.transaction() as repos:
+        assert not repos.proposals.decide(stored.id, event.id, ProposalStatus.APPROVED), (
+            "approving twice is refused"
+        )
+        decided = repos.proposals.get(stored.id, event.id)
     assert (decided.status, decided.decided_at) == (
         ProposalStatus.APPROVED,
         START + timedelta(seconds=30),
     )
 
 
-def test_proposals_are_scoped_to_their_event(engine: Engine) -> None:
-    events_repo = EventRepository(engine)
-    mine = events_repo.create("s", make_plan())
-    other = events_repo.create("s", make_plan())
-    stored = ProposalRepository(engine).add(mine.id, "x", {}, a_proposal())
-    with pytest.raises(NotFoundError):
-        ProposalRepository(engine).get(stored.id, other.id)
-    assert not ProposalRepository(engine).decide(stored.id, other.id, ProposalStatus.REJECTED)
+def test_proposals_are_scoped_to_their_event(db: Database) -> None:
+    with db.transaction() as repos:
+        mine = repos.events.create("s", make_plan())
+        other = repos.events.create("s", make_plan())
+        stored = repos.proposals.add(mine.id, "x", {}, a_proposal())
+        with pytest.raises(NotFoundError):
+            repos.proposals.get(stored.id, other.id)
+        assert not repos.proposals.decide(stored.id, other.id, ProposalStatus.REJECTED)
 
 
-def test_history_is_newest_first(engine: Engine, now: Now) -> None:
-    event = EventRepository(engine, now).create("s", make_plan())
-    repo = ProposalRepository(engine, now)
-    first = repo.add(event.id, "first", {}, a_proposal(12_000))
-    now.advance(minutes=1)
-    second = repo.add(event.id, "second", {}, a_proposal(13_000))
-    assert [p.id for p in repo.history(event.id)] == [second.id, first.id]
+def test_history_is_newest_first(db: Database, now: Now) -> None:
+    with db.transaction() as repos:
+        event = repos.events.create("s", make_plan())
+        first = repos.proposals.add(event.id, "first", {}, a_proposal(12_000))
+        now.advance(minutes=1)
+        second = repos.proposals.add(event.id, "second", {}, a_proposal(13_000))
+        assert [p.id for p in repos.proposals.history(event.id)] == [second.id, first.id]
 
 
-def test_request_text_is_capped(engine: Engine) -> None:
-    event = EventRepository(engine).create("s", make_plan())
-    stored = ProposalRepository(engine).add(event.id, "x" * 400, {}, a_proposal())
+def test_request_text_is_capped(db: Database) -> None:
+    with db.transaction() as repos:
+        event = repos.events.create("s", make_plan())
+        stored = repos.proposals.add(event.id, "x" * 400, {}, a_proposal())
     assert len(stored.request_text) == 300
 
 
