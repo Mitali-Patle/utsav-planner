@@ -180,3 +180,13 @@ The prompts the app itself sends to the LLM live in `app/ai/prompts/`.
   - The Gemini free-tier latency varies widely for identical small calls: 1.75 s, 6.4 s and 12.3 s. Loading the SDK costs only 0.4 s. Groq was steady at about 1.3 s.
   - With a 12 s per-call limit and two Gemini models first, a slow day could use most of the 25 s budget before Groq is tried.
 - **Next iteration:** propose a chain-tuning change to the developer (shorter Gemini limit; skip the same vendor after a timeout).
+
+## 2026-10-22: Chain tuning for Gemini latency (option A)
+- **Tool / model:** Claude Code (Claude Opus 5.5).
+- **Prompt (summary):** the developer chose option A of three: an 8 s per-call limit plus skipping the same vendor after a timeout. The others were Groq first, or racing both providers.
+- **Outcome:**
+  - The per-call limit is 8 s, down from 12 s.
+  - After a timeout, the other models from the same vendor are skipped for that request only, and the attempt is recorded as `skipped_after_timeout`.
+  - Rate limits still move on to the next model from the same vendor.
+  - Worst case on a slow Gemini day: about 8 s plus Groq at about 1.3 s, where the old settings could reach the fallback after about 25 s.
+  - 302 tests.

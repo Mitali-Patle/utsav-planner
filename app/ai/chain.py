@@ -2,7 +2,9 @@
 
 The chain never raises for provider problems. Rate-limited providers sit out until their
 quota resets, invalid answers get one repair attempt on the same model, and the whole call
-is capped in time. The result always says which provider (if any) produced it.
+is capped in time. After a timeout, other models from the same vendor are skipped for that
+request: a slow vendor is usually slow for all its models, so the next vendor gets the time.
+The result always says which provider (if any) produced it.
 """
 
 import json
@@ -58,7 +60,7 @@ def next_quota_reset(now: datetime) -> datetime:
 class ChainLimits:
     """Time limits, in seconds."""
 
-    per_call_timeout_s: float = 12.0
+    per_call_timeout_s: float = 8.0
     total_budget_s: float = 25.0
 
 
@@ -72,6 +74,7 @@ class _Run[C, T: BaseModel]:
     started: float
     deadline: float
     attempts: list[Attempt] = field(default_factory=list)
+    slow_vendors: set[str] = field(default_factory=set)
 
 
 class FallbackChain:
@@ -122,12 +125,9 @@ class FallbackChain:
         started = self._clock()
         run = _Run(task, context, payload, started, started + self._limits.total_budget_s)
         for provider in self._providers:
-            if self._cooling_down(provider.name):
-                run.attempts.append(
-                    Attempt(
-                        provider=provider.name, outcome=AttemptOutcome.COOLING_DOWN, latency_ms=0
-                    )
-                )
+            skip = self._skip_reason(provider, run)
+            if skip is not None:
+                run.attempts.append(Attempt(provider=provider.name, outcome=skip, latency_ms=0))
                 continue
             value = self._try_provider(provider, run)
             if value is not None:
@@ -152,6 +152,8 @@ class FallbackChain:
             outcome, raw = self._call(provider, self._request(run.task, messages, remaining))
             if outcome is not AttemptOutcome.OK:
                 run.attempts.append(self._attempt(provider, outcome, call_started))
+                if outcome is AttemptOutcome.TIMEOUT:
+                    run.slow_vendors.add(_vendor(provider))
                 return None
             try:
                 value = run.task.check(run.task.output.model_validate_json(raw), run.context)
@@ -201,6 +203,15 @@ class FallbackChain:
             logger.warning("ai provider %s unavailable", provider.name)
             return AttemptOutcome.UNAVAILABLE, ""
 
+    def _skip_reason[C, T: BaseModel](
+        self, provider: Provider, run: _Run[C, T]
+    ) -> AttemptOutcome | None:
+        if self._cooling_down(provider.name):
+            return AttemptOutcome.COOLING_DOWN
+        if _vendor(provider) in run.slow_vendors:
+            return AttemptOutcome.SKIPPED_AFTER_TIMEOUT
+        return None
+
     def _cooling_down(self, provider_name: str) -> bool:
         until = self._cooldowns.get(provider_name)
         return until is not None and self._now() < until
@@ -226,6 +237,11 @@ class FallbackChain:
             attempts=tuple(run.attempts),
             request_payload=run.payload,
         )
+
+
+def _vendor(provider: Provider) -> str:
+    """Vendor part of a provider name, for example `gemini` in `gemini:gemini-3.5-flash-lite`."""
+    return provider.name.partition(":")[0]
 
 
 def _from_cache[C, T: BaseModel](

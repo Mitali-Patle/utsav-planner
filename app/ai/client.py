@@ -124,6 +124,7 @@ class AttemptOutcome(StrEnum):
     UNAVAILABLE = "unavailable"
     INVALID = "invalid"
     COOLING_DOWN = "cooling_down"
+    SKIPPED_AFTER_TIMEOUT = "skipped_after_timeout"
 
 
 class Attempt(BaseModel):

@@ -248,3 +248,38 @@ def test_memory_cache_expires_and_evicts() -> None:
     clock.advance(11)
     assert cache.get("a") is None, "expired entry is dropped"
     assert cache.get("c") == {"v": 3}
+
+
+def test_default_per_call_limit_is_eight_seconds() -> None:
+    primary = ScriptedProvider("gemini:a", [GOOD])
+    make_chain(primary).run(TASK, "hello")
+    assert primary.requests[0].timeout_s == 8
+
+
+def test_timeout_skips_other_models_from_the_same_vendor() -> None:
+    first = ScriptedProvider("gemini:a", [ProviderTimeoutError("slow")])
+    second = ScriptedProvider("gemini:b", [])
+    other = ScriptedProvider("groq:c", [GOOD])
+    result = make_chain(first, second, other).run(TASK, "hello")
+    assert result.provenance.provider == "groq:c"
+    assert outcomes(result) == [
+        ("gemini:a", AttemptOutcome.TIMEOUT),
+        ("gemini:b", AttemptOutcome.SKIPPED_AFTER_TIMEOUT),
+        ("groq:c", AttemptOutcome.OK),
+    ]
+    assert second.requests == []
+
+
+def test_rate_limit_still_tries_the_next_model_from_the_same_vendor() -> None:
+    first = ScriptedProvider("gemini:a", [RateLimitedError("quota", daily=True)])
+    second = ScriptedProvider("gemini:b", [GOOD])
+    result = make_chain(first, second).run(TASK, "hello")
+    assert result.provenance.provider == "gemini:b"
+
+
+def test_slow_vendor_is_only_skipped_for_that_request() -> None:
+    first = ScriptedProvider("gemini:a", [ProviderTimeoutError("slow"), GOOD])
+    other = ScriptedProvider("groq:c", [GOOD])
+    chain = make_chain(first, other)
+    chain.run(TASK, "first")
+    assert chain.run(TASK, "second").provenance.provider == "gemini:a"
