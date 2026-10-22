@@ -2,6 +2,7 @@
   {% if alts.shortfall %}<p>To close a gap of {{ alts.shortfall }}:</p>{% endif %}
   <p>{{ alts.summary }}</p>
   {% if alts.ai_note %}<p class="ai-note">{{ alts.ai_note }}</p>{% endif %}
+  {% if alts.ai %}{% with ai = alts.ai %}{% include "partials/ai_panel.html" %}{% endwith %}{% endif %}
   {% if alts.options %}
   <ul>
     {% for o in alts.options %}

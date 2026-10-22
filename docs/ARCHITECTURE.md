@@ -177,7 +177,10 @@ the JSON sent and the validated JSON received, and a link to the prompt's source
    - `propose()` applies them to a copy in a fixed order: protection → date (deadlines move) → guests (scaled categories pinned) → expenses (duplicates and protected items skipped) → custom categories → one `rebalance` → user tasks and follow-up tasks for booked vendors.
    - The Proposal shows before/after values, per-category changes with reason codes, moved deadlines, new tasks, skipped items, protected items kept, and budget summaries, or the exact shortfall.
    - `accept()` saves version + 1 only if the plan is still at the proposal's base version; otherwise the proposal is stale. Rejecting needs no code: the saved plan is never modified.
-4. **Alternatives**: only on user request (POST), shown inline below the shortfall alert.
+4. **Alternatives**: only on user request (POST), shown inline below the shortfall alert. An
+   infeasible proposal gets no AI alternatives: it fails because protected lines and committed
+   money exceed the new total, which trimming cannot fix, so the preview states the exact
+   extra total needed and which protected lines could be released instead.
 
 **HTTP rule:** any route that calls the AI or changes data is `POST` (CSRF-protected), so crawlers,
 link previews and prefetching can never trigger AI calls or writes. Deletions are `POST .../delete`.

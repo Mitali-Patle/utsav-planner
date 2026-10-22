@@ -53,7 +53,7 @@ def test_vague_request_asks_first_and_reject_keeps_the_plan(page: Page) -> None:
 
     request_change(page, f"{VAGUE} invite a few more people")
     expect(page.get_by_role("heading", name="One question first")).to_be_visible()
-    expect(page.get_by_text("How many more guests are coming?")).to_be_visible()
+    expect(page.get_by_text("How many more guests are coming?", exact=True)).to_be_visible()
 
     request_change(page, "10 more guests are coming")
     page.get_by_role("button", name="Reject").click()

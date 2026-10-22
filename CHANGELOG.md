@@ -31,6 +31,11 @@ All notable changes to Utsav Planner will be documented in this file.
 - Change requests that add or update expenses and budget lines are understood more reliably, and money-saving suggestions are sized to the gap they need to close.
 
 ### Fixed
+- When the AI was unavailable or busy, the standard ideas stayed forever; a "Personalize with AI" button now asks again, and a busy repeat no longer relabels AI ideas as standard ones.
+- A change that cannot fit the budget now says exactly how to make it fit (the extra total needed, or which protected lines to release) instead of offering savings that cannot help.
+- Change previews and money-saving suggestions now have their own "How this was generated" panel, like personalization.
+- Screen readers hear when a change preview is ready, focus moves to it, and keyboard focus stays on a button after Mark done, Protect or Save.
+- Form labels stay correct when the change form appears twice on a page.
 - A budget line spent past its plan now shows the plan as over budget, even while total spending is under the budget, and the alert names the lines that cost more than planned.
 - Approving and rejecting the same change at the same moment (two tabs) can no longer leave the plan changed while the history says rejected.
 - The "Interpreting your request" busy message no longer shows when nothing is loading.

@@ -97,11 +97,19 @@ def personalize(
     today: TodayDep,
     ai_limit: AILimitDep,
 ) -> Response:
-    """Tailor the plan with AI (idempotent), or with labelled standard ideas when limited."""
-    allowed = ai_limit.allow(request)
-    stored = services.planning.personalize(session, event_id, use_ai=allowed)
+    """Tailor the plan with AI, or with labelled standard ideas that can be retried later.
+
+    The AI rate limit is consulted only when a model would actually be called.
+    """
+    answers: list[bool] = []
+
+    def allowed() -> bool:
+        answers.append(ai_limit.allow(request))
+        return answers[-1]
+
+    stored = services.planning.personalize(session, event_id, ai_allowed=allowed)
     fallback = bool(stored.ai and stored.ai["provenance"]["fallback"])
-    notice = LIMITED if not allowed else FALLBACK if fallback else PERSONALIZED
+    notice = (LIMITED if answers == [False] else FALLBACK) if fallback else PERSONALIZED
     return after_post(
         request,
         f"/events/{event_id}",

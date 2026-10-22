@@ -1,6 +1,7 @@
 """Use case: create an event — a code-built draft first, then AI personalization."""
 
 import logging
+from collections.abc import Callable
 from typing import Any
 
 from pydantic import ValidationError
@@ -14,7 +15,7 @@ from app.domain.budget import Emphasis
 from app.domain.catalog import IdeaSpec, TaskSpec
 from app.domain.clock import Clock
 from app.domain.errors import StaleProposalError
-from app.domain.models import CategoryId
+from app.domain.models import CategoryId, EventPlan
 from app.domain.planning import (
     EventDetails,
     Personalization,
@@ -59,10 +60,18 @@ class PlanningService:
         with self._db.transaction() as repos:
             return repos.events.create(session_id, draft)
 
-    def personalize(self, session_id: str, event_id: str, *, use_ai: bool = True) -> StoredEvent:
-        """Tailor a saved plan with AI, once.
+    def personalize(
+        self,
+        session_id: str,
+        event_id: str,
+        *,
+        ai_allowed: Callable[[], bool] = lambda: True,
+    ) -> StoredEvent:
+        """Tailor a saved plan with AI.
 
-        Idempotent: a plan that already has a personalization record is returned unchanged.
+        Idempotent once a model has answered. A plan that got the labelled standard ideas
+        (every model down, or the client over its AI limit) can be personalized again: the
+        standard ideas are replaced, and nothing is saved unless a model actually answers.
         While the plan is untouched, the AI may re-split the budget and add tasks, vendor
         notes and ideas; once the user has started editing, only ideas are added, so the AI
         never overwrites the user's work. The AI call happens outside any transaction.
@@ -70,28 +79,37 @@ class PlanningService:
         Args:
             session_id: Owner's session.
             event_id: Event to personalize.
-            use_ai: False when the client is over its AI rate limit; the labelled fallback
-                is used without calling a model.
+            ai_allowed: Asked only when a model would be called; False (the client is over
+                its AI rate limit) gives the labelled fallback without calling a model.
 
         Raises:
             NotFoundError: If the event does not exist or belongs to another session.
         """
         stored = self.get(session_id, event_id)
-        if stored.ai is not None:
+        if _personalized_by_ai(stored):
+            return stored
+        retry = stored.ai is not None
+        use_ai = ai_allowed()
+        if retry and not use_ai:
             return stored
         today = self._clock.today()
-        context = PersonalizeContext(plan=stored.plan, today=today, tone=self._tone)
+        context = PersonalizeContext(
+            plan=_without_standard_ideas(stored), today=today, tone=self._tone
+        )
         result = (
             self._ai.run(PERSONALIZE, context) if use_ai else self._ai.offline(PERSONALIZE, context)
         )
+        if retry and result.provenance.fallback:
+            return stored
         personalization = (
             Personalization() if result.value.off_topic else to_personalization(result.value)
         )
         for _ in range(SAVE_ATTEMPTS):
+            base = _without_standard_ideas(stored)
             plan = (
-                personalize_plan(stored.plan, personalization, today)
-                if is_untouched(stored.plan)
-                else add_ideas(stored.plan, personalization.ideas)
+                personalize_plan(base, personalization, today)
+                if is_untouched(base)
+                else add_ideas(base, personalization.ideas)
             )
             try:
                 with self._db.transaction() as repos:
@@ -104,7 +122,7 @@ class PlanningService:
                     )
             except StaleProposalError:
                 stored = self.get(session_id, event_id)
-                if stored.ai is not None:
+                if _personalized_by_ai(stored):
                     return stored
         raise StaleProposalError("The plan kept changing while it was being personalized.")
 
@@ -174,3 +192,14 @@ def ai_record(result: AIResult[Any]) -> dict[str, Any]:
         "result": result.value.model_dump(mode="json"),
         "provenance": result.provenance.model_dump(mode="json"),
     }
+
+
+def _personalized_by_ai(stored: StoredEvent) -> bool:
+    return stored.ai is not None and not stored.ai["provenance"]["fallback"]
+
+
+def _without_standard_ideas(stored: StoredEvent) -> EventPlan:
+    """The plan without its fallback ideas, which are the only thing a fallback adds."""
+    if stored.ai is None:
+        return stored.plan
+    return stored.plan.with_changes(ideas=())

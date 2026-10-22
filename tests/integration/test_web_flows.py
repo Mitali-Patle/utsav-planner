@@ -218,6 +218,30 @@ def test_ai_outage_shows_labelled_standard_ideas(engine: Engine) -> None:
     assert "not AI-generated" in page.text
 
 
+def test_standard_ideas_can_be_retried_with_ai(engine: Engine) -> None:
+    """A fallback is not final: the user can ask again once a model is back (review, 23 Oct)."""
+    client = client_for(engine, ProviderUnavailableError("503 UNAVAILABLE"), SUGGESTIONS)
+    csrf = token(client)
+    url = create(client, csrf, personalize=False)
+    standard = client.post(f"{url}/personalize", data={"csrf_token": csrf}, headers=HTMX)
+    assert "not AI-generated" in standard.text
+    assert 'id="retry-personalize"' in standard.text
+    retried = client.post(f"{url}/personalize", data={"csrf_token": csrf}, headers=HTMX)
+    assert "Suggested by AI" in retried.text
+    assert "Rocket launch corner" in retried.text
+    assert "not AI-generated" not in retried.text, "the standard ideas were replaced"
+    assert_accessible(retried.text, page=False)
+
+
+def test_a_limited_repeat_never_relabels_ai_ideas(engine: Engine) -> None:
+    client = client_for(engine, SUGGESTIONS, rate_limit=1)
+    csrf = token(client)
+    url = create(client, csrf)
+    again = client.post(f"{url}/personalize", data={"csrf_token": csrf}, headers=HTMX)
+    assert "You've made many AI requests" not in again.text, "no AI call was needed"
+    assert "Your plan has been personalized" in again.text
+
+
 # Change Manager
 
 
@@ -297,6 +321,27 @@ def test_reject_leaves_the_plan_unchanged(engine: Engine) -> None:
     assert "already decided" in again.text
 
 
+def test_rate_limited_page_without_javascript_keeps_ids_unique(engine: Engine) -> None:
+    """The fallback form appears twice on this page (review, 23 Oct): labels must still work."""
+    client = client_for(engine, SUGGESTIONS, rate_limit=1)
+    csrf = token(client)
+    url = create(client, csrf)
+    page = client.post(f"{url}/changes", data={"csrf_token": csrf, "request": "budget 12k"})
+    assert page.text.count("New number of guests") == 2
+    assert_accessible(page.text)
+
+
+def test_change_preview_shows_how_it_was_generated(engine: Engine) -> None:
+    client = client_for(engine, SUGGESTIONS, BUDGET_CUT)
+    csrf = token(client)
+    url = create(client, csrf)
+    page = client.post(f"{url}/changes", data={"csrf_token": csrf, "request": "budget 12k"})
+    assert 'id="change-ai-sent"' in page.text, "the change has its own panel"
+    assert 'id="plan-ai-sent"' in page.text, "next to the personalization panel"
+    assert "interpret-change-v" in page.text
+    assert_accessible(page.text)
+
+
 def test_rate_limited_change_offers_the_form(engine: Engine) -> None:
     client = client_for(engine, SUGGESTIONS, rate_limit=1)
     csrf = token(client)
@@ -326,20 +371,9 @@ def test_change_form_without_ai(engine: Engine, fields: dict[str, str], expected
     assert expected in result.text
 
 
-def test_infeasible_change_offers_priced_alternatives(engine: Engine) -> None:
-    alternatives = Alternatives(
-        summary="Trim decorations.",
-        items=[
-            AIAlternative(
-                category_id="decor",
-                action=SavingAction.REDUCE,
-                level=SavingLevel.LARGE,
-                title="Paper decor",
-                why="Cheaper.",
-            )
-        ],
-    )
-    client = client_for(engine, SUGGESTIONS, alternatives)
+def test_infeasible_change_explains_how_to_make_it_fit(engine: Engine) -> None:
+    """Trimming other lines cannot help, so the preview says what would (review, 23 Oct)."""
+    client = client_for(engine, SUGGESTIONS)
     csrf = token(client)
     url = create(client, csrf)
     client.post(f"{url}/categories/catering/protect", data={"csrf_token": csrf})
@@ -349,14 +383,10 @@ def test_infeasible_change_offers_priced_alternatives(engine: Engine) -> None:
     )
     assert "be approved as it is" in result.text
     assert "Approve this change" not in result.text
-    options = client.post(
-        f"{url}/alternatives",
-        data={"csrf_token": csrf, "proposal_id": proposal_id(result.text)},
-        headers=HTMX,
-    )
-    assert "Paper decor" in options.text
-    assert "saves about ₹" in options.text
-    assert "Suggested by AI" in options.text
+    assert "ask for a total at least" in result.text
+    assert "remove protection from Venue, Food and drinks first" in result.text
+    assert "Suggest ways to close the gap" not in result.text
+    assert_accessible(result.text, page=False)
 
 
 # Direct edits
@@ -446,6 +476,7 @@ def test_over_budget_dashboard_offers_alternatives(engine: Engine) -> None:
     assert "Food and drinks costs more than planned" in page.text
     with_options = client.post(f"{url}/alternatives", data={"csrf_token": csrf})
     assert "Fewer balloons" in with_options.text
+    assert 'id="alternatives-ai-sent"' in with_options.text
     assert_accessible(with_options.text)
 
 

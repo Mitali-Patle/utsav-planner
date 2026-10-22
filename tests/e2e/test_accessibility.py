@@ -109,6 +109,27 @@ def test_skip_link_is_first_and_moves_focus_to_main(page: Page) -> None:
     expect(page.locator("#main")).to_be_focused()
 
 
+def test_keyboard_focus_survives_plan_updates(page: Page) -> None:
+    """After Mark done, focus stays on the same button instead of falling to the page top."""
+    _dashboard(page)
+    button = page.locator("#timeline button").first
+    button_id = button.get_attribute("id")
+    button.focus()
+    page.keyboard.press("Enter")
+    expect(page.locator("#status-region")).to_contain_text("Task done.")
+    expect(page.locator(f"#{button_id}")).to_be_focused()
+    expect(page.locator(f"#{button_id}")).to_have_attribute("aria-pressed", "true")
+
+
+def test_change_preview_is_announced_and_focused(page: Page) -> None:
+    _dashboard(page)
+    page.get_by_label("Your change").fill("10 more guests are coming")
+    page.get_by_label("Your change").press("Tab")
+    page.keyboard.press("Enter")
+    expect(page.locator("#change-result-heading")).to_be_focused()
+    expect(page.locator("#status-region")).to_contain_text("Here is what would change")
+
+
 def test_console_is_clean_in_every_state(page: Page) -> None:
     """No script errors or CSP violations; the 404 and 422 pages may log their status."""
     problems: list[str] = []

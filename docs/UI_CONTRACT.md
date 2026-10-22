@@ -20,7 +20,7 @@ After any template or CSS change, run `uv run pytest -W error`. The tests in
 | `GET /` | `landing.html` | |
 | `POST /events` | 303 to the dashboard; `landing.html` with 422 on invalid input | |
 | `GET /events/{id}` | `dashboard.html` | |
-| `POST /events/{id}/personalize` | 303 to the dashboard | `partials/plan_area.html` |
+| `POST /events/{id}/personalize` | 303 to the dashboard; repeating it after standard (non-AI) ideas asks the AI again | `partials/plan_area.html` |
 | `POST /events/{id}/expenses` | 303 to the dashboard; 422 with the form and its errors | `partials/plan_area.html` |
 | `POST /events/{id}/expenses/{eid}/update`, `/delete`, `/protect`, `/unprotect` | 303 to the dashboard | `partials/plan_area.html` |
 | `POST /events/{id}/categories/{cid}/protect`, `/unprotect` | 303 to the dashboard | `partials/plan_area.html` |
@@ -30,7 +30,7 @@ After any template or CSS change, run `uv run pytest -W error`. The tests in
 | `POST /events/{id}/changes/form` | `dashboard.html` with the answer in place | `partials/change_result.html` |
 | `POST /events/{id}/proposals/{pid}/approve` | 303 to the dashboard; 409 or 422 with the reason | `HX-Redirect` to the dashboard; 409 or 422 with `change_result.html` |
 | `POST /events/{id}/proposals/{pid}/reject` | 303 to the dashboard | `HX-Redirect` to the dashboard |
-| `POST /events/{id}/alternatives` (optional `proposal_id`) | `dashboard.html` with alternatives | `partials/alternatives.html` |
+| `POST /events/{id}/alternatives` | `dashboard.html` with alternatives for the plan's shortfall | `partials/alternatives.html` |
 
 Not-found and domain errors (404, 422) render `error.html`; for htmx requests the server
 sends `partials/notice.html` with `HX-Retarget: #status-region`. A missing CSRF token (403)
@@ -58,13 +58,17 @@ Every action must work **without JavaScript**.
 | `plan-area` | Root of `plan_area.html` | Target of every plan edit (`outerHTML`) |
 | `personalization` | `plan_area.html` | Fires `hx-trigger="load"` once to personalize |
 | `change-result` | `dashboard.html` | Target of change requests and approvals (`innerHTML`) |
-| `change-result-heading` | `change_result.html` | Focusable heading (`tabindex="-1"`) of the answer |
+| `change-result-heading` | `change_result.html` | Heading of the answer; `tabindex="-1"` and `autofocus`, so htmx moves focus to it |
 | `change-busy` | `dashboard.html` | `hx-indicator` of the change request form |
 | `plan-alternatives` | `plan_area.html` | Target for alternatives when the plan is over budget |
-| `alternatives-{proposal id}` | `proposal.html` | Target for alternatives to a proposal |
+| `retry-personalize` | `plan_area.html` | Asks the AI again when the ideas are standard ones |
+| `{panel}-sent`, `{panel}-answer` | `ai_panel.html` | Headings naming the panel's data regions; `{panel}` is `plan-ai`, `change-ai` or `alternatives-ai`, so several panels can share a page |
+| `protect-line-{id}`, `protect-expense-{id}`, `update-{id}`, `task-{id}`, `save-{id}`, `add-expense`, `suggest-savings` | `plan_area.html` | Stable button ids: htmx returns keyboard focus to the same button after the plan area is swapped |
 
 Form field names are fixed: they are the server's API. Field ids follow
-`{prefix}-{name}` from the `field` macro (`f-` on the landing page, `x-` for expenses).
+`{prefix}-{name}` from the `field` macro (`f-` on the landing page, `x-` for expenses). The
+change form can appear twice on a page, so its ids use `form_prefix` (`cf-` on the dashboard,
+`cfr-` inside a result).
 
 ## 4. Template data
 
@@ -81,7 +85,7 @@ strings such as `2 Dec 2026`. Templates never compute; ask for a new field inste
 
 ### `dashboard.html` and `partials/plan_area.html`
 - `event`: `{id, version, title, type_label, city, date, days_left, guests, preferences}`
-- `plan.summary`: `{total, spent, remaining, per_guest, guests, shortfall}`; `shortfall` is `None` unless over budget
+- `plan.summary`: `{total, spent, remaining, per_guest, guests, shortfall, over_plan}`; `shortfall` is `None` unless over budget; `over_plan` names the lines spent past their plan
 - `plan.categories`: `{id, name, allocated, spent, remaining, overspent, protected}`
 - `plan.expenses`: `{id, label, category, amount, amount_inr, protected}`
 - `plan.tasks`: `{id, title, due, done, overdue, compressed, source, ai, why, category}`
@@ -96,16 +100,17 @@ strings such as `2 Dec 2026`. Templates never compute; ask for a new field inste
 
 ### `partials/change_result.html` (variable `result`)
 - `kind`: `proposal`, `clarification`, `off_topic`, `unavailable`, `invalid` or `nothing_to_change`
-- `title`, `message`, `ai_note`, `show_form`, `event_id`, `categories_for_select`
+- `title`, `announce` (sent to the status region), `message`, `ai_note`, `ai` (panel data or `None`), `show_form`, `event_id`, `categories_for_select`
 - `proposal` (see below) or `None`
 
 ### `partials/proposal.html` (variable `proposal`)
 `{id, request, status, feasible, shortfall, fields, budget, expenses, tasks, vendors,
-new_tasks, skipped, protected_kept, summary_before, summary_after}`. Budget rows are
+new_tasks, skipped, protected_kept, protected_lines, summary_before, summary_after}`. When
+`feasible` is false, `protected_lines` names what could be unprotected to make it fit. Budget rows are
 `{name, before, after, delta, reason, overcommitted}`; `reason` is already a plain-language label.
 
 ### `partials/alternatives.html` (variable `alts`)
-`{event_id, shortfall, summary, ai_note, options}`; each option is
+`{event_id, shortfall, summary, ai_note, ai, options}`; each option is
 `{category, title, why, action, level, saving, shortfall_after}`.
 
 ## 5. Accessibility rules

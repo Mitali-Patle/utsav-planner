@@ -15,6 +15,7 @@ from app.services.change_manager import ApprovalStatus, ChangeOutcome, OutcomeKi
 from app.web.deps import AILimitDep, ServicesDep, SessionDep, TodayDep
 from app.web.errors import is_htmx
 from app.web.responses import Notice, after_post, render
+from app.web.session import FlashKind
 from app.web.views import (
     alternatives_context,
     change_result_context,
@@ -133,16 +134,15 @@ def alternatives(
     session: SessionDep,
     today: TodayDep,
     ai_limit: AILimitDep,
-    proposal_id: Annotated[str, Form()] = "",
 ) -> Response:
-    """Priced ways to close a shortfall: the plan's own, or a proposed change's."""
-    shortfall = None
-    if proposal_id:
-        shortfall = services.changes.get_proposal(
-            session, event_id, proposal_id
-        ).proposal.shortfall_inr
+    """Priced ways to close the plan's shortfall.
+
+    Infeasible proposals are not offered alternatives: they fail because protected lines and
+    committed money exceed the new total, which trimming other lines cannot fix; the preview
+    explains what would make them fit instead.
+    """
     view = services.alternatives.suggest(
-        session, event_id, shortfall, use_ai=ai_limit.allow(request)
+        session, event_id, ai_allowed=lambda: ai_limit.allow(request)
     )
     context = alternatives_context(event_id, view)
     if is_htmx(request):
@@ -204,7 +204,9 @@ def _show_outcome(
     categories = [(c.id, c.name) for c in stored.plan.categories]
     context = change_result_context(event_id, outcome, categories)
     if is_htmx(request):
-        return render(request, CHANGE_RESULT, {"result": context}, status_code)
+        kind: FlashKind = "error" if status_code >= status.HTTP_400_BAD_REQUEST else "info"
+        notice = Notice(context["announce"], kind)
+        return render(request, CHANGE_RESULT, {"result": context, "notice": notice}, status_code)
     return _dashboard(
         request, services, session, event_id, today, {"change_result": context}, status_code
     )

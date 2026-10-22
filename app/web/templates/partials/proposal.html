@@ -3,6 +3,7 @@
   <p>You asked: &ldquo;{{ proposal.request }}&rdquo;</p>
   {% if not proposal.feasible %}
   <p class="notice notice-error" role="alert">This change needs {{ proposal.shortfall }} more than the budget allows, so it can't be approved as it is.</p>
+  <p>Protected lines and money already committed can't be cut. To make it fit, ask for a total at least {{ proposal.shortfall }} higher{% if proposal.protected_lines %}, or remove protection from {{ proposal.protected_lines | join(", ") }} first{% endif %}.</p>
   {% endif %}
   {% if proposal.fields %}
   <ul class="field-changes">{% for f in proposal.fields %}<li>{{ f.label }}: {{ f.before }} &rarr; {{ f.after }}</li>{% endfor %}</ul>
@@ -31,18 +32,11 @@
           hx-post="/events/{{ event_id }}/proposals/{{ proposal.id }}/approve" hx-target="#change-result" hx-swap="innerHTML">
       {{ csrf(csrf_token) }}<button type="submit" class="button-primary">Approve this change</button>
     </form>
-    {% else %}
-    <form method="post" action="/events/{{ event_id }}/alternatives"
-          hx-post="/events/{{ event_id }}/alternatives" hx-target="#alternatives-{{ proposal.id }}" hx-swap="innerHTML">
-      {{ csrf(csrf_token) }}<input type="hidden" name="proposal_id" value="{{ proposal.id }}">
-      <button type="submit">Suggest ways to close the gap</button>
-    </form>
     {% endif %}
     <form method="post" action="/events/{{ event_id }}/proposals/{{ proposal.id }}/reject"
           hx-post="/events/{{ event_id }}/proposals/{{ proposal.id }}/reject">
       {{ csrf(csrf_token) }}<button type="submit">Reject</button>
     </form>
   </div>
-  <div id="alternatives-{{ proposal.id }}"></div>
   {% endif %}
 </div>

@@ -222,6 +222,7 @@ def proposal_view(stored: StoredProposal) -> dict[str, Any]:
         "feasible": proposal.feasible,
         "shortfall": format_inr(proposal.shortfall_inr) if proposal.shortfall_inr else None,
         "shortfall_inr": proposal.shortfall_inr,
+        "protected_lines": [c.name for c in proposal.summary_before.categories if c.protected],
         "fields": [
             {
                 "label": FIELD_LABELS[f.field],
@@ -270,12 +271,16 @@ def history_row(stored: StoredProposal) -> dict[str, Any]:
     }
 
 
-def ai_panel(record: Mapping[str, Any] | None) -> dict[str, Any] | None:
-    """Provenance for the "How this was generated" panel, or None before personalization."""
+def ai_panel(record: Mapping[str, Any] | None, panel_id: str = "plan-ai") -> dict[str, Any] | None:
+    """Data for a "How this was generated" panel, or None when no AI was asked.
+
+    `panel_id` keeps element ids unique when a page shows more than one panel.
+    """
     if record is None:
         return None
     provenance = record["provenance"]
     return {
+        "id": panel_id,
         "provider": provenance["provider"] or "None (offline suggestions)",
         "fallback": provenance["fallback"],
         "cached": provenance["cached"],
@@ -405,11 +410,14 @@ def change_result_context(
         "event_id": event_id,
         "kind": outcome.kind.value,
         "title": OUTCOME_TITLES[outcome.kind.value],
+        "announce": OUTCOME_TITLES[outcome.kind.value]
+        + (" Nothing changes until you approve it." if outcome.proposal else "."),
         "message": outcome.message,
         "proposal": proposal_view(outcome.proposal) if outcome.proposal else None,
         "show_form": outcome.kind is OutcomeKind.UNAVAILABLE,
         "categories_for_select": list(categories),
         "ai_note": _ai_note(provenance) if provenance else None,
+        "ai": ai_panel(outcome.ai, "change-ai"),
     }
 
 
@@ -434,6 +442,7 @@ def alternatives_context(event_id: str, view: AlternativesView) -> dict[str, Any
             for o in view.options
         ],
         "ai_note": _ai_note(view.provenance, "Suggested") if view.provenance else None,
+        "ai": ai_panel(view.ai, "alternatives-ai"),
     }
 
 

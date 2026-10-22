@@ -212,10 +212,37 @@ def test_personalization_after_an_edit_only_adds_ideas(engine: Engine) -> None:
 def test_rate_limited_personalization_uses_the_labelled_fallback(engine: Engine) -> None:
     app = services(engine)
     draft = app.planning.create_draft(ME, details())
-    offline = app.planning.personalize(ME, draft.id, use_ai=False)
+    offline = app.planning.personalize(ME, draft.id, ai_allowed=lambda: False)
     assert offline.ai is not None
     assert offline.ai["provenance"]["fallback"] is True
     assert offline.ai["provenance"]["attempts"] == []
+
+
+def test_a_retry_that_falls_back_again_saves_nothing(engine: Engine) -> None:
+    app = services(engine, ProviderUnavailableError("down"), ProviderUnavailableError("down"))
+    draft = app.planning.create_draft(ME, details())
+    standard = app.planning.personalize(ME, draft.id)
+    assert standard.ai is not None and standard.ai["provenance"]["fallback"]
+    again = app.planning.personalize(ME, draft.id)
+    assert again.version == standard.version, "a second fallback is not saved"
+
+
+def test_a_limited_retry_keeps_the_standard_ideas_without_calling_a_model(engine: Engine) -> None:
+    app = services(engine)
+    draft = app.planning.create_draft(ME, details())
+    standard = app.planning.personalize(ME, draft.id, ai_allowed=lambda: False)
+    again = app.planning.personalize(ME, draft.id, ai_allowed=lambda: False)
+    assert again.version == standard.version
+
+
+def test_an_ai_plan_never_asks_the_rate_limit(engine: Engine) -> None:
+    app = services(engine, SUGGESTIONS)
+    event = create(app)
+
+    def asked() -> bool:
+        raise AssertionError("the rate limit was consulted for a plan that needs no AI call")
+
+    assert app.planning.personalize(ME, event.id, ai_allowed=asked).version == event.version
 
 
 def test_edit_during_personalization_is_not_overwritten(engine: Engine) -> None:

@@ -1,7 +1,10 @@
+{#- Announced through the live status region when htmx swaps this in. -#}
+{% if notice %}<div id="status-region" hx-swap-oob="innerHTML"><p class="notice notice-{{ notice.kind }}" role="status">{{ notice.message }}</p></div>{% endif %}
 <section class="change-result change-{{ result.kind }}" aria-labelledby="change-result-heading">
-  <h3 id="change-result-heading" tabindex="-1">{{ result.title }}</h3>
+  <h3 id="change-result-heading" tabindex="-1" autofocus>{{ result.title }}</h3>
   {% if result.message %}<p role="{{ 'alert' if result.kind == 'invalid' else 'status' }}">{{ result.message }}</p>{% endif %}
   {% if result.ai_note %}<p class="ai-note">{{ result.ai_note }}</p>{% endif %}
+  {% if result.ai %}{% with ai = result.ai %}{% include "partials/ai_panel.html" %}{% endwith %}{% endif %}
   {% if result.proposal %}{% set proposal = result.proposal %}{% set event_id = result.event_id %}{% include "partials/proposal.html" %}{% endif %}
-  {% if result.show_form %}{% set event_id = result.event_id %}{% set categories_for_select = result.categories_for_select %}{% include "partials/change_form.html" %}{% endif %}
+  {% if result.show_form %}{% set event_id = result.event_id %}{% set categories_for_select = result.categories_for_select %}{% with form_prefix = "cfr" %}{% include "partials/change_form.html" %}{% endwith %}{% endif %}
 </section>

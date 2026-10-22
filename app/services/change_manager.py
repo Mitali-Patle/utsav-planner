@@ -5,6 +5,7 @@ Proposal; it is saved as pending. Approval saves the new plan version and marks 
 proposal approved in one transaction, so the two can never get out of step.
 """
 
+from collections.abc import Mapping
 from dataclasses import dataclass
 from enum import StrEnum
 from typing import Any
@@ -57,6 +58,7 @@ class ChangeOutcome:
     proposal: StoredProposal | None = None
     unsaved: Proposal | None = None
     provenance: Provenance | None = None
+    ai: Mapping[str, Any] | None = None
 
 
 class ApprovalStatus(StrEnum):
@@ -101,16 +103,24 @@ class ChangeManager:
         result = self._ai.run(
             INTERPRET_CHANGE, ChangeContext(plan=stored.plan, request=request, today=today)
         )
-        intent, provenance = result.value, result.provenance
+        intent, provenance, record = result.value, result.provenance, ai_record(result)
         if provenance.fallback:
             return ChangeOutcome(
-                OutcomeKind.UNAVAILABLE, intent.clarification_question, provenance=provenance
+                OutcomeKind.UNAVAILABLE,
+                intent.clarification_question,
+                provenance=provenance,
+                ai=record,
             )
         if intent.status is IntentStatus.OFF_TOPIC:
-            return ChangeOutcome(OutcomeKind.OFF_TOPIC, OFF_TOPIC_MESSAGE, provenance=provenance)
+            return ChangeOutcome(
+                OutcomeKind.OFF_TOPIC, OFF_TOPIC_MESSAGE, provenance=provenance, ai=record
+            )
         if intent.status is IntentStatus.NEEDS_CLARIFICATION:
             return ChangeOutcome(
-                OutcomeKind.CLARIFICATION, intent.clarification_question, provenance=provenance
+                OutcomeKind.CLARIFICATION,
+                intent.clarification_question,
+                provenance=provenance,
+                ai=record,
             )
         return self._propose(
             stored, request, intent_to_change_set(intent), ai_record(result), provenance
@@ -170,16 +180,6 @@ class ChangeManager:
             repos.proposals.get(proposal_id, event_id)
             return repos.proposals.decide(proposal_id, event_id, ProposalStatus.REJECTED)
 
-    def get_proposal(self, session_id: str, event_id: str, proposal_id: str) -> StoredProposal:
-        """Load one proposal of this session's event.
-
-        Raises:
-            NotFoundError: If the event or proposal does not exist or is not this session's.
-        """
-        with self._db.transaction() as repos:
-            repos.events.get(event_id, session_id)
-            return repos.proposals.get(proposal_id, event_id)
-
     def history(self, session_id: str, event_id: str) -> list[StoredProposal]:
         """The event's change history, newest first.
 
@@ -202,17 +202,19 @@ class ChangeManager:
         intent: dict[str, Any],
         provenance: Provenance | None,
     ) -> ChangeOutcome:
+        ai = intent if provenance is not None else None
         try:
             proposal = propose(stored.plan, change_set, self._clock.today())
         except (InvalidInputError, NotFoundError, InfeasibleChangeError) as error:
-            return ChangeOutcome(OutcomeKind.INVALID, error.message, provenance=provenance)
+            return ChangeOutcome(OutcomeKind.INVALID, error.message, provenance=provenance, ai=ai)
         if proposal.feasible and not proposal.has_changes:
             return ChangeOutcome(
                 OutcomeKind.NOTHING_TO_CHANGE,
                 NOTHING_TO_CHANGE_MESSAGE,
                 unsaved=proposal,
                 provenance=provenance,
+                ai=ai,
             )
         with self._db.transaction() as repos:
             saved = repos.proposals.add(stored.id, request, intent, proposal)
-        return ChangeOutcome(OutcomeKind.PROPOSAL, proposal=saved, provenance=provenance)
+        return ChangeOutcome(OutcomeKind.PROPOSAL, proposal=saved, provenance=provenance, ai=ai)

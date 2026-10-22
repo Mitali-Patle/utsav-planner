@@ -28,7 +28,7 @@
     <p>{{ plan.summary.over_plan | join(", ") }} {{ 'costs' if plan.summary.over_plan | length == 1 else 'cost' }} more than planned, and the other lines still need their planned amounts.</p>
     <form method="post" action="/events/{{ event.id }}/alternatives"
           hx-post="/events/{{ event.id }}/alternatives" hx-target="#plan-alternatives" hx-swap="innerHTML">
-      {{ csrf(csrf_token) }}<button type="submit">Suggest ways to save</button>
+      {{ csrf(csrf_token) }}<button type="submit" id="suggest-savings">Suggest ways to save</button>
     </form>
     <div id="plan-alternatives"></div>
   </div>
@@ -47,7 +47,7 @@
           <form method="post" action="/events/{{ event.id }}/categories/{{ row.id }}/{{ 'unprotect' if row.protected else 'protect' }}"
                 hx-post="/events/{{ event.id }}/categories/{{ row.id }}/{{ 'unprotect' if row.protected else 'protect' }}" hx-target="#plan-area" hx-swap="outerHTML">
             {{ csrf(csrf_token) }}
-            <button type="submit" aria-pressed="{{ 'true' if row.protected else 'false' }}">{{ 'Protected' if row.protected else 'Protect' }}<span class="sr-only"> {{ row.name }}</span></button>
+            <button type="submit" id="protect-line-{{ row.id }}" aria-pressed="{{ 'true' if row.protected else 'false' }}">{{ 'Protected' if row.protected else 'Protect' }}<span class="sr-only"> {{ row.name }}</span></button>
           </form>
         </td>
       </tr>
@@ -59,6 +59,14 @@
 <section id="ideas" aria-labelledby="ideas-heading">
   <h2 id="ideas-heading">Ideas for your event</h2>
   {% if ai and ai.fallback %}<p class="label-not-ai">Standard ideas (not AI-generated).</p>{% elif ai %}<p class="label-ai">Suggested by AI, each with a reason.</p>{% endif %}
+  {% if ai and ai.fallback %}
+  <form method="post" action="/events/{{ event.id }}/personalize" class="retry-ai"
+        hx-post="/events/{{ event.id }}/personalize" hx-target="#plan-area" hx-swap="outerHTML" hx-indicator="#retry-busy">
+    {{ csrf(csrf_token) }}
+    <button type="submit" id="retry-personalize">Personalize with AI</button>
+    <p id="retry-busy" class="htmx-indicator" role="status">Asking the AI again. This can take up to 10 seconds.</p>
+  </form>
+  {% endif %}
   {% if ideas %}
   <ul class="ideas">
     {% for idea in ideas %}
@@ -88,7 +96,7 @@
             {{ csrf(csrf_token) }}
             <label for="amount-{{ e.id }}">New amount for {{ e.label }}</label>
             <input id="amount-{{ e.id }}" name="amount_inr" type="number" min="1" inputmode="numeric" value="{{ e.amount_inr }}">
-            <button type="submit">Update<span class="sr-only"> {{ e.label }}</span></button>
+            <button type="submit" id="update-{{ e.id }}">Update<span class="sr-only"> {{ e.label }}</span></button>
           </form>
           <form method="post" action="/events/{{ event.id }}/expenses/{{ e.id }}/delete"
                 hx-post="/events/{{ event.id }}/expenses/{{ e.id }}/delete" hx-target="#plan-area" hx-swap="outerHTML">
@@ -98,7 +106,7 @@
           <form method="post" action="/events/{{ event.id }}/expenses/{{ e.id }}/{{ 'unprotect' if e.protected else 'protect' }}"
                 hx-post="/events/{{ event.id }}/expenses/{{ e.id }}/{{ 'unprotect' if e.protected else 'protect' }}" hx-target="#plan-area" hx-swap="outerHTML">
             {{ csrf(csrf_token) }}
-            <button type="submit" aria-pressed="{{ 'true' if e.protected else 'false' }}">{{ 'Unprotect' if e.protected else 'Protect' }}<span class="sr-only"> {{ e.label }}</span></button>
+            <button type="submit" id="protect-expense-{{ e.id }}" aria-pressed="{{ 'true' if e.protected else 'false' }}">{{ 'Unprotect' if e.protected else 'Protect' }}<span class="sr-only"> {{ e.label }}</span></button>
           </form>
         </td>
       </tr>
@@ -127,7 +135,7 @@
       <input type="checkbox" id="x-protected" name="protected" value="on"{% if expense_form.values.get('protected') %} checked{% endif %}>
       <label for="x-protected">Protect this expense (changes will keep it as it is)</label>
     </div>
-    <button type="submit" class="button-primary">Add expense</button>
+    <button type="submit" id="add-expense" class="button-primary">Add expense</button>
   </form>
 </section>
 
@@ -144,7 +152,7 @@
       <form method="post" action="/events/{{ event.id }}/tasks/{{ t.id }}/{{ 'undone' if t.done else 'done' }}"
             hx-post="/events/{{ event.id }}/tasks/{{ t.id }}/{{ 'undone' if t.done else 'done' }}" hx-target="#plan-area" hx-swap="outerHTML">
         {{ csrf(csrf_token) }}
-        <button type="submit" aria-pressed="{{ 'true' if t.done else 'false' }}">{{ 'Done' if t.done else 'Mark done' }}<span class="sr-only">: {{ t.title }}</span></button>
+        <button type="submit" id="task-{{ t.id }}" aria-pressed="{{ 'true' if t.done else 'false' }}">{{ 'Done' if t.done else 'Mark done' }}<span class="sr-only">: {{ t.title }}</span></button>
       </form>
     </li>
     {% endfor %}
@@ -171,7 +179,7 @@
               <option value="{{ v.status }}" selected>{{ v.status_label }}</option>
               {% for value, label in v.next %}<option value="{{ value }}">{{ label }}</option>{% endfor %}
             </select>
-            <button type="submit">Save<span class="sr-only"> status of {{ v.name }}</span></button>
+            <button type="submit" id="save-{{ v.id }}">Save<span class="sr-only"> status of {{ v.name }}</span></button>
           </form>
         </td>
       </tr>
