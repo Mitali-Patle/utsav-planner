@@ -118,6 +118,7 @@ class ChangeReason(StrEnum):
     CUT_FIRST = "cut_first"
     PROPORTIONAL = "proportional"
     FLOOR_REACHED = "floor_reached"
+    SET = "set"
 
 
 class Pin(DomainModel):

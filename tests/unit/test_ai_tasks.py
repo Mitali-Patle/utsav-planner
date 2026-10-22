@@ -43,6 +43,7 @@ from app.domain.budget import (
     SavingLevel,
     add_expense,
 )
+from app.domain.changes import _FIELDS as FIELDS
 from app.domain.changes import ChangeKind, SkipReason, propose
 from app.domain.models import BudgetImpact, CategoryId, EventPlan, EventType
 from app.domain.planning import EventDetails, draft_plan
@@ -427,10 +428,6 @@ def test_interpret_examples_show_amounts_for_every_amount_kind() -> None:
         for op in answer.operations
         if op.amount_inr is not None
     }
-    amount_kinds = {
-        ChangeKind.SET_TOTAL_BUDGET,
-        ChangeKind.ADD_EXPENSE,
-        ChangeKind.UPDATE_EXPENSE,
-        ChangeKind.ADD_CATEGORY,
-    }
+    amount_kinds = {kind for kind, (required, _) in FIELDS.items() if "amount_inr" in required}
+    assert amount_kinds, "the engine has amount-bearing kinds"
     assert amount_kinds <= shown

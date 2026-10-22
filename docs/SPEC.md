@@ -33,7 +33,7 @@ Priority: P0 must exist for submission 1; P1 should exist for submission 1; P2 o
 
 | ID | Feature | Pri | AI role | Code role |
 |---|---|---|---|---|
-| F1 | Create event (all 3 types, sub-events, "Fill example" presets) | P0 | none | validation, baseline from catalog |
+| F1 | Create event (all 3 types, sub-events; "Fill example" presets planned) | P0 | none | validation, baseline from catalog |
 | F2 | AI personalization on creation (ideas, budget emphasis, extra tasks, vendor priorities, each with why) | P0 | generates and reasons | bounds, merge, allocate, dates |
 | F3 | Budget dashboard: allocation per category, spent, remaining, ₹/guest, overspend flags | P0 | none | all math |
 | F4 | Add, edit and remove expenses; protect or unprotect items | P0 | none | math, idempotency |
@@ -51,6 +51,7 @@ Priority: P0 must exist for submission 1; P1 should exist for submission 1; P2 o
 | F16 | Custom budget lines (up to 3, for example "Fireworks ₹3,000") | P1 | interprets the request | allocates, enforces the limit |
 | F17 | Follow-up tasks for booked vendors when the date or guest count changes | P0 | none | creates due-today tasks in the proposal |
 | F18 | Relative changes ("10 more guests", "cut ₹2,000") | P0 | copies the number | computes the result |
+| F19 | Set one budget line's planned amount ("put ₹10,000 into decorations"), through the Change Manager or the form | P0 | interprets | pins the line, rebalances the others, keeps the total exact |
 
 ## 5. Coverage matrix (4 capabilities × 3 event types)
 Every cell must be demonstrable in the live app and named in the README.

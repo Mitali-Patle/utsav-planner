@@ -29,7 +29,7 @@ needed to hear about the new date, a line that was meant to stay untouched.
    from "to contact" to "booked". Overspending, overdue tasks and urgent bookings are flagged.
 4. **Change it in plain words** with the Smart Change Manager:
    - "Budget dropped to ₹12,000, keep the cake as it is", "10 more guests are coming",
-     "move it 3 days earlier", "budget 13 lakh kar do".
+     "move it 3 days earlier", "put ₹10,000 into decorations", "budget 13 lakh kar do".
    - You see every effect before anything is saved: new totals, each budget line before
      and after with the reason, moved deadlines, follow-up tasks for vendors you already
      booked, and what was kept.
@@ -233,7 +233,9 @@ docs/            architecture, spec, UI contract
 
 - Budget splits, deadlines and lead times are **planning heuristics** drawn from published
   Indian planning guides (sources are cited in
-  [`app/domain/catalog.py`](app/domain/catalog.py)). Users can change every amount and date.
+  [`app/domain/catalog.py`](app/domain/catalog.py)). Users can change the total, guest count,
+  event date, any line's planned amount and every expense; task and vendor dates follow the
+  event date.
 - The assistant gives qualitative guidance; it does not know live vendor prices. All
   amounts come from the user or from code.
 - Plans belong to one browser; there are no accounts, sharing or multi-device sync.

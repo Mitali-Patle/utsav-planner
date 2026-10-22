@@ -31,6 +31,7 @@ RATE_LIMITED = (
     "or try again in a few minutes."
 )
 EMPTY_FORM = "Fill in at least one change."
+SET_LINE_INCOMPLETE = "To set a budget line, choose the line and enter its new amount."
 APPROVAL_STATUS_CODES = {
     ApprovalStatus.STALE: status.HTTP_409_CONFLICT,
     ApprovalStatus.ALREADY_DECIDED: status.HTTP_409_CONFLICT,
@@ -68,6 +69,8 @@ def change_form(
     guest_count: Annotated[str, Form()] = "",
     shift_days: Annotated[str, Form()] = "",
     protect_category: Annotated[str, Form()] = "",
+    set_category: Annotated[str, Form()] = "",
+    set_amount_inr: Annotated[str, Form()] = "",
 ) -> Response:
     """The structured change form: works with no AI at all."""
     fields = {
@@ -75,6 +78,8 @@ def change_form(
         "guest_count": guest_count.strip(),
         "shift_days": shift_days.strip(),
         "protect_category": protect_category.strip(),
+        "set_category": set_category.strip(),
+        "set_amount_inr": set_amount_inr.strip(),
     }
     try:
         change_set, summary = _form_change_set(fields)
@@ -166,6 +171,17 @@ def _form_change_set(fields: dict[str, str]) -> tuple[ChangeSet, str]:
             )
         )
         parts.append("keep a budget line as it is")
+    if fields["set_category"] or fields["set_amount_inr"]:
+        if not (fields["set_category"] and fields["set_amount_inr"]):
+            raise ValueError(SET_LINE_INCOMPLETE)
+        operations.append(
+            ChangeOperation(
+                kind=ChangeKind.SET_CATEGORY_BUDGET,
+                category_id=CategoryId(fields["set_category"]),
+                amount_inr=_whole_number(fields["set_amount_inr"]),
+            )
+        )
+        parts.append("set a budget line's amount")
     numeric = (
         ("total_budget_inr", ChangeKind.SET_TOTAL_BUDGET, "amount_inr", "set the total budget"),
         ("guest_count", ChangeKind.SET_GUEST_COUNT, "guest_count", "change the guest count"),

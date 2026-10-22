@@ -23,7 +23,7 @@ from app.domain.errors import (
     NotFoundError,
     StaleProposalError,
 )
-from app.domain.models import EventPlan, EventType, TaskSource, VendorStatus
+from app.domain.models import CategoryId, EventPlan, EventType, TaskSource, VendorStatus
 from app.domain.planning import EventDetails, draft_plan
 from app.domain.vendors import set_vendor_status
 from tests.factories import make_plan
@@ -488,4 +488,72 @@ def test_relative_changes_are_validated() -> None:
         changes(
             op(ChangeKind.SET_GUEST_COUNT, guest_count=40),
             op(ChangeKind.ADJUST_GUEST_COUNT, delta=5),
+        )
+
+
+# Setting one budget line (review, 23 Oct: moving money between lines had no operation)
+
+
+def _line(plan: EventPlan, category_id: str) -> int:
+    return plan.category(CategoryId(category_id)).allocated_inr
+
+
+def test_setting_a_line_moves_money_and_keeps_the_total_exact() -> None:
+    plan = make_plan()
+    proposal = propose(
+        plan,
+        changes(op(ChangeKind.SET_CATEGORY_BUDGET, category_id="decor", amount_inr=6_000)),
+        TODAY,
+    )
+    assert proposal.after is not None
+    assert _line(proposal.after, "decor") == 6_000
+    assert sum(c.allocated_inr for c in proposal.after.categories) == plan.total_budget_inr
+    reasons = {c.category_id: c.reason for c in proposal.budget_changes}
+    assert reasons[CategoryId("decor")] is ChangeReason.SET
+    assert _line(proposal.after, "catering") < _line(plan, "catering"), "others give way"
+
+
+def test_set_and_keep_in_one_request_protects_the_new_amount() -> None:
+    proposal = propose(
+        make_plan(),
+        changes(
+            op(ChangeKind.SET_CATEGORY_BUDGET, category_id="decor", amount_inr=6_000),
+            op(ChangeKind.PROTECT, category_id="decor"),
+        ),
+        TODAY,
+    )
+    assert proposal.after is not None
+    decor = proposal.after.category(CategoryId("decor"))
+    assert (decor.allocated_inr, decor.protected) == (6_000, True)
+
+
+def test_setting_an_already_protected_line_is_skipped_and_reported() -> None:
+    plan = make_plan(protected=["decor"])
+    proposal = propose(
+        plan,
+        changes(op(ChangeKind.SET_CATEGORY_BUDGET, category_id="decor", amount_inr=6_000)),
+        TODAY,
+    )
+    assert proposal.after is not None
+    assert _line(proposal.after, "decor") == _line(plan, "decor")
+    assert [(s.label, s.reason) for s in proposal.skipped] == [("Decor", SkipReason.PROTECTED)]
+
+
+def test_setting_a_line_beyond_what_fits_shows_the_exact_shortfall() -> None:
+    plan = make_plan(protected=["catering", "cake", "other"])
+    proposal = propose(
+        plan,
+        changes(op(ChangeKind.SET_CATEGORY_BUDGET, category_id="decor", amount_inr=5_000)),
+        TODAY,
+    )
+    assert proposal.after is None
+    assert proposal.shortfall_inr == 2_000, "decor can only have the ₹3,000 nobody protected"
+
+
+def test_setting_an_unknown_line_is_refused() -> None:
+    with pytest.raises(NotFoundError):
+        propose(
+            make_plan(),
+            changes(op(ChangeKind.SET_CATEGORY_BUDGET, category_id="fireworks", amount_inr=500)),
+            TODAY,
         )

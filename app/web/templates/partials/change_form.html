@@ -11,6 +11,16 @@
     <input id="{{ p }}-guests" name="guest_count" type="number" min="1" max="5000" inputmode="numeric"></div>
   <div class="field"><label for="{{ p }}-shift">Move the event by this many days (negative is earlier)</label>
     <input id="{{ p }}-shift" name="shift_days" type="number" inputmode="numeric"></div>
+  <fieldset class="set-line">
+    <legend>Set one budget line (the other lines are rebalanced)</legend>
+    <div class="field"><label for="{{ p }}-set-line">Budget line</label>
+      <select id="{{ p }}-set-line" name="set_category">
+        <option value="">None</option>
+        {% for value, label in categories_for_select %}<option value="{{ value }}">{{ label }}</option>{% endfor %}
+      </select></div>
+    <div class="field"><label for="{{ p }}-set-amount">Its new amount in rupees</label>
+      <input id="{{ p }}-set-amount" name="set_amount_inr" type="number" min="1" inputmode="numeric"></div>
+  </fieldset>
   <div class="field"><label for="{{ p }}-protect">Keep this budget line as it is</label>
     <select id="{{ p }}-protect" name="protect_category">
       <option value="">None</option>

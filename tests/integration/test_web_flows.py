@@ -357,6 +357,8 @@ def test_rate_limited_change_offers_the_form(engine: Engine) -> None:
     ("fields", "expected"),
     [
         ({"total_budget_inr": "12,000", "protect_category": "cake"}, "Approve this change"),
+        ({"set_category": "decor", "set_amount_inr": "5000"}, "Set to the amount you asked"),
+        ({"set_category": "decor"}, "choose the line and enter its new amount"),
         ({}, "Fill in at least one change"),
         ({"guest_count": "lots"}, "whole numbers"),
         ({"guest_count": "0"}, "Must be at least 1."),

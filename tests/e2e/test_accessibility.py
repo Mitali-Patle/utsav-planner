@@ -40,7 +40,7 @@ def _change_preview(page: Page) -> None:
 def _over_budget(page: Page) -> None:
     _dashboard(page)
     page.get_by_label("What is it?").fill("Party hall booking")
-    page.get_by_label("Amount in rupees").fill("70000")
+    page.get_by_label("Amount in rupees", exact=True).fill("70000")
     page.get_by_role("button", name="Add expense").click()
     page.get_by_role("button", name="Suggest ways to save").click()
     expect(page.get_by_role("heading", name="Paper decorations")).to_be_visible()

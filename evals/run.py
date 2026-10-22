@@ -49,6 +49,11 @@ RESULTS_DIR = Path(__file__).resolve().parent / "results"
 RATE_LIMIT_WAIT_S = 60.0
 TASKS = ("change", "personalize", "alternatives")
 REJECTED = "answered, but the guardrails rejected the answer and its repair"
+PROMPT_OF = {
+    "change": "interpret_change",
+    "personalize": "personalize",
+    "alternatives": "alternatives",
+}
 
 type Case = ChangeCase | PersonalizeCase | AlternativesCase
 
@@ -202,14 +207,16 @@ def retry_errors(
 ) -> list[CaseResult]:
     """Run again only the cases of a results file that got no answer, and update the file.
 
-    Use it when a quota or outage cut a run short. The prompts must be the versions the run
-    used, so every answer in the file stays comparable.
+    Use it when a quota or outage cut a run short. The prompts of the tasks being retried
+    must be the versions the run used, so every answer in the file stays comparable.
 
     Raises:
-        ValueError: If the prompts changed since the run.
+        ValueError: If a retried task's prompt changed since the run.
     """
     document, results = _load(path)
-    if document["prompt_versions"] != _prompt_versions():
+    current = _prompt_versions()
+    retried = {PROMPT_OF[r.task] for r in results if r.error}
+    if any(document["prompt_versions"][name] != current[name] for name in retried):
         raise ValueError("the prompts changed since this run; start a new run instead")
     cases = _all_cases()
     todo = [cases[(r.task, r.case_id)] for r in results if r.error]

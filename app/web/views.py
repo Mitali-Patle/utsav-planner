@@ -44,6 +44,7 @@ REASON_LABELS: Mapping[ChangeReason, str] = {
     ChangeReason.CUT_FIRST: "Cut first, as you asked",
     ChangeReason.PROPORTIONAL: "Adjusted in proportion",
     ChangeReason.FLOOR_REACHED: "Held at its protected expenses",
+    ChangeReason.SET: "Set to the amount you asked",
 }
 TASK_SOURCE_LABELS: Mapping[TaskSource, str] = {
     TaskSource.CATALOG: "Standard step",

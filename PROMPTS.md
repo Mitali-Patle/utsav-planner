@@ -409,3 +409,9 @@ The prompts the app itself sends to the LLM live in `app/ai/prompts/`.
   - **Duplicate ids:** the change form shown twice now uses `cf-` and `cfr-` prefixes. A full-page audit test was shown to fail on the old templates with exactly the four ids the reviewer found.
   - **Accessibility:** previews are announced through the status region and take focus (htmx focuses `[autofocus]`, confirmed in its source). Plan buttons have stable ids, so htmx restores focus after a swap (also confirmed in its source). Two new browser tests cover keyboard Mark done and the preview focus.
   - **A test locator the new panel broke:** the clarifying question now also appears in the panel's JSON, so the locator was made exact.
+- **Fixed next (review finding 2): set one budget line's amount.** This is the `set_category_budget` operation, the 14th kind. The line is pinned at its new amount and the other unprotected lines are rebalanced, so the total stays exact. Through the rebalance a line protected before the request is skipped and reported. One subtlety: the engine applies protection first, so "set decor to ₹6,000 and keep it" would have silently left decor unchanged, because a protected line overrides any pin. Protection of a line that the same request also sets is now applied after the rebalance.
+  - `interpret-change-v3` documents the operation with one worked example. The "every amount-bearing kind has an example" test now derives its list from the engine's field rules, so a future kind cannot be missed.
+  - The no-AI change form gained "Set one budget line".
+  - Two new eval cases: English, and Hinglish "photography ka budget 1 lakh kar do".
+  - `--retry-errors` now checks only the prompts of the tasks it retries, so the scheduled Groq retry is not blocked by this unrelated prompt bump.
+  - The README no longer claims users can change every date; task and vendor dates follow the event date.

@@ -88,6 +88,7 @@ class ChangeKind(StrEnum):
     SET_DATE = "set_date"
     ADD_TASK = "add_task"
     ADD_CATEGORY = "add_category"
+    SET_CATEGORY_BUDGET = "set_category_budget"
 
 
 _PROTECTION_KINDS = frozenset({ChangeKind.PROTECT, ChangeKind.UNPROTECT})
@@ -108,6 +109,7 @@ _FIELDS: Mapping[ChangeKind, tuple[frozenset[str], frozenset[str]]] = MappingPro
         ChangeKind.SET_DATE: (frozenset({"new_date"}), frozenset()),
         ChangeKind.ADD_TASK: (frozenset({"label", "days"}), frozenset({"category_id"})),
         ChangeKind.ADD_CATEGORY: (frozenset({"label", "amount_inr"}), frozenset()),
+        ChangeKind.SET_CATEGORY_BUDGET: (frozenset({"category_id", "amount_inr"}), frozenset()),
     }
 )
 _OPTIONAL_FIELDS = (
@@ -326,7 +328,17 @@ def propose(plan: EventPlan, change_set: ChangeSet, today: date) -> Proposal:
         InvalidInputError: If a value breaks a rule (for example, a date in the past).
         InfeasibleChangeError: If extra budget has nowhere to go because everything is fixed.
     """
-    working = _apply_protection(plan, change_set)
+    # A line set and protected in the same request is protected after the rebalance, so it
+    # keeps its new amount; protecting it first would pin the old one.
+    set_lines = {
+        _require(op.category_id) for op in change_set.of_kind(ChangeKind.SET_CATEGORY_BUDGET)
+    }
+    deferred = frozenset(
+        op.category_id
+        for op in change_set.of_kind(ChangeKind.PROTECT)
+        if op.category_id is not None and op.category_id in set_lines
+    )
+    working = _apply_protection(plan, change_set, defer=deferred)
     follow_ups: list[TaskSpec] = []
     skipped: list[SkippedOperation] = []
 
@@ -334,6 +346,7 @@ def propose(plan: EventPlan, change_set: ChangeSet, today: date) -> Proposal:
     working, pins = _apply_guests(working, change_set, today, follow_ups)
     working = _apply_expenses(working, change_set, skipped)
     working, pins = _apply_custom_categories(working, change_set, pins)
+    pins = _apply_line_amounts(working, change_set, pins, skipped)
 
     budget_changes: tuple[CategoryChange, ...] = ()
     target = _target_total(working, change_set)
@@ -353,6 +366,8 @@ def propose(plan: EventPlan, change_set: ChangeSet, today: date) -> Proposal:
             )
         working = result.apply(working)
         budget_changes = result.changes
+    for category_id in deferred:
+        working = set_category_protection(working, category_id, protected=True)
 
     working = _add_tasks(working, change_set, follow_ups, today, skipped)
     return _build_proposal(plan, working, budget_changes, skipped)
@@ -392,9 +407,13 @@ def _require[T](value: T | None) -> T:
     return value
 
 
-def _apply_protection(plan: EventPlan, change_set: ChangeSet) -> EventPlan:
+def _apply_protection(
+    plan: EventPlan, change_set: ChangeSet, *, defer: frozenset[CategoryId] = frozenset()
+) -> EventPlan:
     for op in change_set.of_kind(ChangeKind.PROTECT, ChangeKind.UNPROTECT):
         protected = op.kind is ChangeKind.PROTECT
+        if protected and op.category_id in defer:
+            continue
         if op.expense_id is not None:
             plan = set_expense_protection(plan, op.expense_id, protected=protected)
         else:
@@ -583,6 +602,30 @@ def _apply_custom_categories(
             category.id: Pin(amount_inr=min(amount, MAX_BUDGET_INR), reason=ChangeReason.ADDED)
         }
     return plan.with_changes(categories=(*plan.categories, *added)), pins
+
+
+def _apply_line_amounts(
+    plan: EventPlan,
+    change_set: ChangeSet,
+    pins: dict[CategoryId, Pin],
+    skipped: list[SkippedOperation],
+) -> dict[CategoryId, Pin]:
+    """Pin each line the user set to its new amount; the rebalance moves the rest.
+
+    A line that was already protected is skipped and reported: protection means "keep it as
+    it is" until the user removes it.
+    """
+    for op in change_set.of_kind(ChangeKind.SET_CATEGORY_BUDGET):
+        category = plan.category(_require(op.category_id))
+        if category.protected:
+            skipped.append(
+                SkippedOperation(kind=op.kind, label=category.name, reason=SkipReason.PROTECTED)
+            )
+            continue
+        pins = pins | {
+            category.id: Pin(amount_inr=_require(op.amount_inr), reason=ChangeReason.SET)
+        }
+    return pins
 
 
 def _add_tasks(

@@ -8,7 +8,7 @@ from app.ai.prompts import GUARDRAILS
 from app.ai.schemas import AIChangeOperation, ChangeIntent, IntentStatus
 from app.domain.changes import ChangeKind
 
-VERSION = "interpret-change-v2"
+VERSION = "interpret-change-v3"
 
 SYSTEM = f"""\
 You turn a user's change request for an event plan into operations. You do not apply them;
@@ -27,6 +27,8 @@ Operation kinds and the fields each one uses (leave all other fields out):
 - set_date: new_date (YYYY-MM-DD)
 - add_task: label, days (days before the event), optional category_id
 - add_category: label, amount_inr (only for a budget line not already in categories)
+- set_category_budget: category_id, amount_inr (a new planned amount for one existing line;
+  the app rebalances the other lines so the total stays the same)
 
 Also set cut_priority to the category ids the user wants cut first ("cut decoration first").
 Copy numbers exactly as the user states them; use the adjust_* kinds for relative changes.
@@ -129,6 +131,18 @@ FEW_SHOTS: tuple[tuple[dict[str, Any], ChangeIntent], ...] = (
                 "Update the cake order, record the decorator advance and add a budget line "
                 "for a mehendi artist."
             ),
+        ),
+    ),
+    (
+        _example("Put 6,000 into decorations"),
+        ChangeIntent(
+            status=IntentStatus.OK,
+            operations=[
+                AIChangeOperation(
+                    kind=ChangeKind.SET_CATEGORY_BUDGET, category_id="decor", amount_inr=6000
+                )
+            ],
+            summary="Plan 6,000 for decorations and rebalance the other lines.",
         ),
     ),
     (

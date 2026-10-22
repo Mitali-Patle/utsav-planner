@@ -148,6 +148,7 @@ def _detail_problems(plan: EventPlan, proposal: Proposal, expected: Outcome) -> 
     after = proposal.after
     needs_after = (
         expected.keep
+        or expected.lines
         or expected.new_category
         or expected.new_expense
         or expected.expense_amount
@@ -155,7 +156,14 @@ def _detail_problems(plan: EventPlan, proposal: Proposal, expected: Outcome) -> 
     )
     if after is None:
         return ["the change does not fit the budget"] if needs_after else []
+    return [
+        *_line_problems(plan, after, expected),
+        *_expense_problems(plan, after, expected),
+        *_task_problems(plan, after, expected),
+    ]
 
+
+def _line_problems(plan: EventPlan, after: EventPlan, expected: Outcome) -> list[str]:
     problems = []
     before_lines: dict[str, BudgetCategory] = {c.id: c for c in plan.categories}
     after_lines: dict[str, BudgetCategory] = {c.id: c for c in after.categories}
@@ -164,31 +172,39 @@ def _detail_problems(plan: EventPlan, proposal: Proposal, expected: Outcome) -> 
             problems.append(f"{line} changed but should stay as it is")
         if not after_lines[line].protected:
             problems.append(f"{line} is not protected")
-
+    for line, amount in expected.lines:
+        if after_lines[line].allocated_inr != amount:
+            problems.append(f"{line} is {after_lines[line].allocated_inr}, expected {amount}")
     added_lines = [c.name for c in after.categories if c.id not in before_lines]
     if expected.new_category and not _any_contains(added_lines, expected.new_category):
         problems.append(f"no new budget line named like {expected.new_category}")
     if added_lines and not expected.new_category:
         problems.append(f"unexpected new budget lines: {added_lines}")
+    return problems
 
-    before_expenses = {e.id: e for e in plan.expenses}
+
+def _expense_problems(plan: EventPlan, after: EventPlan, expected: Outcome) -> list[str]:
+    problems = []
+    before_expenses = {e.id for e in plan.expenses}
     added = [(e.category_id, e.amount_inr) for e in after.expenses if e.id not in before_expenses]
     if expected.new_expense and expected.new_expense not in added:
         problems.append(f"expense {expected.new_expense} was not added (added: {added})")
     if added and not expected.new_expense:
         problems.append(f"unexpected expenses: {added}")
-
     if expected.expense_amount:
         label, amount = expected.expense_amount
         found = next((e.amount_inr for e in after.expenses if e.label == label), None)
         if found != amount:
             problems.append(f"expense '{label}' is {found}, expected {amount}")
+    return problems
 
+
+def _task_problems(plan: EventPlan, after: EventPlan, expected: Outcome) -> list[str]:
     before_tasks = {t.id for t in plan.tasks}
     new_tasks = [t.title for t in after.tasks if t.id not in before_tasks]
     if expected.new_task and not _any_contains(new_tasks, expected.new_task):
-        problems.append(f"no new task about {expected.new_task}")
-    return problems
+        return [f"no new task about {expected.new_task}"]
+    return []
 
 
 def _any_contains(texts: Iterable[str], words: Iterable[str]) -> bool:

@@ -7,6 +7,7 @@ from pathlib import Path
 import pytest
 from pydantic import BaseModel
 
+from app.ai import tasks
 from app.ai.client import RateLimitedError
 from app.ai.schemas import (
     AIAlternative,
@@ -84,6 +85,7 @@ def test_change_case_refers_to_real_budget_lines(case: ChangeCase) -> None:
     lines = {c.id for c in case.plan.categories}
     for outcome in case.accept:
         assert set(outcome.keep) <= lines
+        assert {line for line, _ in outcome.lines} <= lines
         if outcome.new_expense:
             assert outcome.new_expense[0] in lines
 
@@ -412,8 +414,10 @@ def test_history_lists_every_run_with_its_prompt_versions(tmp_path: Path) -> Non
     report = render(latest_runs(tmp_path), all_runs(tmp_path))
     assert "## Run history" in report
     history = report.split("## Run history")[1]
-    assert "| m:1 | v1, v2, v2 | 0/1 | 0/0 | 0/0 | 0 |" in history
-    assert "| m:1 | v1, v2, v2 | 1/1 | 0/0 | 0/0 | 0 |" in history
+    ordered = (tasks.PERSONALIZE, tasks.INTERPRET_CHANGE, tasks.SUGGEST_ALTERNATIVES)
+    versions = ", ".join(t.version.rsplit("-", 1)[-1] for t in ordered)
+    assert f"| m:1 | {versions} | 0/1 | 0/0 | 0/0 | 0 |" in history
+    assert f"| m:1 | {versions} | 1/1 | 0/0 | 0/0 | 0 |" in history
 
 
 def test_retry_errors_reruns_only_unanswered_cases(tmp_path: Path) -> None:
@@ -445,9 +449,30 @@ def test_retry_errors_reruns_only_unanswered_cases(tmp_path: Path) -> None:
     assert "retried_at" in json.loads(path.read_text())
 
 
-def test_retry_errors_refuses_a_run_made_with_other_prompts(tmp_path: Path) -> None:
-    path = save([], "m:1", tmp_path)
+def test_retry_errors_checks_only_the_prompts_of_retried_tasks(tmp_path: Path) -> None:
+    cut_off = CaseResult(
+        "change",
+        "b-budget-set",
+        False,
+        True,
+        ("no AI answer",),
+        {},
+        None,
+        0,
+        False,
+        ("m:1: rate_limited",),
+        {},
+    )
+    path = save([cut_off], "m:1", tmp_path)
     document = json.loads(path.read_text())
+    document["prompt_versions"]["personalize"] = "personalize-v0"
+    path.write_text(json.dumps(document))
+    answer = intent(op(ChangeKind.SET_TOTAL_BUDGET, amount_inr=50_000)).model_dump_json()
+    [result] = retry_errors(path, [ScriptedProvider("m:1", [answer])])
+    assert result.passed, "an unrelated prompt change does not block the retry"
+
+    document = json.loads(path.read_text())
+    document["results"][0]["error"] = True
     document["prompt_versions"]["interpret_change"] = "interpret-change-v0"
     path.write_text(json.dumps(document))
     with pytest.raises(ValueError, match="prompts changed"):
@@ -466,3 +491,11 @@ def test_omitting_forbidden_food_is_respectful() -> None:
         "Jain tasting", "Dishes strictly omit onion, garlic and root vegetables", "Sunset pheras"
     )
     assert score_personalize(PERSONALIZE["w-jain"], answer, SYSTEM).passed
+
+
+def test_a_set_line_must_land_on_the_exact_amount() -> None:
+    case = CHANGES["b-set-line"]
+    right = intent(op(ChangeKind.SET_CATEGORY_BUDGET, category_id="decor", amount_inr=10_000))
+    assert score_change(case, right).passed
+    total_instead = intent(op(ChangeKind.ADJUST_TOTAL_BUDGET, delta=10_000))
+    assert not score_change(case, total_instead).passed

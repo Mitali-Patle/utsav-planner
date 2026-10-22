@@ -123,6 +123,7 @@ class Outcome:
         expense_amount: (label, amount) an existing expense must have; None amount means
             it must be removed.
         new_task: Any one of these words must appear in an added task's title.
+        lines: (budget line, amount) pairs each line must end up at exactly.
     """
 
     status: IntentStatus = OK
@@ -134,6 +135,7 @@ class Outcome:
     new_expense: tuple[str, int] | None = None
     expense_amount: tuple[str, int | None] | None = None
     new_task: tuple[str, ...] = ()
+    lines: tuple[tuple[str, int], ...] = ()
 
 
 @dataclass(frozen=True)
@@ -321,6 +323,19 @@ CHANGE_CASES: tuple[ChangeCase, ...] = (
         birthday_with_advance(),
         "Cancel the hall advance, we got a refund",
         (Outcome(expense_amount=("Party hall advance", None)),),
+    ),
+    # Setting one line; the others are rebalanced and the total stays.
+    ChangeCase(
+        "b-set-line",
+        birthday(),
+        "Put ₹10,000 into decorations",
+        (Outcome(lines=(("decor", 10_000),)),),
+    ),
+    ChangeCase(
+        "w-set-line-hinglish",
+        wedding(),
+        "photography ka budget 1 lakh kar do",
+        (Outcome(lines=(("photography", 100_000),)),),
     ),
     # Hinglish and Marathi-English.
     ChangeCase(

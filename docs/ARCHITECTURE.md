@@ -129,12 +129,15 @@ There is exactly one LLM call per user action, and answers are cached.
 |---|---|---|---|---|---|
 | `personalize` | Right after an event is created (regenerating is planned, F12) | Event details (quoted user text), category ids, existing tasks, vendor types, tone | `PlanSuggestions`: 3–5 ideas, ≤ 4 budget emphases (increase/decrease × small/medium), ≤ 5 extra tasks, ≤ 6 vendor notes, each with a why; `off_topic` | 0.8 | Emphasis → bounded weight change (±10 / ±20 %) → exact allocation; tasks deduplicated and dated (`personalize_plan`) |
 | `interpret_change` | Change request | Plan snapshot (ids, amounts, protected flags) + quoted request + today | `ChangeIntent`: status `ok` / `needs_clarification` / `off_topic`, operations, cut_priority, summary | 0.1 | Converted to a domain `ChangeSet`, then `propose()` computes the Proposal |
-| `alternatives` | "Suggest alternatives" on a shortfall | Plan snapshot + shortfall | `Alternatives`: items (category_id, reduce/replace/remove, small/medium/large, title, why) | 0.6 | Code computes each saving (`estimate_saving`); "apply" needs a `set_category_budget` operation (planned, F13) |
+| `alternatives` | "Suggest alternatives" on a shortfall | Plan snapshot + shortfall | `Alternatives`: items (category_id, reduce/replace/remove, small/medium/large, title, why) | 0.6 | Code computes each saving (`estimate_saving`); applying an option as a proposal is planned (F13) |
 
 Operation kinds (flat `ChangeOperation`, each kind checks its own fields): `set_total_budget`,
 `adjust_total_budget`, `add_expense`, `update_expense`, `remove_expense`, `protect` / `unprotect`
 (exactly one of `category_id` or `expense_id`), `set_guest_count`, `adjust_guest_count`,
-`shift_date_days`, `set_date`, `add_task`, `add_category`. At most five per request.
+`shift_date_days`, `set_date`, `add_task`, `add_category`, `set_category_budget` (the line is
+pinned at the new amount and the other unprotected lines are rebalanced; a line protected
+before the request is skipped; set and protect in one request keeps the new amount). At most
+five per request.
 
 ### 6.2 Prompts
 Each prompt module has `VERSION`, a structured `SYSTEM` prompt (role, task, output rules and the
