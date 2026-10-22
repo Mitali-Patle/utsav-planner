@@ -29,7 +29,7 @@ from evals.cases import (
     PersonalizeCase,
 )
 from evals.report import latest_runs, render
-from evals.run import CaseResult, rescore, run_cases, save, select_cases
+from evals.run import REJECTED, CaseResult, rescore, run_cases, save, select_cases
 from evals.scoring import score_alternatives, score_change, score_personalize
 from tests.fakes import ScriptedProvider, TaskAwareProvider
 
@@ -367,3 +367,28 @@ def test_rescore_applies_current_scoring_to_saved_answers(tmp_path: Path) -> Non
         (False, ("no AI answer",)),
     ]
     assert "rescored_at" in json.loads(path.read_text())
+
+
+def test_an_answer_rejected_twice_is_the_models_failure_not_an_outage() -> None:
+    unknown_line = intent(op(ChangeKind.PROTECT, category_id="fireworks")).model_dump_json()
+    model = ScriptedProvider("gemini:fake", [unknown_line, unknown_line])
+    [result] = run_cases(select_cases("change", ("b-protect-only",)), [model])
+    assert (result.passed, result.error, result.reasons) == (False, False, (REJECTED,))
+
+
+def test_rescore_reclassifies_rejected_answers_saved_as_errors(tmp_path: Path) -> None:
+    saved = CaseResult(
+        "change",
+        "b-add-line",
+        False,
+        True,
+        ("no AI answer: ...",),
+        {},
+        None,
+        0,
+        False,
+        ("gemini:x: invalid", "gemini:x: invalid"),
+        {},
+    )
+    [result] = rescore(save([saved], "gemini:x", tmp_path))
+    assert (result.passed, result.error, result.reasons) == (False, False, (REJECTED,))

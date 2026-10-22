@@ -349,3 +349,12 @@ The prompts the app itself sends to the LLM live in `app/ai/prompts/`.
   - Gemini 3.5 and 3.1 Flash-Lite could not be measured: Google returned 504 timeouts and 503 "This model is currently experiencing high demand" all evening (a trivial prompt took 19 s on 3.5). Their baselines run when Google recovers.
 - **Bug found in my scorer:** the model wrote "alcohol‐free" with a Unicode hyphen (U+2010), and the negation check only knew the ASCII hyphen, so a correct answer was failed. The check now accepts any dash, with a doctest for that character. A new `--rescore` option re-scores saved answers with no new API calls; the Groq run went from 52 to 53 that way.
 - **Self-corrections:** two doctest examples and one coverage expectation in my tests were wrong (the scorer was right); the typed-id dictionaries needed `dict[str, ...]` annotations under `mypy --strict`, which the pre-commit hook (and so CI) now also runs on `tests/` and `evals/`.
+
+## 2026-10-22 (night): Gemini baselines and what they showed
+- **Tool / model:** Claude Code (Claude Opus 5.5).
+- **Outcome:**
+  - Google recovered around 23:20 IST (3.5 answered in 1.9–2.8 s, 3.1 in 0.9 s), and both Gemini runs started at once.
+  - **Gemini 3.5 Flash-Lite:** 40/54. When it answered: change requests 28/31, personalization 8/8, alternatives 4/6. Nine cases (17%) got no answer because of Google timeouts and 500/503 errors. Median latency for a change was 4.1 s, against 1.2 s for Groq.
+  - **Gemini 3.1 Flash-Lite:** the run was discarded. Google went back to 503 "high demand" right after the health check, and 51 of 54 calls got no answer, so the run measured the outage, not the model. It will be rerun.
+  - **Root cause of the three Gemini 3.5 rejections:** it left out `amount_inr` on add_category, add_expense and update_expense, even after the repair message named the missing field. The prompt lists the field, but no few-shot example shows one of those operations, and Gemini follows the examples' shape more literally than Groq. This makes it a prompt v2 candidate (one worked add_expense example).
+- **Runner fix:** an answer the guardrails rejected twice was being counted as "no answer", like an outage. It is the model's failure, so it now counts as a failed answer, and `--rescore` reclassifies old files.

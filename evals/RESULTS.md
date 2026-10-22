@@ -17,9 +17,29 @@ grades another. Latency is measured from the developer's machine in India.
 | groq:openai/gpt-oss-120b | change | 36/36 (100%) | 36/36 (100%) | 0 | 1.2 s | 1.8 s |
 | groq:openai/gpt-oss-120b | personalize | 12/12 (100%) | 12/12 (100%) | 0 | 3.4 s | 4.6 s |
 | groq:openai/gpt-oss-120b | alternatives | 5/6 (83%) | 6/6 (100%) | 0 | 1.6 s | 2.2 s |
+| gemini:gemini-3.5-flash-lite | change | 28/36 (78%) | 28/31 (90%) | 5 | 4.1 s | 11.7 s |
+| gemini:gemini-3.5-flash-lite | personalize | 8/12 (67%) | 8/8 (100%) | 4 | 5.6 s | 6.7 s |
+| gemini:gemini-3.5-flash-lite | alternatives | 4/6 (67%) | 6/6 (100%) | 0 | 4.3 s | 4.5 s |
 
 ## Failures
 
 ### groq:openai/gpt-oss-120b (2026-10-22T16:42:01+00:00, prompts personalize-v1, interpret-change-v1, alternatives-v1)
 
 - `alternatives/b-far-over`: savings cover 17% of the gap
+
+### gemini:gemini-3.5-flash-lite (2026-10-22T18:03:50+00:00, prompts personalize-v1, interpret-change-v1, alternatives-v1)
+
+- `change/w-indian-commas`: no AI answer: gemini:gemini-3.5-flash-lite: timeout
+- `change/c-guests-about`: no AI answer: gemini:gemini-3.5-flash-lite: timeout
+- `change/b-protect-only`: no AI answer: gemini:gemini-3.5-flash-lite: timeout
+- `change/b-add-line`: no AI answer: gemini:gemini-3.5-flash-lite: timeout
+- `change/w-add-line`: answered, but the guardrails rejected the answer and its repair
+- `change/b-add-expense`: answered, but the guardrails rejected the answer and its repair
+- `change/bx-update-expense`: answered, but the guardrails rejected the answer and its repair
+- `change/c-weather`: no AI answer: gemini:gemini-3.5-flash-lite: unavailable
+- `personalize/w-jain`: no AI answer: gemini:gemini-3.5-flash-lite: timeout
+- `personalize/b-jungle`: no AI answer: gemini:gemini-3.5-flash-lite: timeout
+- `personalize/b-tight-home`: no AI answer: gemini:gemini-3.5-flash-lite: unavailable
+- `personalize/c-garba`: no AI answer: gemini:gemini-3.5-flash-lite: timeout
+- `alternatives/b-over-cake-kept`: savings cover 36% of the gap
+- `alternatives/b-far-over`: savings cover 23% of the gap

@@ -48,6 +48,7 @@ logger = logging.getLogger("evals")
 RESULTS_DIR = Path(__file__).resolve().parent / "results"
 RATE_LIMIT_WAIT_S = 60.0
 TASKS = ("change", "personalize", "alternatives")
+REJECTED = "answered, but the guardrails rejected the answer and its repair"
 
 type Case = ChangeCase | PersonalizeCase | AlternativesCase
 
@@ -99,8 +100,11 @@ def _result(
 ) -> CaseResult:
     provenance = result.provenance
     attempts = tuple(f"{a.provider}: {a.outcome.value}" for a in provenance.attempts)
-    if provenance.fallback:
+    error = provenance.fallback and not rejected(attempts)
+    if error:
         verdict = Verdict(False, ("no AI answer: " + ", ".join(attempts),))
+    elif provenance.fallback:
+        verdict = Verdict(False, (REJECTED,))
     else:
         verdict = score()
     value: BaseModel = result.value
@@ -108,7 +112,7 @@ def _result(
         task=task,
         case_id=case_id,
         passed=verdict.passed,
-        error=provenance.fallback,
+        error=error,
         reasons=verdict.reasons,
         metrics=verdict.metrics,
         provider=provenance.provider,
@@ -118,6 +122,21 @@ def _result(
         attempts=attempts,
         answer=value.model_dump(mode="json"),
     )
+
+
+def rejected(attempts: Sequence[str]) -> bool:
+    """Whether every attempt was answered but rejected as invalid.
+
+    That is the model's failure (a wrong answer), unlike a timeout or outage, where the
+    model never answered.
+
+    Examples:
+        >>> rejected(["gemini:x: invalid", "gemini:x: invalid"])
+        True
+        >>> rejected(["gemini:x: timeout"])
+        False
+    """
+    return bool(attempts) and all(a.endswith(f": {AttemptOutcome.INVALID.value}") for a in attempts)
 
 
 def run_cases(
@@ -155,7 +174,8 @@ def rescore(path: Path) -> list[CaseResult]:
     """Score the saved answers in a results file again with the current scoring code.
 
     The answers are not changed and no model is called; use this after fixing a scoring
-    bug. Results with no AI answer stay as they were.
+    bug. Results with no AI answer stay as they were, except that answers the guardrails
+    rejected twice are counted as the model's failure rather than as no answer.
     """
     document: dict[str, Any] = json.loads(path.read_text(encoding="utf-8"))
     cases = {(task, case.id): case for task in TASKS for case in select_cases(task)}
@@ -164,7 +184,9 @@ def rescore(path: Path) -> list[CaseResult]:
         result = CaseResult(
             **{**saved, "reasons": tuple(saved["reasons"]), "attempts": tuple(saved["attempts"])}
         )
-        if not result.error:
+        if result.error and rejected(result.attempts):
+            result = replace(result, error=False, reasons=(REJECTED,))
+        elif not result.error and result.reasons != (REJECTED,):
             verdict = _score_saved(cases[(result.task, result.case_id)], result.answer)
             result = replace(
                 result, passed=verdict.passed, reasons=verdict.reasons, metrics=verdict.metrics
