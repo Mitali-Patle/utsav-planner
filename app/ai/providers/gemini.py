@@ -19,6 +19,8 @@ from app.ai.client import (
 )
 
 HTTP_TOO_MANY_REQUESTS = 429
+# Gemini answers 400 "Manually set deadline 8s is too short. Minimum allowed deadline is 10s."
+MIN_DEADLINE_MS = 10_000
 TIMEOUT_CODES = frozenset({408, 504})
 _SECONDS = re.compile(r"^(\d+(?:\.\d+)?)s$")
 
@@ -59,7 +61,9 @@ class GeminiProvider:
             response_schema=request.schema,
             temperature=request.temperature,
             max_output_tokens=request.max_output_tokens,
-            http_options=types.HttpOptions(timeout=round(request.timeout_s * 1000)),
+            http_options=types.HttpOptions(
+                timeout=max(MIN_DEADLINE_MS, round(request.timeout_s * 1000))
+            ),
         )
         contents = [
             types.Content(role=role, parts=[types.Part(text=text)])
@@ -70,7 +74,7 @@ class GeminiProvider:
                 model=self._model, contents=contents, config=config
             )
         except errors.APIError as error:
-            raise _map_api_error(error.code, error.details) from error
+            raise _map_api_error(error.code, error.status, error.details) from error
         except httpx.TimeoutException as error:
             raise ProviderTimeoutError(f"{self.name} timed out") from error
         except httpx.HTTPError as error:
@@ -89,14 +93,21 @@ class GeminiProvider:
         return self._client
 
 
-def _map_api_error(code: int, details: Any) -> ProviderError:  # noqa: ANN401 - raw API JSON
-    """Translate a Gemini API error into the chain's error types."""
+def _map_api_error(code: int, status: str | None, details: Any) -> ProviderError:  # noqa: ANN401 - raw API JSON
+    """Translate a Gemini API error into the chain's error types.
+
+    Messages carry only the HTTP code and status (for example `503 UNAVAILABLE`), never keys
+    or request content.
+    """
+    label = f"HTTP {code} {status or ''}".strip()
     if code == HTTP_TOO_MANY_REQUESTS:
         daily, retry_after = _quota_details(details)
-        return RateLimitedError("Gemini quota exhausted", daily=daily, retry_after_s=retry_after)
+        return RateLimitedError(
+            f"Gemini quota exhausted ({label})", daily=daily, retry_after_s=retry_after
+        )
     if code in TIMEOUT_CODES:
-        return ProviderTimeoutError(f"Gemini timed out (HTTP {code})")
-    return ProviderUnavailableError(f"Gemini returned HTTP {code}")
+        return ProviderTimeoutError(f"Gemini timed out ({label})")
+    return ProviderUnavailableError(f"Gemini returned {label}")
 
 
 def _quota_details(details: Any) -> tuple[bool, float | None]:  # noqa: ANN401 - raw API JSON

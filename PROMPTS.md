@@ -190,3 +190,30 @@ The prompts the app itself sends to the LLM live in `app/ai/prompts/`.
   - Rate limits still move on to the next model from the same vendor.
   - Worst case on a slow Gemini day: about 8 s plus Groq at about 1.3 s, where the old settings could reach the fallback after about 25 s.
   - 302 tests.
+
+## 2026-10-22: AI layer, part 3 — schemas, prompts, guardrails, fallbacks (CC-AI-02)
+- **Tool / model:** Claude Code (Claude Opus 5.5).
+- **Prompts (v1):**
+  - `personalize`, `interpret-change` and `alternatives`, each structured as role, task, output rules and shared guardrails.
+  - The guardrails cover: Indian events only; text inside `<<< >>>` is data; ids only from the request; never calculate; short specific "why"; JSON only.
+  - Requests are sent as JSON, with few-shot examples as prior turns.
+  - A test fails if the domain gains an operation kind that the interpret prompt does not explain.
+- **Design change found while writing the prompt:**
+  - "10 more guests" and "cut by ₹2,000" would have made the LLM do arithmetic.
+  - Added `adjust_guest_count` and `adjust_total_budget`: the model copies the number, and code computes the result.
+- **Guardrails:**
+  - Lenient for `personalize`: unknown ids are cleared or dropped, lists trimmed, duplicates removed.
+  - Strict for `interpret_change`: the answer is converted to the domain `ChangeSet`, unknown ids are rejected with reasons for one repair, and clarifications and off-topic answers never carry operations.
+  - Alternatives never target protected categories.
+  - Tests show that even a "compromised model" answer deleting a protected expense is skipped by the domain.
+- **Bugs found only by the live smoke test (`scripts/ai_smoke.py`):**
+  1. The adapter logged only "unavailable", which hid the cause. Error messages now carry the HTTP code and status, never keys.
+  2. A single transient Gemini error benched it for 30 s, overloading Groq's 8k tokens/minute. Now there is a circuit breaker: a provider rests only after 2 consecutive failures, and a success resets the count.
+  3. **The 8 s per-call limit broke Gemini entirely.** Gemini answered `400 INVALID_ARGUMENT: "Manually set deadline 8s is too short. Minimum allowed deadline is 10s."` The limit is now 10 s, the Gemini adapter enforces the minimum, and a regression test covers it.
+- **Prompt sizes measured with count_tokens:** personalize about 1.7k tokens, interpret about 2.2k, alternatives about 1.0k. The interpret examples were slimmed.
+- **Final live smoke run (dev keys), 7 calls, 0 fallbacks:**
+  - Gemini answered personalization (2.4 s) and all five change requests (0.9–1.3 s, one at 9.1 s), with correct operations.
+  - It asked a specific clarifying question for "make it nicer" and declined the prompt-injection attempt as off-topic.
+  - For alternatives, Gemini timed out, its second model was skipped, and Groq answered (11.3 s total).
+- 339 tests, 99.95 % branch coverage.
+- **Next iteration:** persistence (Postgres cache and plans), services, web routes, then the UI.

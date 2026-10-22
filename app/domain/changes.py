@@ -76,12 +76,14 @@ class ChangeKind(StrEnum):
     """The operations a change request can contain."""
 
     SET_TOTAL_BUDGET = "set_total_budget"
+    ADJUST_TOTAL_BUDGET = "adjust_total_budget"
     ADD_EXPENSE = "add_expense"
     UPDATE_EXPENSE = "update_expense"
     REMOVE_EXPENSE = "remove_expense"
     PROTECT = "protect"
     UNPROTECT = "unprotect"
     SET_GUEST_COUNT = "set_guest_count"
+    ADJUST_GUEST_COUNT = "adjust_guest_count"
     SHIFT_DATE_DAYS = "shift_date_days"
     SET_DATE = "set_date"
     ADD_TASK = "add_task"
@@ -89,16 +91,19 @@ class ChangeKind(StrEnum):
 
 
 _PROTECTION_KINDS = frozenset({ChangeKind.PROTECT, ChangeKind.UNPROTECT})
+_ADJUST_KINDS = frozenset({ChangeKind.ADJUST_TOTAL_BUDGET, ChangeKind.ADJUST_GUEST_COUNT})
 _FIELDS: Mapping[ChangeKind, tuple[frozenset[str], frozenset[str]]] = MappingProxyType(
     {
         # kind: (required fields, optional fields)
         ChangeKind.SET_TOTAL_BUDGET: (frozenset({"amount_inr"}), frozenset()),
+        ChangeKind.ADJUST_TOTAL_BUDGET: (frozenset({"delta"}), frozenset()),
         ChangeKind.ADD_EXPENSE: (frozenset({"category_id", "label", "amount_inr"}), frozenset()),
         ChangeKind.UPDATE_EXPENSE: (frozenset({"expense_id", "amount_inr"}), frozenset()),
         ChangeKind.REMOVE_EXPENSE: (frozenset({"expense_id"}), frozenset()),
         ChangeKind.PROTECT: (frozenset(), frozenset({"category_id", "expense_id"})),
         ChangeKind.UNPROTECT: (frozenset(), frozenset({"category_id", "expense_id"})),
         ChangeKind.SET_GUEST_COUNT: (frozenset({"guest_count"}), frozenset()),
+        ChangeKind.ADJUST_GUEST_COUNT: (frozenset({"delta"}), frozenset()),
         ChangeKind.SHIFT_DATE_DAYS: (frozenset({"days"}), frozenset()),
         ChangeKind.SET_DATE: (frozenset({"new_date"}), frozenset()),
         ChangeKind.ADD_TASK: (frozenset({"label", "days"}), frozenset({"category_id"})),
@@ -112,12 +117,13 @@ _OPTIONAL_FIELDS = (
     "label",
     "guest_count",
     "days",
+    "delta",
     "new_date",
 )
 _SINGLETON_GROUPS: Mapping[str, frozenset[ChangeKind]] = MappingProxyType(
     {
-        "budget total": frozenset({ChangeKind.SET_TOTAL_BUDGET}),
-        "guest count": frozenset({ChangeKind.SET_GUEST_COUNT}),
+        "budget total": frozenset({ChangeKind.SET_TOTAL_BUDGET, ChangeKind.ADJUST_TOTAL_BUDGET}),
+        "guest count": frozenset({ChangeKind.SET_GUEST_COUNT, ChangeKind.ADJUST_GUEST_COUNT}),
         "event date": frozenset({ChangeKind.SHIFT_DATE_DAYS, ChangeKind.SET_DATE}),
     }
 )
@@ -138,6 +144,7 @@ class ChangeOperation(DomainModel):
     label: ShortText | None = None
     guest_count: int | None = Field(default=None, ge=1, le=MAX_GUESTS)
     days: int | None = Field(default=None, ge=-MAX_DAYS_AHEAD, le=MAX_DAYS_AHEAD)
+    delta: int | None = Field(default=None, ge=-MAX_BUDGET_INR, le=MAX_BUDGET_INR)
     new_date: date | None = None
 
     @model_validator(mode="after")
@@ -164,6 +171,8 @@ class ChangeOperation(DomainModel):
             raise ValueError(f"{self.kind} needs exactly one of category_id or expense_id")
         if self.kind is ChangeKind.SHIFT_DATE_DAYS and self.days == 0:
             raise ValueError("shift_date_days needs a non-zero number of days")
+        if self.kind in _ADJUST_KINDS and self.delta == 0:
+            raise ValueError(f"{self.kind} needs a non-zero delta")
         if (
             self.kind is ChangeKind.ADD_TASK
             and self.days is not None
@@ -327,9 +336,8 @@ def propose(plan: EventPlan, change_set: ChangeSet, today: date) -> Proposal:
     working, pins = _apply_custom_categories(working, change_set, pins)
 
     budget_changes: tuple[CategoryChange, ...] = ()
-    total_ops = change_set.of_kind(ChangeKind.SET_TOTAL_BUDGET)
-    if total_ops or pins or change_set.cut_priority:
-        target = _require(total_ops[0].amount_inr) if total_ops else working.total_budget_inr
+    target = _target_total(working, change_set)
+    if target != working.total_budget_inr or pins or change_set.cut_priority:
         result = rebalance(
             working, total_inr=target, pins=pins, cut_priority=change_set.cut_priority
         )
@@ -421,10 +429,9 @@ def _apply_date(
 def _apply_guests(
     plan: EventPlan, change_set: ChangeSet, today: date, follow_ups: list[TaskSpec]
 ) -> tuple[EventPlan, dict[CategoryId, Pin]]:
-    guest_ops = change_set.of_kind(ChangeKind.SET_GUEST_COUNT)
-    if not guest_ops or guest_ops[0].guest_count == plan.guest_count:
+    new_count = _target_guest_count(plan, change_set)
+    if new_count == plan.guest_count:
         return plan, {}
-    new_count = _require(guest_ops[0].guest_count)
     old_count = plan.guest_count
     pins = {
         c.id: Pin(
@@ -453,8 +460,38 @@ def _apply_guests(
 
 def _only_guests_affect_budget(change_set: ChangeSet) -> bool:
     return not change_set.cut_priority and not change_set.of_kind(
-        ChangeKind.SET_TOTAL_BUDGET, ChangeKind.ADD_CATEGORY
+        ChangeKind.SET_TOTAL_BUDGET, ChangeKind.ADJUST_TOTAL_BUDGET, ChangeKind.ADD_CATEGORY
     )
+
+
+def _target_total(plan: EventPlan, change_set: ChangeSet) -> int:
+    """New total budget: an absolute amount, or the current total plus a stated change."""
+    for op in change_set.of_kind(ChangeKind.SET_TOTAL_BUDGET, ChangeKind.ADJUST_TOTAL_BUDGET):
+        if op.kind is ChangeKind.SET_TOTAL_BUDGET:
+            return _require(op.amount_inr)
+        return plan.total_budget_inr + _require(op.delta)
+    return plan.total_budget_inr
+
+
+def _target_guest_count(plan: EventPlan, change_set: ChangeSet) -> int:
+    """New guest count, computed by code for relative requests such as "10 more guests".
+
+    Raises:
+        InvalidInputError: If the result is outside 1 to the maximum.
+    """
+    for op in change_set.of_kind(ChangeKind.SET_GUEST_COUNT, ChangeKind.ADJUST_GUEST_COUNT):
+        count = (
+            _require(op.guest_count)
+            if op.kind is ChangeKind.SET_GUEST_COUNT
+            else plan.guest_count + _require(op.delta)
+        )
+        if not 1 <= count <= MAX_GUESTS:
+            raise InvalidInputError(
+                f"The guest count would become {count}; it must be between 1 and {MAX_GUESTS}.",
+                code="guest_count_out_of_range",
+            )
+        return count
+    return plan.guest_count
 
 
 def _hold_all_but_contingency(

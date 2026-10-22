@@ -69,7 +69,9 @@ class GroqProvider:
                 retry_after_s=_retry_after(response),
             )
         if response.status_code != HTTP_OK:
-            raise ProviderUnavailableError(f"{self.name} returned HTTP {response.status_code}")
+            raise ProviderUnavailableError(
+                f"{self.name} returned HTTP {response.status_code} {response.reason_phrase}".strip()
+            )
         try:
             content = response.json()["choices"][0]["message"]["content"]
         except (ValueError, KeyError, IndexError, TypeError) as error:

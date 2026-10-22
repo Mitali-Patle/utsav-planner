@@ -451,3 +451,41 @@ def test_stale_proposal_cannot_be_approved() -> None:
     saved = accept(proposal, plan)
     with pytest.raises(StaleProposalError):
         accept(proposal, saved)
+
+
+# Relative changes: the AI copies the number, code does the arithmetic
+
+
+def test_ten_more_guests_is_computed_by_code() -> None:
+    plan = make_plan(scales_with_guests=["catering"])
+    relative = propose(plan, changes(op(ChangeKind.ADJUST_GUEST_COUNT, delta=10)), TODAY)
+    absolute = propose(plan, changes(op(ChangeKind.SET_GUEST_COUNT, guest_count=40)), TODAY)
+    assert after_of(relative).guest_count == 40
+    assert relative.budget_changes == absolute.budget_changes
+
+
+def test_budget_cut_by_an_amount_is_computed_by_code() -> None:
+    plan = make_plan(protected=["cake"])
+    after = after_of(
+        propose(plan, changes(op(ChangeKind.ADJUST_TOTAL_BUDGET, delta=-3_000)), TODAY)
+    )
+    assert after.total_budget_inr == 12_000
+    assert allocation(after, "cake") == 2_000
+
+
+def test_relative_changes_are_validated() -> None:
+    with pytest.raises(ValidationError, match="non-zero delta"):
+        op(ChangeKind.ADJUST_GUEST_COUNT, delta=0)
+    with pytest.raises(InvalidInputError) as guests:
+        propose(
+            make_plan(guest_count=5), changes(op(ChangeKind.ADJUST_GUEST_COUNT, delta=-5)), TODAY
+        )
+    assert guests.value.code == "guest_count_out_of_range"
+    with pytest.raises(InvalidInputError) as budget:
+        propose(make_plan(), changes(op(ChangeKind.ADJUST_TOTAL_BUDGET, delta=-14_500)), TODAY)
+    assert budget.value.code == "budget_out_of_range"
+    with pytest.raises(ValidationError, match="guest count is set more than once"):
+        changes(
+            op(ChangeKind.SET_GUEST_COUNT, guest_count=40),
+            op(ChangeKind.ADJUST_GUEST_COUNT, delta=5),
+        )

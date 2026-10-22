@@ -1,5 +1,6 @@
 """Provider adapters translate requests and every failure into the chain's types."""
 
+import dataclasses
 import json
 from collections.abc import Callable
 from types import SimpleNamespace
@@ -89,6 +90,13 @@ def test_gemini_maps_the_request() -> None:
     assert config.response_schema is Answer
     assert (config.temperature, config.max_output_tokens) == (0.1, 300)
     assert config.http_options.timeout == 12_000
+
+
+def test_gemini_never_sends_a_deadline_below_ten_seconds() -> None:
+    """Regression: Gemini rejects deadlines under 10 s with 400 INVALID_ARGUMENT."""
+    provider, models = gemini(SimpleNamespace(text='{"ok": true}'))
+    provider.generate(dataclasses.replace(REQUEST, timeout_s=3.5))
+    assert models.calls[0]["config"].http_options.timeout == 10_000
 
 
 def test_gemini_daily_quota_with_retry_delay() -> None:

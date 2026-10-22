@@ -146,15 +146,36 @@ def test_per_minute_limit_uses_the_retry_delay() -> None:
     assert chain.run(TASK, "third").provenance.provider == "primary"
 
 
-def test_unavailable_provider_cools_down_briefly() -> None:
-    clocks = Clocks()
-    primary = ScriptedProvider("primary", [ProviderUnavailableError("500"), GOOD])
-    backup = ScriptedProvider("backup", [GOOD, GOOD])
-    chain = make_chain(primary, backup, clocks=clocks)
+def test_one_outage_does_not_bench_a_provider() -> None:
+    primary = ScriptedProvider("primary", [ProviderUnavailableError("503 UNAVAILABLE"), GOOD])
+    backup = ScriptedProvider("backup", [GOOD])
+    chain = make_chain(primary, backup)
     assert chain.run(TASK, "first").provenance.provider == "backup"
-    assert chain.run(TASK, "second").provenance.provider == "backup"
+    assert chain.run(TASK, "second").provenance.provider == "primary"
+
+
+def test_two_outages_in_a_row_bench_a_provider_briefly() -> None:
+    clocks = Clocks()
+    outage = ProviderUnavailableError("503 UNAVAILABLE")
+    primary = ScriptedProvider("primary", [outage, outage, GOOD])
+    backup = ScriptedProvider("backup", [GOOD, GOOD, GOOD])
+    chain = make_chain(primary, backup, clocks=clocks)
+    chain.run(TASK, "first")
+    chain.run(TASK, "second")
+    benched = chain.run(TASK, "third")
+    assert outcomes(benched)[0] == ("primary", AttemptOutcome.COOLING_DOWN)
     clocks.wall = NOW + timedelta(seconds=31)
-    assert chain.run(TASK, "third").provenance.provider == "primary"
+    assert chain.run(TASK, "fourth").provenance.provider == "primary"
+
+
+def test_a_success_resets_the_outage_count() -> None:
+    outage = ProviderUnavailableError("503 UNAVAILABLE")
+    primary = ScriptedProvider("primary", [outage, GOOD, outage, GOOD])
+    backup = ScriptedProvider("backup", [GOOD, GOOD])
+    chain = make_chain(primary, backup)
+    for context in ("a", "b", "c", "d"):
+        chain.run(TASK, context)
+    assert len(primary.requests) == 4, "never benched: outages were not consecutive"
 
 
 def test_invalid_json_gets_one_repair_on_the_same_model() -> None:
@@ -250,10 +271,10 @@ def test_memory_cache_expires_and_evicts() -> None:
     assert cache.get("c") == {"v": 3}
 
 
-def test_default_per_call_limit_is_eight_seconds() -> None:
+def test_default_per_call_limit_is_ten_seconds() -> None:
     primary = ScriptedProvider("gemini:a", [GOOD])
     make_chain(primary).run(TASK, "hello")
-    assert primary.requests[0].timeout_s == 8
+    assert primary.requests[0].timeout_s == 10
 
 
 def test_timeout_skips_other_models_from_the_same_vendor() -> None:

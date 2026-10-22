@@ -1,8 +1,9 @@
 """Fallback chain: cache, then each provider in order, then a labelled non-AI fallback.
 
 The chain never raises for provider problems. Rate-limited providers sit out until their
-quota resets, invalid answers get one repair attempt on the same model, and the whole call
-is capped in time. After a timeout, other models from the same vendor are skipped for that
+quota resets, a provider that fails twice in a row (for example, "model overloaded") rests
+briefly, invalid answers get one repair attempt on the same model, and the whole call is
+capped in time. After a timeout, other models from the same vendor are skipped for that
 request: a slow vendor is usually slow for all its models, so the next vendor gets the time.
 The result always says which provider (if any) produced it.
 """
@@ -39,6 +40,7 @@ logger = logging.getLogger(__name__)
 PACIFIC = ZoneInfo("America/Los_Angeles")
 DEFAULT_RETRY_AFTER_S = 60.0
 UNAVAILABLE_COOLDOWN_S = 30.0
+FAILURES_BEFORE_COOLDOWN = 2
 MAX_PROBLEMS = 5
 MAX_ECHO_CHARS = 2_000
 REPAIR_ATTEMPTS = 1
@@ -60,7 +62,7 @@ def next_quota_reset(now: datetime) -> datetime:
 class ChainLimits:
     """Time limits, in seconds."""
 
-    per_call_timeout_s: float = 8.0
+    per_call_timeout_s: float = 10.0  # Gemini rejects server deadlines under 10 s
     total_budget_s: float = 25.0
 
 
@@ -103,6 +105,7 @@ class FallbackChain:
         self._clock = clock
         self._now = now
         self._cooldowns: dict[str, datetime] = {}
+        self._failures: dict[str, int] = {}
 
     def run[C, T: BaseModel](
         self, task: AITask[C, T], context: C, *, use_cache: bool = True
@@ -186,7 +189,7 @@ class FallbackChain:
 
     def _call(self, provider: Provider, request: LLMRequest) -> tuple[AttemptOutcome, str]:
         try:
-            return AttemptOutcome.OK, provider.generate(request)
+            raw = provider.generate(request)
         except RateLimitedError as error:
             self._cooldowns[provider.name] = (
                 next_quota_reset(self._now())
@@ -195,13 +198,22 @@ class FallbackChain:
             )
             logger.warning("ai provider %s rate limited (daily=%s)", provider.name, error.daily)
             return AttemptOutcome.RATE_LIMITED, ""
-        except ProviderTimeoutError:
-            logger.warning("ai provider %s timed out", provider.name)
+        except ProviderTimeoutError as error:
+            logger.warning("ai provider %s timed out: %s", provider.name, error)
             return AttemptOutcome.TIMEOUT, ""
-        except ProviderUnavailableError:
-            self._cooldowns[provider.name] = self._now() + timedelta(seconds=UNAVAILABLE_COOLDOWN_S)
-            logger.warning("ai provider %s unavailable", provider.name)
+        except ProviderUnavailableError as error:
+            failures = self._failures.get(provider.name, 0) + 1
+            self._failures[provider.name] = failures
+            if failures >= FAILURES_BEFORE_COOLDOWN:
+                self._cooldowns[provider.name] = self._now() + timedelta(
+                    seconds=UNAVAILABLE_COOLDOWN_S
+                )
+            logger.warning(
+                "ai provider %s unavailable (%d in a row): %s", provider.name, failures, error
+            )
             return AttemptOutcome.UNAVAILABLE, ""
+        self._failures.pop(provider.name, None)
+        return AttemptOutcome.OK, raw
 
     def _skip_reason[C, T: BaseModel](
         self, provider: Provider, run: _Run[C, T]
