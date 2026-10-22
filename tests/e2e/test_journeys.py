@@ -69,7 +69,8 @@ def test_over_budget_shows_the_gap_and_priced_alternatives(page: Page) -> None:
     page.get_by_label("What is it?").fill("Party hall booking")
     page.get_by_label("Amount in rupees").fill("70000")
     page.get_by_role("button", name="Add expense").click()
-    expect(page.get_by_text("You are over budget by ₹10,000.")).to_be_visible()
+    expect(page.get_by_text("You are over budget by")).to_be_visible()
+    expect(page.get_by_text("Venue costs more than planned")).to_be_visible()
 
     page.get_by_role("button", name="Suggest ways to save").click()
     expect(page.get_by_role("heading", name="Paper decorations")).to_be_visible()

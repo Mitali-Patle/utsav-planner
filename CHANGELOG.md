@@ -31,6 +31,8 @@ All notable changes to Utsav Planner will be documented in this file.
 - Change requests that add or update expenses and budget lines are understood more reliably, and money-saving suggestions are sized to the gap they need to close.
 
 ### Fixed
+- A budget line spent past its plan now shows the plan as over budget, even while total spending is under the budget, and the alert names the lines that cost more than planned.
+- Approving and rejecting the same change at the same moment (two tabs) can no longer leave the plan changed while the history says rejected.
 - The "Interpreting your request" busy message no longer shows when nothing is loading.
 - Priced alternatives are labelled "Suggested by AI" instead of "Interpreted by AI".
 - Links and phone-layout labels now meet 4.5:1 contrast in the light theme.

@@ -258,15 +258,22 @@ class ProposalRepository:
         )
         return stored
 
-    def get(self, proposal_id: str, event_id: str) -> StoredProposal:
+    def get(self, proposal_id: str, event_id: str, *, lock: bool = False) -> StoredProposal:
         """Load one proposal of an event.
+
+        Args:
+            proposal_id: The proposal.
+            event_id: The event it must belong to.
+            lock: Lock the row until the transaction ends (Postgres `FOR UPDATE`), so a
+                concurrent decision waits instead of racing. SQLite ignores it.
 
         Raises:
             NotFoundError: If it does not belong to this event.
         """
-        row = self._connection.execute(
-            select(proposals).where(proposals.c.id == proposal_id, proposals.c.event_id == event_id)
-        ).one_or_none()
+        query = select(proposals).where(
+            proposals.c.id == proposal_id, proposals.c.event_id == event_id
+        )
+        row = self._connection.execute(query.with_for_update() if lock else query).one_or_none()
         if row is None:
             raise NotFoundError("This change proposal does not exist.")
         return _proposal_from_row(row)

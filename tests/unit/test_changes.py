@@ -159,7 +159,7 @@ def test_adding_an_expense_over_budget_shows_the_shortfall() -> None:
         (ExpenseAction.ADDED, 2_000)
     ]
     assert proposal.summary_after is not None
-    assert proposal.summary_after.shortfall_inr == 1_000
+    assert proposal.summary_after.shortfall_inr == 9_000, "catering is ₹9,000 past its plan"
     assert proposal.budget_changes == (), "no money is moved between categories automatically"
 
 

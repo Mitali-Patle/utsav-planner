@@ -381,3 +381,24 @@ The prompts the app itself sends to the LLM live in `app/ai/prompts/`.
   - `docs/SPEC.md`: the must-pass table names the unit, web, browser and eval tests for each scenario; all 14 are covered.
   - The spec promised a privacy notice that did not exist. The preferences hint now tells users an AI model reads the text, so they should leave out personal details.
 - **Corrections while checking the README:** community vendors listed "idol" (not in the catalog); wedding mehendi and choreographer vendors appear only with those functions; "change previews take 1–3 s" became the measured numbers (1.1 s via Groq, about 6 s when Gemini answers).
+
+## 2026-10-23 (night): Fresh-eyes review and the first fixes
+- **Tool / model:** Claude Code (Claude Opus 5.5). A general-purpose subagent reviewed a fresh clone with no prior context, against AGENTS.md's review procedure: read-only, three AI calls on the live site at most.
+- **The review found 14 issues.** The serious ones:
+  - The shortfall ignored lines still needing their money.
+  - No way to set a budget line's amount.
+  - A fallback personalization was permanent.
+  - Alternatives were offered for infeasible proposals, where trimming cannot help.
+  - The transparency panel appeared only for personalization.
+  - Duplicate ids when the change form is shown twice.
+  - Silent htmx updates and lost focus.
+  - Up to seven database transactions per request.
+  - No limit on non-AI writes.
+  - An approve/reject race.
+  - Some user text was unquoted in prompts.
+  - History dates in UTC.
+  - Docs drift.
+  Each finding is verified here before it is fixed.
+- **Fixed in this commit:**
+  - **Shortfall:** each line needs the larger of its plan and what is committed to it, and the gap is that sum minus the total. Before, ₹7,000 spent on a ₹5,000 line of a ₹15,000 plan showed no alert. The alert now names the lines over their plan. Alternatives become coherent too, because trimming another line's plan really reduces what the plan needs. Seven tests encoded the old rule and were updated with the reason. The eval alternatives cases now build the same gaps as before through `over_by()`, so earlier results stay comparable.
+  - **Approve/reject race:** approval reads the proposal with `FOR UPDATE` and rolls back if its decision does not land. Both new tests were shown to fail on the old code.

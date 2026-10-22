@@ -202,7 +202,12 @@ class CategorySummary(DomainModel):
 
 
 class BudgetSummary(DomainModel):
-    """Totals for the whole plan."""
+    """Totals for the whole plan.
+
+    `remaining_inr` is the budget not yet spent. `shortfall_inr` is what the plan needs
+    beyond its total: each line needs the larger of its plan and what is already committed
+    to it, so a line spent past its plan still leaves the other lines needing theirs.
+    """
 
     total_inr: int
     spent_inr: int
@@ -213,7 +218,7 @@ class BudgetSummary(DomainModel):
 
     @property
     def is_over_budget(self) -> bool:
-        """Whether committed spending exceeds the total budget."""
+        """Whether the plan needs more money than its total budget."""
         return self.shortfall_inr > 0
 
 
@@ -274,6 +279,7 @@ def summarize(plan: EventPlan) -> BudgetSummary:
 
     Returns:
         The budget summary.
+
     """
     categories = tuple(
         _summarize_category(category, plan.committed_inr(category.id))
@@ -285,7 +291,7 @@ def summarize(plan: EventPlan) -> BudgetSummary:
         total_inr=total,
         spent_inr=spent,
         remaining_inr=max(0, total - spent),
-        shortfall_inr=max(0, spent - total),
+        shortfall_inr=max(0, sum(max(c.allocated_inr, c.spent_inr) for c in categories) - total),
         per_guest_inr=total // plan.guest_count,
         categories=categories,
     )

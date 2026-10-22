@@ -2,9 +2,11 @@
 
 from collections.abc import Iterator
 from datetime import UTC, date, datetime, timedelta
+from typing import Any, cast
 
 import pytest
 from sqlalchemy import Engine, select
+from sqlalchemy.dialects import postgresql
 
 from app.ai.cache import MemoryCache, TieredCache
 from app.domain.changes import ChangeKind, ChangeOperation, ChangeSet, Proposal, propose
@@ -12,6 +14,7 @@ from app.domain.errors import NotFoundError, StaleProposalError
 from app.persistence.db import make_engine
 from app.persistence.repositories import (
     Database,
+    ProposalRepository,
     ProposalStatus,
     RateLimiter,
     SqlCacheStore,
@@ -260,3 +263,23 @@ def test_rate_limit_purges_old_windows(engine: Engine, now: Now) -> None:
     with engine.connect() as connection:
         buckets = set(connection.execute(select(metadata.tables["rate_limits"].c.bucket)).scalars())
     assert "old" not in buckets
+
+
+def test_approval_reads_the_proposal_with_a_row_lock_on_postgres() -> None:
+    """`lock=True` must become SELECT ... FOR UPDATE, so a concurrent reject waits."""
+
+    class Recorder:
+        statement: Any = None
+
+        def execute(self, statement: Any) -> "Recorder":
+            self.statement = statement
+            return self
+
+        def one_or_none(self) -> None:
+            return None
+
+    recorder = Recorder()
+    with pytest.raises(NotFoundError):
+        ProposalRepository(cast(Any, recorder)).get("p-1", "e-1", lock=True)
+    compiled = str(recorder.statement.compile(dialect=cast(Any, postgresql.dialect)()))
+    assert compiled.rstrip().endswith("FOR UPDATE")

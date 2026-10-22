@@ -85,6 +85,15 @@ def with_expense(plan: EventPlan, category: str, label: str, amount_inr: int) ->
     return updated
 
 
+def over_by(plan: EventPlan, category: str, gap_inr: int, label: str) -> EventPlan:
+    """The plan with an expense that takes `category` exactly `gap_inr` past its plan.
+
+    The other lines still need their planned money, so the plan is short by `gap_inr`.
+    """
+    allocated = next(c.allocated_inr for c in plan.categories if c.id == category)
+    return with_expense(plan, category, label, allocated + gap_inr)
+
+
 def with_protected(plan: EventPlan, *categories: str) -> EventPlan:
     """The plan with the given budget lines protected."""
     for category in categories:
@@ -435,17 +444,17 @@ PERSONALIZE_CASES: tuple[PersonalizeCase, ...] = (
 ALTERNATIVES_CASES: tuple[AlternativesCase, ...] = (
     AlternativesCase(
         "b-over-cake-kept",
-        with_protected(with_expense(birthday(), "venue", "Party hall", 70_000), "cake"),
+        with_protected(over_by(birthday(), "venue", 10_000, "Party hall"), "cake"),
         protected=("cake",),
     ),
     AlternativesCase(
         "b-far-over",
-        with_expense(birthday(), "venue", "Banquet hall", 90_000),
+        over_by(birthday(), "venue", 30_000, "Banquet hall"),
     ),
     AlternativesCase(
         "w-over-two-kept",
         with_protected(
-            with_expense(wedding(), "venue", "Palace venue", 1_600_000),
+            over_by(wedding(), "venue", 100_000, "Palace venue"),
             "photography",
             "attire_makeup",
         ),
@@ -454,7 +463,7 @@ ALTERNATIVES_CASES: tuple[AlternativesCase, ...] = (
     AlternativesCase(
         "w-few-flexible",
         with_protected(
-            with_expense(wedding(), "venue", "Palace venue", 1_550_000),
+            over_by(wedding(), "venue", 50_000, "Palace venue"),
             "catering",
             "decor",
             "photography",
@@ -476,7 +485,7 @@ ALTERNATIVES_CASES: tuple[AlternativesCase, ...] = (
     AlternativesCase(
         "c-over-puja-kept",
         with_protected(
-            with_expense(community(), "pandal_venue", "Pandal structure", 280_000),
+            over_by(community(), "pandal_venue", 30_000, "Pandal structure"),
             "puja_rituals",
             "prasad_catering",
         ),
@@ -484,6 +493,6 @@ ALTERNATIVES_CASES: tuple[AlternativesCase, ...] = (
     ),
     AlternativesCase(
         "c-small-gap",
-        with_expense(community(), "sound_lighting", "LED wall", 252_000),
+        over_by(community(), "sound_lighting", 2_000, "LED wall"),
     ),
 )

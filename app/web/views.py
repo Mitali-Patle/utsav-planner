@@ -308,6 +308,7 @@ def _summary(summary: BudgetSummary, plan: EventPlan) -> dict[str, Any]:
         "spent": format_inr(summary.spent_inr),
         "remaining": format_inr(summary.remaining_inr),
         "shortfall": format_inr(summary.shortfall_inr) if summary.is_over_budget else None,
+        "over_plan": [c.name for c in summary.categories if c.overspent_by_inr],
         "per_guest": format_inr(summary.per_guest_inr),
         "guests": plan.guest_count,
     }

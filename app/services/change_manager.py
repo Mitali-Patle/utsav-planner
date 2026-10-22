@@ -31,6 +31,7 @@ from app.persistence.repositories import (
 )
 from app.services.planning import ai_record
 
+DECIDED_ELSEWHERE = "This change was decided in another tab. Reload to see the latest plan."
 OFF_TOPIC_MESSAGE = "I can only help with changes to this event plan."
 EMPTY_REQUEST_MESSAGE = "Please describe the change you want to make."
 NOTHING_TO_CHANGE_MESSAGE = "That is already in your plan, so there is nothing to change."
@@ -134,7 +135,7 @@ class ChangeManager:
         """
         with self._db.transaction() as repos:
             stored = repos.events.get(event_id, session_id)
-            pending = repos.proposals.get(proposal_id, event_id)
+            pending = repos.proposals.get(proposal_id, event_id, lock=True)
             if pending.status is not ProposalStatus.PENDING:
                 return ApprovalOutcome(
                     ApprovalStatus.ALREADY_DECIDED,
@@ -150,7 +151,9 @@ class ChangeManager:
                 return ApprovalOutcome(ApprovalStatus.STALE, message=error.message)
             except InfeasibleChangeError as error:
                 return ApprovalOutcome(ApprovalStatus.INFEASIBLE, message=error.message)
-            repos.proposals.decide(proposal_id, event_id, ProposalStatus.APPROVED)
+            if not repos.proposals.decide(proposal_id, event_id, ProposalStatus.APPROVED):
+                # Decided elsewhere after our read: undo the save with the transaction.
+                raise StaleProposalError(DECIDED_ELSEWHERE)
             return ApprovalOutcome(ApprovalStatus.APPROVED, event=saved)
 
     def reject(self, session_id: str, event_id: str, proposal_id: str) -> bool:

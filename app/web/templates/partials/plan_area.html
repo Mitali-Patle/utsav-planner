@@ -25,6 +25,7 @@
   {% if plan.summary.shortfall %}
   <div class="notice notice-error" role="alert">
     <p>You are over budget by {{ plan.summary.shortfall }}.</p>
+    <p>{{ plan.summary.over_plan | join(", ") }} {{ 'costs' if plan.summary.over_plan | length == 1 else 'cost' }} more than planned, and the other lines still need their planned amounts.</p>
     <form method="post" action="/events/{{ event.id }}/alternatives"
           hx-post="/events/{{ event.id }}/alternatives" hx-target="#plan-alternatives" hx-swap="innerHTML">
       {{ csrf(csrf_token) }}<button type="submit">Suggest ways to save</button>

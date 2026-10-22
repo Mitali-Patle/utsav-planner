@@ -127,9 +127,22 @@ def test_scenario_2_expense_over_budget_shows_shortfall() -> None:
     )
     summary = summarize(plan)
     assert summary.is_over_budget
-    assert (summary.remaining_inr, summary.shortfall_inr) == (0, 1_000)
     decor = next(c for c in summary.categories if c.category_id == DECOR)
     assert (decor.remaining_inr, decor.overspent_by_inr) == (0, 13_000)
+    assert (summary.remaining_inr, summary.shortfall_inr) == (0, 13_000), (
+        "the other lines still need their ₹12,000, so the plan is short by decor's overspend"
+    )
+
+
+def test_one_line_overspent_makes_the_plan_short_while_spending_is_under_the_total() -> None:
+    """Fresh-eyes review, 23 Oct: ₹7,000 of a ₹15,000 budget spent on one ₹5,000 line."""
+    plan, _ = add_expense(
+        make_plan(),
+        NewExpense(category_id=CategoryId("catering"), label="Caterer", amount_inr=7_000),
+    )
+    summary = summarize(plan)
+    assert summary.spent_inr < summary.total_inr
+    assert (summary.remaining_inr, summary.shortfall_inr) == (8_000, 2_000)
 
 
 def test_expense_up_to_twice_the_budget_is_allowed() -> None:
@@ -137,7 +150,7 @@ def test_expense_up_to_twice_the_budget_is_allowed() -> None:
         make_plan(), NewExpense(category_id=DECOR, label="Big", amount_inr=30_000)
     )
     assert expense.amount_inr == 30_000
-    assert summarize(plan).shortfall_inr == 15_000
+    assert summarize(plan).shortfall_inr == 27_000, "decor is ₹27,000 past its ₹3,000 plan"
 
 
 @pytest.mark.parametrize("amount", [0, -5])

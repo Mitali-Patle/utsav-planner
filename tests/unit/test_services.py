@@ -35,7 +35,7 @@ from app.domain.errors import InvalidInputError, NotFoundError, StaleProposalErr
 from app.domain.models import BudgetImpact, CategoryId, EventType, TaskId, TaskSource, VendorStatus
 from app.domain.planning import EventDetails
 from app.persistence.db import make_engine
-from app.persistence.repositories import ProposalStatus, StoredEvent
+from app.persistence.repositories import ProposalRepository, ProposalStatus, StoredEvent
 from app.persistence.tables import metadata
 from app.services import Services, build_services
 from app.services.change_manager import ApprovalStatus, OutcomeKind
@@ -388,6 +388,21 @@ def test_infeasible_proposal_is_kept_but_cannot_be_approved(engine: Engine) -> N
     )
 
 
+def test_a_decision_lost_to_another_tab_rolls_the_approval_back(
+    engine: Engine, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    """If a reject wins between reading and deciding, the plan save is undone (review, 23 Oct)."""
+    app = services(engine, SUGGESTIONS)
+    event = create(app)
+    form = ChangeSet(operations=(ChangeOperation(kind=ChangeKind.SET_GUEST_COUNT, guest_count=45),))
+    outcome = app.changes.propose_from_form(ME, event.id, form, "45 guests")
+    assert outcome.proposal is not None
+    monkeypatch.setattr(ProposalRepository, "decide", lambda *_args: False)
+    with pytest.raises(StaleProposalError, match="another tab"):
+        app.changes.approve(ME, event.id, outcome.proposal.id)
+    assert app.planning.get(ME, event.id).version == event.version, "the save was rolled back"
+
+
 def test_another_session_cannot_approve_or_reject(engine: Engine) -> None:
     app = services(engine, SUGGESTIONS, BUDGET_CUT)
     event = create(app)
@@ -462,11 +477,12 @@ def test_alternatives_are_priced_by_code(engine: Engine) -> None:
         NewExpense(category_id=CategoryId("catering"), label="Caterer", amount_inr=16_000),
     )
     view = app.alternatives.suggest(ME, event.id)
-    decor = next(c for c in app.planning.get(ME, event.id).plan.categories if c.id == "decor")
+    lines = {c.id: c for c in app.planning.get(ME, event.id).plan.categories}
     option = view.options[0]
-    assert view.shortfall_inr == 1_000
-    assert option.saving_inr == decor.allocated_inr * 25 // 100
-    assert option.shortfall_after_inr == max(0, 1_000 - option.saving_inr)
+    gap = 16_000 - lines[CategoryId("catering")].allocated_inr
+    assert view.shortfall_inr == gap, "the gap is catering's overspend"
+    assert option.saving_inr == lines[CategoryId("decor")].allocated_inr * 25 // 100
+    assert option.shortfall_after_inr == max(0, gap - option.saving_inr)
     assert view.provenance is not None and view.provenance.provider == "gemini:fake"
 
 
