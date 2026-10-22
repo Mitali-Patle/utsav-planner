@@ -1,0 +1,448 @@
+"""Change engine: SPEC §6 behaviours and must-pass scenarios 3-7, 10 and 13."""
+
+from datetime import date, timedelta
+from typing import Any
+
+import pytest
+from pydantic import ValidationError
+
+from app.domain.budget import ChangeReason
+from app.domain.changes import (
+    ChangeKind,
+    ChangeOperation,
+    ChangeSet,
+    ExpenseAction,
+    Proposal,
+    SkipReason,
+    accept,
+    propose,
+)
+from app.domain.errors import (
+    InfeasibleChangeError,
+    InvalidInputError,
+    NotFoundError,
+    StaleProposalError,
+)
+from app.domain.models import EventPlan, EventType, TaskSource, VendorStatus
+from app.domain.planning import EventDetails, draft_plan
+from app.domain.vendors import set_vendor_status
+from tests.factories import make_plan
+
+TODAY = date(2026, 10, 22)
+
+
+def op(kind: ChangeKind, **fields: Any) -> ChangeOperation:
+    return ChangeOperation.model_validate({"kind": kind, **fields})
+
+
+def changes(*operations: ChangeOperation, cut_priority: tuple[str, ...] = ()) -> ChangeSet:
+    return ChangeSet.model_validate({"operations": operations, "cut_priority": cut_priority})
+
+
+def after_of(proposal: Proposal) -> EventPlan:
+    assert proposal.after is not None
+    return proposal.after
+
+
+def allocation(plan: EventPlan, category_id: str) -> int:
+    return next(c.allocated_inr for c in plan.categories if c.id == category_id)
+
+
+def birthday(days_ahead: int = 40, guests: int = 30) -> EventPlan:
+    details = EventDetails(
+        event_type=EventType.BIRTHDAY,
+        title="Aarav's 8th birthday",
+        city="Pune",
+        event_date=TODAY + timedelta(days=days_ahead),
+        guest_count=guests,
+        total_budget_inr=15_000,
+    )
+    return draft_plan(details, TODAY)
+
+
+# Validation of operations and change sets
+
+
+@pytest.mark.parametrize(
+    ("fields", "message"),
+    [
+        ({"kind": "set_total_budget"}, "needs amount_inr"),
+        ({"kind": "set_total_budget", "amount_inr": 9_000, "label": "x"}, "does not use label"),
+        ({"kind": "shift_date_days", "days": 0}, "non-zero"),
+        ({"kind": "add_task", "label": "Tidy up", "days": -31}, "at most 30 days after"),
+        ({"kind": "set_guest_count", "guest_count": 0}, "greater than or equal to 1"),
+        ({"kind": "fly_to_moon"}, "kind"),
+    ],
+)
+def test_operation_fields_are_checked_per_kind(fields: dict[str, Any], message: str) -> None:
+    with pytest.raises(ValidationError, match=message):
+        ChangeOperation.model_validate(fields)
+
+
+@pytest.mark.parametrize(
+    ("operations", "message"),
+    [
+        (
+            [
+                op(ChangeKind.SET_TOTAL_BUDGET, amount_inr=9_000),
+                op(ChangeKind.SET_TOTAL_BUDGET, amount_inr=8_000),
+            ],
+            "budget total is set more than once",
+        ),
+        (
+            [
+                op(ChangeKind.SHIFT_DATE_DAYS, days=-3),
+                op(ChangeKind.SET_DATE, new_date=date(2026, 12, 1)),
+            ],
+            "event date is set more than once",
+        ),
+        (
+            [op(ChangeKind.PROTECT, target_id="cake"), op(ChangeKind.UNPROTECT, target_id="cake")],
+            "protected and unprotected",
+        ),
+        ([], "at least 1"),
+        ([op(ChangeKind.PROTECT, target_id="cake")] * 6, "at most 5"),
+    ],
+)
+def test_conflicting_or_oversized_change_sets_are_rejected(
+    operations: list[ChangeOperation], message: str
+) -> None:
+    with pytest.raises(ValidationError, match=message):
+        ChangeSet(operations=tuple(operations))
+
+
+# SPEC §6 behaviours
+
+
+def test_budget_drop_keeping_the_cake() -> None:
+    """'My budget dropped to ₹12,000 but keep the cake as is' (scenario 3)."""
+    plan = make_plan()
+    proposal = propose(
+        plan,
+        changes(
+            op(ChangeKind.PROTECT, target_id="cake"),
+            op(ChangeKind.SET_TOTAL_BUDGET, amount_inr=12_000),
+        ),
+        TODAY,
+    )
+    after = after_of(proposal)
+    assert after.total_budget_inr == 12_000
+    assert allocation(after, "cake") == 2_000
+    reasons: dict[str, ChangeReason] = {c.category_id: c.reason for c in proposal.budget_changes}
+    assert reasons["cake"] is ChangeReason.PROTECTED
+    assert reasons["decor"] is ChangeReason.PROPORTIONAL
+    assert "Cake" in proposal.protected_kept
+    assert [(f.field, f.before, f.after) for f in proposal.field_changes] == [
+        ("total_budget_inr", 15_000, 12_000)
+    ]
+    assert proposal.summary_after is not None
+    assert proposal.summary_after.total_inr == 12_000
+
+
+def test_adding_an_expense_over_budget_shows_the_shortfall() -> None:
+    """'Add a photographer for ₹2,000' when the budget is already used (scenario 2)."""
+    plan = make_plan(expenses=[("catering", "Caterer", 14_000, False)])
+    proposal = propose(
+        plan,
+        changes(
+            op(ChangeKind.ADD_EXPENSE, category_id="decor", label="Photographer", amount_inr=2_000)
+        ),
+        TODAY,
+    )
+    assert proposal.feasible, "expenses are recorded; overspending is shown, not blocked"
+    assert [(c.action, c.after_inr) for c in proposal.expense_changes] == [
+        (ExpenseAction.ADDED, 2_000)
+    ]
+    assert proposal.summary_after is not None
+    assert proposal.summary_after.shortfall_inr == 1_000
+    assert proposal.budget_changes == (), "no money is moved between categories automatically"
+
+
+def test_guest_increase_scales_per_guest_categories() -> None:
+    """'Guest count goes from 30 to 40' (scenario 4)."""
+    plan = make_plan(scales_with_guests=["catering"])
+    proposal = propose(plan, changes(op(ChangeKind.SET_GUEST_COUNT, guest_count=40)), TODAY)
+    after = after_of(proposal)
+    catering = next(c for c in proposal.budget_changes if c.category_id == "catering")
+    assert (catering.before_inr, catering.after_inr, catering.reason) == (
+        5_000,
+        6_667,
+        ChangeReason.GUEST_SCALED,
+    )
+    assert after.total_budget_inr == 15_000
+    assert after.guest_count == 40
+
+
+def test_guest_increase_that_cannot_fit_reports_the_shortfall() -> None:
+    plan = make_plan(scales_with_guests=["catering"], protected=["decor", "cake", "other"])
+    proposal = propose(plan, changes(op(ChangeKind.SET_GUEST_COUNT, guest_count=60)), TODAY)
+    assert not proposal.feasible
+    assert proposal.shortfall_inr == 5_000
+    assert proposal.summary_after is None
+    with pytest.raises(InfeasibleChangeError):
+        accept(proposal, plan)
+
+
+def test_guest_decrease_moves_freed_money_to_contingency() -> None:
+    plan = make_plan(
+        allocations={"catering": 6_000, "decor": 3_000, "contingency": 1_000},
+        scales_with_guests=["catering"],
+    )
+    after = after_of(propose(plan, changes(op(ChangeKind.SET_GUEST_COUNT, guest_count=20)), TODAY))
+    assert (
+        allocation(after, "catering"),
+        allocation(after, "decor"),
+        allocation(after, "contingency"),
+    ) == (
+        4_000,
+        3_000,
+        3_000,
+    )
+
+
+def test_guest_decrease_without_contingency_is_shared_proportionally() -> None:
+    plan = make_plan(
+        allocations={"catering": 6_000, "decor": 3_000, "music": 3_000},
+        scales_with_guests=["catering"],
+    )
+    after = after_of(propose(plan, changes(op(ChangeKind.SET_GUEST_COUNT, guest_count=20)), TODAY))
+    assert (
+        allocation(after, "catering"),
+        allocation(after, "decor"),
+        allocation(after, "music"),
+    ) == (
+        4_000,
+        4_000,
+        4_000,
+    )
+
+
+def test_moving_the_event_earlier_recalculates_deadlines() -> None:
+    """'Move the event 3 days earlier' (scenario 5)."""
+    plan = birthday(days_ahead=40)
+    proposal = propose(plan, changes(op(ChangeKind.SHIFT_DATE_DAYS, days=-3)), TODAY)
+    after = after_of(proposal)
+    assert after.event_date == plan.event_date - timedelta(days=3)
+    assert proposal.task_changes
+    assert all(
+        change.after == change.before - timedelta(days=3)
+        for change in proposal.task_changes
+        if not change.flagged
+    )
+    assert proposal.vendor_changes
+
+
+def test_moving_the_event_into_the_past_is_rejected() -> None:
+    plan = birthday(days_ahead=2)
+    with pytest.raises(InvalidInputError) as error:
+        propose(plan, changes(op(ChangeKind.SHIFT_DATE_DAYS, days=-5)), TODAY)
+    assert error.value.code == "event_date_in_past"
+
+
+def test_setting_the_same_date_changes_nothing() -> None:
+    plan = birthday()
+    proposal = propose(plan, changes(op(ChangeKind.SET_DATE, new_date=plan.event_date)), TODAY)
+    assert not proposal.has_changes
+
+
+def test_cut_decoration_first_keeping_the_cake() -> None:
+    plan = make_plan()
+    proposal = propose(
+        plan,
+        changes(
+            op(ChangeKind.PROTECT, target_id="cake"),
+            op(ChangeKind.SET_TOTAL_BUDGET, amount_inr=13_000),
+            cut_priority=("decor",),
+        ),
+        TODAY,
+    )
+    after = after_of(proposal)
+    assert (
+        allocation(after, "decor"),
+        allocation(after, "cake"),
+        allocation(after, "catering"),
+    ) == (1_000, 2_000, 5_000)
+
+
+# Follow-up tasks for booked vendors (addition 7)
+
+
+def test_date_change_creates_follow_ups_for_booked_vendors() -> None:
+    plan = birthday(days_ahead=40)
+    venue = next(v for v in plan.vendors if v.vendor_type == "venue")
+    plan = set_vendor_status(plan, venue.id, VendorStatus.BOOKED)
+    proposal = propose(plan, changes(op(ChangeKind.SHIFT_DATE_DAYS, days=7)), TODAY)
+    follow_ups = [t for t in proposal.new_tasks if t.source is TaskSource.CHANGE]
+    assert [t.title for t in follow_ups] == [
+        f"Confirm the new date {after_of(proposal).event_date:%d %b} with Venue"
+    ]
+    assert follow_ups[0].due_date == TODAY
+
+
+def test_guest_change_tells_booked_per_guest_vendors() -> None:
+    plan = birthday()
+    caterer = next(v for v in plan.vendors if v.vendor_type == "caterer")
+    plan = set_vendor_status(plan, caterer.id, VendorStatus.BOOKED)
+    proposal = propose(plan, changes(op(ChangeKind.SET_GUEST_COUNT, guest_count=45)), TODAY)
+    titles = [t.title for t in proposal.new_tasks]
+    assert titles == ["Update Caterer or restaurant: new guest count 45"]
+
+
+def test_guest_decrease_only_notifies_vendors_of_scaled_categories() -> None:
+    """Regression: categories held still so savings reach contingency are not "scaled"."""
+    plan = birthday(guests=40)
+    for vendor_type in ("caterer", "decorator"):
+        vendor = next(v for v in plan.vendors if v.vendor_type == vendor_type)
+        plan = set_vendor_status(plan, vendor.id, VendorStatus.BOOKED)
+    proposal = propose(plan, changes(op(ChangeKind.SET_GUEST_COUNT, guest_count=25)), TODAY)
+    assert [t.title for t in proposal.new_tasks] == [
+        "Update Caterer or restaurant: new guest count 25"
+    ]
+
+
+def test_task_without_a_category() -> None:
+    proposal = propose(
+        birthday(), changes(op(ChangeKind.ADD_TASK, label="Call grandparents", days=5)), TODAY
+    )
+    assert proposal.new_tasks[0].category_id is None
+
+
+def test_unbooked_vendors_get_no_follow_ups() -> None:
+    proposal = propose(birthday(), changes(op(ChangeKind.SHIFT_DATE_DAYS, days=7)), TODAY)
+    assert proposal.new_tasks == ()
+
+
+# Expenses, protection, tasks and custom categories
+
+
+def test_repeated_expense_is_skipped_not_duplicated() -> None:
+    """Scenario 10: the same request twice never adds the expense twice."""
+    plan = make_plan(expenses=[("decor", "Photographer", 2_000, False)])
+    add = op(ChangeKind.ADD_EXPENSE, category_id="decor", label="photographer", amount_inr=2_000)
+    proposal = propose(plan, changes(add), TODAY)
+    assert [(s.reason, s.label) for s in proposal.skipped] == [
+        (SkipReason.DUPLICATE, "photographer")
+    ]
+    assert not proposal.has_changes
+    twice = propose(make_plan(), changes(add, add), TODAY)
+    assert len(after_of(twice).expenses) == 1
+
+
+def test_update_and_remove_expenses() -> None:
+    plan = make_plan(expenses=[("decor", "Balloons", 400, False), ("decor", "Lights", 900, False)])
+    proposal = propose(
+        plan,
+        changes(
+            op(ChangeKind.UPDATE_EXPENSE, expense_id="exp-1", amount_inr=650),
+            op(ChangeKind.REMOVE_EXPENSE, expense_id="exp-2"),
+        ),
+        TODAY,
+    )
+    assert sorted((c.action, c.before_inr, c.after_inr) for c in proposal.expense_changes) == [
+        (ExpenseAction.REMOVED, 900, None),
+        (ExpenseAction.UPDATED, 400, 650),
+    ]
+
+
+def test_protected_expenses_are_never_touched() -> None:
+    plan = make_plan(expenses=[("cake", "Cake", 2_000, True)])
+    proposal = propose(plan, changes(op(ChangeKind.REMOVE_EXPENSE, expense_id="exp-1")), TODAY)
+    assert [(s.reason, s.label) for s in proposal.skipped] == [(SkipReason.PROTECTED, "Cake")]
+    assert after_of(proposal).expenses == plan.expenses
+
+
+def test_protect_and_unprotect_resolve_expenses_and_categories() -> None:
+    plan = make_plan(expenses=[("cake", "Cake", 2_000, False)], protected=["decor"])
+    after = after_of(
+        propose(
+            plan,
+            changes(
+                op(ChangeKind.PROTECT, target_id="exp-1"),
+                op(ChangeKind.UNPROTECT, target_id="decor"),
+            ),
+            TODAY,
+        )
+    )
+    assert after.expenses[0].protected
+    assert not next(c for c in after.categories if c.id == "decor").protected
+    with pytest.raises(NotFoundError):
+        propose(plan, changes(op(ChangeKind.PROTECT, target_id="fireworks")), TODAY)
+
+
+def test_add_task_with_deadline_and_duplicate_check() -> None:
+    plan = birthday()
+    task = op(ChangeKind.ADD_TASK, label="Book a magician", days=10, category_id="entertainment")
+    proposal = propose(plan, changes(task), TODAY)
+    new = proposal.new_tasks[0]
+    assert (new.title, new.source, new.due_date) == (
+        "Book a magician",
+        TaskSource.USER,
+        plan.event_date - timedelta(days=10),
+    )
+    again = propose(after_of(proposal), changes(task), TODAY)
+    assert [s.reason for s in again.skipped] == [SkipReason.DUPLICATE]
+    with pytest.raises(NotFoundError):
+        propose(
+            plan, changes(op(ChangeKind.ADD_TASK, label="x", days=1, category_id="nope")), TODAY
+        )
+
+
+def test_custom_budget_line_is_added_and_funded() -> None:
+    proposal = propose(
+        make_plan(),
+        changes(op(ChangeKind.ADD_CATEGORY, label="Fireworks", amount_inr=3_000)),
+        TODAY,
+    )
+    after = after_of(proposal)
+    fireworks = next(c for c in after.categories if c.name == "Fireworks")
+    assert (fireworks.id, fireworks.custom, fireworks.allocated_inr) == ("custom-1", True, 3_000)
+    assert after.total_budget_inr == 15_000
+    reasons: dict[str, ChangeReason] = {c.category_id: c.reason for c in proposal.budget_changes}
+    assert reasons["custom-1"] is ChangeReason.ADDED
+
+
+def test_custom_budget_lines_are_limited_and_unique() -> None:
+    lines = [op(ChangeKind.ADD_CATEGORY, label=f"Extra {i}", amount_inr=500) for i in range(4)]
+    with pytest.raises(InvalidInputError) as limit:
+        propose(make_plan(), changes(*lines), TODAY)
+    assert limit.value.code == "too_many_custom_categories"
+    with pytest.raises(InvalidInputError) as duplicate:
+        propose(
+            make_plan(), changes(op(ChangeKind.ADD_CATEGORY, label="cake", amount_inr=500)), TODAY
+        )
+    assert duplicate.value.code == "duplicate_category"
+
+
+# Approve and reject
+
+
+def test_reject_leaves_the_saved_plan_unchanged() -> None:
+    """Scenario 6: proposing never modifies the plan, so rejecting needs no undo."""
+    plan = birthday()
+    snapshot = plan.model_dump()
+    propose(
+        plan,
+        changes(
+            op(ChangeKind.SET_TOTAL_BUDGET, amount_inr=10_000),
+            op(ChangeKind.SHIFT_DATE_DAYS, days=-2),
+        ),
+        TODAY,
+    )
+    assert plan.model_dump() == snapshot
+
+
+def test_approve_saves_a_new_version() -> None:
+    """Scenario 7."""
+    plan = make_plan()
+    proposal = propose(plan, changes(op(ChangeKind.SET_TOTAL_BUDGET, amount_inr=12_000)), TODAY)
+    saved = accept(proposal, plan)
+    assert (saved.version, saved.total_budget_inr) == (2, 12_000)
+
+
+def test_stale_proposal_cannot_be_approved() -> None:
+    """Scenario 13, and approving twice is refused."""
+    plan = make_plan()
+    proposal = propose(plan, changes(op(ChangeKind.SET_TOTAL_BUDGET, amount_inr=12_000)), TODAY)
+    saved = accept(proposal, plan)
+    with pytest.raises(StaleProposalError):
+        accept(proposal, saved)

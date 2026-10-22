@@ -30,6 +30,7 @@ MAX_DAYS_AHEAD = 3 * 365
 MAX_DAYS_AFTER = 30
 MAX_LEAD_DAYS = 730
 MAX_PRIORITY = 50
+MAX_CUSTOM_CATEGORIES = 3
 SLUG_PATTERN = r"^[a-z][a-z0-9_-]{0,39}$"
 
 CategoryId = NewType("CategoryId", str)
@@ -79,6 +80,7 @@ class TaskSource(StrEnum):
     CATALOG = "catalog"
     AI = "ai"
     USER = "user"
+    CHANGE = "change"
 
 
 class VendorStatus(StrEnum):
@@ -174,6 +176,7 @@ class BudgetCategory(DomainModel):
     allocated_inr: Rupees
     scales_with_guests: bool = False
     protected: bool = False
+    custom: bool = False
 
 
 class Expense(DomainModel):

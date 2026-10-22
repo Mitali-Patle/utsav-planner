@@ -72,6 +72,7 @@ class ChangeReason(StrEnum):
     """Why a category's allocation ended up where it did."""
 
     UNCHANGED = "unchanged"
+    ADDED = "added"
     PROTECTED = "protected"
     GUEST_SCALED = "guest_scaled"
     CUT_FIRST = "cut_first"

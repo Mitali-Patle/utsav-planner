@@ -131,3 +131,24 @@ The prompts the app itself sends to the LLM live in `app/ai/prompts/`.
   - 215 tests, 99.90 % branch coverage. The draft-plan property also passed a deep randomized run.
 - **Self-correction:** one assertion in the draft-plan test was always true (it checked a set against a union that already contained it). It was replaced with real checks before commit.
 - **Next iteration:** DOM-07, the change engine.
+
+## 2026-10-22: Smart Change Manager core (CC-DOM-07)
+- **Tool / model:** Claude Code (Claude Opus 5.5).
+- **Prompt (summary):** "Yes, all recommended plus 6 and 7" (custom budget lines; follow-up tasks for booked vendors).
+- **Outcome:**
+  - `ChangeOperation` and `ChangeSet`: 11 operation kinds. Each kind checks its own fields, conflicting requests are rejected, and a request has at most five operations.
+  - `propose()` applies a request to a copy of the plan in a fixed order and returns a `Proposal` with:
+    - before/after values for the total, guests and date
+    - category changes with reason codes
+    - expense changes
+    - moved deadlines and book-by dates
+    - new and follow-up tasks
+    - skipped duplicates and protected items, and the protected items that were kept
+    - budget summaries
+    - or the exact shortfall
+  - `accept()` refuses stale or infeasible proposals.
+  - Fewer guests sends the freed money to contingency. Booked vendors get due-today follow-up tasks when the date or headcount changes.
+  - 252 tests, 99.92 % branch coverage.
+  - Over 5,000 random plans and requests (69 % feasible, 22 % shortfall), the saved plan was never modified, protected items never moved, totals were exact, and approving twice was refused.
+- **Bug caught by coverage:** after a guest decrease, categories held still (so the savings reach contingency) were treated as "scaled", so a booked decorator would have got a bogus headcount follow-up. Fixed by computing the scaled set before the holds. A regression test was confirmed to fail on the old code and pass on the fix.
+- **Next iteration:** the AI layer (CC-AI-01 to 04). `interpret_change` must produce exactly this `ChangeSet`.
