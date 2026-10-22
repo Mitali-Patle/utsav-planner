@@ -372,3 +372,12 @@ The prompts the app itself sends to the LLM live in `app/ai/prompts/`.
 - **Report fix:** the summary divided by all cases, which made Groq's quota cut-off look like 0/6 alternatives. It now shows passed out of answered, with no-answer cases in their own column.
 - **Tooling:** `--retry-errors FILE` re-runs only the unanswered cases of a run, if its prompt versions still match.
 - **Operational lesson:** a Groq eval running at the same time as live traffic used up the shared per-minute quota, and live change previews fell back from Groq (1.1 s) to Gemini (about 6 s). Groq evals are not to be run while evaluators may be using the app.
+
+## 2026-10-22 (night): Docs sync and README
+- **Tool / model:** Claude Code (Claude Opus 5.5), continuing overnight as the developer asked.
+- **Outcome:**
+  - `README.md`: problem, what the app does, the 4 × 3 coverage matrix, how it works (with a diagram), where GenAI is used, eval results and what they changed, security, accessibility, testing and CI, performance, running locally, structure, assumptions and limitations, and how it was built. Every claim was checked against code or a measurement before it went in.
+  - `docs/ARCHITECTURE.md` v1.2: about 20 "(planned)" items that are now built and tested were updated. The ones still unbuilt stay marked: form idempotency tokens (duplicates are caught by duplicate detection instead), moving focus after a swap, regenerating ideas, applying an alternative, the uptime monitor and the persona.
+  - `docs/SPEC.md`: the must-pass table names the unit, web, browser and eval tests for each scenario; all 14 are covered.
+  - The spec promised a privacy notice that did not exist. The preferences hint now tells users an AI model reads the text, so they should leave out personal details.
+- **Corrections while checking the README:** community vendors listed "idol" (not in the catalog); wedding mehendi and choreographer vendors appear only with those functions; "change previews take 1–3 s" became the measured numbers (1.1 s via Groq, about 6 s when Gemini answers).

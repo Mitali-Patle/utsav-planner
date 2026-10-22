@@ -1,6 +1,6 @@
 # Architecture: Utsav Planner
 
-Status: v1.1, decided 21 Oct 2026 and synced with the code on 22 Oct 2026. This document is
+Status: v1.2, decided 21 Oct 2026 and synced with the code on 22 Oct 2026 (late evening). This document is
 binding on all agents (see `AGENTS.md`). Items marked **(planned)** are designed but not built yet.
 
 ## 1. Principle
@@ -20,17 +20,17 @@ It copies numbers the user states; relative requests ("10 more guests", "cut ₹
 ## 2. System context
 ```
 Browser (HTML + htmx, no secrets)
-   │  HTTPS, forms / htmx partial requests, CSRF token, signed session cookie (planned)
+   │  HTTPS, forms / htmx partial requests, CSRF token, signed session cookie
    ▼
 Vercel Function: FastAPI app (region sin1, Singapore)
    ├── web/         routes, security headers, Jinja2 templates
-   ├── services/    use cases: planning, change manager, alternatives (planned)
+   ├── services/    use cases: planning, change manager, edits, alternatives
    ├── domain/      pure logic: catalog, budget, timeline, vendors, changes
-   ├── ai/          Provider protocol → FallbackChain → Gemini / Groq
+   ├── ai/          Provider protocol → FallbackChain → Groq / Gemini
    └── persistence/ engine and repositories
         │                                  │
         ▼                                  ▼
-Neon Postgres (aws-ap-southeast-1)   Gemini API (primary) → Groq API (backup)
+Neon Postgres (aws-ap-southeast-1)   Groq API (primary) → Gemini API (backup)
 Static assets: public/static/** served by the Vercel CDN
 ```
 
@@ -43,9 +43,9 @@ Static assets: public/static/** served by the Vercel CDN
 | D4 | Hosting | Vercel Hobby, Fluid compute, FastAPI zero-config | Free, no card. Measured: cold start 2.1 s for `/`, warm 0.25–0.4 s, from India. | Cloud Run (needs billing); Render (30–60 s cold start); Koyeb |
 | D5 | LLM | Groq `openai/gpt-oss-120b` → Gemini 3.5 Flash-Lite → Gemini 3.1 Flash-Lite → labelled non-AI fallback, via `LLM_CHAIN` | Evals on 22 Oct 2026 (`evals/RESULTS.md`): Groq scored 53/54 with change answers in a median 1.2 s, while Gemini 3.5 took 4.1 s and gave no answer in 17% of cases during Google's capacity problems. Groq's free tier (8K tokens/minute, 200K/day) runs out first, but a quota refusal is instant, so Gemini still answers without waiting. Two vendors, three models. | Gemini first (the original order, changed on 22 Oct after the evals); Gemini only; racing providers |
 | D6 | Failure policy | 10 s per call, same-vendor skip after a timeout, circuit breaker, quota cooldowns, one repair, labelled fallback, writes only on approval | The app is never broken or dishonest at judging time. | |
-| D7 | AI transparency | "How this was generated" panel on every AI result (planned UI; provenance is built) | Proves genuine, dynamic GenAI to reviewers and in the video. | Badge only |
-| D8 | Sessions | Anonymous signed-cookie session; events owned by session (planned) | Each judge gets private data with no login. | Accounts; public event IDs (IDOR) |
-| D9 | Tooling | uv, ruff, mypy --strict (app and tests), pytest + hypothesis + doctests, 95 % branch-coverage gate, pre-commit, GitHub Actions (planned) | Visible quality signals; edge cases covered. | |
+| D7 | AI transparency | "How this was generated" panel on every AI result: model, prompt version, attempts, the JSON sent and the validated answer | Proves genuine, dynamic GenAI to reviewers and in the video. | Badge only |
+| D8 | Sessions | Anonymous signed-cookie session (30 days, HttpOnly, SameSite=Lax, Secure in production); events owned by a hash of the session id | Each judge gets private data with no login. | Accounts; public event IDs (IDOR) |
+| D9 | Tooling | uv, ruff, mypy --strict (app and tests), pytest + hypothesis + doctests, 95 % branch-coverage gate, Playwright + axe, pre-commit, GitHub Actions, AI evals | Visible quality signals; edge cases covered. | |
 
 ## 4. Modules
 ```
@@ -70,27 +70,35 @@ app/
     client.py           Provider protocol, typed errors, LLMRequest, AITask, Provenance, AIResult
     providers/          gemini.py (SDK loaded on first call), groq.py (httpx), build_providers()
     chain.py            FallbackChain: cache, limits, skip-after-timeout, circuit breaker, cooldowns, repair, fallback
-    cache.py            CacheStore protocol, MemoryCache (TTL + LRU); Postgres store (planned)
+    cache.py            CacheStore protocol, MemoryCache (TTL + LRU), TieredCache (memory, then Postgres)
     contexts.py         PersonalizeContext, ChangeContext, AlternativesContext
     schemas.py          PlanSuggestions, ChangeIntent, Alternatives
     prompts/            personalize.py, interpret_change.py, alternatives.py (VERSION, SYSTEM, FEW_SHOTS, build_payload)
     guardrails.py       quoting user text, plan snapshot, output checks, intent_to_change_set()
     fallbacks.py        deterministic answers labelled "not AI-generated"
     tasks.py            PERSONALIZE, INTERPRET_CHANGE, SUGGEST_ALTERNATIVES
-  services/             planning, change manager, alternatives (planned)
+  services/             planning (draft, personalize), change_manager (request, form, approve, reject, history),
+                        edits (expenses, protection, tasks, vendors), alternatives; build_services()
   content/persona.py    persona copy, tone and presets (planned)
   persistence/
     db.py               engine (NullPool, psycopg 3), readiness check
-    tables.py, repositories.py   events, proposals, ai_cache, rate_limits (planned)
+    tables.py, repositories.py   events, proposals, ai_cache, rate_limits; Database.transaction() unit of work;
+                        ownership enforced in SQL; optimistic versioning; SqlCacheStore; RateLimiter
   web/
     routes/health.py    /healthz (no database), /readyz (database)
-    routes/pages.py     / and /favicon.ico; event, change and budget routes (planned)
-    deps.py             engine dependency; session, CSRF, rate limit, ownership (planned)
-    security.py         security headers middleware (CSP, HSTS in production); body-size limit (planned)
+    routes/             pages (/, favicon), events (create, dashboard, personalize), edits, changes
+                        (request, form, approve, reject, alternatives)
+    deps.py             services, session, today, AI rate limit
+    guard.py            CSRF check (header or form field) and 32 KB body limit
+    session.py, limits.py, errors.py   session id, CSRF token, flash messages; AI rate limit; error pages
+    views.py, responses.py   view models (all formatting in tested Python); redirect-after-POST or htmx fragment
+    security.py         security headers middleware (CSP, HSTS in production)
     templating.py       Jinja2 with autoescape and StrictUndefined
-    templates/          base.html; feature partials (planned)
+    templates/          base, landing, dashboard, error and feature partials (contract: docs/UI_CONTRACT.md)
 public/static/          css/app.css, img/favicon.svg, vendor/htmx.min.js (+ VENDOR.md checksum)
-scripts/                hooks/ (pre-commit checks), ai_smoke.py (manual live check)
+scripts/                hooks/ (pre-commit checks), ai_smoke.py (manual live check), init_db.py
+evals/                  scored cases for the three AI tasks, runner, report (evals/RESULTS.md)
+.github/workflows/      ci.yml: hooks and tests, browser and axe tests, secrets, dependencies and size
 ```
 Dependencies point **inward**: web → services → (domain, ai, persistence). `domain` imports nothing from the app.
 
@@ -106,11 +114,12 @@ Dependencies point **inward**: web → services → (domain, ai, persistence). `
 Invariants checked on every construction: unique ids per collection, every reference points to an
 existing category, and category allocations sum exactly to the total budget.
 
-Tables (planned): `events` (id, owner_session, version, plan JSON, AI provenance JSON, timestamps),
+Tables: `events` (id, owner_session, version, plan JSON, AI provenance JSON, timestamps),
 `proposals` (id, event_id, base_version, request_text, intent JSON, proposal JSON, status
 `pending|approved|rejected|stale`, timestamps; this is the **change history**), `ai_cache`
 (key, response JSON, provider, expires_at), `rate_limits` (bucket, window_start, count).
-Idempotency tokens for forms are stored with the event (planned).
+Form idempotency tokens are not built: a repeated submission is caught by duplicate detection
+(see §8) and proposals can be decided only once.
 
 ## 6. AI design
 ### 6.1 Tasks
@@ -118,9 +127,9 @@ There is exactly one LLM call per user action, and answers are cached.
 
 | Task | Trigger | Input | Output | Temp | Code then does |
 |---|---|---|---|---|---|
-| `personalize` | Create event; "Regenerate ideas" | Event details (quoted user text), category ids, existing tasks, vendor types, tone | `PlanSuggestions`: 3–5 ideas, ≤ 4 budget emphases (increase/decrease × small/medium), ≤ 5 extra tasks, ≤ 6 vendor notes, each with a why; `off_topic` | 0.8 | Emphasis → bounded weight change (±10 / ±20 %) → exact allocation; tasks deduplicated and dated (planned in services) |
+| `personalize` | Right after an event is created (regenerating is planned, F12) | Event details (quoted user text), category ids, existing tasks, vendor types, tone | `PlanSuggestions`: 3–5 ideas, ≤ 4 budget emphases (increase/decrease × small/medium), ≤ 5 extra tasks, ≤ 6 vendor notes, each with a why; `off_topic` | 0.8 | Emphasis → bounded weight change (±10 / ±20 %) → exact allocation; tasks deduplicated and dated (`personalize_plan`) |
 | `interpret_change` | Change request | Plan snapshot (ids, amounts, protected flags) + quoted request + today | `ChangeIntent`: status `ok` / `needs_clarification` / `off_topic`, operations, cut_priority, summary | 0.1 | Converted to a domain `ChangeSet`, then `propose()` computes the Proposal |
-| `alternatives` | "Suggest alternatives" on a shortfall | Plan snapshot + shortfall | `Alternatives`: items (category_id, reduce/replace/remove, small/medium/large, title, why) | 0.6 | Code computes each saving (planned); "apply" needs a `set_category_budget` operation (planned, F13) |
+| `alternatives` | "Suggest alternatives" on a shortfall | Plan snapshot + shortfall | `Alternatives`: items (category_id, reduce/replace/remove, small/medium/large, title, why) | 0.6 | Code computes each saving (`estimate_saving`); "apply" needs a `set_category_budget` operation (planned, F13) |
 
 Operation kinds (flat `ChangeOperation`, each kind checks its own fields): `set_total_budget`,
 `adjust_total_budget`, `add_expense`, `update_expense`, `remove_expense`, `protect` / `unprotect`
@@ -132,7 +141,9 @@ Each prompt module has `VERSION`, a structured `SYSTEM` prompt (role, task, outp
 shared guardrails) and `FEW_SHOTS` validated in tests. The user message is JSON, for example
 `{"task": "interpret_change", "today": ..., "plan": {...}, "request": "<<<...>>>"}`; examples are
 sent as prior turns. A test fails if the domain gains an operation kind the interpret prompt does
-not document. Measured prompt sizes: personalize ≈ 1.7k tokens, interpret ≈ 2.2k, alternatives ≈ 1.0k.
+not document. Measured prompt sizes (v1): personalize ≈ 1.7k tokens, interpret ≈ 2.2k, alternatives ≈ 1.0k;
+v2 adds one interpret example (amounts on expense and budget-line operations) and gap-sizing rules
+for alternatives, both prompted by the evals (`evals/RESULTS.md`).
 Tone is a context field (default in `ai/contexts.py`; persona file planned).
 
 ### 6.3 Fallback chain (`ai/chain.py`)
@@ -154,12 +165,12 @@ Tone is a context field (default in `ai/contexts.py`; persona file planned).
 - The domain then applies its own rules: protected items are skipped and reported even if an answer targets them (tested with a "compromised model" answer).
 - Model output is never executed and never rendered as raw HTML (autoescape).
 
-### 6.5 Transparency panel (planned UI)
+### 6.5 Transparency panel
 Every AI result gets a "How this was generated" `<details>` element showing the provenance above,
 the JSON sent and the validated JSON received, and a link to the prompt's source file.
 
 ## 7. Key flows
-1. **Create event**: validate `EventDetails` → `draft_plan()` (catalog, opening budget, dated tasks and vendors) → `personalize` → code merges the suggestions (planned) → save version 1 → redirect to the dashboard.
+1. **Create event**: validate `EventDetails` → `draft_plan()` (catalog, opening budget, dated tasks and vendors) → save version 1 → redirect to the dashboard at once → the dashboard requests `personalize` (htmx `load`, or a button without JavaScript) → `personalize_plan()` merges the suggestions → save version 2. The page is complete before the AI answers.
 2. **Add expense** (no AI): validate, add, recompute the summary. Money is never moved between categories automatically; overspend or shortfall is shown with a "Suggest alternatives" button.
 3. **Change Manager**:
    - `interpret_change` returns a clarification question, an off-topic notice, or operations.
@@ -194,7 +205,7 @@ Every flow works as a plain form submission; htmx only enhances it.
 - Text: title ≤ 80, city ≤ 60, preferences ≤ 500, change request ≤ 300, labels ≤ 80 characters.
 - Up to five operations per change request; at most three custom budget lines per plan.
 - Unicode is allowed (Hindi, Tamil, Malayalam), including joiners; control and bidi-override characters are removed.
-- Request body ≤ 32 KB (planned). Errors are shown inline and keep the user's input (planned UI).
+- Request body ≤ 32 KB. Errors are shown inline in plain language and keep the user's input.
 
 ## 10. Security
 - Built:
@@ -204,7 +215,10 @@ Every flow works as a plain form submission; htmx only enhances it.
   - Jinja autoescape and StrictUndefined. `/readyz` never reveals why the database is unavailable.
   - Provider errors and logs carry codes and statuses only, never keys or user text.
   - gitleaks, file-size, branch and `.env` guards in pre-commit; htmx checksum test.
-- Planned: signed session cookie with ownership checks (IDOR), CSRF tokens on every POST, rate limits (AI routes 20 per 10 min per hashed IP; global soft cap 1,500 AI calls/day), body-size limit, pip-audit and gitleaks in CI.
+  - Signed session cookie; every event and proposal query is filtered by owner in SQL, so another session gets 404 (tested in the browser too).
+  - CSRF token on every POST (header for htmx, hidden field without JavaScript); 32 KB body limit.
+  - AI rate limits: 20 calls per 10 minutes per HMAC-hashed IP and a global soft cap of 1,500 a day; over the limit, the app answers with labelled standard suggestions instead of failing.
+  - CI: gitleaks over the full history, pip-audit on production dependencies, actions pinned to commit SHAs, read-only token.
 
 ## 11. Efficiency
 - One AI call per user action; alternatives only on demand; cached answers reused.
@@ -214,8 +228,10 @@ Every flow works as a plain form submission; htmx only enhances it.
 - `/healthz` never touches the database, so uptime pings don't wake Neon.
 
 ## 12. Accessibility (WCAG 2.2 AA target)
-- Built in `base.html` and `app.css`: `lang="en-IN"`, skip link, landmarks, `aria-live` status region, visible focus styles, reduced motion, dark mode, responsive to 320 px, contrast tokens (one light-mode pair at 4.41:1 pending a fix).
-- Planned per feature: labels for every input, fieldset/legend for choices, errors linked with `aria-describedby`, focus moved to the preview heading after a swap, table captions and `th scope`.
+- Built in `base.html` and `app.css`: `lang="en-IN"`, skip link, landmarks, `aria-live` status region, visible focus styles, reduced motion, dark mode, responsive to 320 px, contrast tokens checked by a test for every colour pair as used, in both themes.
+- Built per feature: labels for every input, fieldset/legend for choices, errors linked with `aria-describedby`, table captions and `th scope`, screen-reader names on repeated buttons, keyboard-scrollable data panels.
+- Checked in a real browser by axe (WCAG 2.2 A/AA) on six page states, light and dark, phone and desktop.
+- Planned: moving focus to the preview heading after an htmx swap.
 
 ## 13. Testing strategy and seams
 - **Seams:** `Provider` protocol (`tests/fakes.py::ScriptedProvider` scripts answers, timeouts, 429s and outages; `FakeClock` controls time), `Clock` (`FixedClock`), injected engine (in-memory SQLite), `create_app(settings, engine)`.
@@ -223,7 +239,10 @@ Every flow works as a plain form submission; htmx only enhances it.
 - **AI:** chain paths (cache, timeout, vendor skip, cooldowns, circuit breaker, repair, fallback, time budget), adapters (fake SDK client, httpx mock transport), prompts (examples validate; every operation kind documented), guardrails and injection cases, fallbacks, and the full loop from a model answer to an approvable proposal.
 - **Doctests** run in `app/domain` and `app/ai`. A 95 % branch-coverage gate applies to `app/`.
 - **Live smoke** (manual, dev keys): `python -m scripts.ai_smoke`.
-- Planned: route integration tests (CSRF, ownership, rate limits), Playwright + axe end-to-end, labelled evals (`evals/`), CI workflow.
+- **Web:** HTTP flow tests for every route with and without htmx, including CSRF, ownership and rate limits, plus a label audit of every page and fragment.
+- **Browser** (`pytest -m e2e`): Playwright journeys with and without JavaScript; axe; 320 px overflow; skip link; a console free of errors and CSP violations. The app runs in a thread with a task-aware fake AI and a temporary SQLite file.
+- **AI evals** (`evals/`, real models, run by hand): 54 cases scored by code through the guardrails and change engine; results in `evals/RESULTS.md`.
+- **CI** runs all of the above except the evals on every push to `main`.
 
 ## 14. Deployment and operations
 - Vercel project linked to GitHub `main`; production URL `https://utsav-planner.vercel.app` (the team-scoped alias is behind Vercel SSO and is never shared).

@@ -32,7 +32,7 @@
     {{ field(form, "event_date", "Event date", type="date", attrs={"min": today, "required": "required"}) }}
     {{ field(form, "guest_count", "Number of guests", type="number", attrs={"min": "1", "max": "5000", "inputmode": "numeric", "required": "required"}) }}
     {{ field(form, "total_budget_inr", "Total budget in rupees", type="number", hint="Whole rupees, from ₹1,000.", attrs={"min": "1000", "inputmode": "numeric", "required": "required"}) }}
-    {{ field(form, "preferences", "Preferences (optional)", type="textarea", hint="Theme, food, culture, anything that matters. Up to 500 characters.", attrs={"maxlength": "500", "rows": "3"}) }}
+    {{ field(form, "preferences", "Preferences (optional)", type="textarea", hint="Theme, food, culture, anything that matters, up to 500 characters. An AI model reads this, so leave out phone numbers and other personal details.", attrs={"maxlength": "500", "rows": "3"}) }}
 
     <fieldset>
       <legend>Functions to include (optional)</legend>
