@@ -41,7 +41,7 @@ Priority: P0 must exist for submission 1; P1 should exist for submission 1; P2 o
 | F6 | Timeline: tasks with due dates, done toggle, compressed/overdue flags | P0 | adds context-specific tasks | dates |
 | F7 | Vendor checklist: book-by dates, status todo → contacted → booked, priority with why | P0 | prioritizes with why | lead times, status rules |
 | F8 | Smart Change Manager: natural-language change → clarify or preview (before/after) → approve or reject | P0 | interprets | computes impact, enforces protection |
-| F9 | Change history (approved and rejected, with the request text and diff) | P0 | none | log |
+| F9 | Change history (approved and rejected, with the request text and a summary of what changed) | P0 | none | log |
 | F10 | "How this was generated" panel on every AI result | P0 | none | provenance |
 | F11 | Labelled non-AI fallback for all three AI tasks | P0 | none | deterministic |
 | F12 | Regenerate ideas (variation, rate-limited) | P1 | generates | cache bypass, limit |

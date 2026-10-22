@@ -21,6 +21,7 @@ All notable changes to Utsav Planner will be documented in this file.
 - The new-event form reminds users that an AI model reads their preferences, so personal details should be left out.
 
 ### Changed
+- The change history shows what each change did (for example "Total budget ₹15,000 → ₹12,000", "3 budget lines changed").
 - Pages load with less database work (one transaction for the dashboard, three for a change request).
 - New plans are limited per connection per hour, and a plan holds at most 200 expenses and 200 tasks.
 - Set one budget line's planned amount, in plain words ("put ₹10,000 into decorations") or with the change form; the other lines are rebalanced and the total stays exact.

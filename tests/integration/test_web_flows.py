@@ -292,6 +292,8 @@ def test_change_preview_then_approve(engine: Engine) -> None:
     assert "Change approved" in page.text
     assert "₹12,000" in page.text
     assert "budget 12k, keep the cake" in page.text, "logged in the history"
+    history = page.text.split('id="history-heading"')[1]
+    assert "Total budget ₹15,000 → ₹12,000" in history, "the history says what changed"
 
 
 def test_change_without_javascript_renders_the_dashboard(engine: Engine) -> None:

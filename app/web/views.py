@@ -265,12 +265,32 @@ def proposal_view(stored: StoredProposal) -> dict[str, Any]:
 
 
 def history_row(stored: StoredProposal) -> dict[str, Any]:
-    """One line of the change history."""
+    """One line of the change history, with a short summary of what the change did."""
     return {
         "request": stored.request_text,
         "status": stored.status.value,
         "created": format_date(stored.created_at.astimezone(INDIA_TZ).date()),
+        "changes": change_summary(stored.proposal),
     }
+
+
+def change_summary(proposal: Proposal) -> list[str]:
+    """Plain-language points for what a proposal changes, for the history."""
+    points = [
+        f"{FIELD_LABELS[f.field]} {_field_value(f.before, f.field)} → "
+        f"{_field_value(f.after, f.field)}"
+        for f in proposal.field_changes
+    ]
+    moved = [c for c in proposal.budget_changes if c.before_inr != c.after_inr]
+    if moved:
+        points.append(f"{len(moved)} budget line{'s' if len(moved) != 1 else ''} changed")
+    for change in proposal.expense_changes:
+        points.append(f"Expense {change.label}: {change.action.value}")
+    if proposal.new_tasks:
+        points.append(
+            f"{len(proposal.new_tasks)} new task{'s' if len(proposal.new_tasks) != 1 else ''}"
+        )
+    return points
 
 
 def ai_panel(record: Mapping[str, Any] | None, panel_id: str = "plan-ai") -> dict[str, Any] | None:

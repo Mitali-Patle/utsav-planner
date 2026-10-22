@@ -1,7 +1,8 @@
 {% if history %}
 <ol class="history">
   {% for item in history %}
-  <li><span class="history-status">{{ item.status | capitalize }}</span> on {{ item.created }}: &ldquo;{{ item.request }}&rdquo;</li>
+  <li><span class="history-status">{{ item.status | capitalize }}</span> on {{ item.created }}: &ldquo;{{ item.request }}&rdquo;
+    {% if item.changes %}<ul class="history-changes">{% for point in item.changes %}<li>{{ point }}</li>{% endfor %}</ul>{% endif %}</li>
   {% endfor %}
 </ol>
 {% else %}

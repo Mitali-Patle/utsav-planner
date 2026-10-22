@@ -28,5 +28,8 @@ def test_history_dates_are_shown_in_india() -> None:
         request_text="x",
         status=ProposalStatus.APPROVED,
         created_at=datetime(2026, 10, 22, 20, 0, tzinfo=UTC),
+        proposal=SimpleNamespace(
+            field_changes=(), budget_changes=(), expense_changes=(), new_tasks=()
+        ),
     )
     assert history_row(cast(Any, late))["created"] == "23 Oct 2026"

@@ -440,3 +440,5 @@ The prompts the app itself sends to the LLM live in `app/ai/prompts/`.
     - History dates are in India time.
     - Unknown routes render the HTML error page.
     - The README and ARCHITECTURE numbers now match `evals/RESULTS.md`.
+- **History summary (SPEC F9):** each approved or rejected change lists what it did ("Total budget ₹15,000 → ₹12,000", "3 budget lines changed"), built from the stored proposal.
+- **Not fixed, left for the developer:** personalization swaps the whole plan area, so text typed into the add-expense form in the first second or two after creating a plan can be lost (the reviewer's suspicion; the window is the AI's answer time). The fix is to split the plan area into sections updated out of band. That is a template restructure in the design lane, so it was left rather than rushed overnight.
