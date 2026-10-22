@@ -159,3 +159,17 @@ def test_event_date_window_rejects(event_date: date, code: str) -> None:
 @pytest.mark.parametrize("offset", [0, 1, MAX_DAYS_AHEAD])
 def test_event_date_window_accepts(offset: int) -> None:
     validate_event_date(TODAY + timedelta(days=offset), TODAY)
+
+
+@pytest.mark.parametrize(("offset", "valid"), [(-30, True), (-31, False), (MAX_DAYS_AHEAD, True)])
+def test_task_offsets_allow_up_to_thirty_days_after_the_event(offset: int, *, valid: bool) -> None:
+    def build() -> Task:
+        return Task(
+            id=TaskId("task-1"), title="Clean up", offset_days=offset, due_date=date(2026, 12, 1)
+        )
+
+    if valid:
+        assert build().offset_days == offset
+    else:
+        with pytest.raises(ValidationError):
+            build()

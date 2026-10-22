@@ -27,6 +27,7 @@ MIN_BUDGET_INR = 1_000
 MAX_BUDGET_INR = 100_000_000  # ₹10,00,00,000
 MAX_GUESTS = 5_000
 MAX_DAYS_AHEAD = 3 * 365
+MAX_DAYS_AFTER = 30
 MAX_LEAD_DAYS = 730
 MAX_PRIORITY = 50
 SLUG_PATTERN = r"^[a-z][a-z0-9_-]{0,39}$"
@@ -171,12 +172,16 @@ class Expense(DomainModel):
 
 
 class Task(DomainModel):
-    """A to-do item with a deadline relative to the event date."""
+    """A to-do item with a deadline relative to the event date.
+
+    `offset_days` counts days before the event; negative values are after it (for example,
+    cleanup or settling accounts).
+    """
 
     id: TaskRef
     title: ShortText
     category_id: CategoryRef | None = None
-    offset_days: int = Field(ge=0, le=MAX_DAYS_AHEAD)
+    offset_days: int = Field(ge=-MAX_DAYS_AFTER, le=MAX_DAYS_AHEAD)
     due_date: date
     done: bool = False
     compressed: bool = False

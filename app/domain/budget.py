@@ -420,7 +420,7 @@ def rebalance(
         NotFoundError: If a pin or priority refers to an unknown category.
         InfeasibleChangeError: If extra money must be added but every category is fixed.
     """
-    _check_total(total_inr)
+    validate_total_budget(total_inr)
     pins = dict(pins or {})
     known = {c.id for c in plan.categories}
     unknown = (set(pins) | set(cut_priority)) - known
@@ -554,7 +554,12 @@ def _change_reason(before: int, after: int, *, floor_inr: int, cut_first: bool) 
     return ChangeReason.PROPORTIONAL if after > before else ChangeReason.UNCHANGED
 
 
-def _check_total(total_inr: int) -> None:
+def validate_total_budget(total_inr: int) -> None:
+    """Check that a total budget is within the allowed range.
+
+    Raises:
+        InvalidInputError: If the total is out of range.
+    """
     if not MIN_BUDGET_INR <= total_inr <= MAX_BUDGET_INR:
         raise InvalidInputError(
             f"The budget must be between {format_inr(MIN_BUDGET_INR)} and "

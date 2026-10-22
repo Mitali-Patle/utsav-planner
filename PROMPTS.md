@@ -102,3 +102,19 @@ The prompts the app itself sends to the LLM live in `app/ai/prompts/`.
   - The editor wrote real bidirectional-control characters into `text.py` instead of `\u` escapes. Ruff (PLE2502) caught it, the file was fixed, and the repo was scanned clean. Tests now build such characters with `chr()`.
   - One test expectation was wrong (proportional cuts don't reach a floor unless spare capacity is exhausted). The test was fixed, not the code.
 - **Next iteration:** CC-DOM-04 catalog (India-specific categories, tasks and vendor lead times), then timeline/vendors (DOM-06) and the change engine (DOM-07).
+
+## 2026-10-22: India event catalog and opening budget (CC-DOM-04)
+- **Tool / model:** Claude Code (Claude Opus 5.5), plan-first; the developer approved all four recommended decisions.
+- **Prompt (summary):** "Write the DOM-04 plan." Then: "Approved, all recommended."
+- **Research step:** before writing any numbers, a web search was run for Indian wedding budget splits, wedding and birthday timelines, and pandal permission windows.
+  - The sources are mostly planning-industry guides, and their ranges vary.
+  - Midpoints were used, with the links cited in the `catalog.py` docstring.
+  - A test checks that the wedding split stays inside the published ranges (venue and catering 20–30 %, decor 10–16 %).
+- **Outcome:**
+  - Typed catalog for all three event types. Each has 8–11 budget categories with contingency at 5–10 %, 12–18 core tasks plus tasks per sub-event, vendors with lead times, 3–5 sub-events, and three non-AI fallback ideas with reasons.
+  - The opening budget depends on the event type, the chosen sub-events (for example, a sangeet raises music) and guest-count bands (×0.9 to ×1.2 on per-guest costs).
+  - Tests prove the output changes with context. City stays AI-only, to avoid unverifiable price tables.
+  - Tasks may now fall up to 30 days after the event, for cleanup and settling accounts.
+  - 187 tests, 99.88 % branch coverage.
+- **Self-correction:** the first docstring claimed wedding lead times were shortened "to fit the three-year window". That was wrong; the real reason is that many families plan within a few months. Corrected before commit.
+- **Next iteration:** DOM-06 (timeline and vendor dates, compression, book-now flags), then DOM-07 (change engine).
