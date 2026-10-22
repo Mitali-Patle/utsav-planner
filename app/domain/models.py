@@ -49,6 +49,7 @@ ShortText = Annotated[str, _Normalized, StringConstraints(min_length=1, max_leng
 CityName = Annotated[str, _Normalized, StringConstraints(min_length=1, max_length=60)]
 LongText = Annotated[str, _Normalized, StringConstraints(max_length=500)]
 Rationale = Annotated[str, _Normalized, StringConstraints(min_length=1, max_length=280)]
+Description = Annotated[str, _Normalized, StringConstraints(min_length=1, max_length=500)]
 Slug = Annotated[str, StringConstraints(pattern=SLUG_PATTERN)]
 
 CategoryRef = Annotated[CategoryId, StringConstraints(pattern=SLUG_PATTERN)]
@@ -229,7 +230,7 @@ class Idea(DomainModel):
 
     id: IdeaRef
     title: ShortText
-    description: Annotated[str, _Normalized, StringConstraints(min_length=1, max_length=500)]
+    description: Description
     category_id: CategoryRef | None = None
     budget_impact: BudgetImpact = BudgetImpact.NEUTRAL
     why: Rationale

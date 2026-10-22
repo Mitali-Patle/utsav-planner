@@ -5,7 +5,8 @@ from typing import Any
 from app.ai.contexts import AlternativesContext
 from app.ai.guardrails import plan_snapshot
 from app.ai.prompts import GUARDRAILS
-from app.ai.schemas import AIAlternative, AlternativeAction, Alternatives, SavingLevel
+from app.ai.schemas import AIAlternative, Alternatives
+from app.domain.budget import SavingAction, SavingLevel
 
 VERSION = "alternatives-v1"
 
@@ -68,21 +69,21 @@ _EXAMPLE_ANSWER = Alternatives(
     items=[
         AIAlternative(
             category_id="decor",
-            action=AlternativeAction.REPLACE,
+            action=SavingAction.REPLACE,
             level=SavingLevel.MEDIUM,
             title="Seasonal marigold and mogra instead of imported flowers",
             why="January is peak season for local flowers, so they look fresh and cost less.",
         ),
         AIAlternative(
             category_id="photography",
-            action=AlternativeAction.REDUCE,
+            action=SavingAction.REDUCE,
             level=SavingLevel.SMALL,
             title="Drop the drone and second videographer",
             why="A single experienced team still covers every ritual for 150 guests.",
         ),
         AIAlternative(
             category_id="transport",
-            action=AlternativeAction.REDUCE,
+            action=SavingAction.REDUCE,
             level=SavingLevel.MEDIUM,
             title="Shared shuttles at fixed times",
             why="Scheduled shuttles replace individual cabs for out-of-town guests.",

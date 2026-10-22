@@ -10,7 +10,7 @@ from enum import StrEnum
 
 from pydantic import BaseModel, Field
 
-from app.domain.budget import EmphasisDirection, EmphasisStrength
+from app.domain.budget import EmphasisDirection, EmphasisStrength, SavingAction, SavingLevel
 from app.domain.changes import ChangeKind
 from app.domain.models import BudgetImpact
 
@@ -93,27 +93,11 @@ class ChangeIntent(BaseModel):
     summary: str = Field(description="One sentence restating the request, with no new numbers.")
 
 
-class AlternativeAction(StrEnum):
-    """Kind of saving."""
-
-    REDUCE = "reduce"
-    REPLACE = "replace"
-    REMOVE = "remove"
-
-
-class SavingLevel(StrEnum):
-    """How much of a category an alternative would free up."""
-
-    SMALL = "small"
-    MEDIUM = "medium"
-    LARGE = "large"
-
-
 class AIAlternative(BaseModel):
     """A way to close a budget shortfall."""
 
     category_id: str
-    action: AlternativeAction
+    action: SavingAction
     level: SavingLevel
     title: str
     why: str

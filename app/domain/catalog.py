@@ -45,6 +45,7 @@ from app.domain.models import (
     BudgetImpact,
     CategoryId,
     CategoryRef,
+    Description,
     DomainModel,
     EventType,
     Rationale,
@@ -71,6 +72,7 @@ class TaskSpec(DomainModel):
     title: ShortText
     category_id: CategoryRef | None = None
     offset_days: int = Field(ge=-MAX_DAYS_AFTER, le=MAX_DAYS_AHEAD)
+    why: Rationale | None = None
 
 
 class VendorSpec(DomainModel):
@@ -90,10 +92,10 @@ class WeightBonus(DomainModel):
 
 
 class IdeaSpec(DomainModel):
-    """A non-AI fallback idea, shown with a "not AI-generated" label."""
+    """An idea before it is added to a plan: from the catalog (fallback) or from the AI."""
 
     title: ShortText
-    description: ShortText
+    description: Description
     category_id: CategoryRef | None = None
     budget_impact: BudgetImpact
     why: Rationale

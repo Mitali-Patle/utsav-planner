@@ -13,9 +13,12 @@ from app.domain.budget import (
     EmphasisStrength,
     NewExpense,
     Pin,
+    SavingAction,
+    SavingLevel,
     add_expense,
     allocate,
     apply_emphasis,
+    estimate_saving,
     find_duplicate_expense,
     rebalance,
     remove_expense,
@@ -381,3 +384,20 @@ def test_rebalance_cannot_be_applied_to_a_different_plan() -> None:
     result = rebalance(make_plan(), total_inr=12_000)
     with pytest.raises(ValueError, match="different plan"):
         result.apply(make_plan(allocations={"venue": 15_000}))
+
+
+@pytest.mark.parametrize(
+    ("action", "level", "expected"),
+    [
+        (SavingAction.REDUCE, SavingLevel.SMALL, 300),
+        (SavingAction.REPLACE, SavingLevel.MEDIUM, 750),
+        (SavingAction.REDUCE, SavingLevel.LARGE, 1_500),
+        (SavingAction.REMOVE, SavingLevel.SMALL, 3_000),
+    ],
+)
+def test_estimated_savings(action: SavingAction, level: SavingLevel, expected: int) -> None:
+    assert estimate_saving(3_000, action, level) == expected
+
+
+def test_savings_round_down_to_whole_rupees() -> None:
+    assert estimate_saving(999, SavingAction.REDUCE, SavingLevel.MEDIUM) == 249

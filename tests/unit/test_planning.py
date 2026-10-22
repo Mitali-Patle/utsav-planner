@@ -7,16 +7,20 @@ from hypothesis import given
 from hypothesis import strategies as st
 from pydantic import ValidationError
 
-from app.domain.catalog import spec_for
-from app.domain.errors import InvalidInputError
+from app.domain.budget import Emphasis, EmphasisDirection, EmphasisStrength, NewExpense, add_expense
+from app.domain.catalog import IdeaSpec, TaskSpec, spec_for
+from app.domain.errors import InvalidInputError, NotFoundError
 from app.domain.models import (
     MAX_BUDGET_INR,
     MAX_DAYS_AHEAD,
     MAX_GUESTS,
     MIN_BUDGET_INR,
+    BudgetImpact,
+    CategoryId,
     EventType,
+    TaskSource,
 )
-from app.domain.planning import EventDetails, draft_plan
+from app.domain.planning import EventDetails, Personalization, draft_plan, personalize_plan
 
 TODAY = date(2026, 10, 22)
 
@@ -97,3 +101,84 @@ def test_any_valid_details_give_a_valid_plan(
     assert all(t.due_date >= TODAY for t in plan.tasks)
     assert all(v.book_by >= TODAY for v in plan.vendors)
     assert sorted(v.priority for v in plan.vendors) == list(range(1, len(plan.vendors) + 1))
+
+
+# Personalization (applied by code after the AI's suggestions are validated)
+
+
+def personalization(**overrides: object) -> Personalization:
+    values: dict[str, object] = {
+        "emphasis": {
+            CategoryId("music"): Emphasis(
+                direction=EmphasisDirection.INCREASE, strength=EmphasisStrength.MEDIUM
+            )
+        },
+        "tasks": (
+            TaskSpec(
+                key="ai",
+                title="Book a folk dance troupe",
+                category_id=CategoryId("music"),
+                offset_days=45,
+                why="Rajasthani theme.",
+            ),
+        ),
+        "ideas": (
+            IdeaSpec(
+                title="Puppet show at the sangeet",
+                description="A kathputli show between dance performances.",
+                category_id=CategoryId("music"),
+                budget_impact=BudgetImpact.ADDS,
+                why="Local Rajasthani art that guests of all ages enjoy.",
+            ),
+        ),
+        "vendor_notes": {"music": "Ask for Rajasthani folk musicians for the sangeet."},
+    }
+    return Personalization.model_validate(values | overrides)
+
+
+def test_personalization_is_applied_by_code() -> None:
+    draft = draft_plan(details(), TODAY)
+    snapshot = draft.model_dump()
+    plan = personalize_plan(draft, personalization(), TODAY)
+    music_before = next(c.allocated_inr for c in draft.categories if c.id == "music")
+    music_after = next(c.allocated_inr for c in plan.categories if c.id == "music")
+    assert music_after > music_before
+    assert sum(c.allocated_inr for c in plan.categories) == draft.total_budget_inr
+    new_task = plan.tasks[-1]
+    assert (new_task.source, new_task.why, new_task.due_date) == (
+        TaskSource.AI,
+        "Rajasthani theme.",
+        draft.event_date - timedelta(days=45),
+    )
+    assert [(i.id, i.why) for i in plan.ideas] == [
+        ("idea-1", "Local Rajasthani art that guests of all ages enjoy.")
+    ]
+    music_vendor = next(v for v in plan.vendors if v.vendor_type == "music")
+    assert music_vendor.why == "Ask for Rajasthani folk musicians for the sangeet."
+    assert draft.model_dump() == snapshot
+
+
+def test_empty_personalization_keeps_the_draft_budget() -> None:
+    draft = draft_plan(details(), TODAY)
+    plan = personalize_plan(draft, Personalization(), TODAY)
+    assert [c.allocated_inr for c in plan.categories] == [c.allocated_inr for c in draft.categories]
+    assert plan.tasks == draft.tasks
+
+
+def test_personalization_needs_a_fresh_plan() -> None:
+    draft = draft_plan(details(), TODAY)
+    used, _ = add_expense(
+        draft, NewExpense(category_id=CategoryId("decor"), label="Flowers", amount_inr=5_000)
+    )
+    with pytest.raises(ValueError, match="freshly drafted"):
+        personalize_plan(used, Personalization(), TODAY)
+
+
+def test_personalization_rejects_unknown_categories() -> None:
+    emphasis = {
+        CategoryId("fireworks"): Emphasis(
+            direction=EmphasisDirection.INCREASE, strength=EmphasisStrength.SMALL
+        )
+    }
+    with pytest.raises(NotFoundError):
+        personalize_plan(draft_plan(details(), TODAY), personalization(emphasis=emphasis), TODAY)

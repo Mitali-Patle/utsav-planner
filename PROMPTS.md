@@ -248,3 +248,13 @@ The prompts the app itself sends to the LLM live in `app/ai/prompts/`.
   - `save` now uses `UPDATE … RETURNING`.
 - **Tests:** a new test proves a failed approval changes nothing (360 tests).
 - **Live on Neon:** an atomic approval (save version 2 and mark the proposal approved) took 1.43 s from India in one connection, compared with about 3.2 s for three separate connections. Rollback, stale and ownership checks were verified on Postgres.
+
+## 2026-10-22: Domain additions for the services
+- **Tool / model:** Claude Code (Claude Opus 5.5).
+- **Outcome:**
+  - `Personalization` value object and `personalize_plan()`: bounded emphasis with an exact re-split, AI tasks dated with their reasons, ideas, and vendor notes. The function uses domain types only, so the domain still never imports the AI layer.
+  - `estimate_saving()`: remove frees 100 %; reduce or replace frees 10/25/50 %, rounded down.
+  - `SavingAction` and `SavingLevel` now live in the domain, and the AI schema reuses them, as it does for emphasis.
+  - `TaskSpec` carries an optional `why`.
+  - 370 tests.
+- **Self-correction:** one test compared category weights, but emphasis scales every weight by 100, so the weights differ while the rupee allocations are identical. The test now compares allocations, which is what matters.

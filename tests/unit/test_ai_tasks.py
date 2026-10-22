@@ -27,15 +27,20 @@ from app.ai.schemas import (
     AIIdea,
     AISuggestedTask,
     AIVendorNote,
-    AlternativeAction,
     Alternatives,
     ChangeIntent,
     IntentStatus,
     PlanSuggestions,
-    SavingLevel,
 )
 from app.ai.tasks import INTERPRET_CHANGE, PERSONALIZE, SUGGEST_ALTERNATIVES
-from app.domain.budget import EmphasisDirection, EmphasisStrength, NewExpense, add_expense
+from app.domain.budget import (
+    EmphasisDirection,
+    EmphasisStrength,
+    NewExpense,
+    SavingAction,
+    SavingLevel,
+    add_expense,
+)
 from app.domain.changes import ChangeKind, SkipReason, propose
 from app.domain.models import BudgetImpact, CategoryId, EventPlan, EventType
 from app.domain.planning import EventDetails, draft_plan
@@ -292,7 +297,7 @@ def test_clarification_and_off_topic_never_carry_operations() -> None:
 def alternative(category_id: str) -> AIAlternative:
     return AIAlternative(
         category_id=category_id,
-        action=AlternativeAction.REDUCE,
+        action=SavingAction.REDUCE,
         level=SavingLevel.SMALL,
         title="Trim",
         why="Because.",

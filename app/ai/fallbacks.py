@@ -4,13 +4,12 @@ from app.ai.contexts import AlternativesContext, ChangeContext, PersonalizeConte
 from app.ai.schemas import (
     AIAlternative,
     AIIdea,
-    AlternativeAction,
     Alternatives,
     ChangeIntent,
     IntentStatus,
     PlanSuggestions,
-    SavingLevel,
 )
+from app.domain.budget import SavingAction, SavingLevel
 from app.domain.catalog import spec_for
 
 NOT_AI = "not AI-generated"
@@ -57,7 +56,7 @@ def alternatives_fallback(context: AlternativesContext) -> Alternatives:
         items=[
             AIAlternative(
                 category_id=c.id,
-                action=AlternativeAction.REDUCE,
+                action=SavingAction.REDUCE,
                 level=SavingLevel.MEDIUM,
                 title=f"Trim {c.name.lower()}",
                 why=f"One of the largest flexible lines in this plan ({NOT_AI}).",

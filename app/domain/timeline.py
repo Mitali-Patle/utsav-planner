@@ -67,6 +67,7 @@ def build_tasks(
                 due_date=due,
                 compressed=compressed,
                 source=source,
+                why=spec.why,
             )
         )
     return tuple(tasks)

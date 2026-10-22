@@ -68,6 +68,46 @@ class Emphasis(DomainModel):
         return _EMPHASIS_PERCENT[(self.direction, self.strength)]
 
 
+class SavingAction(StrEnum):
+    """Kind of saving an alternative proposes."""
+
+    REDUCE = "reduce"
+    REPLACE = "replace"
+    REMOVE = "remove"
+
+
+class SavingLevel(StrEnum):
+    """How much of a category an alternative would free up."""
+
+    SMALL = "small"
+    MEDIUM = "medium"
+    LARGE = "large"
+
+
+_SAVING_PERCENT: Mapping[SavingLevel, int] = {
+    SavingLevel.SMALL: 10,
+    SavingLevel.MEDIUM: 25,
+    SavingLevel.LARGE: 50,
+}
+_WHOLE = 100
+
+
+def estimate_saving(allocated_inr: int, action: SavingAction, level: SavingLevel) -> int:
+    """Rupees an alternative would free from a category, rounded down.
+
+    Removing a category frees all of it; reducing or replacing frees 10, 25 or 50 % for a
+    small, medium or large change.
+
+    Examples:
+        >>> estimate_saving(3_000, SavingAction.REDUCE, SavingLevel.MEDIUM)
+        750
+        >>> estimate_saving(3_000, SavingAction.REMOVE, SavingLevel.SMALL)
+        3000
+    """
+    percent = _WHOLE if action is SavingAction.REMOVE else _SAVING_PERCENT[level]
+    return allocated_inr * percent // _WHOLE
+
+
 class ChangeReason(StrEnum):
     """Why a category's allocation ended up where it did."""
 
