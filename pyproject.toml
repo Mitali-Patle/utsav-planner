@@ -72,7 +72,7 @@ warn_unreachable = true
 plugins = ["pydantic.mypy"]
 
 [tool.pytest.ini_options]
-testpaths = ["tests", "app/domain", "app/ai"]
+testpaths = ["tests", "app/domain", "app/ai", "evals"]
 pythonpath = ["."]
 # Browser tests are slower and need Playwright's Chromium: run them with `pytest -m e2e`.
 addopts = '-q --strict-markers --doctest-modules -m "not e2e"'

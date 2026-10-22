@@ -54,9 +54,9 @@ repos:
         pass_filenames: false
       - id: mypy
         name: mypy (strict)
-        entry: uv run --frozen mypy app
+        entry: uv run --frozen mypy app tests evals
         language: system
-        files: '^app/.*\.py$'
+        files: '^(app|tests|evals)/.*\.py$'
         pass_filenames: false
       - id: repo-size
         name: repository under 8 MB including history
