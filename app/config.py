@@ -7,7 +7,7 @@ from pydantic import Field, SecretStr, model_validator
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
 DEFAULT_LLM_CHAIN = (
-    "gemini:gemini-3.5-flash-lite,gemini:gemini-3.1-flash-lite,groq:openai/gpt-oss-120b"
+    "groq:openai/gpt-oss-120b,gemini:gemini-3.5-flash-lite,gemini:gemini-3.1-flash-lite"
 )
 MIN_SESSION_SECRET_LENGTH = 32
 
