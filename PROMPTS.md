@@ -167,3 +167,16 @@ The prompts the app itself sends to the LLM live in `app/ai/prompts/`.
   - 270 tests, 99.94 % branch coverage.
 - **Self-correction:** one chain test wrongly assumed a timeout benches a provider. It doesn't, by design (timeouts may be transient), so the test now asserts that the AI is retried.
 - **Next iteration:** Gemini and Groq adapters.
+
+## 2026-10-22: AI layer, part 2 — Gemini and Groq adapters (CC-AI-03)
+- **Tool / model:** Claude Code (Claude Opus 5.5).
+- **Outcome:**
+  - `GeminiProvider` (google-genai, imported on first use, with a per-request timeout) and `GroqProvider` (httpx, non-strict JSON-schema mode, `reasoning_effort` only for gpt-oss models).
+  - Every failure is mapped to a typed error. Gemini 429s are read for daily vs per-minute quota (`PerDay` quota ids) and the `RetryInfo` delay. Groq 429s use `retry-after` and "per day / RPD" in the message.
+  - `build_providers` follows `LLM_CHAIN`, skips providers without keys and fails fast on malformed entries.
+  - Adapter tests use a fake SDK client and httpx's mock transport.
+  - A live check through the real chain (dev keys) succeeded on both providers.
+- **Measured:**
+  - The Gemini free-tier latency varies widely for identical small calls: 1.75 s, 6.4 s and 12.3 s. Loading the SDK costs only 0.4 s. Groq was steady at about 1.3 s.
+  - With a 12 s per-call limit and two Gemini models first, a slow day could use most of the 25 s budget before Groq is tried.
+- **Next iteration:** propose a chain-tuning change to the developer (shorter Gemini limit; skip the same vendor after a timeout).
