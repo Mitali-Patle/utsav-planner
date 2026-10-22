@@ -12,7 +12,7 @@
     <caption>Budget lines that change</caption>
     <thead><tr><th scope="col">Line</th><th scope="col">Before</th><th scope="col">After</th><th scope="col">Why</th></tr></thead>
     <tbody>{% for b in proposal.budget %}
-      <tr><th scope="row">{{ b.name }}</th><td>{{ b.before }}</td><td>{{ b.after }}</td><td>{{ b.reason }}{% if b.overcommitted %}; already spent {{ b.overcommitted }} more than this{% endif %}</td></tr>
+      <tr><th scope="row">{{ b.name }}</th><td data-label="Before">{{ b.before }}</td><td data-label="After">{{ b.after }}</td><td data-label="Why">{{ b.reason }}{% if b.overcommitted %}; already spent {{ b.overcommitted }} more than this{% endif %}</td></tr>
     {% endfor %}</tbody>
   </table>
   {% endif %}
@@ -29,7 +29,7 @@
     {% if proposal.feasible %}
     <form method="post" action="/events/{{ event_id }}/proposals/{{ proposal.id }}/approve"
           hx-post="/events/{{ event_id }}/proposals/{{ proposal.id }}/approve" hx-target="#change-result" hx-swap="innerHTML">
-      {{ csrf(csrf_token) }}<button type="submit">Approve this change</button>
+      {{ csrf(csrf_token) }}<button type="submit" class="button-primary">Approve this change</button>
     </form>
     {% else %}
     <form method="post" action="/events/{{ event_id }}/alternatives"

@@ -23,6 +23,14 @@ All notable changes to Utsav Planner will be documented in this file.
 - Adjusted light and dark theme tokens in `public/static/css/app.css` to guarantee all text/background pairs achieve $\ge$ 4.5:1 contrast and UI borders / focus outlines achieve $\ge$ 3.0:1 contrast.
 - Removed redundant ARIA landmark roles from native `<header>`, `<nav>`, and `<footer>` elements in `app/web/templates/base.html`.
 
+### Changed
+- Festive, warmer design for every page in light and dark themes: cards for ideas, reasons highlighted, a clear AI panel, budget tables that become cards on phones, and highlighted main actions.
+- The new-event form shows only the functions of the chosen event type.
+- Budget comes before ideas on the dashboard.
+
 ### Fixed
 - The "Interpreting your request" busy message no longer shows when nothing is loading.
 - Priced alternatives are labelled "Suggested by AI" instead of "Interpreted by AI".
+- Links and phone-layout labels now meet 4.5:1 contrast in the light theme.
+- Swapping parts of the page no longer logs Content Security Policy errors in the browser console.
+- Form controls outside the main forms (vendor status, expense amounts, the change request) are styled and readable in dark mode.

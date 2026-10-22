@@ -19,9 +19,11 @@
         hx-post="/events/{{ event.id }}/changes" hx-target="#change-result" hx-swap="innerHTML"
         hx-indicator="#change-busy" hx-disabled-elt="find button">
     {{ csrf(csrf_token) }}
-    <label for="change-request">Your change</label>
-    <textarea id="change-request" name="request" rows="2" maxlength="300" required></textarea>
-    <button type="submit">Preview the change</button>
+    <div class="field">
+      <label for="change-request">Your change</label>
+      <textarea id="change-request" name="request" rows="2" maxlength="300" required></textarea>
+    </div>
+    <button type="submit" class="button-primary">Preview the change</button>
     <p id="change-busy" class="htmx-indicator" role="status">Interpreting your request. This can take up to 10 seconds.</p>
   </form>
   <div id="change-result">

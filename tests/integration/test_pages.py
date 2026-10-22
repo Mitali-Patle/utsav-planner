@@ -1,5 +1,7 @@
 """Landing page rendering, base-template accessibility contract and static files."""
 
+import html as html_lib
+import json
 import re
 
 from fastapi.testclient import TestClient
@@ -34,6 +36,15 @@ def test_favicon_ico_redirects_to_svg(client: TestClient) -> None:
     response = client.get("/favicon.ico", follow_redirects=False)
     assert response.status_code == 308
     assert response.headers["location"] == "/static/img/favicon.svg"
+
+
+def test_htmx_config_suits_the_strict_csp(client: TestClient) -> None:
+    """htmx must not inject indicator styles or copy `style` attributes during a swap."""
+    match = re.search(r'<meta name="htmx-config" content=\'([^\']+)\'', client.get("/").text)
+    assert match
+    config = json.loads(html_lib.unescape(match.group(1)))
+    assert config["includeIndicatorStyles"] is False
+    assert "style" not in config["attributesToSettle"]
 
 
 def test_base_template_has_no_inline_script_or_style(client: TestClient) -> None:

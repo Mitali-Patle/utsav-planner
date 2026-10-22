@@ -36,9 +36,9 @@
 
     <fieldset>
       <legend>Functions to include (optional)</legend>
-      <p class="field-hint">Only the functions for the event type you chose are used.</p>
+      <p class="field-hint sub-events-hint">Only the functions for the event type you chose are used.</p>
       {% for group in sub_events %}
-      <fieldset class="sub-events">
+      <fieldset class="sub-events" data-event-type="{{ group.event_type }}">
         <legend>{{ group.label }}</legend>
         {% for value, label in group.options %}
         <div class="choice">
@@ -50,7 +50,7 @@
       {% endfor %}
     </fieldset>
 
-    <button type="submit">Create my plan</button>
+    <button type="submit" class="button-primary">Create my plan</button>
   </form>
 </section>
 

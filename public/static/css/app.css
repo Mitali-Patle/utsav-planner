@@ -2,33 +2,56 @@
  * Utsav Planner - Main Stylesheet
  * Hand-written CSS with accessible design tokens (WCAG 2.2 AA target).
  * Strict CSP compliant: no external fonts, no inline styles required.
+ *
+ * Design direction: warm, festive Indian feel (marigold/saffron accents),
+ * calm and highly readable, mobile-first from 320 px.
  */
 
 :root {
   /* Color tokens - Light theme default (WCAG AA >= 4.5:1 contrast against bg/surface) */
-  --color-bg: #faf8f5;
-  --color-surface: #ffffff;
-  --color-surface-subtle: #f3f0ea;
+  --color-bg: #fdf8f0;
+  --color-surface: #fffaf3;
+  --color-surface-subtle: #f5efe4;
   --color-text: #1b1e23;
   --color-text-muted: #4b5563;
   --color-border: #767676;
-  --color-border-subtle: #e5e7eb;
+  --color-border-subtle: #e5ddd2;
 
-  /* Brand accents - Indian celebration palette (festive vermillion / saffron & deep teal) */
-  --color-primary: #b43403;
-  --color-primary-hover: #882200;
+  /* Brand accents - Indian celebration palette (saffron/marigold & block-print indigo) */
+  --color-primary: #b04f1e;
+  --color-primary-hover: #9c4221;
   --color-primary-text: #ffffff;
-  --color-secondary: #0f766e;
-  --color-secondary-hover: #115e59;
+  --color-secondary: #2b6cb0;
+  --color-secondary-hover: #2c5282;
   --color-secondary-text: #ffffff;
 
   /* Interaction and feedback */
-  --color-focus: #3730a3;
-  --color-success: #15803d;
+  --color-focus: #6b46c1;
+  --color-success: #166534;
   --color-warning: #92400e;
   --color-error: #b91c1c;
   --color-error-bg: #fef2f2;
   --color-error-border: #fca5a5;
+
+  /* AI transparency */
+  --color-ai-bg: #eff6ff;
+  --color-ai-border: #93c5fd;
+  --color-ai-text: #1e40af;
+
+  /* "Why" spotlight — the product's core idea */
+  --color-why-bg: #fefce8;
+  --color-why-border: #e9b308;
+  --color-why-text: #854d0e;
+
+  /* Notice backgrounds */
+  --color-notice-info-bg: #eff6ff;
+  --color-notice-info-border: #93c5fd;
+  --color-notice-success-bg: #f0fdf4;
+  --color-notice-success-border: #86efac;
+
+  /* Badge variant */
+  --color-badge-warning-bg: #fffbeb;
+  --color-badge-warning-border: #fcd34d;
 
   /* Spacing scale */
   --space-1: 0.25rem;   /* 4px */
@@ -70,33 +93,53 @@
 /* Dark theme tokens via prefers-color-scheme */
 @media (prefers-color-scheme: dark) {
   :root {
-    --color-bg: #111827;
-    --color-surface: #1f2937;
-    --color-surface-subtle: #374151;
-    --color-text: #f9fafb;
-    --color-text-muted: #cbd5e1;
+    --color-bg: #1a1410;
+    --color-surface: #2d2418;
+    --color-surface-subtle: #3d332a;
+    --color-text: #faf5eb;
+    --color-text-muted: #c9bfad;
     --color-border: #94a3b8;
-    --color-border-subtle: #374151;
+    --color-border-subtle: #4a3f34;
 
-    --color-primary: #fb923c;
-    --color-primary-hover: #fdba74;
-    --color-primary-text: #111827;
-    --color-secondary: #2dd4bf;
-    --color-secondary-hover: #5eead4;
-    --color-secondary-text: #111827;
+    --color-primary: #ed8936;
+    --color-primary-hover: #f6ad55;
+    --color-primary-text: #1a1410;
+    --color-secondary: #63b3ed;
+    --color-secondary-hover: #90cdf4;
+    --color-secondary-text: #1a1410;
 
-    --color-focus: #a5b4fc;
-    --color-success: #4ade80;
+    --color-focus: #b794f4;
+    --color-success: #68d391;
     --color-warning: #fcd34d;
     --color-error: #fca5a5;
     --color-error-bg: #450a0a;
     --color-error-border: #991b1b;
+
+    --color-ai-bg: #1e293b;
+    --color-ai-border: #3b82f6;
+    --color-ai-text: #93c5fd;
+
+    --color-why-bg: #422006;
+    --color-why-border: #ca8a04;
+    --color-why-text: #fde68a;
+
+    --color-notice-info-bg: #1e293b;
+    --color-notice-info-border: #3b82f6;
+    --color-notice-success-bg: #064e3b;
+    --color-notice-success-border: #34d399;
+
+    --color-badge-warning-bg: #422006;
+    --color-badge-warning-border: #ca8a04;
+
     --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.5);
     --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.4), 0 2px 4px -2px rgb(0 0 0 / 0.4);
   }
 }
 
-/* Box sizing and base resets */
+/* ========================================================================
+   Box sizing and base resets
+   ======================================================================== */
+
 *,
 *::before,
 *::after {
@@ -124,7 +167,10 @@ body {
   overflow-x: hidden;
 }
 
-/* Accessible Skip Link */
+/* ========================================================================
+   Accessible Skip Link
+   ======================================================================== */
+
 .skip-link {
   position: absolute;
   top: -9999px;
@@ -145,13 +191,19 @@ body {
   outline-offset: 2px;
 }
 
-/* WCAG Focus indicator - Never remove focus outlines */
+/* ========================================================================
+   WCAG Focus indicator - Never remove focus outlines
+   ======================================================================== */
+
 :focus-visible {
   outline: 3px solid var(--color-focus);
   outline-offset: 2px;
 }
 
-/* Screen reader utility (visually hidden) */
+/* ========================================================================
+   Screen reader utility (visually hidden)
+   ======================================================================== */
+
 .sr-only {
   position: absolute;
   width: 1px;
@@ -164,7 +216,10 @@ body {
   border: 0;
 }
 
-/* prefers-reduced-motion overrides */
+/* ========================================================================
+   prefers-reduced-motion overrides
+   ======================================================================== */
+
 @media (prefers-reduced-motion: reduce) {
   html {
     scroll-behavior: auto;
@@ -180,7 +235,10 @@ body {
   }
 }
 
-/* Layout container */
+/* ========================================================================
+   Layout container
+   ======================================================================== */
+
 .container {
   width: 100%;
   max-width: var(--layout-max-width);
@@ -194,9 +252,12 @@ body {
   }
 }
 
-/* Landmark styles */
+/* ========================================================================
+   Landmark styles
+   ======================================================================== */
+
 .site-header {
-  border-bottom: 1px solid var(--color-border);
+  border-bottom: 2px solid var(--color-primary);
   background-color: var(--color-surface);
   padding-block: var(--space-3);
 }
@@ -246,7 +307,7 @@ body {
 }
 
 .site-footer {
-  border-top: 1px solid var(--color-border);
+  border-top: 2px solid var(--color-primary);
   background-color: var(--color-surface);
   padding-block: var(--space-6);
   color: var(--color-text-muted);
@@ -254,7 +315,10 @@ body {
   margin-top: auto;
 }
 
-/* Typography */
+/* ========================================================================
+   Typography
+   ======================================================================== */
+
 h1, h2, h3, h4, h5, h6 {
   line-height: var(--line-height-tight);
   color: var(--color-text);
@@ -293,7 +357,10 @@ a:hover {
   color: var(--color-primary-hover);
 }
 
-/* Accessible tables */
+/* ========================================================================
+   Accessible tables - desktop
+   ======================================================================== */
+
 table {
   width: 100%;
   border-collapse: collapse;
@@ -312,7 +379,7 @@ caption {
 th, td {
   padding: var(--space-2) var(--space-3);
   text-align: left;
-  border-bottom: 1px solid var(--color-border);
+  border-bottom: 1px solid var(--color-border-subtle);
 }
 
 th {
@@ -321,7 +388,97 @@ th {
   color: var(--color-text);
 }
 
-/* Form controls accessibility foundations */
+/* ========================================================================
+   Responsive tables - mobile cards (below 640px)
+   ======================================================================== */
+
+@media (max-width: 640px) {
+  table,
+  thead,
+  tbody,
+  tr {
+    display: block;
+  }
+
+  thead {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+  }
+
+  tr {
+    margin-bottom: var(--space-3);
+    border: 1px solid var(--color-border-subtle);
+    border-radius: var(--radius-md);
+    padding: var(--space-3);
+    background: var(--color-surface);
+  }
+
+  td,
+  th[scope="row"] {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    padding: var(--space-1) 0;
+    border-bottom: 1px dotted var(--color-border-subtle);
+    background: transparent;
+    text-align: right;
+  }
+
+  td:last-child,
+  th[scope="row"]:last-child {
+    border-bottom: none;
+  }
+
+  td::before {
+    content: attr(data-label);
+    font-weight: 600;
+    flex-shrink: 0;
+    margin-right: var(--space-3);
+    text-align: left;
+    color: var(--color-text-muted);
+    font-size: var(--font-size-xs);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+
+  th[scope="row"] {
+    font-size: var(--font-size-base);
+    font-weight: 700;
+    color: var(--color-primary);
+    text-align: left;
+    display: block;
+    padding-bottom: var(--space-2);
+  }
+
+  caption {
+    display: block;
+  }
+
+  td form {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: flex-end;
+    align-items: center;
+    gap: var(--space-2);
+  }
+
+  td form label {
+    flex-basis: 100%;
+    font-size: var(--font-size-sm);
+  }
+
+  td form input:not([type="hidden"]) {
+    width: 8rem;
+  }
+}
+
+/* ========================================================================
+   Form controls accessibility foundations
+   ======================================================================== */
+
 input, select, textarea, button {
   font-family: inherit;
   font-size: var(--font-size-base);
@@ -339,6 +496,13 @@ button, .button {
   cursor: pointer;
   text-decoration: none;
   border: 1px solid transparent;
+  background: var(--color-surface-subtle);
+  color: var(--color-text);
+  transition: background-color 0.15s, color 0.15s;
+}
+
+button:hover, .button:hover {
+  background: var(--color-border-subtle);
 }
 
 .button-primary {
@@ -359,14 +523,603 @@ button, .button {
   background-color: var(--color-secondary-hover);
 }
 
+/* ========================================================================
+   Status messages: .notice, .notice-info, .notice-success, .notice-error
+   ======================================================================== */
+
+.notice {
+  padding: var(--space-3) var(--space-4);
+  border-radius: var(--radius-md);
+  border-left: 4px solid var(--color-border);
+  margin-block: var(--space-4);
+  font-weight: 500;
+  background: var(--color-surface);
+}
+
+.notice-info {
+  background: var(--color-notice-info-bg);
+  border-left-color: var(--color-secondary);
+}
+
+.notice-success {
+  background: var(--color-notice-success-bg);
+  border-left-color: var(--color-success);
+}
+
+.notice-error {
+  background: var(--color-error-bg);
+  border-left-color: var(--color-error);
+}
+
+/* ========================================================================
+   Form layout: .field, .field-invalid, .field-hint, .field-error, .choice
+   ======================================================================== */
+
+.field {
+  margin-bottom: var(--space-5);
+}
+
+.field label {
+  display: block;
+  font-weight: 600;
+  margin-bottom: var(--space-1);
+}
+
+input:not([type="checkbox"], [type="radio"]),
+select,
+textarea {
+  min-height: 44px;
+  padding: var(--space-2) var(--space-3);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-sm);
+  background: var(--color-surface);
+  color: var(--color-text);
+}
+
+input:not([type="checkbox"], [type="radio"]):focus,
+select:focus,
+textarea:focus {
+  border-color: var(--color-focus);
+}
+
+.field input:not([type="checkbox"], [type="radio"]),
+.field select,
+.field textarea {
+  width: 100%;
+}
+
+input[type="checkbox"],
+input[type="radio"] {
+  width: 1.25rem;
+  height: 1.25rem;
+  accent-color: var(--color-primary);
+}
+
+.field-invalid input,
+.field-invalid select,
+.field-invalid textarea {
+  border-color: var(--color-error);
+  background: var(--color-error-bg);
+}
+
+.field-hint {
+  font-size: var(--font-size-sm);
+  color: var(--color-text-muted);
+  margin-top: var(--space-1);
+  margin-bottom: var(--space-1);
+}
+
+.field-error {
+  font-size: var(--font-size-sm);
+  color: var(--color-error);
+  font-weight: 600;
+  margin-top: var(--space-1);
+  margin-bottom: 0;
+}
+
+.choice {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  padding-block: var(--space-1);
+  min-height: 24px;
+}
+
+fieldset {
+  border: none;
+  padding: 0;
+  margin: 0 0 var(--space-4);
+}
+
+legend {
+  font-weight: 600;
+  font-size: var(--font-size-base);
+  margin-bottom: var(--space-2);
+}
+
+/* ========================================================================
+   Badges: .badge, .badge-error, .badge-warning, .badge-ai
+   ======================================================================== */
+
+.badge {
+  display: inline-block;
+  font-size: var(--font-size-xs);
+  font-weight: 600;
+  padding: 2px var(--space-2);
+  border-radius: 9999px;
+  border: 1px solid var(--color-border-subtle);
+  background: var(--color-surface-subtle);
+  vertical-align: middle;
+  white-space: nowrap;
+}
+
+.badge-error {
+  background: var(--color-error-bg);
+  color: var(--color-error);
+  border-color: var(--color-error-border);
+}
+
+.badge-warning {
+  background: var(--color-badge-warning-bg);
+  color: var(--color-warning);
+  border-color: var(--color-badge-warning-border);
+}
+
+.badge-ai {
+  background: var(--color-ai-bg);
+  color: var(--color-ai-text);
+  border-color: var(--color-ai-border);
+}
+
+/* ========================================================================
+   .why - the product's core idea, made easy to spot
+   ======================================================================== */
+
+.why {
+  background: var(--color-why-bg);
+  border-left: 3px solid var(--color-why-border);
+  color: var(--color-why-text);
+  padding: var(--space-2) var(--space-3);
+  border-radius: var(--radius-sm);
+  font-size: var(--font-size-sm);
+  margin-top: var(--space-2);
+  margin-bottom: var(--space-2);
+}
+
+/* ========================================================================
+   AI labels and panel: .label-ai, .label-not-ai, .ai-note, .ai-panel
+   ======================================================================== */
+
+.label-ai {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  background: var(--color-ai-bg);
+  color: var(--color-ai-text);
+  border: 1px solid var(--color-ai-border);
+  padding: var(--space-1) var(--space-3);
+  border-radius: var(--radius-sm);
+  font-size: var(--font-size-sm);
+  font-weight: 600;
+}
+
+.label-not-ai {
+  font-style: italic;
+  color: var(--color-text-muted);
+  font-size: var(--font-size-sm);
+}
+
+.ai-note {
+  font-size: var(--font-size-sm);
+  color: var(--color-text-muted);
+  font-style: italic;
+  padding: var(--space-2) 0;
+  border-top: 1px dashed var(--color-border-subtle);
+  margin-top: var(--space-2);
+}
+
+.ai-panel {
+  margin-top: var(--space-6);
+  border: 2px solid var(--color-ai-border);
+  border-radius: var(--radius-md);
+  background: var(--color-ai-bg);
+}
+
+.ai-panel summary {
+  padding: var(--space-3) var(--space-4);
+  font-weight: 600;
+  cursor: pointer;
+  color: var(--color-ai-text);
+  list-style: revert;
+}
+
+.ai-panel[open] {
+  padding: 0 var(--space-4) var(--space-4);
+}
+
+.ai-panel[open] summary {
+  border-bottom: 1px solid var(--color-ai-border);
+  margin-bottom: var(--space-3);
+}
+
+.ai-panel dl {
+  margin: 0;
+}
+
+.ai-panel dl > div {
+  display: flex;
+  gap: var(--space-3);
+  padding: var(--space-1) 0;
+  font-size: var(--font-size-sm);
+}
+
+.ai-panel dt {
+  font-weight: 600;
+  min-width: 110px;
+  flex-shrink: 0;
+}
+
+.ai-panel dd {
+  margin: 0;
+}
+
+.ai-panel pre {
+  overflow-x: auto;
+  font-size: var(--font-size-xs);
+  font-family: var(--font-family-mono);
+  background: var(--color-surface-subtle);
+  padding: var(--space-3);
+  border-radius: var(--radius-sm);
+  max-height: 300px;
+  overflow-y: auto;
+}
+
+/* ========================================================================
+   Plan sections: .ideas, .summary, .tasks, .task-title, .task-due, .actions
+   ======================================================================== */
+
+.ideas {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.ideas li {
+  padding: var(--space-4);
+  background: var(--color-surface);
+  border: 1px solid var(--color-border-subtle);
+  border-radius: var(--radius-md);
+  margin-bottom: var(--space-4);
+  box-shadow: var(--shadow-sm);
+}
+
+.ideas h3 {
+  margin-top: 0;
+  margin-bottom: var(--space-2);
+}
+
+.summary {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+  gap: var(--space-3);
+  margin-bottom: var(--space-6);
+}
+
+.summary > div {
+  background: var(--color-surface);
+  border: 1px solid var(--color-border-subtle);
+  border-radius: var(--radius-md);
+  padding: var(--space-3) var(--space-4);
+  text-align: center;
+  box-shadow: var(--shadow-sm);
+}
+
+.summary dt {
+  font-size: var(--font-size-sm);
+  color: var(--color-text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  font-weight: 600;
+}
+
+.summary dd {
+  font-size: var(--font-size-2xl);
+  font-weight: 700;
+  margin: 0;
+  color: var(--color-primary);
+}
+
+@media (max-width: 480px) {
+  .summary {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  .summary dd {
+    font-size: var(--font-size-xl);
+  }
+}
+
+.tasks {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.tasks li {
+  padding: var(--space-3) var(--space-4);
+  border-bottom: 1px solid var(--color-border-subtle);
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: var(--space-2);
+}
+
+.tasks li:last-child {
+  border-bottom: none;
+}
+
+.tasks li.done {
+  opacity: 0.6;
+}
+
+.tasks li.done .task-title {
+  text-decoration: line-through;
+}
+
+.task-title {
+  font-weight: 600;
+  flex: 1 1 200px;
+}
+
+.task-due {
+  font-size: var(--font-size-sm);
+  color: var(--color-text-muted);
+}
+
+.actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+  align-items: center;
+}
+
+/* ========================================================================
+   Change Manager: .change-result, .change-{kind}, .proposal,
+   .proposal-actions, .field-changes
+   ======================================================================== */
+
+.change-result {
+  margin-top: var(--space-4);
+  padding: var(--space-4);
+  background: var(--color-surface);
+  border: 1px solid var(--color-border-subtle);
+  border-radius: var(--radius-md);
+}
+
+.change-proposal {
+  border-left: 4px solid var(--color-primary);
+}
+
+.change-clarification {
+  border-left: 4px solid var(--color-warning);
+}
+
+.change-off_topic,
+.change-invalid {
+  border-left: 4px solid var(--color-error);
+}
+
+.change-unavailable,
+.change-nothing_to_change {
+  border-left: 4px solid var(--color-text-muted);
+}
+
+.proposal {
+  padding: var(--space-4);
+  background: var(--color-surface);
+  border: 1px solid var(--color-border-subtle);
+  border-radius: var(--radius-md);
+  margin-top: var(--space-4);
+}
+
+.proposal-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-3);
+  margin-top: var(--space-4);
+  padding-top: var(--space-4);
+  border-top: 1px solid var(--color-border-subtle);
+}
+
+.field-changes {
+  list-style: none;
+  padding: 0;
+  margin: var(--space-3) 0;
+}
+
+.field-changes li {
+  padding: var(--space-2) 0;
+  border-bottom: 1px solid var(--color-border-subtle);
+  font-size: var(--font-size-sm);
+}
+
+.field-changes li:last-child {
+  border-bottom: none;
+}
+
+/* ========================================================================
+   Other blocks: .change-form, .change-form-toggle, .alternatives,
+   .history, .history-status, .event-list, .event-header, .preferences,
+   .lede, .create-form, .sub-events
+   ======================================================================== */
+
+.change-form {
+  margin-top: var(--space-4);
+}
+
+.change-form-toggle {
+  margin-top: var(--space-4);
+  border: 1px solid var(--color-border-subtle);
+  border-radius: var(--radius-md);
+}
+
+.change-form-toggle summary {
+  padding: var(--space-3) var(--space-4);
+  cursor: pointer;
+  font-weight: 500;
+  color: var(--color-text-muted);
+}
+
+.change-form-toggle[open] {
+  padding: 0 var(--space-4) var(--space-4);
+}
+
+.alternatives {
+  background: var(--color-surface);
+  border: 1px solid var(--color-border-subtle);
+  border-radius: var(--radius-md);
+  padding: var(--space-4);
+  margin-top: var(--space-4);
+}
+
+.alternatives ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.alternatives li {
+  padding-block: var(--space-3);
+  border-top: 1px solid var(--color-border-subtle);
+}
+
+.history {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.history li {
+  padding: var(--space-3) 0;
+  border-bottom: 1px solid var(--color-border-subtle);
+  font-size: var(--font-size-sm);
+}
+
+.history li:last-child {
+  border-bottom: none;
+}
+
+.history-status {
+  font-weight: 700;
+  text-transform: uppercase;
+  font-size: var(--font-size-xs);
+  padding: 2px var(--space-2);
+  border-radius: var(--radius-sm);
+  background: var(--color-surface-subtle);
+  letter-spacing: 0.05em;
+}
+
+.event-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.event-list li {
+  padding: var(--space-3) var(--space-4);
+  border: 1px solid var(--color-border-subtle);
+  border-radius: var(--radius-md);
+  margin-bottom: var(--space-3);
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+  background: var(--color-surface);
+}
+
+.event-list a {
+  font-weight: 600;
+}
+
+.event-header {
+  padding-bottom: var(--space-4);
+  border-bottom: 2px solid var(--color-primary);
+  margin-bottom: var(--space-6);
+}
+
+.preferences {
+  font-style: italic;
+  color: var(--color-text-muted);
+  font-size: var(--font-size-sm);
+}
+
+.lede {
+  font-size: var(--font-size-lg);
+  color: var(--color-text-muted);
+  max-width: 640px;
+  line-height: var(--line-height-relaxed);
+  margin-bottom: var(--space-6);
+}
+
+.create-form {
+  background: var(--color-surface);
+  padding: var(--space-6);
+  border: 1px solid var(--color-border-subtle);
+  border-radius: var(--radius-lg);
+  max-width: 600px;
+}
+
+@media (max-width: 480px) {
+  .create-form {
+    padding: var(--space-4);
+  }
+}
+
+.sub-events {
+  border: none;
+  padding: var(--space-2) 0;
+  margin: 0 0 var(--space-3);
+}
+
+.sub-events legend {
+  font-weight: 600;
+  font-size: var(--font-size-sm);
+  color: var(--color-text-muted);
+}
+
+.create-form:has([name="event_type"]:checked) .sub-events,
+.create-form:has([name="event_type"]:checked) .sub-events-hint {
+  display: none;
+}
+
+.create-form:has(#type-wedding:checked) .sub-events[data-event-type="wedding"],
+.create-form:has(#type-birthday:checked) .sub-events[data-event-type="birthday"],
+.create-form:has(#type-community:checked) .sub-events[data-event-type="community"] {
+  display: block;
+}
+
+/* ========================================================================
+   htmx indicator and status region
+   ======================================================================== */
+
 /* Behaviour: required by docs/UI_CONTRACT.md; restyle freely but keep these rules.
    htmx's own indicator styles are off (CSP has no inline styles), so a busy message
    is hidden until htmx marks it as in flight. */
 .htmx-indicator {
   display: none;
+  font-size: var(--font-size-sm);
+  color: var(--color-text-muted);
+  font-style: italic;
+  padding: var(--space-2) 0;
 }
 
 .htmx-indicator.htmx-request,
 .htmx-request .htmx-indicator {
   display: block;
+}
+
+.status-region {
+  max-width: var(--layout-max-width);
+  margin-inline: auto;
+  padding-inline: var(--space-4);
 }

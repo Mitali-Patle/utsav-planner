@@ -313,3 +313,18 @@ The prompts the app itself sends to the LLM live in `app/ai/prompts/`.
   - Writing the contract showed that the busy message was always visible: htmx's built-in indicator styles are off because the CSP forbids inline styles, and nothing else hid it. A three-rule CSS block now hides it until a request is in flight (small lane exception in `public/static/`, recorded here).
   - Alternatives said "Interpreted by AI"; they now say "Suggested by AI", with a test.
 - **Self-corrections:** the first contract draft stated the wrong date format and said 403 and 413 render `error.html`; both were checked against the code and corrected before commit.
+
+## 2026-10-22: Design pass — Antigravity's redesign, finished and verified by Claude Code
+- **Tool / model:** Antigravity (Claude Opus 4.6, Planning mode) for the redesign; Claude Code (Claude Opus 5.5) to finish and verify it.
+- **Prompt (short):** design pass per `docs/UI_CONTRACT.md` — warm festive Indian look, readable, mobile-first; style every hook; fix the 4.41:1 pair; meta description mentions personalized ideas; compute contrast with a script; run the tests; hand off.
+- **What happened:** Antigravity planned and wrote about 770 lines of CSS plus `data-label` attributes for phone tables, then hit its account quota (resets 28 Oct) before reviewing or committing. The developer approved finishing it in Claude Code as a recorded lane exception.
+- **Verification by Claude Code:**
+  - Recomputed contrast independently. Antigravity's script reported a full pass, but it judged the orange accent against 3:1, while links and bold phone labels use it as normal-size text (3.99–4.42:1 against 4.5:1). Light `--color-primary` moved from `#c05621` to `#b04f1e` (same hue; 4.61:1 or better on every light background, white button text 5.27:1). This is the third wrong self-check from that lane, so contrast is now a test (`CONTRAST_PAIRS`, built from how `app.css` uses each colour), which fails on the old colour.
+  - Drove every state in real Chrome (Playwright on the installed Chrome; the Chromium download failed because the disk was full) at 320/375 px and 1280 px, light and dark, with full-page and per-section screenshots. Checks: no horizontal overflow anywhere; table semantics survive the phone card layout; console clean apart from the expected 422 and 404.
+- **Bugs found in the browser and fixed:**
+  - Content Security Policy errors on every plan edit: htmx's settle step copies `style` attributes, and the strict CSP blocks that. Fixed by removing `style` from `attributesToSettle` in the htmx config, with a test; the error was traced with a `securitypolicyviolation` listener (`htmx.min.js:1:10457`).
+  - Controls outside `.field` (change request, vendor status, expense amount) were unstyled: white boxes in dark mode. All text controls now share one style.
+  - On phones, table captions collapsed into a narrow column and in-cell forms were cramped; alternatives kept indented bullets.
+  - Main actions looked identical to secondary ones; they now use `button-primary`.
+  - The create form listed every event type's functions; CSS `:has()` now shows only the chosen type's group, with no JavaScript.
+- **Self-corrections:** stopping the local server with `pkill -f` matched the shell's own command line and ended it; checks were rerun separately.

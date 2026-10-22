@@ -45,7 +45,9 @@ Every action must work **without JavaScript**.
 - htmx attributes (`hx-post`, `hx-target`, `hx-swap`) are added on top of a working form,
   never in place of one. No links or buttons that work only with JavaScript.
 - `<body hx-headers=...>` sends the CSRF token on htmx requests. Keep it on `<body>`.
-- The `htmx-config` meta tag in `base.html` makes 404, 409 and 422 swap like 200. Keep it.
+- The `htmx-config` meta tag in `base.html` makes 404, 409 and 422 swap like 200, turns off
+  htmx's inline indicator styles and leaves `style` out of `attributesToSettle`, so swaps never
+  trip the CSP. Keep all three settings.
 
 ## 3. Fixed ids and swap targets
 
@@ -151,6 +153,8 @@ These labels are an honesty rule (AGENTS.md): AI output is labelled, non-AI outp
 | `change-result`, `change-{kind}`, `proposal`, `proposal-actions`, `field-changes` | Change Manager |
 | `change-form`, `change-form-toggle`, `alternatives` | Fallback form and alternatives |
 | `history`, `history-status`, `event-list`, `event-header`, `preferences`, `lede`, `create-form`, `sub-events` | Other blocks |
+| `button-primary` | The main action of a form (create, preview, approve, add, personalize); one per form |
+| `sub-events[data-event-type]`, `sub-events-hint` | Function groups; CSS shows only the chosen event type's group |
 | `htmx-indicator` | Busy message, hidden until htmx adds `htmx-request` |
 | `sr-only`, `skip-link` | Accessibility utilities |
 
@@ -159,9 +163,12 @@ These labels are an honesty rule (AGENTS.md): AI output is labelled, non-AI outp
 | Test | Checks |
 |---|---|
 | `tests/integration/test_web_flows.py` | Every flow with and without htmx; label audit (labels, unique ids, named buttons, one `h1`) on every page and fragment |
-| `tests/integration/test_pages.py` | Landmarks, skip link, description, icon, no inline script or style |
+| `tests/integration/test_pages.py` | Landmarks, skip link, description, icon, no inline script or style, htmx config fits the CSP |
 | `tests/integration/test_security_headers.py` | CSP and other headers |
-| `tests/unit/test_stylesheet.py` | Busy indicator hidden by default, `.sr-only`, skip link, focus, reduced motion, dark theme |
+| `tests/unit/test_stylesheet.py` | WCAG contrast of every colour pair as used (4.5:1 text, 3:1 focus and borders) in both themes; busy indicator hidden by default; `.sr-only`, skip link, focus, reduced motion, dark theme |
 | `tests/unit/test_vendor.py` | htmx checksum |
 
-Planned: Playwright with axe in CI for real-browser checks (contrast, focus order, zoom).
+When a colour is used in a new combination, add the pair to `CONTRAST_PAIRS` in
+`tests/unit/test_stylesheet.py`.
+
+Planned: Playwright with axe in CI for real-browser checks (focus order, zoom, overflow).

@@ -23,6 +23,7 @@ dev = [
     "httpx2>=2.16.0",
     "hypothesis>=6.170.5",
     "mypy>=2.4.0",
+    "playwright>=1.64.0",
     "pre-commit>=4.7.0",
     "pytest>=9.1.1",
     "pytest-cov>=7.1.0",

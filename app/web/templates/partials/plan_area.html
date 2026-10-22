@@ -9,23 +9,10 @@
   <p>Your plan below is already complete. The AI is now tailoring it to your event; this can take up to 10 seconds.</p>
   <form method="post" action="/events/{{ event.id }}/personalize">
     {{ csrf(csrf_token) }}
-    <button type="submit">Personalize with AI</button>
+    <button type="submit" class="button-primary">Personalize with AI</button>
   </form>
 </section>
 {% endif %}
-
-<section id="ideas" aria-labelledby="ideas-heading">
-  <h2 id="ideas-heading">Ideas for your event</h2>
-  {% if ai and ai.fallback %}<p class="label-not-ai">Standard ideas (not AI-generated).</p>{% elif ai %}<p class="label-ai">Suggested by AI, each with a reason.</p>{% endif %}
-  {% if ideas %}
-  <ul class="ideas">
-    {% for idea in ideas %}
-    <li><h3>{{ idea.title }}</h3><p>{{ idea.description }}</p><p class="why">Why: {{ idea.why }}</p></li>
-    {% endfor %}
-  </ul>
-  {% elif not personalization_pending %}<p>No ideas yet.</p>{% endif %}
-  {% if ai %}{% include "partials/ai_panel.html" %}{% endif %}
-</section>
 
 <section id="budget" aria-labelledby="budget-heading">
   <h2 id="budget-heading">Budget</h2>
@@ -52,10 +39,10 @@
       {% for row in plan.categories %}
       <tr>
         <th scope="row">{{ row.name }}</th>
-        <td>{{ row.allocated }}</td>
-        <td>{{ row.spent }}</td>
-        <td>{{ row.remaining }}{% if row.overspent %} <span class="badge badge-error">over by {{ row.overspent }}</span>{% endif %}</td>
-        <td>
+        <td data-label="Planned">{{ row.allocated }}</td>
+        <td data-label="Spent">{{ row.spent }}</td>
+        <td data-label="Left">{{ row.remaining }}{% if row.overspent %} <span class="badge badge-error">over by {{ row.overspent }}</span>{% endif %}</td>
+        <td data-label="Protect">
           <form method="post" action="/events/{{ event.id }}/categories/{{ row.id }}/{{ 'unprotect' if row.protected else 'protect' }}"
                 hx-post="/events/{{ event.id }}/categories/{{ row.id }}/{{ 'unprotect' if row.protected else 'protect' }}" hx-target="#plan-area" hx-swap="outerHTML">
             {{ csrf(csrf_token) }}
@@ -68,6 +55,19 @@
   </table>
 </section>
 
+<section id="ideas" aria-labelledby="ideas-heading">
+  <h2 id="ideas-heading">Ideas for your event</h2>
+  {% if ai and ai.fallback %}<p class="label-not-ai">Standard ideas (not AI-generated).</p>{% elif ai %}<p class="label-ai">Suggested by AI, each with a reason.</p>{% endif %}
+  {% if ideas %}
+  <ul class="ideas">
+    {% for idea in ideas %}
+    <li><h3>{{ idea.title }}</h3><p>{{ idea.description }}</p><p class="why">Why: {{ idea.why }}</p></li>
+    {% endfor %}
+  </ul>
+  {% elif not personalization_pending %}<p>No ideas yet.</p>{% endif %}
+  {% if ai %}{% include "partials/ai_panel.html" %}{% endif %}
+</section>
+
 <section id="expenses" aria-labelledby="expenses-heading">
   <h2 id="expenses-heading">Expenses</h2>
   {% if plan.expenses %}
@@ -78,9 +78,9 @@
       {% for e in plan.expenses %}
       <tr>
         <th scope="row">{{ e.label }}{% if e.protected %} <span class="badge">protected</span>{% endif %}</th>
-        <td>{{ e.category }}</td>
-        <td>{{ e.amount }}</td>
-        <td class="actions">
+        <td data-label="Line">{{ e.category }}</td>
+        <td data-label="Amount">{{ e.amount }}</td>
+        <td data-label="Actions" class="actions">
           {% if not e.protected %}
           <form method="post" action="/events/{{ event.id }}/expenses/{{ e.id }}/update"
                 hx-post="/events/{{ event.id }}/expenses/{{ e.id }}/update" hx-target="#plan-area" hx-swap="outerHTML">
@@ -126,7 +126,7 @@
       <input type="checkbox" id="x-protected" name="protected" value="on"{% if expense_form.values.get('protected') %} checked{% endif %}>
       <label for="x-protected">Protect this expense (changes will keep it as it is)</label>
     </div>
-    <button type="submit">Add expense</button>
+    <button type="submit" class="button-primary">Add expense</button>
   </form>
 </section>
 
@@ -158,10 +158,10 @@
     <tbody>
       {% for v in plan.vendors %}
       <tr>
-        <td>{{ v.priority }}</td>
+        <td data-label="Priority">{{ v.priority }}</td>
         <th scope="row">{{ v.name }}{% if v.why %}<p class="why">Why: {{ v.why }}</p>{% endif %}</th>
-        <td>{{ v.book_by }}{% if v.urgent and v.status != 'booked' %} <span class="badge badge-warning">book now</span>{% endif %}</td>
-        <td>
+        <td data-label="Book by">{{ v.book_by }}{% if v.urgent and v.status != 'booked' %} <span class="badge badge-warning">book now</span>{% endif %}</td>
+        <td data-label="Status">
           <form method="post" action="/events/{{ event.id }}/vendors/{{ v.id }}/status"
                 hx-post="/events/{{ event.id }}/vendors/{{ v.id }}/status" hx-target="#plan-area" hx-swap="outerHTML">
             {{ csrf(csrf_token) }}
