@@ -58,7 +58,6 @@ from app.domain.models import (
     ExpenseRef,
     ExpenseSource,
     ShortText,
-    Slug,
     Task,
     TaskSource,
     VendorItem,
@@ -89,6 +88,7 @@ class ChangeKind(StrEnum):
     ADD_CATEGORY = "add_category"
 
 
+_PROTECTION_KINDS = frozenset({ChangeKind.PROTECT, ChangeKind.UNPROTECT})
 _FIELDS: Mapping[ChangeKind, tuple[frozenset[str], frozenset[str]]] = MappingProxyType(
     {
         # kind: (required fields, optional fields)
@@ -96,8 +96,8 @@ _FIELDS: Mapping[ChangeKind, tuple[frozenset[str], frozenset[str]]] = MappingPro
         ChangeKind.ADD_EXPENSE: (frozenset({"category_id", "label", "amount_inr"}), frozenset()),
         ChangeKind.UPDATE_EXPENSE: (frozenset({"expense_id", "amount_inr"}), frozenset()),
         ChangeKind.REMOVE_EXPENSE: (frozenset({"expense_id"}), frozenset()),
-        ChangeKind.PROTECT: (frozenset({"target_id"}), frozenset()),
-        ChangeKind.UNPROTECT: (frozenset({"target_id"}), frozenset()),
+        ChangeKind.PROTECT: (frozenset(), frozenset({"category_id", "expense_id"})),
+        ChangeKind.UNPROTECT: (frozenset(), frozenset({"category_id", "expense_id"})),
         ChangeKind.SET_GUEST_COUNT: (frozenset({"guest_count"}), frozenset()),
         ChangeKind.SHIFT_DATE_DAYS: (frozenset({"days"}), frozenset()),
         ChangeKind.SET_DATE: (frozenset({"new_date"}), frozenset()),
@@ -109,7 +109,6 @@ _OPTIONAL_FIELDS = (
     "amount_inr",
     "category_id",
     "expense_id",
-    "target_id",
     "label",
     "guest_count",
     "days",
@@ -128,15 +127,14 @@ class ChangeOperation(DomainModel):
     """One structured change. Only the fields its `kind` needs may be set.
 
     `days` means days to move the event for `shift_date_days` (negative is earlier) and days
-    before the event for `add_task` (negative is after it). `target_id` is a category or
-    expense id for `protect` and `unprotect`.
+    before the event for `add_task` (negative is after it). `protect` and `unprotect` take
+    exactly one of `category_id` or `expense_id`, the fields models naturally use for them.
     """
 
     kind: ChangeKind
     amount_inr: int | None = Field(default=None, ge=1, le=2 * MAX_BUDGET_INR)
     category_id: CategoryRef | None = None
     expense_id: ExpenseRef | None = None
-    target_id: Slug | None = None
     label: ShortText | None = None
     guest_count: int | None = Field(default=None, ge=1, le=MAX_GUESTS)
     days: int | None = Field(default=None, ge=-MAX_DAYS_AHEAD, le=MAX_DAYS_AHEAD)
@@ -160,6 +158,10 @@ class ChangeOperation(DomainModel):
         unexpected = sorted(present - required - optional)
         if unexpected:
             raise ValueError(f"{self.kind} does not use {', '.join(unexpected)}")
+        if self.kind in _PROTECTION_KINDS and (self.category_id is None) == (
+            self.expense_id is None
+        ):
+            raise ValueError(f"{self.kind} needs exactly one of category_id or expense_id")
         if self.kind is ChangeKind.SHIFT_DATE_DAYS and self.days == 0:
             raise ValueError("shift_date_days needs a non-zero number of days")
         if (
@@ -169,6 +171,11 @@ class ChangeOperation(DomainModel):
         ):
             raise ValueError(f"tasks can be at most {MAX_DAYS_AFTER} days after the event")
         return self
+
+    @property
+    def protection_target(self) -> str | None:
+        """The category or expense id a protect/unprotect operation refers to."""
+        return self.expense_id or self.category_id
 
 
 class ChangeSet(DomainModel):
@@ -191,8 +198,8 @@ class ChangeSet(DomainModel):
         for name, group in _SINGLETON_GROUPS.items():
             if sum(kinds[kind] for kind in group) > 1:
                 raise ValueError(f"conflicting operations: the {name} is set more than once")
-        protected = {op.target_id for op in self.operations if op.kind is ChangeKind.PROTECT}
-        unprotected = {op.target_id for op in self.operations if op.kind is ChangeKind.UNPROTECT}
+        protected = {op.protection_target for op in self.of_kind(ChangeKind.PROTECT)}
+        unprotected = {op.protection_target for op in self.of_kind(ChangeKind.UNPROTECT)}
         both = sorted(t for t in protected & unprotected if t is not None)
         if both:
             raise ValueError(f"conflicting operations: {both[0]} is protected and unprotected")
@@ -378,14 +385,12 @@ def _require[T](value: T | None) -> T:
 
 
 def _apply_protection(plan: EventPlan, change_set: ChangeSet) -> EventPlan:
-    expense_ids = {e.id for e in plan.expenses}
     for op in change_set.of_kind(ChangeKind.PROTECT, ChangeKind.UNPROTECT):
-        target_id = _require(op.target_id)
         protected = op.kind is ChangeKind.PROTECT
-        if target_id in expense_ids:
-            plan = set_expense_protection(plan, ExpenseId(target_id), protected=protected)
+        if op.expense_id is not None:
+            plan = set_expense_protection(plan, op.expense_id, protected=protected)
         else:
-            plan = set_category_protection(plan, CategoryId(target_id), protected=protected)
+            plan = set_category_protection(plan, _require(op.category_id), protected=protected)
     return plan
 
 

@@ -152,3 +152,18 @@ The prompts the app itself sends to the LLM live in `app/ai/prompts/`.
   - Over 5,000 random plans and requests (69 % feasible, 22 % shortfall), the saved plan was never modified, protected items never moved, totals were exact, and approving twice was refused.
 - **Bug caught by coverage:** after a guest decrease, categories held still (so the savings reach contingency) were treated as "scaled", so a booked decorator would have got a bogus headcount follow-up. Fixed by computing the scaled set before the holds. A regression test was confirmed to fail on the old code and pass on the fix.
 - **Next iteration:** the AI layer (CC-AI-01 to 04). `interpret_change` must produce exactly this `ChangeSet`.
+
+## 2026-10-22: AI layer, part 1 — real-API spike, client, fallback chain, cache (CC-AI-01, 04)
+- **Tool / model:** Claude Code (Claude Opus 5.5). The developer approved the AI-layer plan ("all recommended").
+- **Step 0, a spike with six real calls on the dev key:**
+  - Gemini 3.5 Flash-Lite returned schema-valid JSON in 1.9–2.6 s.
+  - Asking it for "low" thinking made it 3× slower (7.8 s) with the same answer, so thinking is left off.
+  - Groq `gpt-oss-120b` rejects strict JSON-schema mode unless every object sets `additionalProperties: false`. Non-strict schema mode works in 1.0–1.3 s.
+  - **Finding:** for "keep the cake", 3 of 5 answers put the id in `category_id` rather than the designed `target_id`. `protect`/`unprotect` now take `category_id` or `expense_id` (exactly one). Otherwise about 60 % of these requests would have needed a repair call.
+- **Outcome:**
+  - `Provider` protocol with typed errors. `AITask` bundles prompt, schema, plan checks and fallback. `Provenance` on every result.
+  - `FallbackChain`: cache first; per-call and total time limits; daily-quota cooldown until midnight Pacific, retry delay for per-minute limits, and a short cooldown after outages; one repair attempt that tells the model what was wrong; a labelled fallback when everything fails. Fallbacks are never cached as AI answers.
+  - `MemoryCache` with expiry and least-recently-used eviction, behind a `CacheStore` interface for Postgres later.
+  - 270 tests, 99.94 % branch coverage.
+- **Self-correction:** one chain test wrongly assumed a timeout benches a provider. It doesn't, by design (timeouts may be transient), so the test now asserts that the AI is retried.
+- **Next iteration:** Gemini and Groq adapters.

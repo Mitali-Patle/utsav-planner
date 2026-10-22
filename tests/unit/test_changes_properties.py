@@ -64,7 +64,9 @@ def requests(draw: st.DrawFn, plan: EventPlan) -> ChangeSet:
     candidates: list[ChangeOperation] = []
     if draw(st.booleans()):
         candidates.append(
-            ChangeOperation(kind=ChangeKind.PROTECT, target_id=draw(st.sampled_from(category_ids)))
+            ChangeOperation(
+                kind=ChangeKind.PROTECT, category_id=draw(st.sampled_from(category_ids))
+            )
         )
     if draw(st.booleans()):
         total = draw(st.integers(MIN_BUDGET_INR, 6_000_000))
@@ -119,7 +121,9 @@ def test_change_engine_guarantees(data: st.DataObject) -> None:
     event("feasible")
     after = proposal.after
     assert after is not None
-    newly_protected = {op.target_id for op in request.operations if op.kind is ChangeKind.PROTECT}
+    newly_protected = {
+        op.protection_target for op in request.operations if op.kind is ChangeKind.PROTECT
+    }
     for category in plan.categories:
         if category.protected or category.id in newly_protected:
             assert after.category(category.id).allocated_inr == category.allocated_inr

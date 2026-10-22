@@ -72,6 +72,8 @@ def birthday(days_ahead: int = 40, guests: int = 30) -> EventPlan:
         ({"kind": "add_task", "label": "Tidy up", "days": -31}, "at most 30 days after"),
         ({"kind": "set_guest_count", "guest_count": 0}, "greater than or equal to 1"),
         ({"kind": "fly_to_moon"}, "kind"),
+        ({"kind": "protect"}, "exactly one of category_id or expense_id"),
+        ({"kind": "protect", "category_id": "cake", "expense_id": "exp-1"}, "exactly one"),
     ],
 )
 def test_operation_fields_are_checked_per_kind(fields: dict[str, Any], message: str) -> None:
@@ -97,11 +99,14 @@ def test_operation_fields_are_checked_per_kind(fields: dict[str, Any], message: 
             "event date is set more than once",
         ),
         (
-            [op(ChangeKind.PROTECT, target_id="cake"), op(ChangeKind.UNPROTECT, target_id="cake")],
+            [
+                op(ChangeKind.PROTECT, category_id="cake"),
+                op(ChangeKind.UNPROTECT, category_id="cake"),
+            ],
             "protected and unprotected",
         ),
         ([], "at least 1"),
-        ([op(ChangeKind.PROTECT, target_id="cake")] * 6, "at most 5"),
+        ([op(ChangeKind.PROTECT, category_id="cake")] * 6, "at most 5"),
     ],
 )
 def test_conflicting_or_oversized_change_sets_are_rejected(
@@ -120,7 +125,7 @@ def test_budget_drop_keeping_the_cake() -> None:
     proposal = propose(
         plan,
         changes(
-            op(ChangeKind.PROTECT, target_id="cake"),
+            op(ChangeKind.PROTECT, category_id="cake"),
             op(ChangeKind.SET_TOTAL_BUDGET, amount_inr=12_000),
         ),
         TODAY,
@@ -250,7 +255,7 @@ def test_cut_decoration_first_keeping_the_cake() -> None:
     proposal = propose(
         plan,
         changes(
-            op(ChangeKind.PROTECT, target_id="cake"),
+            op(ChangeKind.PROTECT, category_id="cake"),
             op(ChangeKind.SET_TOTAL_BUDGET, amount_inr=13_000),
             cut_priority=("decor",),
         ),
@@ -357,8 +362,8 @@ def test_protect_and_unprotect_resolve_expenses_and_categories() -> None:
         propose(
             plan,
             changes(
-                op(ChangeKind.PROTECT, target_id="exp-1"),
-                op(ChangeKind.UNPROTECT, target_id="decor"),
+                op(ChangeKind.PROTECT, expense_id="exp-1"),
+                op(ChangeKind.UNPROTECT, category_id="decor"),
             ),
             TODAY,
         )
@@ -366,7 +371,7 @@ def test_protect_and_unprotect_resolve_expenses_and_categories() -> None:
     assert after.expenses[0].protected
     assert not next(c for c in after.categories if c.id == "decor").protected
     with pytest.raises(NotFoundError):
-        propose(plan, changes(op(ChangeKind.PROTECT, target_id="fireworks")), TODAY)
+        propose(plan, changes(op(ChangeKind.PROTECT, category_id="fireworks")), TODAY)
 
 
 def test_add_task_with_deadline_and_duplicate_check() -> None:
