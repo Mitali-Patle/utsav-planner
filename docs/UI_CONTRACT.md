@@ -167,8 +167,9 @@ These labels are an honesty rule (AGENTS.md): AI output is labelled, non-AI outp
 | `tests/integration/test_security_headers.py` | CSP and other headers |
 | `tests/unit/test_stylesheet.py` | WCAG contrast of every colour pair as used (4.5:1 text, 3:1 focus and borders) in both themes; busy indicator hidden by default; `.sr-only`, skip link, focus, reduced motion, dark theme |
 | `tests/unit/test_vendor.py` | htmx checksum |
+| `tests/e2e/` (`pytest -m e2e`) | Real Chromium: journeys with and without JavaScript; axe WCAG 2.2 A/AA on six page states in light and dark at 375 and 1280 px; no horizontal scrolling at 320 px; skip link; a clean console with no CSP violations |
 
 When a colour is used in a new combination, add the pair to `CONTRAST_PAIRS` in
 `tests/unit/test_stylesheet.py`.
 
-Planned: Playwright with axe in CI for real-browser checks (focus order, zoom, overflow).
+CI (`.github/workflows/ci.yml`) runs all of these on every push to `main`.

@@ -72,7 +72,7 @@ These are also available as `/plan`, `/handoff`, `/review` and `/ship-check` in 
 5. Do not edit files until the developer approves.
 
 ### handoff
-1. Run `uv run ruff check .`, `uv run ruff format --check .`, `uv run mypy app tests` and `uv run pytest -W error --cov=app`. Report the real results.
+1. Run `uv run ruff check .`, `uv run ruff format --check .`, `uv run mypy app tests` and `uv run pytest -W error --cov=app`. For template, CSS or web changes also run `uv run pytest -W error -m e2e` (browser and axe tests). Report the real results.
 2. Append the session's key prompts to `PROMPTS.md`: date, tool, model, prompt (short), outcome, what changed in the next iteration.
 3. If the change is user-visible, add it to `CHANGELOG.md` under "Unreleased".
 4. Stage explicit paths and commit. The body has four parts:

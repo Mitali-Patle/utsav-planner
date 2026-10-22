@@ -328,3 +328,13 @@ The prompts the app itself sends to the LLM live in `app/ai/prompts/`.
   - Main actions looked identical to secondary ones; they now use `button-primary`.
   - The create form listed every event type's functions; CSS `:has()` now shows only the chosen type's group, with no JavaScript.
 - **Self-corrections:** stopping the local server with `pkill -f` matched the shell's own command line and ended it; checks were rerun separately.
+
+## 2026-10-22: CI and real-browser tests
+- **Tool / model:** Claude Code (Claude Opus 5.5).
+- **Prompt (short):** plan approved — GitHub Actions on every push (pre-commit hooks, tests with the coverage gate, Playwright + axe browser tests, full-history secret scan, dependency audit, size budget); browser tests run the app with a task-aware fake AI and a temporary SQLite file.
+- **Outcome:**
+  - `.github/workflows/ci.yml`: three parallel jobs, read-only token, actions pinned to commit SHAs, per-job timeouts, a weekly scheduled run for newly published vulnerabilities. gitleaks runs as the release binary with a checksum instead of a third-party action, and scans the whole history (26 commits, no leaks locally). pip-audit found no known vulnerabilities.
+  - `tests/e2e/`: four journeys (including the whole flow with JavaScript turned off) and accessibility checks — 24 axe scans, 320 px overflow, skip link, console. 36 tests, about 75 s. `TaskAwareProvider` in `tests/fakes.py` answers by task, so the live server can take requests in any order.
+  - axe is read from the `axe-playwright-python` package (axe 4.12.1); its untyped wrapper is not used. Vendoring axe was ruled out because the file is 652 KB, over the 500 KB limit.
+- **Bug found by axe:** the JSON panels in "How this was generated" scrolled but could not get keyboard focus (`scrollable-region-focusable`). They are now focusable named regions.
+- **Self-corrections:** the first version of the tests passed with two of today's bugs put back. axe only scanned desktop width, where the faint orange never appears as normal text, and skipped collapsed panels; it now also scans at 375 px with every `<details>` opened, and was shown to fail on the old colour. The console test was shown to catch an injected inline style. The htmx settle bug itself could not be reproduced without screenshot tooling, so the htmx-config integration test remains its guard. The rate-limit setting in the e2e server first exceeded the settings' maximum (1,000).

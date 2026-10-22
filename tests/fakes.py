@@ -1,8 +1,10 @@
 """Test doubles for injected dependencies."""
 
-from collections.abc import Sequence
+from collections.abc import Callable, Mapping, Sequence
 from dataclasses import dataclass
 from datetime import date
+
+from pydantic import BaseModel
 
 from app.ai.client import LLMRequest
 
@@ -64,3 +66,25 @@ class ScriptedProvider:
         if isinstance(outcome, Exception):
             raise outcome
         return outcome
+
+
+class TaskAwareProvider:
+    """An LLM provider that answers by task, for long-running browser tests.
+
+    Each answer is built from the last message sent (the task's JSON payload), so one
+    provider can serve any number of requests in any order.
+    """
+
+    def __init__(
+        self, name: str, answers: Mapping[type[BaseModel], Callable[[str], BaseModel]]
+    ) -> None:
+        self._name = name
+        self._answers = answers
+
+    @property
+    def name(self) -> str:
+        return self._name
+
+    def generate(self, request: LLMRequest) -> str:
+        answer = self._answers[request.schema]
+        return answer(request.messages[-1][1]).model_dump_json()

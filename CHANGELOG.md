@@ -34,3 +34,4 @@ All notable changes to Utsav Planner will be documented in this file.
 - Links and phone-layout labels now meet 4.5:1 contrast in the light theme.
 - Swapping parts of the page no longer logs Content Security Policy errors in the browser console.
 - Form controls outside the main forms (vendor status, expense amounts, the change request) are styled and readable in dark mode.
+- The data panels in "How this was generated" can be scrolled with the keyboard.

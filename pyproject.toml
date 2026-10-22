@@ -20,6 +20,7 @@ dependencies = [
 
 [dependency-groups]
 dev = [
+    "axe-playwright-python>=0.1.8",
     "httpx2>=2.16.0",
     "hypothesis>=6.170.5",
     "mypy>=2.4.0",
@@ -73,7 +74,9 @@ plugins = ["pydantic.mypy"]
 [tool.pytest.ini_options]
 testpaths = ["tests", "app/domain", "app/ai"]
 pythonpath = ["."]
-addopts = "-q --strict-markers --doctest-modules"
+# Browser tests are slower and need Playwright's Chromium: run them with `pytest -m e2e`.
+addopts = '-q --strict-markers --doctest-modules -m "not e2e"'
+markers = ["e2e: real-browser tests against a live app (Playwright)"]
 
 [tool.coverage.run]
 branch = true
