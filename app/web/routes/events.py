@@ -130,7 +130,8 @@ def personalize(
         f"/events/{event_id}",
         notice,
         "partials/plan_area.html",
-        dashboard_context(stored, [], today),
+        # The AI answer arrives seconds after the page; keep anything typed meanwhile.
+        {**dashboard_context(stored, [], today), "keep_typed_input": True},
     )
 
 

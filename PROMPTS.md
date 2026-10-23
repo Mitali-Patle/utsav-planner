@@ -454,3 +454,9 @@ The prompts the app itself sends to the LLM live in `app/ai/prompts/`.
 - **Gemini 3.5, `interpret-change-v4`:** 36/36 answered change requests (2 still unanswered), median 1.4 s, compared with 28/31 on v1. The worked example fixed its missing amounts on add-expense, update-expense and add-line.
 - **Gemini 3.1, first usable run:** change requests 30/34, personalization 12/12, alternatives 6/6. Its four failures are all one cause, confirmed with a diagnostic call: it leaves out `amount_inr` on add_category, add_expense and update_expense even with the examples and the repair message. It is third in the chain, and a rejected repair falls back honestly, so this is recorded as a known limitation rather than worked around by parsing numbers from user text.
 - The README eval table now covers all three models.
+
+## 2026-10-23 (midday): Typing survives the personalization swap
+- **Tool / model:** Claude Code (Claude Opus 5.5).
+- **Problem:** a new plan is shown at once and the AI ideas replace the plan area a few seconds later, which cleared anything typed into the add-expense form meanwhile.
+- **Fix:** only the personalization response marks the add-expense form `hx-preserve`, so htmx keeps the user's form (and focus) while the rest of the plan updates. Later edits still reset the form after a successful add. Chosen over per-section out-of-band swaps because it is one attribute and needs no template restructure.
+- **Test:** a browser test holds the personalization request, types an expense, releases it and checks the values and focus survive. Without the attribute it fails with an empty field.

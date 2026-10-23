@@ -61,6 +61,7 @@ Every action must work **without JavaScript**.
 | `change-result-heading` | `change_result.html` | Heading of the answer; `tabindex="-1"` and `autofocus`, so htmx moves focus to it |
 | `change-busy` | `dashboard.html` | `hx-indicator` of the change request form |
 | `plan-alternatives` | `plan_area.html` | Target for alternatives when the plan is over budget |
+| `add-expense-form` | `plan_area.html` | Carries `hx-preserve` when `keep_typed_input` is true, so the personalization swap keeps what the user typed |
 | `retry-personalize` | `plan_area.html` | Asks the AI again when the ideas are standard ones |
 | `{panel}-sent`, `{panel}-answer` | `ai_panel.html` | Headings naming the panel's data regions; `{panel}` is `plan-ai`, `change-ai` or `alternatives-ai`, so several panels can share a page |
 | `protect-line-{id}`, `protect-expense-{id}`, `update-{id}`, `task-{id}`, `save-{id}`, `add-expense`, `suggest-savings` | `plan_area.html` | Stable button ids: htmx returns keyboard focus to the same button after the plan area is swapped |
@@ -95,6 +96,7 @@ strings such as `2 Dec 2026`. Templates never compute; ask for a new field inste
 - `personalization_pending`: `True` until the first personalization
 - `history`: `{request, status, created}`; `status` is `approved` or `rejected`
 - `expense_form`, `categories_for_select`
+- `keep_typed_input`: `True` only in the personalization response, which arrives seconds after the page
 - `notice` (only in htmx responses): `{message, kind}`, swapped out of band into `#status-region`
 - `change_result`, `alternatives`: `None` unless the no-JavaScript path shows an answer
 

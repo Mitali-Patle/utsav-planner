@@ -1,7 +1,7 @@
 """User journeys in a real browser, with and without JavaScript."""
 
 import pytest
-from playwright.sync_api import Page, expect
+from playwright.sync_api import Page, Route, expect
 
 from tests.e2e.helpers import VAGUE, NewPage, create_event
 
@@ -28,6 +28,30 @@ def test_plan_personalize_change_and_approve(page: Page) -> None:
     expect(page.locator("#status-region")).to_contain_text("Your plan is now version 3")
     expect(page.locator(".event-header")).to_contain_text("50 guests")
     expect(page.locator("#history")).to_contain_text("Approved")
+
+
+def test_typing_survives_the_personalization_swap(page: Page) -> None:
+    held: list[Route] = []
+
+    def hold(route: Route) -> None:
+        held.append(route)
+
+    page.route("**/personalize", hold)
+    create_event(page)
+    page.locator("#x-label").fill("Return gifts")
+    page.locator("#x-amount_inr").fill("2500")
+    assert held, "the personalization request should still be waiting"
+    held[0].continue_()
+
+    expect(page.locator("#status-region")).to_contain_text("personalized")
+    expect(page.get_by_role("heading", name="Rocket launch corner")).to_be_visible()
+    expect(page.locator("#x-label")).to_have_value("Return gifts")
+    expect(page.locator("#x-amount_inr")).to_have_value("2500")
+    expect(page.locator("#x-amount_inr")).to_be_focused()
+
+    page.get_by_role("button", name="Add expense").click()
+    expect(page.locator("#expenses")).to_contain_text("Return gifts")
+    expect(page.locator("#x-label")).to_have_value("")
 
 
 def test_every_step_works_without_javascript(new_page: NewPage) -> None:

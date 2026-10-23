@@ -219,6 +219,8 @@ def test_personalization_fragment_with_status_notice(engine: Engine) -> None:
     assert "Rocket launch corner" in fragment.text
     assert 'hx-swap-oob="innerHTML"' in fragment.text
     assert "How this was generated" in fragment.text
+    assert "hx-preserve" in fragment.text
+    assert "hx-preserve" not in client.get(url).text
     assert_accessible(fragment.text, page=False)
 
 

@@ -174,6 +174,7 @@ def dashboard_context(
         "personalization_pending": stored.ai is None,
         "history": [history_row(p) for p in history],
         "expense_form": expense_form or FormState(),
+        "keep_typed_input": False,
         "categories_for_select": [(c.id, c.name) for c in plan.categories],
         "change_result": None,
         "alternatives": None,

@@ -118,7 +118,7 @@
   <h3 id="add-expense-heading">Add an expense</h3>
   {% if expense_form.errors %}<p class="notice notice-error" role="alert">Please check the highlighted fields.</p>{% endif %}
   <form method="post" action="/events/{{ event.id }}/expenses" aria-labelledby="add-expense-heading" novalidate
-        hx-post="/events/{{ event.id }}/expenses" hx-target="#plan-area" hx-swap="outerHTML">
+        id="add-expense-form"{% if keep_typed_input %} hx-preserve{% endif %} hx-post="/events/{{ event.id }}/expenses" hx-target="#plan-area" hx-swap="outerHTML">
     {{ csrf(csrf_token) }}
     <div class="field{{ ' field-invalid' if expense_form.errors.get('category_id') else '' }}">
       <label for="x-category_id">Budget line</label>

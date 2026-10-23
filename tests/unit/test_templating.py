@@ -1,15 +1,17 @@
 """Template environment safety settings."""
 
-from datetime import UTC, datetime
+from datetime import UTC, date, datetime
 from types import SimpleNamespace
 from typing import Any, cast
 
 import pytest
 from jinja2 import UndefinedError
 
+from app.domain.changes import ChangeKind, ChangeSet, propose
 from app.persistence.repositories import ProposalStatus
 from app.web.templating import environment
-from app.web.views import history_row
+from app.web.views import change_summary, history_row
+from tests.factories import make_plan
 
 
 def test_autoescape_escapes_html() -> None:
@@ -33,3 +35,21 @@ def test_history_dates_are_shown_in_india() -> None:
         ),
     )
     assert history_row(cast(Any, late))["created"] == "23 Oct 2026"
+
+
+def test_history_summary_names_expenses_and_counts_new_tasks() -> None:
+    changes = ChangeSet.model_validate(
+        {
+            "operations": [
+                {
+                    "kind": ChangeKind.ADD_EXPENSE,
+                    "category_id": "cake",
+                    "label": "Cake order",
+                    "amount_inr": 1_000,
+                },
+                {"kind": ChangeKind.ADD_TASK, "label": "Book a magician", "days": 10},
+            ]
+        }
+    )
+    proposal = propose(make_plan(), changes, date(2026, 10, 22))
+    assert change_summary(proposal) == ["Expense Cake order: added", "1 new task"]

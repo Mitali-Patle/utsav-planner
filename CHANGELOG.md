@@ -23,6 +23,9 @@ All notable changes to Utsav Planner will be documented in this file.
 ### Changed
 - The change history shows what each change did (for example "Total budget ₹15,000 → ₹12,000", "3 budget lines changed").
 - Pages load with less database work (one transaction for the dashboard, three for a change request).
+
+### Fixed
+- Text typed into the add-expense form while the AI is still personalizing a new plan is no longer cleared when the ideas arrive.
 - New plans are limited per connection per hour, and a plan holds at most 200 expenses and 200 tasks.
 - Set one budget line's planned amount, in plain words ("put ₹10,000 into decorations") or with the change form; the other lines are rebalanced and the total stays exact.
 - Upgraded vendored htmx to official unmodified `htmx.org@2.0.11` without added headers (`public/static/vendor/htmx.min.js`).
