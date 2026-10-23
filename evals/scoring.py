@@ -37,6 +37,12 @@ _NEGATION_BEFORE = re.compile(
 # Any dash: models often write "alcohol-free" with U+2010 or a non-breaking hyphen.
 _NEGATION_AFTER = re.compile(r"^[\s\-\u2010-\u2015]?free\b", re.IGNORECASE)
 _CLAUSE_END = re.compile(r"[.;!?:]")
+COMPARES = re.compile(
+    r"\b(previous|(listed|suggested|mentioned) (before|earlier)|already suggested|"
+    r"differs? from|different from|unlike the|beyond (a|the) simple)\b",
+    re.IGNORECASE,
+)
+"""Phrases of a reason that compares with ideas the user no longer sees (live, 24 Oct)."""
 
 
 @dataclass(frozen=True)
@@ -255,6 +261,8 @@ def score_personalize(case: PersonalizeCase, value: PlanSuggestions, system: str
         for old in case.previous_ideas
         if any(_same_idea(old, idea.title) for idea in value.ideas)
     ]
+    if case.previous_ideas and any(COMPARES.search(idea.why) for idea in value.ideas):
+        problems.append("a reason compares with the previous ideas instead of the event")
     return Verdict(not problems, tuple(problems), {"ideas": float(len(value.ideas))})
 
 

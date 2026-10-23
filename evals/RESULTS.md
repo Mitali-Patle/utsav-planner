@@ -22,10 +22,10 @@ developer's machine in India.
 | groq:openai/gpt-oss-120b | personalize | 2026-10-22T18:45 | personalize-v1 | 12/12 (100%) | 12/12 (100%) | 0 | 3.3 s | 4.0 s |
 | groq:openai/gpt-oss-120b | alternatives | 2026-10-22T18:45 | alternatives-v2 | 3/6 (50%) | 6/6 (100%) | 0 | 1.7 s | 2.0 s |
 | gemini:gemini-3.5-flash-lite | change | 2026-10-23T07:55 | interpret-change-v6 | 35/36 (97%) | 36/36 (100%) | 2 | 1.9 s | 9.1 s |
-| gemini:gemini-3.5-flash-lite | personalize | 2026-10-23T19:36 | personalize-v2 | 16/16 (100%) | 16/16 (100%) | 0 | 3.1 s | 3.8 s |
+| gemini:gemini-3.5-flash-lite | personalize | 2026-10-23T19:46 | personalize-v3 | 15/16 (94%) | 16/16 (100%) | 0 | 2.9 s | 3.7 s |
 | gemini:gemini-3.5-flash-lite | alternatives | 2026-10-23T19:02 | alternatives-v5 | 6/6 (100%) | 6/6 (100%) | 0 | 1.6 s | 1.9 s |
 | gemini:gemini-3.1-flash-lite | change | 2026-10-23T08:00 | interpret-change-v6 | 33/33 (100%) | 33/33 (100%) | 5 | 2.1 s | 9.4 s |
-| gemini:gemini-3.1-flash-lite | personalize | 2026-10-23T19:38 | personalize-v2 | 16/16 (100%) | 16/16 (100%) | 0 | 3.4 s | 5.2 s |
+| gemini:gemini-3.1-flash-lite | personalize | 2026-10-23T19:49 | personalize-v3 | 16/16 (100%) | 16/16 (100%) | 0 | 4.1 s | 9.3 s |
 | gemini:gemini-3.1-flash-lite | alternatives | 2026-10-23T19:03 | alternatives-v5 | 6/6 (100%) | 6/6 (100%) | 0 | 5.8 s | 9.0 s |
 
 ## Failures
@@ -48,9 +48,9 @@ developer's machine in India.
 
 - `b-budget-set`: total_budget_inr became 500003, expected 50000
 
-### gemini:gemini-3.5-flash-lite, personalize (personalize-v2)
+### gemini:gemini-3.5-flash-lite, personalize (personalize-v3)
 
-- None.
+- `w-punjabi`: only 1 ideas
 
 ### gemini:gemini-3.5-flash-lite, alternatives (alternatives-v5)
 
@@ -60,7 +60,7 @@ developer's machine in India.
 
 - None.
 
-### gemini:gemini-3.1-flash-lite, personalize (personalize-v2)
+### gemini:gemini-3.1-flash-lite, personalize (personalize-v3)
 
 - None.
 
@@ -95,3 +95,5 @@ alternatives, in that order.
 | 2026-10-23T19:03 | gemini:gemini-3.1-flash-lite | v1, v6, v5 | 0/0 | 0/0 | 6/6 | 0 |
 | 2026-10-23T19:36 | gemini:gemini-3.5-flash-lite | v2, v6, v5 | 0/0 | 16/16 | 0/0 | 0 |
 | 2026-10-23T19:38 | gemini:gemini-3.1-flash-lite | v2, v6, v5 | 0/0 | 16/16 | 0/0 | 0 |
+| 2026-10-23T19:46 | gemini:gemini-3.5-flash-lite | v3, v6, v5 | 0/0 | 15/16 | 0/0 | 0 |
+| 2026-10-23T19:49 | gemini:gemini-3.1-flash-lite | v3, v6, v5 | 0/0 | 16/16 | 0/0 | 0 |

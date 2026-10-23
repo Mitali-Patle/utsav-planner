@@ -245,6 +245,15 @@ def test_different_ideas_must_not_repeat_the_previous_ones() -> None:
     )
 
 
+def test_different_ideas_must_explain_the_event_not_the_old_ideas() -> None:
+    """Live answers said "not listed before" and "differs from excavation sandbox" (24 Oct)."""
+    answer = ideas("Treasure hunt through the jungle", "Animal sound quiz", "Tiger cupcakes")
+    answer.ideas[0].why = "Differs from the excavation sandbox."
+    verdict = score_personalize(PERSONALIZE["b-jungle-again"], answer, SYSTEM)
+    assert verdict.reasons == ("a reason compares with the previous ideas instead of the event",)
+    assert score_personalize(PERSONALIZE["b-jungle"], answer, SYSTEM).passed
+
+
 def test_off_topic_passes_only_for_an_injection() -> None:
     declined = ideas(off_topic=True)
     assert not score_personalize(PERSONALIZE["b-jungle"], declined, SYSTEM).passed

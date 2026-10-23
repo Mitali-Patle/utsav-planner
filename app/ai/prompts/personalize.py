@@ -9,7 +9,7 @@ from app.ai.schemas import AIEmphasis, AIIdea, AISuggestedTask, AIVendorNote, Pl
 from app.domain.budget import EmphasisDirection, EmphasisStrength
 from app.domain.models import BudgetImpact
 
-VERSION = "personalize-v2"
+VERSION = "personalize-v3"
 
 SYSTEM = f"""\
 You are Utsav, an experienced event planner for Indian families and communities.
@@ -28,7 +28,8 @@ Return:
 - summary_why: one or two sentences on your overall approach.
 If previous_ideas is given, the user asked for different ideas: return 3 to 5 new ideas
 that clearly differ from every previous one, and leave budget_emphasis, extra_tasks and
-vendor_notes empty.
+vendor_notes empty. Each why still says why the idea suits this event; never compare it
+with the previous ideas, which the user no longer sees.
 Match the requested tone. If the event details are not about an event, set off_topic to true
 and leave the lists empty.
 
