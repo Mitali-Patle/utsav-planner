@@ -82,7 +82,7 @@ in Chromium (`pytest -m e2e`); evals run the real models (`evals/`).
 | # | Scenario | Expected | Tests | Status |
 |---|---|---|---|---|
 | 1 | Add an expense within budget | Totals and remaining balance are correct | `test_budget.py`; `test_web_flows.py::test_add_expense_with_and_without_javascript` | ✅ |
-| 2 | Add an expense that exceeds the budget | Shortfall shown, alternatives available | `test_budget.py`; `test_web_flows.py::test_over_budget_dashboard_offers_alternatives`; e2e `test_over_budget_shows_the_gap_and_priced_alternatives`; 6 alternatives evals | ✅ |
+| 2 | Add an expense that exceeds the budget | Shortfall shown, alternatives available | `test_budget.py`; `test_web_flows.py::test_over_budget_dashboard_offers_alternatives`; e2e `test_over_budget_shows_the_gap_and_priced_alternatives` (applies an option and approves it); `test_web_flows.py::test_an_alternative_is_previewed_then_approved`; 6 alternatives evals | ✅ |
 | 3 | Reduce the budget while protecting the cake | Cake unchanged; sum equals the new total | `test_budget.py`, `test_changes.py`, property tests; evals `b-multi`, `w-cut-keep-two` | ✅ |
 | 4 | Increase the guest count | Guest-scaled categories scaled and flagged | `test_changes.py`; e2e `test_plan_personalize_change_and_approve`; guest evals | ✅ |
 | 5 | Move the event date | Deadlines recalculated; compression flagged | `test_timeline_vendors.py`, `test_changes.py`; `test_web_flows.py::test_date_change_preview_shows_moved_deadlines`; date evals | ✅ |

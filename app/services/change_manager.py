@@ -16,14 +16,17 @@ from app.ai.contexts import ChangeContext
 from app.ai.guardrails import MAX_REQUEST_CHARS, clean_user_text, intent_to_change_set
 from app.ai.schemas import IntentStatus
 from app.ai.tasks import INTERPRET_CHANGE
-from app.domain.changes import ChangeSet, Proposal, accept, propose
+from app.domain.budget import SavingAction, SavingLevel
+from app.domain.changes import ChangeSet, Proposal, accept, propose, saving_change
 from app.domain.clock import Clock
 from app.domain.errors import (
+    DomainError,
     InfeasibleChangeError,
     InvalidInputError,
     NotFoundError,
     StaleProposalError,
 )
+from app.domain.models import CategoryId
 from app.persistence.repositories import (
     Database,
     ProposalStatus,
@@ -40,6 +43,10 @@ DECIDED_ELSEWHERE = "This change was decided in another tab. Reload to see the l
 OFF_TOPIC_MESSAGE = "I can only help with changes to this event plan."
 EMPTY_REQUEST_MESSAGE = "Please describe the change you want to make."
 NOTHING_TO_CHANGE_MESSAGE = "That is already in your plan, so there is nothing to change."
+NOTHING_TO_FREE_MESSAGE = (
+    "There is nothing left to save on this budget line: it is protected or its money is "
+    "already spent."
+)
 
 
 class OutcomeKind(StrEnum):
@@ -155,6 +162,33 @@ class ChangeManager:
         """
         stored = self._load(session_id, event_id)
         return self._propose(stored, summary, change_set, {"source": "form"}, None)
+
+    def propose_saving(
+        self,
+        session_id: str,
+        event_id: str,
+        category_id: str,
+        action: SavingAction,
+        level: SavingLevel,
+    ) -> ChangeOutcome:
+        """Turn a suggested alternative into a proposal, without AI.
+
+        The amount is recomputed from the saved plan, so the client only names the option.
+
+        Raises:
+            NotFoundError: If the event does not exist or belongs to another session.
+        """
+        stored = self._load(session_id, event_id)
+        try:
+            category = stored.plan.category(CategoryId(category_id))
+            change_set = saving_change(stored.plan, category.id, action, level)
+        except DomainError as error:
+            return ChangeOutcome(OutcomeKind.INVALID, error.message, event=stored)
+        if change_set is None:
+            return ChangeOutcome(OutcomeKind.INVALID, NOTHING_TO_FREE_MESSAGE, event=stored)
+        how = "remove it" if action is SavingAction.REMOVE else f"{action.value} ({level.value})"
+        summary = f"Save on {category.name}: {how}"
+        return self._propose(stored, summary, change_set, {"source": "alternative"}, None)
 
     def approve(self, session_id: str, event_id: str, proposal_id: str) -> ApprovalOutcome:
         """Apply a pending proposal: new plan version and approved status, in one transaction.

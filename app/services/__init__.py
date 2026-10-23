@@ -48,5 +48,5 @@ def build_services(
         planning=PlanningService(db, chain, clock),
         changes=ChangeManager(db, chain, clock),
         edits=PlanEditor(db),
-        alternatives=AlternativesService(db, chain),
+        alternatives=AlternativesService(db, chain, clock),
     )

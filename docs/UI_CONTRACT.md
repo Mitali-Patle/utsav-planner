@@ -31,6 +31,7 @@ After any template or CSS change, run `uv run pytest -W error`. The tests in
 | `POST /events/{id}/proposals/{pid}/approve` | 303 to the dashboard; 409 or 422 with the reason | `HX-Redirect` to the dashboard; 409 or 422 with `change_result.html` |
 | `POST /events/{id}/proposals/{pid}/reject` | 303 to the dashboard | `HX-Redirect` to the dashboard |
 | `POST /events/{id}/alternatives` | `dashboard.html` with alternatives for the plan's shortfall | `partials/alternatives.html` |
+| `POST /events/{id}/alternatives/apply` (fields `category_id`, `action`, `level`) | `dashboard.html` with the preview in place | `partials/change_result.html` into `#change-result` |
 
 Not-found and domain errors (404, 422) render `error.html`; for htmx requests the server
 sends `partials/notice.html` with `HX-Retarget: #status-region`. A missing CSRF token (403)
@@ -113,7 +114,9 @@ new_tasks, skipped, protected_kept, protected_lines, summary_before, summary_aft
 
 ### `partials/alternatives.html` (variable `alts`)
 `{event_id, shortfall, summary, ai_note, ai, options}`; each option is
-`{category, title, why, action, level, saving, shortfall_after}`.
+`{category_id, category, title, why, action, level, applicable, saving, shortfall_after}`.
+`saving` and `shortfall_after` come from the preview that applying the option creates; only
+`applicable` options get the "Preview this change" form (button id `apply-option-{n}`).
 
 ## 5. Accessibility rules
 

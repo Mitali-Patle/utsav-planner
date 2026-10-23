@@ -6,7 +6,7 @@ from typing import Any
 import pytest
 from pydantic import ValidationError
 
-from app.domain.budget import ChangeReason
+from app.domain.budget import ChangeReason, SavingAction, SavingLevel, summarize
 from app.domain.changes import (
     ChangeKind,
     ChangeOperation,
@@ -16,6 +16,7 @@ from app.domain.changes import (
     SkipReason,
     accept,
     propose,
+    saving_change,
 )
 from app.domain.errors import (
     InfeasibleChangeError,
@@ -564,3 +565,77 @@ def test_a_plan_has_a_bounded_number_of_tasks(monkeypatch: pytest.MonkeyPatch) -
     with pytest.raises(InvalidInputError) as error:
         propose(make_plan(), changes(op(ChangeKind.ADD_TASK, label="Buy candles", days=3)), TODAY)
     assert error.value.code == "too_many_tasks"
+
+
+# Freed money and alternatives (F13)
+
+CATERING_OVER = make_plan(expenses=(("catering", "Caterer advance", 7_000, False),))
+"""Catering is planned at ₹5,000 but ₹7,000 is spent: ₹2,000 short."""
+
+
+def test_extra_money_covers_overspent_lines_first() -> None:
+    assert summarize(CATERING_OVER).shortfall_inr == 2_000
+    after = after_of(
+        propose(CATERING_OVER, changes(op(ChangeKind.ADJUST_TOTAL_BUDGET, delta=1_000)), TODAY)
+    )
+    assert [allocation(after, c) for c in ("catering", "decor", "cake", "other")] == [
+        6_000,
+        3_000,
+        2_000,
+        5_000,
+    ]
+    assert summarize(after).shortfall_inr == 1_000
+
+
+def test_a_saving_moves_money_to_the_overspent_line() -> None:
+    change_set = saving_change(
+        CATERING_OVER, CategoryId("decor"), SavingAction.REDUCE, SavingLevel.LARGE
+    )
+    assert change_set is not None
+    after = after_of(propose(CATERING_OVER, change_set, TODAY))
+    assert (allocation(after, "decor"), allocation(after, "catering")) == (1_500, 6_500)
+    assert summarize(after).shortfall_inr == 500
+
+
+def test_a_saving_larger_than_the_gap_shares_the_rest() -> None:
+    """₹3,000 freed: ₹2,000 covers catering, ₹1,000 is shared in proportion to the plan."""
+    change_set = saving_change(
+        CATERING_OVER, CategoryId("decor"), SavingAction.REMOVE, SavingLevel.SMALL
+    )
+    assert change_set is not None
+    after = after_of(propose(CATERING_OVER, change_set, TODAY))
+    assert [allocation(after, c) for c in ("catering", "decor", "cake", "other")] == [
+        7_417,
+        0,
+        2_167,
+        5_416,
+    ]
+    assert summarize(after).shortfall_inr == 0
+    assert after.total_budget_inr == CATERING_OVER.total_budget_inr
+
+
+@pytest.mark.parametrize(
+    ("spent_on_decor", "expected"),
+    [(0, 1_500), (2_500, 2_500), (3_000, None)],
+)
+def test_a_saving_never_cuts_below_what_is_spent(spent_on_decor: int, expected: int | None) -> None:
+    expenses = [("catering", "Caterer advance", 7_000, False)]
+    if spent_on_decor:
+        expenses.append(("decor", "Flowers", spent_on_decor, False))
+    plan = make_plan(expenses=expenses)
+    change_set = saving_change(plan, CategoryId("decor"), SavingAction.REDUCE, SavingLevel.LARGE)
+    amount = change_set.operations[0].amount_inr if change_set else None
+    assert amount == expected
+
+
+def test_protected_lines_offer_no_saving() -> None:
+    plan = make_plan(protected=("decor",))
+    assert saving_change(plan, CategoryId("decor"), SavingAction.REMOVE, SavingLevel.SMALL) is None
+    with pytest.raises(NotFoundError):
+        saving_change(plan, CategoryId("nope"), SavingAction.REMOVE, SavingLevel.SMALL)
+
+
+def test_only_a_budget_line_may_be_set_to_zero() -> None:
+    assert op(ChangeKind.SET_CATEGORY_BUDGET, category_id="decor", amount_inr=0).amount_inr == 0
+    with pytest.raises(ValidationError, match="at least ₹1"):
+        op(ChangeKind.SET_TOTAL_BUDGET, amount_inr=0)

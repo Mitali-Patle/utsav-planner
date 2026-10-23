@@ -1,3 +1,4 @@
+{% from "macros.html" import csrf %}
 <div class="alternatives">
   {% if alts.shortfall %}<p>To close a gap of {{ alts.shortfall }}:</p>{% endif %}
   <p>{{ alts.summary }}</p>
@@ -8,8 +9,22 @@
     {% for o in alts.options %}
     <li>
       <h4>{{ o.title }}</h4>
-      <p>{{ o.category }}: saves about {{ o.saving }}{% if o.shortfall_after %}, still {{ o.shortfall_after }} short{% else %}, closes the gap{% endif %}.</p>
+      {% if o.applicable %}
+      <p>{{ o.category }}: frees {{ o.saving }}{% if o.shortfall_after %}, still {{ o.shortfall_after }} short{% else %}, closes the gap{% endif %}.</p>
+      {% else %}
+      <p>{{ o.category }}: nothing left to free, because this line is protected or its money is already spent.</p>
+      {% endif %}
       <p class="why">Why: {{ o.why }}</p>
+      {% if o.applicable %}
+      <form method="post" action="/events/{{ alts.event_id }}/alternatives/apply"
+            hx-post="/events/{{ alts.event_id }}/alternatives/apply" hx-target="#change-result" hx-swap="innerHTML">
+        {{ csrf(csrf_token) }}
+        <input type="hidden" name="category_id" value="{{ o.category_id }}">
+        <input type="hidden" name="action" value="{{ o.action }}">
+        <input type="hidden" name="level" value="{{ o.level }}">
+        <button type="submit" id="apply-option-{{ loop.index }}">Preview this change<span class="sr-only">: {{ o.title }}</span></button>
+      </form>
+      {% endif %}
     </li>
     {% endfor %}
   </ul>

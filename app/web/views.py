@@ -455,8 +455,10 @@ def alternatives_context(event_id: str, view: AlternativesView) -> dict[str, Any
                 "category": o.category_name,
                 "title": o.title,
                 "why": o.why,
+                "category_id": o.category_id,
                 "action": o.action.value,
                 "level": o.level.value,
+                "applicable": o.applicable,
                 "saving": format_inr(o.saving_inr),
                 "shortfall_after": format_inr(o.shortfall_after_inr)
                 if o.shortfall_after_inr

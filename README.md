@@ -36,8 +36,11 @@ needed to hear about the new date, a line that was meant to stay untouched.
    - Approve or reject; both are recorded in the change history.
    - A vague request gets one clarifying question. Off-topic requests and attempts to take
      over the assistant are declined. A form does the same job without AI.
-5. **Over budget?** The shortfall is shown, and the assistant suggests priced ways to close
-   it, never touching what you protected.
+5. **Over budget?** The shortfall is shown, and the assistant suggests ways to close it,
+   never touching what you protected. Code prices each option by building the exact preview
+   it would create ("frees ₹1,500, still ₹500 short"), and one click turns it into a
+   Change Manager preview to approve or reject. Freed money goes first to the lines spent
+   past their plan.
 
 Every AI result has a **"How this was generated"** panel: the model, the prompt version,
 every attempt, the data sent and the validated answer. If every model is unavailable, the
@@ -88,7 +91,7 @@ Details: [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md) (binding design and deci
 |---|---|---|---|
 | `personalize` | Right after an event is created | Suggests ideas, budget emphasis, extra tasks and vendor notes for this city, date and preferences, each with a reason | Bounds every suggestion, turns emphasis into exact rupees, dates the tasks, drops anything invalid |
 | `interpret_change` | A change request in plain words | Turns it into structured operations, asks one question, or declines | Validates every operation against the plan, computes the full effect, waits for approval |
-| `alternatives` | "Suggest ways to save" on a shortfall | Picks lines and how much to trim, with reasons | Refuses protected lines and computes each saving |
+| `alternatives` | "Suggest ways to save" on a shortfall | Picks lines and how much to trim, with reasons | Refuses protected lines, never cuts below money already spent, and computes each saving and the gap left from the real preview |
 
 - **Models:** Groq `openai/gpt-oss-120b`, then Gemini 3.5 Flash-Lite, then Gemini 3.1
   Flash-Lite, then a labelled non-AI fallback. The order comes from the evals below. Each

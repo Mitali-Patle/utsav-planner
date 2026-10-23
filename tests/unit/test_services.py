@@ -29,6 +29,7 @@ from app.domain.budget import (
     NewExpense,
     SavingAction,
     SavingLevel,
+    summarize,
 )
 from app.domain.changes import ChangeKind, ChangeOperation, ChangeSet
 from app.domain.errors import InvalidInputError, NotFoundError, StaleProposalError
@@ -38,8 +39,10 @@ from app.persistence.db import make_engine
 from app.persistence.repositories import ProposalRepository, ProposalStatus, StoredEvent
 from app.persistence.tables import metadata
 from app.services import Services, build_services
-from app.services.change_manager import ApprovalStatus, OutcomeKind
+from app.services.alternatives import _price
+from app.services.change_manager import NOTHING_TO_FREE_MESSAGE, ApprovalStatus, OutcomeKind
 from app.services.planning import PlanningService, to_personalization
+from tests.factories import make_plan
 from tests.fakes import FixedClock, ScriptedProvider
 
 TODAY = date(2026, 10, 22)
@@ -486,6 +489,19 @@ def test_invalid_edits_are_rejected_and_nothing_is_saved(engine: Engine) -> None
 
 # Alternatives
 
+DECOR_CUT = Alternatives(
+    summary="Trim decor.",
+    items=[
+        AIAlternative(
+            category_id="decor",
+            action=SavingAction.REDUCE,
+            level=SavingLevel.MEDIUM,
+            title="Paper decor",
+            why="Cheaper.",
+        )
+    ],
+)
+
 
 def test_alternatives_are_priced_by_code(engine: Engine) -> None:
     answer = Alternatives(
@@ -515,6 +531,48 @@ def test_alternatives_are_priced_by_code(engine: Engine) -> None:
     assert option.saving_inr == lines[CategoryId("decor")].allocated_inr * 25 // 100
     assert option.shortfall_after_inr == max(0, gap - option.saving_inr)
     assert view.provenance is not None and view.provenance.provider == "gemini:fake"
+
+
+def test_an_alternative_becomes_a_proposal_that_closes_what_it_promised(engine: Engine) -> None:
+    app = services(engine, SUGGESTIONS, DECOR_CUT)
+    event = create(app)
+    app.edits.add_expense(
+        ME,
+        event.id,
+        NewExpense(category_id=CategoryId("catering"), label="Caterer", amount_inr=16_000),
+    )
+    option = app.alternatives.suggest(ME, event.id).options[0]
+    assert option.applicable
+    outcome = app.changes.propose_saving(ME, event.id, "decor", option.action, option.level)
+    assert outcome.kind is OutcomeKind.PROPOSAL and outcome.proposal is not None
+    assert outcome.proposal.request_text == "Save on Decorations: reduce (medium)"
+    approved = app.changes.approve(ME, event.id, outcome.proposal.id)
+    assert approved.event is not None
+    assert summarize(approved.event.plan).shortfall_inr == option.shortfall_after_inr
+
+
+def test_an_alternative_with_nothing_to_free_is_explained(engine: Engine) -> None:
+    app = services(engine, SUGGESTIONS, DECOR_CUT)
+    event = create(app)
+    decor = app.planning.get(ME, event.id).plan.category(CategoryId("decor")).allocated_inr
+    for category, amount in (("catering", 16_000), ("decor", decor)):
+        app.edits.add_expense(
+            ME,
+            event.id,
+            NewExpense(category_id=CategoryId(category), label="Paid", amount_inr=amount),
+        )
+    option = app.alternatives.suggest(ME, event.id).options[0]
+    assert (option.applicable, option.saving_inr) == (False, 0)
+    spent = app.changes.propose_saving(ME, event.id, "decor", option.action, option.level)
+    unknown = app.changes.propose_saving(ME, event.id, "nope", option.action, option.level)
+    assert (spent.kind, spent.message) == (OutcomeKind.INVALID, NOTHING_TO_FREE_MESSAGE)
+    assert unknown.kind is OutcomeKind.INVALID and "nope" in (unknown.message or "")
+
+
+def test_an_alternative_whose_money_has_nowhere_to_go_is_not_offered() -> None:
+    plan = make_plan(protected=("catering", "cake", "other"))
+    option = _price(plan, DECOR_CUT.items[0], 1_000, TODAY)
+    assert (option.applicable, option.saving_inr, option.shortfall_after_inr) == (False, 0, 1_000)
 
 
 def test_no_alternatives_needed_within_budget(engine: Engine) -> None:

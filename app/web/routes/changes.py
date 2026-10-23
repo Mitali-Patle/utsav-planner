@@ -8,6 +8,7 @@ from typing import Annotated, Any
 from fastapi import APIRouter, Form, Request, Response, status
 from pydantic import ValidationError
 
+from app.domain.budget import SavingAction, SavingLevel
 from app.domain.changes import ChangeKind, ChangeOperation, ChangeSet
 from app.domain.models import CategoryId
 from app.services import Services
@@ -32,6 +33,7 @@ RATE_LIMITED = (
 )
 EMPTY_FORM = "Fill in at least one change."
 SET_LINE_INCOMPLETE = "To set a budget line, choose the line and enter its new amount."
+UNKNOWN_OPTION = "That suggestion is no longer available. Ask for suggestions again."
 APPROVAL_STATUS_CODES = {
     ApprovalStatus.STALE: status.HTTP_409_CONFLICT,
     ApprovalStatus.ALREADY_DECIDED: status.HTTP_409_CONFLICT,
@@ -153,6 +155,29 @@ def alternatives(
     if is_htmx(request):
         return render(request, "partials/alternatives.html", {"alts": context})
     return _dashboard(request, services, session, event_id, today, {"alternatives": context})
+
+
+@router.post("/events/{event_id}/alternatives/apply", include_in_schema=False)
+def apply_alternative(
+    request: Request,
+    event_id: str,
+    services: ServicesDep,
+    session: SessionDep,
+    today: TodayDep,
+    category_id: Annotated[str, Form()] = "",
+    action: Annotated[str, Form()] = "",
+    level: Annotated[str, Form()] = "",
+) -> Response:
+    """Preview a suggested saving as a change. Nothing is saved until it is approved."""
+    try:
+        saving_action, saving_level = SavingAction(action), SavingLevel(level)
+    except ValueError:
+        outcome = ChangeOutcome(OutcomeKind.INVALID, UNKNOWN_OPTION)
+    else:
+        outcome = services.changes.propose_saving(
+            session, event_id, category_id, saving_action, saving_level
+        )
+    return _show_outcome(request, services, session, event_id, today, outcome)
 
 
 def _form_change_set(fields: dict[str, str]) -> tuple[ChangeSet, str]:

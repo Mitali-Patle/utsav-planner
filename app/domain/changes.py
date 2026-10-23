@@ -32,7 +32,10 @@ from app.domain.budget import (
     ChangeReason,
     NewExpense,
     Pin,
+    SavingAction,
+    SavingLevel,
     add_expense,
+    estimate_saving,
     find_duplicate_expense,
     rebalance,
     remove_expense,
@@ -141,7 +144,7 @@ class ChangeOperation(DomainModel):
     """
 
     kind: ChangeKind
-    amount_inr: int | None = Field(default=None, ge=1, le=2 * MAX_BUDGET_INR)
+    amount_inr: int | None = Field(default=None, ge=0, le=2 * MAX_BUDGET_INR)
     category_id: CategoryRef | None = None
     expense_id: ExpenseRef | None = None
     label: ShortText | None = None
@@ -172,6 +175,8 @@ class ChangeOperation(DomainModel):
             self.expense_id is None
         ):
             raise ValueError(f"{self.kind} needs exactly one of category_id or expense_id")
+        if self.amount_inr == 0 and self.kind is not ChangeKind.SET_CATEGORY_BUDGET:
+            raise ValueError(f"{self.kind} needs an amount of at least ₹1")
         if self.kind is ChangeKind.SHIFT_DATE_DAYS and self.days == 0:
             raise ValueError("shift_date_days needs a non-zero number of days")
         if self.kind in _ADJUST_KINDS and self.delta == 0:
@@ -399,6 +404,40 @@ def accept(proposal: Proposal, current: EventPlan) -> EventPlan:
             shortfall_inr=proposal.shortfall_inr,
         )
     return proposal.after.with_changes(version=current.version + 1)
+
+
+def saving_change(
+    plan: EventPlan, category_id: CategoryId, action: SavingAction, level: SavingLevel
+) -> ChangeSet | None:
+    """The change that frees an alternative's saving from one budget line.
+
+    The line is set to its plan minus `estimate_saving`, but never below what is already
+    spent on it: cutting the plan for money already committed frees nothing. The rebalance
+    then gives the freed money first to lines spent past their plan.
+
+    Args:
+        plan: The saved plan.
+        category_id: Line to save on.
+        action: Reduce, replace or remove.
+        level: Size of a reduction or replacement.
+
+    Returns:
+        A one-operation change set, or None if the line is protected or has nothing to free.
+
+    Raises:
+        NotFoundError: If the plan has no such line.
+    """
+    category = plan.category(category_id)
+    target = max(
+        category.allocated_inr - estimate_saving(category.allocated_inr, action, level),
+        plan.committed_inr(category.id),
+    )
+    if category.protected or target >= category.allocated_inr:
+        return None
+    operation = ChangeOperation(
+        kind=ChangeKind.SET_CATEGORY_BUDGET, category_id=category.id, amount_inr=target
+    )
+    return ChangeSet(operations=(operation,))
 
 
 def _require[T](value: T | None) -> T:

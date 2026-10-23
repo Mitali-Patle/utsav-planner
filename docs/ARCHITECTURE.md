@@ -1,6 +1,6 @@
 # Architecture: Utsav Planner
 
-Status: v1.2, decided 21 Oct 2026 and synced with the code on 22 Oct 2026 (late evening). This document is
+Status: v1.3, decided 21 Oct 2026 and synced with the code on 23 Oct 2026 (evening). This document is
 binding on all agents (see `AGENTS.md`). Items marked **(planned)** are designed but not built yet.
 
 ## 1. Principle
@@ -129,7 +129,7 @@ There is exactly one LLM call per user action, and answers are cached.
 |---|---|---|---|---|---|
 | `personalize` | Right after an event is created (regenerating is planned, F12) | Event details (quoted user text), category ids, existing tasks, vendor types, tone | `PlanSuggestions`: 3–5 ideas, ≤ 4 budget emphases (increase/decrease × small/medium), ≤ 5 extra tasks, ≤ 6 vendor notes, each with a why; `off_topic` | 0.8 | Emphasis → bounded weight change (±10 / ±20 %) → exact allocation; tasks deduplicated and dated (`personalize_plan`) |
 | `interpret_change` | Change request | Plan snapshot (ids, amounts, protected flags) + quoted request + today | `ChangeIntent`: status `ok` / `needs_clarification` / `off_topic`, operations, cut_priority, summary | 0.1 | Converted to a domain `ChangeSet`, then `propose()` computes the Proposal |
-| `alternatives` | "Suggest alternatives" on a shortfall | Plan snapshot + shortfall | `Alternatives`: items (category_id, reduce/replace/remove, small/medium/large, title, why) | 0.6 | Code computes each saving (`estimate_saving`); applying an option as a proposal is planned (F13) |
+| `alternatives` | "Suggest alternatives" on a shortfall | Plan snapshot + shortfall | `Alternatives`: items (category_id, reduce/replace/remove, small/medium/large, title, why) | 0.6 | `saving_change()` sets the line to its plan minus `estimate_saving`, never below what is spent on it; the saving and the gap left come from `propose()` on that change, and applying the option creates that proposal (F13) |
 
 Operation kinds (flat `ChangeOperation`, each kind checks its own fields): `set_total_budget`,
 `adjust_total_budget`, `add_expense`, `update_expense`, `remove_expense`, `protect` / `unprotect`
@@ -180,7 +180,10 @@ the JSON sent and the validated JSON received, and a link to the prompt's source
    - `propose()` applies them to a copy in a fixed order: protection → date (deadlines move) → guests (scaled categories pinned) → expenses (duplicates and protected items skipped) → custom categories → one `rebalance` → user tasks and follow-up tasks for booked vendors.
    - The Proposal shows before/after values, per-category changes with reason codes, moved deadlines, new tasks, skipped items, protected items kept, and budget summaries, or the exact shortfall.
    - `accept()` saves version + 1 only if the plan is still at the proposal's base version; otherwise the proposal is stale. Rejecting needs no code: the saved plan is never modified.
-4. **Alternatives**: only on user request (POST), shown inline below the shortfall alert. An
+4. **Alternatives**: only on user request (POST), shown inline below the shortfall alert. Each
+   option has a "Preview this change" button that posts only its line, action and level; the
+   server rebuilds the change from the saved plan (`ChangeManager.propose_saving`) and shows an
+   ordinary proposal to approve or reject. An
    infeasible proposal gets no AI alternatives: it fails because protected lines and committed
    money exceed the new total, which trimming cannot fix, so the preview states the exact
    extra total needed and which protected lines could be released instead.
@@ -195,7 +198,9 @@ Every flow works as a plain form submission; htmx only enhances it.
 - **Rebalance** (`budget.rebalance`):
   - Protected categories keep their allocation; pinned categories get their pin, raised to their protected-expense floor if needed.
   - No category drops below the total of its protected expenses.
-  - Extra money is shared in proportion to current allocations (weights only as a fallback).
+  - Extra money first covers categories whose spending exceeds their allocation (in proportion
+    to each overspend); the rest is shared in proportion to current allocations (weights only
+    as a fallback). So a raised total or a cut line closes a shortfall where it is.
   - Cuts come from `cut_priority` categories first, then in proportion to what each category can give.
   - If floors and pins exceed the total, the result is infeasible with the exact shortfall.
   - Every category gets a reason code: `unchanged`, `added`, `protected`, `guest_scaled`, `cut_first`, `proportional`, `floor_reached`.

@@ -1,5 +1,7 @@
 """User journeys in a real browser, with and without JavaScript."""
 
+import re
+
 import pytest
 from playwright.sync_api import Page, Route, expect
 
@@ -99,3 +101,12 @@ def test_over_budget_shows_the_gap_and_priced_alternatives(page: Page) -> None:
     page.get_by_role("button", name="Suggest ways to save").click()
     expect(page.get_by_role("heading", name="Paper decorations")).to_be_visible()
     expect(page.locator("#plan-alternatives")).to_contain_text("Suggested by AI")
+    option = page.locator("#plan-alternatives li", has_text="Paper decorations")
+    remaining = re.search(r"still (₹[\d,]+) short", option.inner_text())
+    assert remaining, "the option says what gap would remain"
+
+    option.get_by_role("button", name="Preview this change").click()
+    expect(page.get_by_role("heading", name="Here is what would change")).to_be_focused()
+    page.get_by_role("button", name="Approve this change").click()
+    expect(page.locator("#status-region")).to_contain_text("Change approved")
+    expect(page.get_by_text(f"You are over budget by {remaining.group(1)}.")).to_be_visible()

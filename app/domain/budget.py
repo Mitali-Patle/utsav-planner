@@ -454,7 +454,9 @@ def rebalance(
     2. Pinned categories (for example, scaled for a new guest count) get their pinned
        amount, raised to their protected-expense floor if needed.
     3. No other category drops below the total of its protected expenses.
-    4. Extra money is shared in proportion to current allocations.
+    4. Extra money first covers categories whose spending exceeds their allocation (in
+       proportion to each overspend), and the rest is shared in proportion to current
+       allocations.
     5. Cuts come first from `cut_priority` categories (in order, down to their floor), then
        in proportion to what each remaining category can give.
 
@@ -493,7 +495,8 @@ def rebalance(
                 "Every category is fixed, so the extra budget has nowhere to go.",
                 code="no_adjustable_category",
             )
-        after = _share_increase(adjustable, base, need)
+        overspend = {c.id: max(0, plan.committed_inr(c.id) - base[c.id]) for c in adjustable}
+        after = _share_increase(adjustable, base, need, overspend)
         cut_first: set[CategoryId] = set()
     else:
         capacity = {cid: base[cid] - floors[cid] for cid in base}
@@ -551,17 +554,27 @@ def _effective_pins(
 
 
 def _share_increase(
-    adjustable: Sequence[BudgetCategory], base: Mapping[CategoryId, int], increase: int
+    adjustable: Sequence[BudgetCategory],
+    base: Mapping[CategoryId, int],
+    increase: int,
+    overspend: Mapping[CategoryId, int],
 ) -> dict[CategoryId, int]:
     if not adjustable:
         return {}
+    ids = [c.id for c in adjustable]
+    gaps = [overspend[cid] for cid in ids]
+    if sum(gaps) >= increase:
+        shares = largest_remainder_split(increase, gaps) if increase else [0] * len(ids)
+        return {cid: base[cid] + share for cid, share in zip(ids, shares, strict=True)}
+    filled = {cid: base[cid] + gap for cid, gap in zip(ids, gaps, strict=True)}
+    increase -= sum(gaps)
     weights = [base[c.id] for c in adjustable]
     if sum(weights) == 0:
         weights = [c.weight for c in adjustable]
     if sum(weights) == 0:
         weights = [1] * len(adjustable)
     shares = largest_remainder_split(increase, weights)
-    return {c.id: base[c.id] + share for c, share in zip(adjustable, shares, strict=True)}
+    return {c.id: filled[c.id] + share for c, share in zip(adjustable, shares, strict=True)}
 
 
 def _share_cut(

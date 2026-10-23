@@ -15,6 +15,7 @@ All notable changes to Utsav Planner will be documented in this file.
 - Edit the plan directly: expenses, protected budget lines and expenses, task progress and vendor booking status.
 - Smart Change Manager: describe a change in plain words (or use a form that works without AI), preview exactly what changes, then approve or reject; approved and rejected changes appear in a history.
 - Priced ways to close a budget gap, from AI or labelled standard suggestions.
+- Ways to save show exactly what they free and what gap would remain, and each has a "Preview this change" button that turns it into a Change Manager preview to approve or reject.
 - "How this was generated" panel showing the model, prompt version, attempts, the data sent and the validated answer.
 - `docs/UI_CONTRACT.md`: the template, data and behaviour contract between the server and the interface.
 - README with how the app works, where AI is used, evaluation results, security, accessibility, testing and limitations.
@@ -24,6 +25,7 @@ All notable changes to Utsav Planner will be documented in this file.
 - The change history shows what each change did (for example "Total budget ₹15,000 → ₹12,000", "3 budget lines changed").
 - Pages load with less database work (one transaction for the dashboard, three for a change request).
 - Change requests that state an amount ("add a line for a magician, ₹5,000") are understood reliably by the backup AI models, and "postponed by 10 days" always moves the date later.
+- When a change frees money or raises the total, it goes first to budget lines already spent past their plan, so the shortfall closes where it is.
 
 ### Fixed
 - Text typed into the add-expense form while the AI is still personalizing a new plan is no longer cleared when the ideas arrive.

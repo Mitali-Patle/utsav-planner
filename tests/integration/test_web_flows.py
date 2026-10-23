@@ -21,7 +21,7 @@ from app.persistence.db import make_engine
 from app.persistence.tables import metadata
 from app.services import build_services
 from tests.fakes import FixedClock, ScriptedProvider
-from tests.unit.test_services import BUDGET_CUT, SUGGESTIONS
+from tests.unit.test_services import BUDGET_CUT, DECOR_CUT, SUGGESTIONS
 
 TODAY = date(2026, 10, 22)
 HTMX = {"HX-Request": "true"}
@@ -526,6 +526,61 @@ def test_over_budget_dashboard_offers_alternatives(engine: Engine) -> None:
     assert "Fewer balloons" in with_options.text
     assert 'id="alternatives-ai-sent"' in with_options.text
     assert_accessible(with_options.text)
+
+
+def test_an_alternative_is_previewed_then_approved(engine: Engine) -> None:
+    client = client_for(engine, SUGGESTIONS, DECOR_CUT)
+    csrf = token(client)
+    url = create(client, csrf)
+    client.post(
+        f"{url}/expenses",
+        data={
+            "csrf_token": csrf,
+            "category_id": "catering",
+            "label": "Caterer",
+            "amount_inr": "16000",
+        },
+    )
+    options = client.post(f"{url}/alternatives", data={"csrf_token": csrf}, headers=HTMX)
+    still_short = re.search(r"still (₹[\d,]+) short", options.text)
+    assert still_short, "the option says what gap would remain"
+    apply = {"csrf_token": csrf, "category_id": "decor", "action": "reduce", "level": "medium"}
+
+    preview = client.post(f"{url}/alternatives/apply", data=apply, headers=HTMX)
+    assert "Here is what would change" in preview.text
+    assert "Save on Decorations: reduce (medium)" in preview.text
+    assert_accessible(preview.text, page=False)
+    client.post(
+        f"{url}/proposals/{proposal_id(preview.text)}/approve",
+        data={"csrf_token": csrf},
+        headers=HTMX,
+    )
+    page = client.get(url).text
+    assert f"You are over budget by {still_short.group(1)}." in page
+
+    no_js = client.post(f"{url}/alternatives/apply", data=apply, follow_redirects=True)
+    assert "Here is what would change" in no_js.text
+    assert_accessible(no_js.text)
+
+
+@pytest.mark.parametrize(
+    ("fields", "message"),
+    [
+        ({"category_id": "decor", "action": "burn", "level": "small"}, "no longer available"),
+        ({"category_id": "nope", "action": "reduce", "level": "small"}, "No budget category"),
+    ],
+)
+def test_a_tampered_alternative_is_refused(
+    engine: Engine, fields: dict[str, str], message: str
+) -> None:
+    client = client_for(engine, SUGGESTIONS)
+    csrf = token(client)
+    url = create(client, csrf)
+    answer = client.post(
+        f"{url}/alternatives/apply", data={"csrf_token": csrf, **fields}, headers=HTMX
+    )
+    assert message in answer.text
+    assert "Here is what would change" not in answer.text
 
 
 def test_expense_update_protect_and_remove(engine: Engine) -> None:
