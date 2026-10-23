@@ -197,10 +197,7 @@ def check_alternatives(value: Alternatives, context: AlternativesContext) -> Alt
             )
     if not items:
         raise OutputRejectedError(
-            [
-                "Suggest 2 to 4 alternatives using only unprotected categories whose "
-                "unspent_inr is above 0."
-            ]
+            ["Suggest 2 to 4 alternatives using only categories listed in frees_inr."]
         )
     return Alternatives(
         items=items[:MAX_ALTERNATIVES], summary=_fit(value.summary, MAX_SUMMARY_CHARS)

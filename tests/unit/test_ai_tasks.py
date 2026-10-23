@@ -22,6 +22,7 @@ from app.ai.guardrails import (
     quote,
 )
 from app.ai.prompts import GUARDRAILS, interpret_change
+from app.ai.prompts import alternatives as alternatives_prompt
 from app.ai.schemas import (
     AIAlternative,
     AIChangeOperation,
@@ -36,7 +37,6 @@ from app.ai.schemas import (
 )
 from app.ai.tasks import INTERPRET_CHANGE, PERSONALIZE, SUGGEST_ALTERNATIVES
 from app.domain.budget import (
-    SAVING_PERCENT,
     EmphasisDirection,
     EmphasisStrength,
     NewExpense,
@@ -348,8 +348,7 @@ def test_alternatives_skip_lines_whose_money_is_spent() -> None:
     answer = Alternatives(summary="x", items=[alternative("catering"), alternative("decor")])
     context = AlternativesContext(plan=plan, shortfall_inr=2_000)
     assert [i.category_id for i in check_alternatives(answer, context).items] == ["decor"]
-    payload = SUGGEST_ALTERNATIVES.build_payload(context)
-    assert payload["unspent_inr"] == {"catering": 0, "decor": 3_000, "cake": 2_000, "other": 5_000}
+    assert "catering" not in SUGGEST_ALTERNATIVES.build_payload(context)["frees_inr"]
 
 
 def test_alternatives_fallback_ranks_by_unspent_money() -> None:
@@ -439,9 +438,32 @@ def test_personalization_is_salvaged_through_the_chain() -> None:
     assert result.value.ideas[0].category_id is None
 
 
-def test_alternatives_prompt_states_the_saving_the_app_will_compute() -> None:
-    for level, percent in SAVING_PERCENT.items():
-        assert f"{level.value} about {percent}%" in SUGGEST_ALTERNATIVES.system
+def test_alternatives_payload_states_what_each_option_frees() -> None:
+    """Models sized cuts too small from percentages (eval finding, 23 Oct): code prices them."""
+    plan = make_plan(
+        expenses=(
+            ("catering", "Caterer advance", 7_000, False),
+            ("decor", "Flowers", 2_500, False),
+        ),
+        protected=("cake",),
+    )
+    table = SUGGEST_ALTERNATIVES.build_payload(AlternativesContext(plan=plan, shortfall_inr=4_500))[
+        "frees_inr"
+    ]
+    assert table == {
+        "decor": {"small": 300, "medium": 500, "large": 500, "remove": 500},
+        "other": {"small": 500, "medium": 1_250, "large": 2_500, "remove": 5_000},
+    }
+
+
+def test_alternatives_example_closes_its_own_gap() -> None:
+    ((payload, answer),) = alternatives_prompt.FEW_SHOTS
+    table = payload["frees_inr"]
+    freed = sum(
+        table[i.category_id]["remove" if i.action is SavingAction.REMOVE else i.level.value]
+        for i in answer.items
+    )
+    assert freed >= payload["shortfall_inr"]
 
 
 def test_interpret_examples_show_amounts_for_every_amount_kind() -> None:

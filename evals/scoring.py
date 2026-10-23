@@ -12,14 +12,13 @@ from pydantic import ValidationError
 
 from app.ai.guardrails import intent_to_change_set
 from app.ai.schemas import (
-    AIAlternative,
     Alternatives,
     ChangeIntent,
     IntentStatus,
     PlanSuggestions,
 )
 from app.domain.budget import summarize
-from app.domain.changes import Proposal, propose, saving_change
+from app.domain.changes import Proposal, freed_inr, propose
 from app.domain.errors import DomainError
 from app.domain.models import BudgetCategory, CategoryId, EventPlan
 from evals.cases import TODAY, AlternativesCase, ChangeCase, Outcome, PersonalizeCase
@@ -271,7 +270,7 @@ def score_alternatives(case: AlternativesCase, value: Alternatives) -> Verdict:
         if item.category_id in case.protected
     ]
     saving = sum(
-        _frees(case.plan, CategoryId(item.category_id), item)
+        freed_inr(case.plan, CategoryId(item.category_id), item.action, item.level)
         for item in value.items
         if item.category_id in lines
     )
@@ -281,9 +280,3 @@ def score_alternatives(case: AlternativesCase, value: Alternatives) -> Verdict:
     if coverage < MIN_COVERAGE:
         problems.append(f"savings cover {coverage:.0%} of the gap")
     return Verdict(not problems, tuple(problems), {"coverage": round(coverage, 3)})
-
-
-def _frees(plan: EventPlan, category_id: CategoryId, item: AIAlternative) -> int:
-    change_set = saving_change(plan, category_id, item.action, item.level)
-    target = change_set.operations[0].amount_inr if change_set else None
-    return plan.category(category_id).allocated_inr - target if target is not None else 0

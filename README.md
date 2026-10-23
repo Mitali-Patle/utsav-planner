@@ -117,19 +117,19 @@ Every answer is **scored by code**, not by another model: a change answer is app
 the app's own guardrails and change engine, and the resulting plan is checked. Equivalent
 operations pass; changes nobody asked for fail.
 
-Results from 22–23 Oct 2026, counted as **passed out of answered**. Cases with no answer
+Results from 22–24 Oct 2026, counted as **passed out of answered**. Cases with no answer
 (Google's capacity problems, or Groq's free daily quota running out) are listed separately
 in the results, so they never count as wrong answers. Each figure is the latest run in
 which the model answered at least 80% of that task's cases. Columns name the prompt
-version measured; the app runs `interpret-change-v6` and `alternatives-v3`. An
+version measured; the app runs `interpret-change-v6` and `alternatives-v5`. An
 alternatives answer passes only if the savings the app would actually apply cover at
 least half the gap.
 
 | Model | Change requests | Personalization | Alternatives | Median time, change |
 |---|---|---|---|---|
 | Groq `openai/gpt-oss-120b` (first in the chain) | 36/36 (v2) | 12/12 | 3/6 (v2) | 1.0 s |
-| Gemini 3.5 Flash-Lite (second) | 35/36 (v6) | 9/9 | 4/6 (v3) | 1.9 s |
-| Gemini 3.1 Flash-Lite (third) | 33/33 (v6) | 12/12 | 5/5 (v3) | 2.1 s |
+| Gemini 3.5 Flash-Lite (second) | 35/36 (v6) | 9/9 | 6/6 (v5) | 1.9 s |
+| Gemini 3.1 Flash-Lite (third) | 33/33 (v6) | 12/12 | 6/6 (v5) | 2.1 s |
 
 What the evals changed:
 - **Model order.** Groq was faster and more accurate, and it answered every case until
@@ -140,9 +140,10 @@ What the evals changed:
   nullable) in the schema the models receive fixed it: Gemini 3.1 went from 30/34 to
   33/33 on `interpret-change-v6`. Groq read "postponed by 10 days" as 10 days earlier, so
   v5 spells out the sign of a date shift. The alternatives prompt sizes cuts to the gap,
-  after the models undershot a gap of half the budget, and v3 tells the model how much
-  of each line is still unspent, after a live test suggested cutting a line whose money
-  was already paid.
+  after the models undershot a gap of half the budget. v3 stopped suggestions on lines
+  whose money was already paid (seen in a live test). v4 gives the model the rupees each
+  option would free, computed by the app, instead of percentages it had to multiply, and
+  v5 asks for at least two options: Gemini 3.5 went from 4/6 on v3 to 6/6.
 - **What approval is for.** Gemini 3.5's one v6 failure turned "₹50,000" into ₹5,00,003
   while its own summary said 50,000. The preview shows that number before anything is
   saved, which is why no change is applied without the user's approval.

@@ -440,6 +440,20 @@ def saving_change(
     return ChangeSet(operations=(operation,))
 
 
+def freed_inr(
+    plan: EventPlan, category_id: CategoryId, action: SavingAction, level: SavingLevel
+) -> int:
+    """Rupees `saving_change` would take from a line's plan, or 0 if it changes nothing.
+
+    Raises:
+        NotFoundError: If the plan has no such line.
+    """
+    change_set = saving_change(plan, category_id, action, level)
+    if change_set is None:
+        return 0
+    return plan.category(category_id).allocated_inr - _require(change_set.operations[0].amount_inr)
+
+
 def _require[T](value: T | None) -> T:
     """Narrow an optional field that `ChangeOperation` validation guarantees is set."""
     if value is None:  # pragma: no cover - unreachable after model validation

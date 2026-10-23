@@ -1,0 +1,235 @@
+{
+ "model": "gemini:gemini-3.5-flash-lite",
+ "run_at": "2026-10-23T19:02:21+00:00",
+ "prompt_versions": {
+  "personalize": "personalize-v1",
+  "interpret_change": "interpret-change-v6",
+  "alternatives": "alternatives-v5"
+ },
+ "results": [
+  {
+   "task": "alternatives",
+   "case_id": "b-over-cake-kept",
+   "passed": true,
+   "error": false,
+   "reasons": [],
+   "metrics": {
+    "coverage": 1.295
+   },
+   "provider": "gemini:gemini-3.5-flash-lite",
+   "latency_ms": 1560,
+   "first_try_valid": true,
+   "attempts": [
+    "gemini:gemini-3.5-flash-lite: ok"
+   ],
+   "answer": {
+    "items": [
+     {
+      "category_id": "catering",
+      "action": "replace",
+      "level": "large",
+      "title": "Streamline the party menu",
+      "why": "Focus on fewer starters while keeping the main birthday feast satisfying for 40 guests."
+     },
+     {
+      "category_id": "entertainment",
+      "action": "reduce",
+      "level": "large",
+      "title": "Simplify party games and activity stalls",
+      "why": "A simpler DJ setup and curated playlist keeps the birthday lively without extra costs."
+     }
+    ],
+    "summary": "Even after exploring the largest sensible savings across categories, the remaining gap cannot be fully closed this way."
+   }
+  },
+  {
+   "task": "alternatives",
+   "case_id": "b-far-over",
+   "passed": true,
+   "error": false,
+   "reasons": [],
+   "metrics": {
+    "coverage": 0.863
+   },
+   "provider": "gemini:gemini-3.5-flash-lite",
+   "latency_ms": 1439,
+   "first_try_valid": true,
+   "attempts": [
+    "gemini:gemini-3.5-flash-lite: ok"
+   ],
+   "answer": {
+    "items": [
+     {
+      "category_id": "catering",
+      "action": "remove",
+      "level": "large",
+      "title": "Drop full catering service",
+      "why": "Even after removing every possible category, the total savings cannot reach the requested gap."
+     },
+     {
+      "category_id": "entertainment",
+      "action": "remove",
+      "level": "large",
+      "title": "Cancel live entertainment",
+      "why": "Even after removing every possible category, the total savings cannot reach the requested gap."
+     }
+    ],
+    "summary": "Even removing every unprotected category does not fully cover the gap, but here are the maximum possible savings."
+   }
+  },
+  {
+   "task": "alternatives",
+   "case_id": "w-over-two-kept",
+   "passed": true,
+   "error": false,
+   "reasons": [],
+   "metrics": {
+    "coverage": 1.66
+   },
+   "provider": "gemini:gemini-3.5-flash-lite",
+   "latency_ms": 1859,
+   "first_try_valid": true,
+   "attempts": [
+    "gemini:gemini-3.5-flash-lite: ok"
+   ],
+   "answer": {
+    "items": [
+     {
+      "category_id": "decor",
+      "action": "replace",
+      "level": "medium",
+      "title": "Use local seasonal blooms",
+      "why": "Local flowers keep the mandap vibrant for 250 guests while reducing floral import costs."
+     },
+     {
+      "category_id": "catering",
+      "action": "reduce",
+      "level": "medium",
+      "title": "Streamline dessert and starter counters",
+      "why": "Focusing on fewer, high-quality dessert options keeps guests happy without overspending."
+     },
+     {
+      "category_id": "music",
+      "action": "reduce",
+      "level": "medium",
+      "title": "Opt for a compact DJ setup",
+      "why": "A simpler sound system provides great energy for the sangeet while saving funds."
+     }
+    ],
+    "summary": "We can close the budget gap comfortably by refining decor, catering, and music choices without losing the wedding's charm."
+   }
+  },
+  {
+   "task": "alternatives",
+   "case_id": "w-few-flexible",
+   "passed": true,
+   "error": false,
+   "reasons": [],
+   "metrics": {
+    "coverage": 1.355
+   },
+   "provider": "gemini:gemini-3.5-flash-lite",
+   "latency_ms": 1448,
+   "first_try_valid": true,
+   "attempts": [
+    "gemini:gemini-3.5-flash-lite: ok"
+   ],
+   "answer": {
+    "items": [
+     {
+      "category_id": "gifts",
+      "action": "reduce",
+      "level": "large",
+      "title": "Streamline return gift hampers",
+      "why": "Guests will appreciate meaningful sweets over elaborate imported keepsakes for 250 attendees."
+     },
+     {
+      "category_id": "transport",
+      "action": "remove",
+      "level": "large",
+      "title": "Drop coordinated guest transport",
+      "why": "Local guests can easily arrange their own cabs to the wedding venue."
+     },
+     {
+      "category_id": "contingency",
+      "action": "reduce",
+      "level": "small",
+      "title": "Trim the emergency buffer slightly",
+      "why": "A smaller cushion safely covers the remaining gap without risking essential bookings."
+     }
+    ],
+    "summary": "Optimize return gifts and transport while slightly trimming the contingency buffer to close the gap."
+   }
+  },
+  {
+   "task": "alternatives",
+   "case_id": "c-over-puja-kept",
+   "passed": true,
+   "error": false,
+   "reasons": [],
+   "metrics": {
+    "coverage": 0.981
+   },
+   "provider": "gemini:gemini-3.5-flash-lite",
+   "latency_ms": 1755,
+   "first_try_valid": true,
+   "attempts": [
+    "gemini:gemini-3.5-flash-lite: ok"
+   ],
+   "answer": {
+    "items": [
+     {
+      "category_id": "sound_lighting",
+      "action": "replace",
+      "level": "large",
+      "title": "Standard community sound setup",
+      "why": "This covers announcements and background devotional tracks without extra concert lighting."
+     },
+     {
+      "category_id": "cultural_program",
+      "action": "reduce",
+      "level": "large",
+      "title": "Streamline stage performances",
+      "why": "Focusing on key community acts keeps the celebration vibrant while trimming production overhead."
+     }
+    ],
+    "summary": "Adjusting stage and sound production covers the shortfall while keeping the main community rituals intact."
+   }
+  },
+  {
+   "task": "alternatives",
+   "case_id": "c-small-gap",
+   "passed": true,
+   "error": false,
+   "reasons": [],
+   "metrics": {
+    "coverage": 0.953
+   },
+   "provider": "gemini:gemini-3.5-flash-lite",
+   "latency_ms": 1653,
+   "first_try_valid": true,
+   "attempts": [
+    "gemini:gemini-3.5-flash-lite: ok"
+   ],
+   "answer": {
+    "items": [
+     {
+      "category_id": "volunteers_logistics",
+      "action": "reduce",
+      "level": "small",
+      "title": "Rely on community volunteers for transport coordination",
+      "why": "Using local youth volunteers for logistics keeps the community spirit alive without extra costs."
+     },
+     {
+      "category_id": "cleanup",
+      "action": "reduce",
+      "level": "small",
+      "title": "Streamline post-event waste sorting",
+      "why": "A smaller crew handles cleanup efficiently since community members help clear the main hall."
+     }
+    ],
+    "summary": "A few minor adjustments to volunteer logistics and cleanup will cover the small gap easily."
+   }
+  }
+ ]
+}

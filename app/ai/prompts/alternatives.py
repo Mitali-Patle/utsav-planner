@@ -6,29 +6,26 @@ from app.ai.contexts import AlternativesContext
 from app.ai.guardrails import plan_snapshot, quote
 from app.ai.prompts import GUARDRAILS
 from app.ai.schemas import AIAlternative, Alternatives
-from app.domain.budget import SAVING_PERCENT, SavingAction, SavingLevel
+from app.domain.budget import SavingAction, SavingLevel
+from app.domain.changes import freed_inr
+from app.domain.models import EventPlan
 
-VERSION = "alternatives-v3"
-
-_LEVELS = ", ".join(f"{level.value} about {percent}%" for level, percent in SAVING_PERCENT.items())
+VERSION = "alternatives-v5"
 
 SYSTEM = f"""\
 A plan needs more money than its budget. Suggest 2 to 4 realistic ways to close the gap,
 the kind an experienced Indian event planner would offer.
-Each item names one unprotected category with unspent money (category_id), an action
-(reduce, replace or remove), how much it would free up (small, medium or large), a short
-title and why it suits this event. Prefer swaps that keep the event special over simply
-cutting. Never touch protected categories. Do not state amounts; the app calculates the
-saving for each option.
-unspent_inr gives, per category, the planned money not yet spent; money already spent
-cannot be freed, so never choose a category whose unspent_inr is 0, such as the line that
-went over its plan.
-Size the options to the gap: reduce or replace frees {_LEVELS} of that category's
-allocated_inr, up to its unspent_inr, and remove frees all of its unspent_inr. Choose
-categories and levels whose savings
-together reach shortfall_inr. If even large cuts to every unprotected category cannot
-reach it, offer the biggest sensible savings and say plainly in summary that the gap
-cannot be fully closed this way. summary is one sentence on the overall approach.
+Each item names one category from frees_inr (category_id), an action (reduce, replace or
+remove), a level (small, medium or large), a short title and why it suits this event.
+Prefer swaps that keep the event special over simply cutting. Do not state amounts.
+frees_inr lists the only categories you may choose: unprotected lines with money not yet
+spent. For each it gives the rupees the app would free: small, medium and large are what
+reduce or replace frees at that level, and remove frees everything not yet spent.
+Choose options whose frees_inr amounts together reach shortfall_inr, using the gentlest
+levels that do. Always offer at least 2 options so the user has a choice, even when one
+alone would close the gap. If even every remove amount together cannot reach it, offer the biggest
+sensible savings and say plainly in summary that the gap cannot be fully closed this way.
+summary is one sentence on the overall approach.
 
 {GUARDRAILS}"""
 
@@ -38,15 +35,33 @@ def build_payload(context: AlternativesContext) -> dict[str, Any]:
     return {
         "task": "alternatives",
         "shortfall_inr": context.shortfall_inr,
-        "unspent_inr": {c.id: context.plan.unspent_inr(c.id) for c in context.plan.categories},
+        "frees_inr": saving_table(context.plan),
         "plan": plan_snapshot(context.plan),
     }
 
 
+def saving_table(plan: EventPlan) -> dict[str, dict[str, int]]:
+    """Rupees each option would free, per line that has anything to free."""
+    table: dict[str, dict[str, int]] = {}
+    for category in plan.categories:
+        options = {
+            level.value: freed_inr(plan, category.id, SavingAction.REDUCE, level)
+            for level in SavingLevel
+        }
+        options["remove"] = freed_inr(plan, category.id, SavingAction.REMOVE, SavingLevel.LARGE)
+        if options["remove"]:
+            table[category.id] = options
+    return table
+
+
 _EXAMPLE_PAYLOAD: dict[str, Any] = {
     "task": "alternatives",
-    "shortfall_inr": 4000,
-    "unspent_inr": {"catering": 0, "decor": 80000, "photography": 60000, "transport": 20000},
+    "shortfall_inr": 30000,
+    "frees_inr": {
+        "decor": {"small": 8000, "medium": 20000, "large": 40000, "remove": 80000},
+        "photography": {"small": 6000, "medium": 15000, "large": 30000, "remove": 60000},
+        "transport": {"small": 2000, "medium": 5000, "large": 10000, "remove": 20000},
+    },
     "plan": {
         "event_type": "wedding",
         "event_date": "2027-01-20",
@@ -78,7 +93,7 @@ _EXAMPLE_PAYLOAD: dict[str, Any] = {
                 "id": "exp-1",
                 "category_id": "catering",
                 "label": quote("Caterer advance"),
-                "amount_inr": 184000,
+                "amount_inr": 210000,
                 "protected": True,
             }
         ],

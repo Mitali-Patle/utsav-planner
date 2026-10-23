@@ -1,0 +1,251 @@
+{
+ "model": "gemini:gemini-3.5-flash-lite",
+ "run_at": "2026-10-23T18:59:57+00:00",
+ "prompt_versions": {
+  "personalize": "personalize-v1",
+  "interpret_change": "interpret-change-v6",
+  "alternatives": "alternatives-v4"
+ },
+ "results": [
+  {
+   "task": "alternatives",
+   "case_id": "b-over-cake-kept",
+   "passed": true,
+   "error": false,
+   "reasons": [],
+   "metrics": {
+    "coverage": 1.054
+   },
+   "provider": "gemini:gemini-3.5-flash-lite",
+   "latency_ms": 2474,
+   "first_try_valid": true,
+   "attempts": [
+    "gemini:gemini-3.5-flash-lite: ok"
+   ],
+   "answer": {
+    "items": [
+     {
+      "category_id": "catering",
+      "action": "replace",
+      "level": "large",
+      "title": "Streamline the menu to fewer starters",
+      "why": "Simplifying the snack menu for 40 guests keeps the party lively without losing quality."
+     },
+     {
+      "category_id": "entertainment",
+      "action": "replace",
+      "level": "medium",
+      "title": "Curated playlist instead of a live DJ",
+      "why": "A great sound system keeps the birthday vibe high while saving on professional fees."
+     }
+    ],
+    "summary": "Even after using the largest sensible savings across available categories, the gap cannot be fully closed this way."
+   }
+  },
+  {
+   "task": "alternatives",
+   "case_id": "b-far-over",
+   "passed": true,
+   "error": false,
+   "reasons": [],
+   "metrics": {
+    "coverage": 1.305
+   },
+   "provider": "gemini:gemini-3.5-flash-lite",
+   "latency_ms": 1438,
+   "first_try_valid": true,
+   "attempts": [
+    "gemini:gemini-3.5-flash-lite: ok"
+   ],
+   "answer": {
+    "items": [
+     {
+      "category_id": "catering",
+      "action": "remove",
+      "level": "large",
+      "title": "Remove catering",
+      "why": "The gap cannot be fully closed this way because even every remove amount together cannot reach the shortfall."
+     },
+     {
+      "category_id": "cake",
+      "action": "remove",
+      "level": "large",
+      "title": "Remove cake",
+      "why": "The gap cannot be fully closed this way because even every remove amount together cannot reach the shortfall."
+     },
+     {
+      "category_id": "decor",
+      "action": "remove",
+      "level": "large",
+      "title": "Remove decor",
+      "why": "The gap cannot be fully closed this way because even every remove amount together cannot reach the shortfall."
+     },
+     {
+      "category_id": "entertainment",
+      "action": "remove",
+      "level": "large",
+      "title": "Remove entertainment",
+      "why": "The gap cannot be fully closed this way because even every remove amount together cannot reach the shortfall."
+     }
+    ],
+    "summary": "The gap cannot be fully closed this way even by removing every unprotected category completely."
+   }
+  },
+  {
+   "task": "alternatives",
+   "case_id": "w-over-two-kept",
+   "passed": true,
+   "error": false,
+   "reasons": [],
+   "metrics": {
+    "coverage": 1.194
+   },
+   "provider": "gemini:gemini-3.5-flash-lite",
+   "latency_ms": 2678,
+   "first_try_valid": true,
+   "attempts": [
+    "gemini:gemini-3.5-flash-lite: ok"
+   ],
+   "answer": {
+    "items": [
+     {
+      "category_id": "catering",
+      "action": "reduce",
+      "level": "medium",
+      "title": "Streamline dessert counters",
+      "why": "Reducing three dessert stations to one keeps the main buffet grand while saving on ingredients."
+     },
+     {
+      "category_id": "decor",
+      "action": "replace",
+      "level": "small",
+      "title": "Use local foliage for mandap pillars",
+      "why": "Local banana leaves and greens give a lush traditional look without costly exotic floral imports."
+     },
+     {
+      "category_id": "music",
+      "action": "reduce",
+      "level": "small",
+      "title": "Shorter DJ set",
+      "why": "Starting the dance floor an hour later still gives 250 guests plenty of celebration time."
+     }
+    ],
+    "summary": "Trim secondary elements across food, decor, and entertainment to protect the wedding experience."
+   }
+  },
+  {
+   "task": "alternatives",
+   "case_id": "w-few-flexible",
+   "passed": true,
+   "error": false,
+   "reasons": [],
+   "metrics": {
+    "coverage": 1.654
+   },
+   "provider": "gemini:gemini-3.5-flash-lite",
+   "latency_ms": 1757,
+   "first_try_valid": true,
+   "attempts": [
+    "gemini:gemini-3.5-flash-lite: ok"
+   ],
+   "answer": {
+    "items": [
+     {
+      "category_id": "gifts",
+      "action": "replace",
+      "level": "large",
+      "title": "Practical edible return gifts instead of silver keepsakes",
+      "why": "Homemade sweets in festive boxes delight 250 guests while staying well within budget."
+     },
+     {
+      "category_id": "contingency",
+      "action": "reduce",
+      "level": "large",
+      "title": "Trim the contingency buffer",
+      "why": "A slight reduction in the buffer safely covers the gap without touching core wedding functions."
+     },
+     {
+      "category_id": "transport",
+      "action": "replace",
+      "level": "large",
+      "title": "Streamline guest pickup routes",
+      "why": "Pooling guest shuttles for the 250 attendees cuts extra rental trips."
+     }
+    ],
+    "summary": "Swap high-end return gifts and streamline transport to bridge the shortfall comfortably."
+   }
+  },
+  {
+   "task": "alternatives",
+   "case_id": "c-over-puja-kept",
+   "passed": true,
+   "error": false,
+   "reasons": [],
+   "metrics": {
+    "coverage": 1.201
+   },
+   "provider": "gemini:gemini-3.5-flash-lite",
+   "latency_ms": 2070,
+   "first_try_valid": true,
+   "attempts": [
+    "gemini:gemini-3.5-flash-lite: ok"
+   ],
+   "answer": {
+    "items": [
+     {
+      "category_id": "sound_lighting",
+      "action": "replace",
+      "level": "large",
+      "title": "Optimize stage lighting and sound setups",
+      "why": "Streamlining the stage lighting and audio equipment keeps the community function lively without exceeding the limit."
+     },
+     {
+      "category_id": "cultural_program",
+      "action": "reduce",
+      "level": "large",
+      "title": "Streamline cultural programme acts",
+      "why": "Focusing on key community performances retains the festive spirit while cutting down on external artist fees."
+     },
+     {
+      "category_id": "decor",
+      "action": "reduce",
+      "level": "medium",
+      "title": "Simplify entrance and stage decorations",
+      "why": "Using fewer floral arrangements for the 400 guests maintains a welcoming look economically."
+     }
+    ],
+    "summary": "Adjust sound, cultural, and decor elements to bring the community event back within budget."
+   }
+  },
+  {
+   "task": "alternatives",
+   "case_id": "c-small-gap",
+   "passed": false,
+   "error": false,
+   "reasons": [
+    "only 1 option(s)"
+   ],
+   "metrics": {
+    "coverage": 0.507
+   },
+   "provider": "gemini:gemini-3.5-flash-lite",
+   "latency_ms": 1554,
+   "first_try_valid": true,
+   "attempts": [
+    "gemini:gemini-3.5-flash-lite: ok"
+   ],
+   "answer": {
+    "items": [
+     {
+      "category_id": "volunteers_logistics",
+      "action": "reduce",
+      "level": "small",
+      "title": "Simplify volunteer refreshment packets",
+      "why": "Basic tea and biscuits work well for 400 volunteers during setup."
+     }
+    ],
+    "summary": "A single small adjustment to logistics covers the minor gap without impacting the community experience."
+   }
+  }
+ ]
+}

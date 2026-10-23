@@ -1,0 +1,257 @@
+{
+ "model": "gemini:gemini-3.1-flash-lite",
+ "run_at": "2026-10-23T19:03:12+00:00",
+ "prompt_versions": {
+  "personalize": "personalize-v1",
+  "interpret_change": "interpret-change-v6",
+  "alternatives": "alternatives-v5"
+ },
+ "results": [
+  {
+   "task": "alternatives",
+   "case_id": "b-over-cake-kept",
+   "passed": true,
+   "error": false,
+   "reasons": [],
+   "metrics": {
+    "coverage": 1.295
+   },
+   "provider": "gemini:gemini-3.1-flash-lite",
+   "latency_ms": 1590,
+   "first_try_valid": true,
+   "attempts": [
+    "gemini:gemini-3.1-flash-lite: ok"
+   ],
+   "answer": {
+    "items": [
+     {
+      "category_id": "catering",
+      "action": "reduce",
+      "level": "large",
+      "title": "Simplify the menu selection",
+      "why": "Removing two premium starters will easily bring down the food costs for 40 guests."
+     },
+     {
+      "category_id": "entertainment",
+      "action": "reduce",
+      "level": "large",
+      "title": "Switch to a curated playlist",
+      "why": "Using a professional sound system with a pre-made playlist replaces the need for a live entertainer."
+     }
+    ],
+    "summary": "We can comfortably meet the target by streamlining the menu and opting for a DIY music setup instead of live entertainment."
+   }
+  },
+  {
+   "task": "alternatives",
+   "case_id": "b-far-over",
+   "passed": true,
+   "error": false,
+   "reasons": [],
+   "metrics": {
+    "coverage": 1.305
+   },
+   "provider": "gemini:gemini-3.1-flash-lite",
+   "latency_ms": 5978,
+   "first_try_valid": true,
+   "attempts": [
+    "gemini:gemini-3.1-flash-lite: ok"
+   ],
+   "answer": {
+    "items": [
+     {
+      "category_id": "catering",
+      "action": "remove",
+      "level": "large",
+      "title": "Simplify birthday menu",
+      "why": "Reducing menu variety helps focus on quality while freeing up significant funds."
+     },
+     {
+      "category_id": "entertainment",
+      "action": "remove",
+      "level": "large",
+      "title": "Self-managed party games",
+      "why": "Hosting interactive games yourself creates a personal touch and removes professional fees."
+     },
+     {
+      "category_id": "cake",
+      "action": "remove",
+      "level": "large",
+      "title": "Bake or buy a home-style cake",
+      "why": "A smaller, simpler cake is perfect for an intimate group of 40."
+     },
+     {
+      "category_id": "decor",
+      "action": "remove",
+      "level": "large",
+      "title": "DIY balloon and streamer decor",
+      "why": "Using creative DIY decor keeps the birthday vibe festive without professional installation costs."
+     }
+    ],
+    "summary": "The requested shortfall exceeds the available savings from these categories; please consider increasing the total budget or further reducing the guest count."
+   }
+  },
+  {
+   "task": "alternatives",
+   "case_id": "w-over-two-kept",
+   "passed": true,
+   "error": false,
+   "reasons": [],
+   "metrics": {
+    "coverage": 1.487
+   },
+   "provider": "gemini:gemini-3.1-flash-lite",
+   "latency_ms": 2037,
+   "first_try_valid": true,
+   "attempts": [
+    "gemini:gemini-3.1-flash-lite: ok"
+   ],
+   "answer": {
+    "items": [
+     {
+      "category_id": "catering",
+      "action": "reduce",
+      "level": "medium",
+      "title": "Streamline the menu to regional specialties",
+      "why": "Reducing the number of live stations and exotic cuisines keeps the feast grand while lowering costs."
+     },
+     {
+      "category_id": "decor",
+      "action": "replace",
+      "level": "medium",
+      "title": "Use local foliage and lighting effects",
+      "why": "Focusing on creative lighting and locally sourced greenery creates a beautiful aesthetic without expensive imported floral arrangements."
+     },
+     {
+      "category_id": "music",
+      "action": "reduce",
+      "level": "small",
+      "title": "Book a DJ instead of a live band",
+      "why": "A high-energy DJ set is often preferred by guests and significantly more cost-effective than a full live band."
+     }
+    ],
+    "summary": "By refining the menu, opting for creative local decor, and choosing a DJ, we can effectively close the budget gap without compromising the wedding experience."
+   }
+  },
+  {
+   "task": "alternatives",
+   "case_id": "w-few-flexible",
+   "passed": true,
+   "error": false,
+   "reasons": [],
+   "metrics": {
+    "coverage": 1.757
+   },
+   "provider": "gemini:gemini-3.1-flash-lite",
+   "latency_ms": 8512,
+   "first_try_valid": true,
+   "attempts": [
+    "gemini:gemini-3.1-flash-lite: ok"
+   ],
+   "answer": {
+    "items": [
+     {
+      "category_id": "gifts",
+      "action": "remove",
+      "level": "small",
+      "title": "Simplify return gift hampers",
+      "why": "Replacing luxury boxes with high-quality, modest sweets keeps the tradition meaningful."
+     },
+     {
+      "category_id": "contingency",
+      "action": "replace",
+      "level": "medium",
+      "title": "Reduce contingency fund",
+      "why": "Tightening the buffer is safer than cutting core celebration elements."
+     },
+     {
+      "category_id": "transport",
+      "action": "replace",
+      "level": "large",
+      "title": "Optimize guest pickup routes",
+      "why": "Consolidating transport pickup points reduces the number of vehicles needed for 250 guests."
+     }
+    ],
+    "summary": "We can close the gap by streamlining gift logistics and optimizing transport routes while maintaining your core wedding vision."
+   }
+  },
+  {
+   "task": "alternatives",
+   "case_id": "c-over-puja-kept",
+   "passed": true,
+   "error": false,
+   "reasons": [],
+   "metrics": {
+    "coverage": 2.841
+   },
+   "provider": "gemini:gemini-3.1-flash-lite",
+   "latency_ms": 5640,
+   "first_try_valid": true,
+   "attempts": [
+    "gemini:gemini-3.1-flash-lite: ok"
+   ],
+   "answer": {
+    "items": [
+     {
+      "category_id": "sound_lighting",
+      "action": "remove",
+      "level": "large",
+      "title": "Simplify stage lighting setup",
+      "why": "Focusing on essential sound and basic illumination maintains the community spirit while saving significantly."
+     },
+     {
+      "category_id": "cultural_program",
+      "action": "remove",
+      "level": "large",
+      "title": "Shift to local community talent",
+      "why": "Replacing professional performers with local volunteers keeps the event authentic and costs low."
+     },
+     {
+      "category_id": "decor",
+      "action": "remove",
+      "level": "large",
+      "title": "Minimalist floral and fabric decor",
+      "why": "Using simple, reusable decor elements is a standard way to manage community event budgets."
+     }
+    ],
+    "summary": "The gap can be fully closed by prioritizing essential services and relying on community participation for the cultural segment."
+   }
+  },
+  {
+   "task": "alternatives",
+   "case_id": "c-small-gap",
+   "passed": true,
+   "error": false,
+   "reasons": [],
+   "metrics": {
+    "coverage": 2.587
+   },
+   "provider": "gemini:gemini-3.1-flash-lite",
+   "latency_ms": 9013,
+   "first_try_valid": true,
+   "attempts": [
+    "gemini:gemini-3.1-flash-lite: ok"
+   ],
+   "answer": {
+    "items": [
+     {
+      "category_id": "decor",
+      "action": "reduce",
+      "level": "small",
+      "title": "Simplify entrance floral arch",
+      "why": "A smaller, elegant entrance display maintains the festive vibe while reducing costs."
+     },
+     {
+      "category_id": "volunteers_logistics",
+      "action": "reduce",
+      "level": "medium",
+      "title": "Streamline volunteer refreshments",
+      "why": "Sourcing bulk snacks instead of individual meal boxes keeps energy high for the team at a lower cost."
+     }
+    ],
+    "summary": "We can bridge the gap by slightly simplifying the decor and optimizing volunteer logistics without compromising the event experience."
+   }
+  }
+ ],
+ "retried_at": "2026-10-23T19:03:25+00:00"
+}

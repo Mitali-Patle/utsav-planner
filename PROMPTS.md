@@ -482,3 +482,9 @@ The prompts the app itself sends to the LLM live in `app/ai/prompts/`.
 - **Scoring:** each option is now priced exactly as the app applies it (`saving_change`, capped at money spent), not by a flat percentage. Re-scoring the saved runs made three old verdicts stricter (Groq v2 alternatives 4/6 → 3/6); the README shows the new figures.
 - **Results:** Gemini 3.1 5/5 answered; Gemini 3.5 4/6 (a first run timed out on 5 of 6 cases and was rerun later). Both failures sized cuts too small for the gap (31% and 35%, with 50% needed) although the prompt states the percentage for each level.
 - **Next:** v4 gives the model the rupees each option would free, computed by code, so it chooses rather than multiplies.
+
+## 2026-10-24 (just after midnight): alternatives v4 and v5
+- **Tool / model:** Claude Code (Claude Opus 5.5).
+- **v4:** the payload replaces `unspent_inr` with `frees_inr`: for each line that has anything to free, the rupees a small, medium or large reduce/replace and a remove would free, computed by `freed_inr()` (the same code that applies the option). The model chooses; it no longer multiplies percentages. The worked example now closes its own gap, checked by a test. Gemini 3.5 went from 4/6 to 5/6 and Gemini 3.1 answered 6/6 (3 after retrying timeouts).
+- **v5:** Gemini 3.5's one v4 failure offered a single option for a ₹2,000 gap. The option did close the gap, but the user should get a choice, and "the gentlest levels" had nudged it to one. The prompt now asks for at least 2 options even when one would do. Both Gemini models 6/6 (Gemini 3.1 after retrying one unavailable answer).
+- **Next:** Groq on alternatives v5 and interpret-change v6 after its quota resets (12:40 IST), alternatives first.
