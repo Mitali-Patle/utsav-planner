@@ -10,11 +10,17 @@ DEFAULT_TONE = "warm, practical and concise, like an experienced family event pl
 
 @dataclass(frozen=True)
 class PersonalizeContext:
-    """A freshly drafted plan to personalize."""
+    """A plan to personalize, or to suggest different ideas for.
+
+    Attributes:
+        previous_ideas: Titles of the ideas the user asked to replace; empty for the first
+            personalization.
+    """
 
     plan: EventPlan
     today: date
     tone: str = DEFAULT_TONE
+    previous_ideas: tuple[str, ...] = ()
 
 
 @dataclass(frozen=True)

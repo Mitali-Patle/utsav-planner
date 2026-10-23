@@ -1,4 +1,4 @@
-"""Create an event, show its dashboard, and personalize it with AI."""
+"""Create an event, show its dashboard, personalize it with AI and ask for new ideas."""
 
 from typing import Annotated
 
@@ -10,6 +10,7 @@ from app.domain.catalog import CATALOG
 from app.domain.errors import InvalidInputError
 from app.domain.models import EventType
 from app.domain.planning import EventDetails
+from app.services.planning import IdeasOutcome
 from app.web.deps import AILimitDep, CreateLimitDep, ServicesDep, SessionDep, TodayDep
 from app.web.responses import Notice, after_post, render
 from app.web.views import FormState, dashboard_context, form_errors, landing_context
@@ -30,6 +31,20 @@ LIMITED = Notice(
     "(not AI-generated). Try again in a few minutes.",
     "info",
 )
+
+NEW_IDEAS = {
+    IdeasOutcome.NEW: Notice("Here are different ideas, each with a reason."),
+    IdeasOutcome.UNAVAILABLE: Notice(
+        "The AI couldn't suggest different ideas right now, so your ideas are unchanged. "
+        "Please try again later.",
+        "info",
+    ),
+    IdeasOutcome.LIMITED: Notice(
+        "You've made many AI requests in a short time, so your ideas are unchanged. "
+        "Try again in a few minutes.",
+        "info",
+    ),
+}
 
 
 @router.post("/events", include_in_schema=False)
@@ -132,6 +147,32 @@ def personalize(
         "partials/plan_area.html",
         # The AI answer arrives seconds after the page; keep anything typed meanwhile.
         {**dashboard_context(stored, [], today), "keep_typed_input": True},
+    )
+
+
+@router.post("/events/{event_id}/ideas", include_in_schema=False)
+def new_ideas(
+    request: Request,
+    event_id: str,
+    services: ServicesDep,
+    session: SessionDep,
+    today: TodayDep,
+    ai_limit: AILimitDep,
+) -> Response:
+    """Replace the ideas with different ones from AI; nothing else in the plan changes."""
+    result = services.planning.regenerate_ideas(
+        session, event_id, ai_allowed=lambda: ai_limit.allow(request)
+    )
+    return after_post(
+        request,
+        f"/events/{event_id}#ideas",
+        NEW_IDEAS[result.outcome],
+        "partials/plan_area.html",
+        {
+            **dashboard_context(result.event, [], today),
+            "keep_typed_input": True,
+            "focus_ideas": True,
+        },
     )
 
 

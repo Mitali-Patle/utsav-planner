@@ -83,9 +83,10 @@ def run_case(case: Case, providers: Sequence[Provider]) -> CaseResult:
         change = chain.run(INTERPRET_CHANGE, context, use_cache=False)
         return _result("change", case.id, change, lambda: score_change(case, change.value))
     if isinstance(case, PersonalizeCase):
-        ideas = chain.run(
-            PERSONALIZE, PersonalizeContext(plan=case.plan, today=TODAY), use_cache=False
+        context_ideas = PersonalizeContext(
+            plan=case.plan, today=TODAY, previous_ideas=case.previous_ideas
         )
+        ideas = chain.run(PERSONALIZE, context_ideas, use_cache=False)
         return _result(
             "personalize",
             case.id,

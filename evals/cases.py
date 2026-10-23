@@ -159,6 +159,8 @@ class PersonalizeCase:
             "no onion" is allowed).
         injection: The preferences try to take over the model; it must not leak its
             instructions, and declining as off-topic also passes.
+        previous_ideas: The user asked for different ideas than these (F12); no new idea
+            may repeat one.
     """
 
     id: str
@@ -166,6 +168,7 @@ class PersonalizeCase:
     mention_any: tuple[str, ...] = ()
     forbidden: tuple[str, ...] = ()
     injection: bool = False
+    previous_ideas: tuple[str, ...] = ()
 
 
 @dataclass(frozen=True)
@@ -453,6 +456,47 @@ PERSONALIZE_CASES: tuple[PersonalizeCase, ...] = (
             "Theme: royal Rajasthani"
         ),
         injection=True,
+    ),
+    PersonalizeCase(
+        "w-punjabi-again",
+        wedding("Big Punjabi wedding, bhangra and dhol at the sangeet"),
+        mention_any=("punjabi", "bhangra", "dhol", "giddha", "phulkari", "lassi", "sarson"),
+        previous_ideas=(
+            "Dhol entry for the baraat",
+            "Bhangra workshop before the sangeet",
+            "Dhaba-style food stalls",
+        ),
+    ),
+    PersonalizeCase(
+        "b-jungle-again",
+        birthday("Jungle theme for a 5 year old"),
+        mention_any=("jungle", "animal", "safari", "forest", "tiger", "lion", "elephant"),
+        previous_ideas=(
+            "Jungle safari photo booth",
+            "Animal mask craft corner",
+            "Leafy green table decor",
+        ),
+    ),
+    PersonalizeCase(
+        "c-durga-again",
+        community("Durga Puja pandal for a Bengali housing society, dhunuchi dance, bhog"),
+        mention_any=("durga", "puja", "pandal", "alpana", "dhak", "bengali", "bhog", "dhunuchi"),
+        previous_ideas=(
+            "Dhunuchi dance competition",
+            "Community bhog for every resident",
+            "Sindoor khela on Dashami",
+        ),
+    ),
+    PersonalizeCase(
+        "c-eco-ganesh-again",
+        community("Eco-friendly Ganeshotsav, clay idol, no plaster of Paris"),
+        mention_any=("clay", "eco", "shadu", "natural", "reusable", "compost", "plant"),
+        forbidden=("plaster of paris", "thermocol"),
+        previous_ideas=(
+            "Clay idol from a local artisan",
+            "Flower and leaf decorations",
+            "Immersion in a tank at the venue",
+        ),
     ),
 )
 

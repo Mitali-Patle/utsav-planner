@@ -2,6 +2,8 @@
 
 import logging
 from collections.abc import Callable
+from dataclasses import dataclass
+from enum import StrEnum
 from typing import Any
 
 from pydantic import ValidationError
@@ -29,6 +31,22 @@ from app.persistence.repositories import Database, StoredEvent
 logger = logging.getLogger(__name__)
 
 SAVE_ATTEMPTS = 2
+
+
+class IdeasOutcome(StrEnum):
+    """What happened when the user asked for different ideas."""
+
+    NEW = "new"
+    UNAVAILABLE = "unavailable"
+    LIMITED = "limited"
+
+
+@dataclass(frozen=True)
+class NewIdeas:
+    """The event after a request for different ideas, and what happened."""
+
+    event: StoredEvent
+    outcome: IdeasOutcome
 
 
 class PlanningService:
@@ -125,6 +143,64 @@ class PlanningService:
                 if _personalized_by_ai(stored):
                     return stored
         raise StaleProposalError("The plan kept changing while it was being personalized.")
+
+    def regenerate_ideas(
+        self,
+        session_id: str,
+        event_id: str,
+        *,
+        ai_allowed: Callable[[], bool] = lambda: True,
+    ) -> NewIdeas:
+        """Replace the plan's ideas with different ones from a model (F12).
+
+        Only the ideas change: they are suggestions, while budget, tasks and vendors change
+        only through an approved proposal. The cache is bypassed so the answer is new, and
+        the current ideas are sent so the model avoids them. Nothing is saved unless a model
+        answers; the labelled standard ideas are never offered as new ideas. A plan not yet
+        personalized by a model gets the full personalization instead.
+
+        Args:
+            session_id: Owner's session.
+            event_id: Event whose ideas to replace.
+            ai_allowed: False (the client is over its AI rate limit) skips the model call.
+
+        Raises:
+            NotFoundError: If the event does not exist or belongs to another session.
+        """
+        stored = self.get(session_id, event_id)
+        if not _personalized_by_ai(stored):
+            personalized = self.personalize(session_id, event_id, ai_allowed=ai_allowed)
+            done = _personalized_by_ai(personalized)
+            return NewIdeas(personalized, IdeasOutcome.NEW if done else IdeasOutcome.UNAVAILABLE)
+        if not ai_allowed():
+            return NewIdeas(stored, IdeasOutcome.LIMITED)
+        context = PersonalizeContext(
+            plan=stored.plan,
+            today=self._clock.today(),
+            tone=self._tone,
+            previous_ideas=tuple(i.title for i in stored.plan.ideas),
+        )
+        result = self._ai.run(PERSONALIZE, context, use_cache=False)
+        if result.provenance.fallback or result.value.off_topic:
+            return NewIdeas(stored, IdeasOutcome.UNAVAILABLE)
+        ideas = to_personalization(result.value).ideas
+        if not ideas:
+            return NewIdeas(stored, IdeasOutcome.UNAVAILABLE)
+        for _ in range(SAVE_ATTEMPTS):
+            plan = add_ideas(stored.plan.with_changes(ideas=()), ideas)
+            try:
+                with self._db.transaction() as repos:
+                    saved = repos.events.save(
+                        event_id,
+                        session_id,
+                        plan,
+                        expected_version=stored.version,
+                        ai=ai_record(result),
+                    )
+                return NewIdeas(saved, IdeasOutcome.NEW)
+            except StaleProposalError:
+                stored = self.get(session_id, event_id)
+        raise StaleProposalError("The plan kept changing while new ideas were being saved.")
 
     def get(self, session_id: str, event_id: str) -> StoredEvent:
         """Load one of this session's events.

@@ -235,6 +235,16 @@ def test_forbidden_suggestions_fail_but_negated_mentions_pass() -> None:
     )
 
 
+def test_different_ideas_must_not_repeat_the_previous_ones() -> None:
+    case = PERSONALIZE["b-jungle-again"]
+    fresh = ideas("Treasure hunt through the jungle", "Animal sound quiz", "Tiger cupcakes")
+    assert score_personalize(case, fresh, SYSTEM).passed
+    stale = ideas("A jungle safari photo booth", "Animal sound quiz", "Tiger cupcakes")
+    assert score_personalize(case, stale, SYSTEM).reasons == (
+        "repeats the previous idea 'Jungle safari photo booth'",
+    )
+
+
 def test_off_topic_passes_only_for_an_injection() -> None:
     declined = ideas(off_topic=True)
     assert not score_personalize(PERSONALIZE["b-jungle"], declined, SYSTEM).passed

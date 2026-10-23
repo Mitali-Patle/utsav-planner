@@ -41,7 +41,7 @@ from app.persistence.tables import metadata
 from app.services import Services, build_services
 from app.services.alternatives import _price
 from app.services.change_manager import NOTHING_TO_FREE_MESSAGE, ApprovalStatus, OutcomeKind
-from app.services.planning import PlanningService, to_personalization
+from app.services.planning import IdeasOutcome, PlanningService, to_personalization
 from tests.factories import make_plan
 from tests.fakes import FixedClock, ScriptedProvider
 
@@ -272,6 +272,132 @@ def test_edit_during_personalization_is_not_overwritten(engine: Engine) -> None:
     assert personalized.plan.task(TaskId("task-1")).done
     assert [i.title for i in personalized.plan.ideas] == ["Rocket launch corner"]
     assert not any(t.source is TaskSource.AI for t in personalized.plan.tasks)
+
+
+# Different ideas (F12)
+
+DIFFERENT = PlanSuggestions(
+    summary_why="Other ways to make it special.",
+    ideas=[
+        AIIdea(
+            title="rocket launch corner ",
+            description="The same idea again, in other letters.",
+            budget_impact=BudgetImpact.NEUTRAL,
+            why="x",
+        ),
+        AIIdea(
+            title="Planet piñata",
+            description="A Saturn piñata filled with sweets.",
+            category_id="entertainment",
+            budget_impact=BudgetImpact.ADDS,
+            why="A game every child joins.",
+        ),
+    ],
+    budget_emphasis=SUGGESTIONS.budget_emphasis,
+    extra_tasks=SUGGESTIONS.extra_tasks,
+)
+
+
+def test_different_ideas_replace_only_the_ideas(engine: Engine) -> None:
+    provider = ScriptedProvider(
+        "gemini:fake", [SUGGESTIONS.model_dump_json(), DIFFERENT.model_dump_json()]
+    )
+    app = build_services(
+        Settings(_env_file=None, app_env="test"),
+        engine,
+        FixedClock(TODAY),
+        ai=FallbackChain([provider], MemoryCache()),
+    )
+    event = create(app)
+    result = app.planning.regenerate_ideas(ME, event.id)
+    assert result.outcome is IdeasOutcome.NEW
+    plan = result.event.plan
+    assert [i.title for i in plan.ideas] == ["Planet piñata"], "the repeated idea was dropped"
+    assert (plan.categories, plan.tasks, plan.vendors) == (
+        event.plan.categories,
+        event.plan.tasks,
+        event.plan.vendors,
+    ), "suggested emphasis and tasks are ignored: only an approved change may alter them"
+    assert result.event.version == event.version + 1
+    assert result.event.ai is not None
+    assert result.event.ai["result"]["ideas"][0]["title"] == "Planet piñata"
+    sent = provider.requests[-1].messages[-1][1]
+    assert '"previous_ideas": ["<<<Rocket launch corner>>>"]' in sent
+
+
+def test_different_ideas_keep_the_old_ones_when_no_model_answers(engine: Engine) -> None:
+    app = services(engine, SUGGESTIONS, ProviderUnavailableError("down"))
+    event = create(app)
+    result = app.planning.regenerate_ideas(ME, event.id)
+    assert result.outcome is IdeasOutcome.UNAVAILABLE
+    assert result.event.version == event.version
+
+
+@pytest.mark.parametrize(
+    "answer",
+    [
+        PlanSuggestions(off_topic=True, summary_why="Not an event."),
+        PlanSuggestions(summary_why="x", ideas=[SUGGESTIONS.ideas[1]]),
+    ],
+    ids=["off-topic", "nothing-valid"],
+)
+def test_different_ideas_need_a_usable_answer(engine: Engine, answer: PlanSuggestions) -> None:
+    app = services(engine, SUGGESTIONS, answer)
+    event = create(app)
+    result = app.planning.regenerate_ideas(ME, event.id)
+    assert result.outcome is IdeasOutcome.UNAVAILABLE
+    assert app.planning.get(ME, event.id).version == event.version
+
+
+def test_different_ideas_over_the_limit_call_no_model(engine: Engine) -> None:
+    app = services(engine, SUGGESTIONS)
+    event = create(app)
+    result = app.planning.regenerate_ideas(ME, event.id, ai_allowed=lambda: False)
+    assert (result.outcome, result.event.version) == (IdeasOutcome.LIMITED, event.version)
+
+
+def test_different_ideas_for_an_unpersonalized_plan_personalize_it(engine: Engine) -> None:
+    app = services(engine, SUGGESTIONS)
+    draft = app.planning.create_draft(ME, details())
+    result = app.planning.regenerate_ideas(ME, draft.id)
+    assert result.outcome is IdeasOutcome.NEW
+    assert any(t.source is TaskSource.AI for t in result.event.plan.tasks)
+
+
+def test_different_ideas_for_a_plan_with_standard_ideas_need_a_model(engine: Engine) -> None:
+    app = services(engine)
+    draft = app.planning.create_draft(ME, details())
+    app.planning.personalize(ME, draft.id, ai_allowed=lambda: False)
+    result = app.planning.regenerate_ideas(ME, draft.id, ai_allowed=lambda: False)
+    assert result.outcome is IdeasOutcome.UNAVAILABLE
+
+
+def test_different_ideas_keep_an_edit_made_meanwhile(engine: Engine) -> None:
+    holder: dict[str, Services] = {}
+    answers = [SUGGESTIONS, DIFFERENT]
+
+    class EditingProvider:
+        name = "gemini:slow"
+
+        def generate(self, request: object) -> str:
+            answer = answers.pop(0)
+            if answer is DIFFERENT:
+                app = holder["app"]
+                event = app.planning.list_events(ME)[0]
+                app.edits.set_task_done(ME, event.id, TaskId("task-1"), done=True)
+            return answer.model_dump_json()
+
+    app = build_services(
+        Settings(_env_file=None, app_env="test"),
+        engine,
+        FixedClock(TODAY),
+        ai=FallbackChain([EditingProvider()], MemoryCache()),
+    )
+    holder["app"] = app
+    event = create(app)
+    result = app.planning.regenerate_ideas(ME, event.id)
+    assert result.event.plan.task(TaskId("task-1")).done
+    assert [i.title for i in result.event.plan.ideas] == ["Planet piñata"]
 
 
 # Change requests
@@ -645,3 +771,22 @@ def test_personalization_gives_up_if_the_plan_keeps_changing(
     monkeypatch.setattr(PlanningService, "get", get_and_edit)
     with pytest.raises(StaleProposalError):
         app.planning.personalize(ME, draft.id)
+
+
+def test_different_ideas_give_up_if_the_plan_keeps_changing(
+    engine: Engine, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    app = services(engine, SUGGESTIONS, DIFFERENT)
+    event = create(app)
+    original_get = PlanningService.get
+    calls = {"n": 0}
+
+    def get_and_edit(self: PlanningService, session_id: str, event_id: str) -> StoredEvent:
+        stored = original_get(self, session_id, event_id)
+        calls["n"] += 1
+        app.edits.set_task_done(ME, event_id, TaskId(f"task-{calls['n']}"), done=True)
+        return stored
+
+    monkeypatch.setattr(PlanningService, "get", get_and_edit)
+    with pytest.raises(StaleProposalError, match="new ideas"):
+        app.planning.regenerate_ideas(ME, event.id)

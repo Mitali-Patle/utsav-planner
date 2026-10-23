@@ -32,6 +32,16 @@ def test_plan_personalize_change_and_approve(page: Page) -> None:
     expect(page.locator("#history")).to_contain_text("Approved")
 
 
+def test_different_ideas_replace_the_ideas_and_keep_focus_nearby(page: Page) -> None:
+    create_event(page)
+    expect(page.get_by_role("heading", name="Rocket launch corner")).to_be_visible()
+    page.get_by_role("button", name="Suggest different ideas").click()
+    expect(page.get_by_role("heading", name="Planet piñata")).to_be_visible()
+    expect(page.get_by_role("heading", name="Rocket launch corner")).to_have_count(0)
+    expect(page.get_by_role("heading", name="Ideas for your event")).to_be_focused()
+    expect(page.locator("#status-region")).to_contain_text("Here are different ideas")
+
+
 def test_typing_survives_the_personalization_swap(page: Page) -> None:
     held: list[Route] = []
 

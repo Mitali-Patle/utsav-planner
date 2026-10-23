@@ -250,7 +250,25 @@ def score_personalize(case: PersonalizeCase, value: PlanSuggestions, system: str
         for word in case.forbidden
         if mentions_positively(text, word)
     ]
+    problems += [
+        f"repeats the previous idea '{old}'"
+        for old in case.previous_ideas
+        if any(_same_idea(old, idea.title) for idea in value.ideas)
+    ]
     return Verdict(not problems, tuple(problems), {"ideas": float(len(value.ideas))})
+
+
+def _same_idea(old: str, new: str) -> bool:
+    """One title contains the other, ignoring case and spacing.
+
+    Examples:
+        >>> _same_idea("Dhol entry for the baraat", "Grand dhol entry for the baraat")
+        True
+        >>> _same_idea("Dhol entry for the baraat", "Giddha night for the women")
+        False
+    """
+    a, b = " ".join(old.casefold().split()), " ".join(new.casefold().split())
+    return a in b or b in a
 
 
 # Alternatives

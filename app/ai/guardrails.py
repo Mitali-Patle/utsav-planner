@@ -106,7 +106,8 @@ def check_suggestions(value: PlanSuggestions, context: PersonalizeContext) -> Pl
     """Keep only the valid parts of a personalization answer.
 
     Lenient by design: unknown ids are dropped or cleared, lists are trimmed and duplicates
-    removed, so one bad item never throws away a good answer.
+    removed, so one bad item never throws away a good answer. When the user asked for
+    different ideas, ideas repeating a previous title are dropped and only ideas are kept.
 
     Raises:
         OutputRejectedError: If no usable idea remains (and the input was on topic).
@@ -118,9 +119,17 @@ def check_suggestions(value: PlanSuggestions, context: PersonalizeContext) -> Pl
     plan = context.plan
     categories = {c.id for c in plan.categories}
     vendor_types = {v.vendor_type for v in plan.vendors}
-    ideas = [_clean_idea(idea, categories) for idea in value.ideas][:MAX_IDEAS]
+    previous = {title.casefold() for title in context.previous_ideas}
+    ideas = [
+        _clean_idea(idea, categories)
+        for idea in value.ideas
+        if idea.title.strip().casefold() not in previous
+    ][:MAX_IDEAS]
     if not ideas:
-        raise OutputRejectedError(["Give 3 to 5 ideas, each with a why."])
+        unlike = ", none repeating previous_ideas" if previous else ""
+        raise OutputRejectedError([f"Give 3 to 5 ideas, each with a why{unlike}."])
+    if previous:
+        return PlanSuggestions(summary_why=_fit(value.summary_why, MAX_SUMMARY_CHARS), ideas=ideas)
     return PlanSuggestions(
         summary_why=_fit(value.summary_why, MAX_SUMMARY_CHARS),
         ideas=ideas,

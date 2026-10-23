@@ -25,6 +25,8 @@ needed to hear about the new date, a line that was meant to stay untouched.
    dated timeline and a vendor checklist with book-by dates.
 2. **AI personalizes it** while you look at it: ideas, budget emphasis, extra tasks and
    vendor notes that fit your city, season and preferences. Every suggestion says **why**.
+   Not inspired? "Suggest different ideas" replaces only the ideas, never the budget or
+   tasks, and the model is told which ideas to avoid.
 3. **Track it.** Add expenses, protect lines you must not cut, tick off tasks, move vendors
    from "to contact" to "booked". Overspending, overdue tasks and urgent bookings are flagged.
 4. **Change it in plain words** with the Smart Change Manager:
@@ -89,7 +91,7 @@ Details: [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md) (binding design and deci
 
 | Task | When | The model | Code |
 |---|---|---|---|
-| `personalize` | Right after an event is created | Suggests ideas, budget emphasis, extra tasks and vendor notes for this city, date and preferences, each with a reason | Bounds every suggestion, turns emphasis into exact rupees, dates the tasks, drops anything invalid |
+| `personalize` | Right after an event is created, and on "Suggest different ideas" | Suggests ideas, budget emphasis, extra tasks and vendor notes for this city, date and preferences, each with a reason | Bounds every suggestion, turns emphasis into exact rupees, dates the tasks, drops anything invalid |
 | `interpret_change` | A change request in plain words | Turns it into structured operations, asks one question, or declines | Validates every operation against the plan, computes the full effect, waits for approval |
 | `alternatives` | "Suggest ways to save" on a shortfall | Picks lines and how much to trim, with reasons | Refuses protected lines, never cuts below money already spent, and computes each saving and the gap left from the real preview |
 
@@ -107,11 +109,12 @@ Details: [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md) (binding design and deci
 
 ## AI quality: evals
 
-[`evals/`](evals) holds 54 cases run against the real models: 36 change requests (lakh and
+[`evals/`](evals) holds 60 cases run against the real models: 38 change requests (lakh and
 "45k" amounts, Hinglish, relative changes, dates, keep-as-is, several changes at once, vague
 and off-topic requests, prompt injection), 12 personalizations (Bengali, Tamil, Punjabi and
 Jain weddings, a dry wedding, Ganeshotsav, Durga Puja, garba night and more, with dietary
-rules that must be respected) and 6 over-budget plans.
+rules that must be respected), 4 requests for different ideas (no repeats, preferences still
+honoured) and 6 over-budget plans.
 
 Every answer is **scored by code**, not by another model: a change answer is applied through
 the app's own guardrails and change engine, and the resulting plan is checked. Equivalent
@@ -121,15 +124,15 @@ Results from 22–24 Oct 2026, counted as **passed out of answered**. Cases with
 (Google's capacity problems, or Groq's free daily quota running out) are listed separately
 in the results, so they never count as wrong answers. Each figure is the latest run in
 which the model answered at least 80% of that task's cases. Columns name the prompt
-version measured; the app runs `interpret-change-v6` and `alternatives-v5`. An
+version measured; the app runs `personalize-v2`, `interpret-change-v6` and `alternatives-v5`. An
 alternatives answer passes only if the savings the app would actually apply cover at
 least half the gap.
 
 | Model | Change requests | Personalization | Alternatives | Median time, change |
 |---|---|---|---|---|
-| Groq `openai/gpt-oss-120b` (first in the chain) | 36/36 (v2) | 12/12 | 3/6 (v2) | 1.0 s |
-| Gemini 3.5 Flash-Lite (second) | 35/36 (v6) | 9/9 | 6/6 (v5) | 1.9 s |
-| Gemini 3.1 Flash-Lite (third) | 33/33 (v6) | 12/12 | 6/6 (v5) | 2.1 s |
+| Groq `openai/gpt-oss-120b` (first in the chain) | 36/36 (v2) | 12/12 (v1) | 3/6 (v2) | 1.0 s |
+| Gemini 3.5 Flash-Lite (second) | 35/36 (v6) | 16/16 (v2) | 6/6 (v5) | 1.9 s |
+| Gemini 3.1 Flash-Lite (third) | 33/33 (v6) | 16/16 (v2) | 6/6 (v5) | 2.1 s |
 
 What the evals changed:
 - **Model order.** Groq was faster and more accurate, and it answered every case until
@@ -193,7 +196,7 @@ Full results, every failure with its reason, and the run history:
 | Unit and property | Money, budget, timeline, vendors, change engine (Hypothesis checks exact totals and protection over thousands of generated plans), AI chain, providers, prompts, guardrails, services, persistence | `uv run pytest` |
 | Web | Every route through HTTP with and without htmx: CSRF, ownership, rate limits, validation, label audit of every page | `uv run pytest` |
 | Browser | Playwright journeys (one with JavaScript off), axe, phone width, keyboard, clean console | `uv run pytest -m e2e` |
-| AI evals | 54 cases against the real models | `uv run python -m evals.run --model …` |
+| AI evals | 60 cases against the real models | `uv run python -m evals.run --model …` |
 
 The AI is always faked in tests. A 95% branch-coverage gate applies to `app/`, and
 `mypy --strict` covers the app, tests and evals. GitHub Actions runs the pre-commit hooks,

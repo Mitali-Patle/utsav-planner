@@ -57,7 +57,7 @@
 </section>
 
 <section id="ideas" aria-labelledby="ideas-heading">
-  <h2 id="ideas-heading">Ideas for your event</h2>
+  <h2 id="ideas-heading"{% if focus_ideas %} tabindex="-1" autofocus{% endif %}>Ideas for your event</h2>
   {% if ai and ai.fallback %}<p class="label-not-ai">Standard ideas (not AI-generated).</p>{% elif ai %}<p class="label-ai">Suggested by AI, each with a reason.</p>{% endif %}
   {% if ai and ai.fallback %}
   <form method="post" action="/events/{{ event.id }}/personalize" class="retry-ai"
@@ -74,6 +74,14 @@
     {% endfor %}
   </ul>
   {% elif not personalization_pending %}<p>No ideas yet.</p>{% endif %}
+  {% if ai and not ai.fallback %}
+  <form method="post" action="/events/{{ event.id }}/ideas" class="retry-ai"
+        hx-post="/events/{{ event.id }}/ideas" hx-target="#plan-area" hx-swap="outerHTML" hx-indicator="#ideas-busy">
+    {{ csrf(csrf_token) }}
+    <button type="submit" id="new-ideas">Suggest different ideas</button>
+    <p id="ideas-busy" class="htmx-indicator" role="status">Asking the AI for different ideas. This can take up to 10 seconds.</p>
+  </form>
+  {% endif %}
   {% if ai %}{% include "partials/ai_panel.html" %}{% endif %}
 </section>
 

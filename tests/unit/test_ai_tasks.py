@@ -237,6 +237,33 @@ def test_off_topic_suggestions_are_emptied() -> None:
     assert cleaned.ideas == []
 
 
+def test_different_ideas_send_the_previous_ones_and_keep_only_new_ideas() -> None:
+    first = PersonalizeContext(plan=birthday(), today=TODAY)
+    assert "previous_ideas" not in PERSONALIZE.build_payload(first)
+    again = PersonalizeContext(
+        plan=birthday(), today=TODAY, previous_ideas=("Rocket corner", "Moon cake")
+    )
+    payload = PERSONALIZE.build_payload(again)
+    assert payload["previous_ideas"] == ["<<<Rocket corner>>>", "<<<Moon cake>>>"]
+    answer = PlanSuggestions(
+        summary_why="x",
+        ideas=[idea(title="MOON CAKE"), idea(title="Star map")],
+        budget_emphasis=[
+            AIEmphasis(
+                category_id="decor",
+                direction=EmphasisDirection.INCREASE,
+                strength=EmphasisStrength.SMALL,
+                why="theme",
+            )
+        ],
+    )
+    cleaned = check_suggestions(answer, again)
+    assert [i.title for i in cleaned.ideas] == ["Star map"]
+    assert cleaned.budget_emphasis == []
+    with pytest.raises(OutputRejectedError, match="none repeating previous_ideas"):
+        check_suggestions(PlanSuggestions(summary_why="x", ideas=[idea(title="Moon cake")]), again)
+
+
 # Guardrails: interpret_change (strict)
 
 

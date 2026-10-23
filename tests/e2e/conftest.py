@@ -37,7 +37,7 @@ from app.persistence.tables import metadata
 from app.services import build_services
 from tests.e2e.helpers import TODAY, VAGUE, NewPage
 from tests.fakes import FixedClock, TaskAwareProvider
-from tests.unit.test_services import SUGGESTIONS
+from tests.unit.test_services import DIFFERENT, SUGGESTIONS
 
 CLARIFY = ChangeIntent(
     status=IntentStatus.NEEDS_CLARIFICATION,
@@ -71,7 +71,7 @@ def _interpret(payload: str) -> ChangeIntent:
 
 
 ANSWERS: dict[type[BaseModel], Callable[[str], BaseModel]] = {
-    PlanSuggestions: lambda _payload: SUGGESTIONS,
+    PlanSuggestions: lambda payload: DIFFERENT if '"previous_ideas"' in payload else SUGGESTIONS,
     ChangeIntent: _interpret,
     Alternatives: lambda _payload: SAVINGS,
 }

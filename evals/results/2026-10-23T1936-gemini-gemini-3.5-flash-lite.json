@@ -1,0 +1,1184 @@
+{
+ "model": "gemini:gemini-3.5-flash-lite",
+ "run_at": "2026-10-23T19:36:40+00:00",
+ "prompt_versions": {
+  "personalize": "personalize-v2",
+  "interpret_change": "interpret-change-v6",
+  "alternatives": "alternatives-v5"
+ },
+ "results": [
+  {
+   "task": "personalize",
+   "case_id": "w-bengali",
+   "passed": true,
+   "error": false,
+   "reasons": [],
+   "metrics": {
+    "ideas": 4.0
+   },
+   "provider": "gemini:gemini-3.5-flash-lite",
+   "latency_ms": 3603,
+   "first_try_valid": true,
+   "attempts": [
+    "gemini:gemini-3.5-flash-lite: ok"
+   ],
+   "answer": {
+    "off_topic": false,
+    "summary_why": "A destination wedding in Jaipur blending a royal heritage backdrop with authentic Bengali traditions and a festive February weather plan.",
+    "ideas": [
+     {
+      "title": "Hand-painted Alpana entryways",
+      "description": "Hire local folk artists or use stencils to create traditional rice-paste alpana motifs at the venue entrance.",
+      "category_id": "decor",
+      "budget_impact": "neutral",
+      "why": "Brings authentic Bengali heritage directly into a grand Jaipur palace setting."
+     },
+     {
+      "title": "Bengali-Rajasthani fusion menu",
+      "description": "Serve a dedicated Bengali fish dish alongside royal Rajasthani dal baati churma stations.",
+      "category_id": "catering",
+      "budget_impact": "adds",
+      "why": "Honors the groom's cultural roots while treating guests to local delicacies."
+     },
+     {
+      "title": "E-invites with Bengali motifs",
+      "description": "Send digital invitations featuring traditional red-bordered saree prints and shankha designs.",
+      "category_id": "invitations",
+      "budget_impact": "saves",
+      "why": "Cuts printing and shipping costs for guests traveling from outside Jaipur."
+     },
+     {
+      "title": "February garden lawn setup",
+      "description": "Host the evening sangeet and reception on open-air heritage lawns.",
+      "category_id": "venue",
+      "budget_impact": "neutral",
+      "why": "Jaipur in February has cool, pleasant evenings perfect for outdoor gatherings."
+     }
+    ],
+    "budget_emphasis": [
+     {
+      "category_id": "catering",
+      "direction": "increase",
+      "strength": "medium",
+      "why": "Sourcing fresh fish for a Bengali menu in Rajasthan requires specialized suppliers."
+     },
+     {
+      "category_id": "decor",
+      "direction": "increase",
+      "strength": "small",
+      "why": "Authentic alpana and marigold floral styling demand skilled local artisans."
+     }
+    ],
+    "extra_tasks": [
+     {
+      "title": "Source a specialized seafood vendor in Jaipur for the reception",
+      "category_id": "catering",
+      "days_before_event": 60,
+      "why": "Ensures authentic preparation of fish dishes for the Bengali guests."
+     },
+     {
+      "title": "Coordinate traditional Bengali ritual items from home",
+      "category_id": "rituals",
+      "days_before_event": 30,
+      "why": "Special items like shankha, pola, and khori might not be locally available in Jaipur."
+     }
+    ],
+    "vendor_notes": [
+     {
+      "vendor_type": "caterer",
+      "why": "Crucial for verifying their capability to cook authentic Bengali fish dishes alongside local cuisine."
+     },
+     {
+      "vendor_type": "decorator",
+      "why": "Confirm if they can execute traditional floor alpana alongside standard Rajasthani palace decor."
+     }
+    ]
+   }
+  },
+  {
+   "task": "personalize",
+   "case_id": "w-tamil-veg",
+   "passed": true,
+   "error": false,
+   "reasons": [],
+   "metrics": {
+    "ideas": 3.0
+   },
+   "provider": "gemini:gemini-3.5-flash-lite",
+   "latency_ms": 3078,
+   "first_try_valid": true,
+   "attempts": [
+    "gemini:gemini-3.5-flash-lite: ok"
+   ],
+   "answer": {
+    "off_topic": false,
+    "summary_why": "Blending Tamil Brahmin traditions like banana-leaf meals and nadaswaram with the royal heritage of Jaipur for an authentic, memorable wedding.",
+    "ideas": [
+     {
+      "title": "Traditional banana-leaf feast with a Rajasthani twist",
+      "description": "Serve pure vegetarian Sadya on banana leaves while offering a live counter for hot Rajasthani dal baati churma for evening snacks.",
+      "category_id": "catering",
+      "budget_impact": "neutral",
+      "why": "Honors the Tamil Brahmin preference while celebrating local Jaipur flavors."
+     },
+     {
+      "title": "Live nadaswaram with Rajasthani folk fusion",
+      "description": "Welcome guests at the entrance with traditional nadaswaram and thavil, and blend in local nagada drums for key ceremony entries.",
+      "category_id": "music",
+      "budget_impact": "adds",
+      "why": "Brings the classic South Indian wedding aura to a grand heritage venue in Jaipur."
+     },
+     {
+      "title": "Marigold and jasmine floral minimalism",
+      "description": "Use abundant fresh jasmine and marigolds for the mandap and haldi, reducing heavy structural props.",
+      "category_id": "decor",
+      "budget_impact": "saves",
+      "why": "Keeps the decor pure and traditional without overspending on artificial structures."
+     }
+    ],
+    "budget_emphasis": [
+     {
+      "category_id": "catering",
+      "direction": "increase",
+      "strength": "medium",
+      "why": "Authentic multi-course banana-leaf meals for 250 guests require skilled traditional cooks."
+     },
+     {
+      "category_id": "music",
+      "direction": "increase",
+      "strength": "small",
+      "why": "Sourcing and flying in a skilled nadaswaram troupe to Jaipur involves extra travel costs."
+     }
+    ],
+    "extra_tasks": [
+     {
+      "title": "Source fresh banana leaves locally in Jaipur",
+      "category_id": "catering",
+      "days_before_event": 14,
+      "why": "Banana leaves are less common in North India and need advance vendor arrangement."
+     },
+     {
+      "title": "Arrange traditional brass samai lamps and ritual items",
+      "category_id": "rituals",
+      "days_before_event": 20,
+      "why": "Essential for traditional Tamil Brahmin rituals and often hard to find locally in Rajasthan."
+     }
+    ],
+    "vendor_notes": [
+     {
+      "vendor_type": "caterer",
+      "why": "Crucial for delivering an authentic pure vegetarian Tamil Brahmin banana-leaf meal in Jaipur."
+     },
+     {
+      "vendor_type": "music",
+      "why": "Ensure the nadaswaram vidwan is booked early and understands the exact muhurtham timings."
+     }
+    ]
+   }
+  },
+  {
+   "task": "personalize",
+   "case_id": "w-punjabi",
+   "passed": true,
+   "error": false,
+   "reasons": [],
+   "metrics": {
+    "ideas": 4.0
+   },
+   "provider": "gemini:gemini-3.5-flash-lite",
+   "latency_ms": 3497,
+   "first_try_valid": true,
+   "attempts": [
+    "gemini:gemini-3.5-flash-lite: ok"
+   ],
+   "answer": {
+    "off_topic": false,
+    "summary_why": "For a grand Punjabi wedding in Jaipur, we will focus on vibrant marigold decor, high-energy dhol beats, and seamless guest hospitality.",
+    "ideas": [
+     {
+      "title": "Live Dhol teli session at Sangeet",
+      "description": "Hire traditional dhol players to welcome guests right at the entrance.",
+      "category_id": "music",
+      "budget_impact": "adds",
+      "why": "It brings the authentic Punjabi wedding energy right at the start of the sangeet."
+     },
+     {
+      "title": "Jaipur heritage fort backdrop",
+      "description": "Choose a haveli or palace venue in Jaipur for a royal feel.",
+      "category_id": "venue",
+      "budget_impact": "neutral",
+      "why": "It highlights the destination wedding experience for out-of-town guests."
+     },
+     {
+      "title": "Phoolon ki holi for Haldi",
+      "description": "Use rose petals alongside turmeric paste during the haldi ceremony.",
+      "category_id": "rituals",
+      "budget_impact": "neutral",
+      "why": "It makes the photographs colorful and adds a festive North Indian touch."
+     },
+     {
+      "title": "Customized Punjabi juttis for guests",
+      "description": "Set up a stall with traditional footwear as a special wedding favor.",
+      "category_id": "gifts",
+      "budget_impact": "adds",
+      "why": "It matches the lively Punjabi theme and is useful for dancing."
+     }
+    ],
+    "budget_emphasis": [
+     {
+      "category_id": "music",
+      "direction": "increase",
+      "strength": "medium",
+      "why": "Bhangra and dhol are central to a vibrant Punjabi sangeet night."
+     },
+     {
+      "category_id": "decor",
+      "direction": "increase",
+      "strength": "small",
+      "why": "A grand Jaipur venue needs rich floral and fabric styling to pop."
+     }
+    ],
+    "extra_tasks": [
+     {
+      "title": "Arrange special dhol walas for the baraat entry",
+      "category_id": "music",
+      "days_before_event": 60,
+      "why": "Ensures high energy for the groom's grand entrance."
+     },
+     {
+      "title": "Coordinate welcome hampers with traditional sweets for hotel rooms",
+      "category_id": "gifts",
+      "days_before_event": 14,
+      "why": "Welcomes guests traveling to Jaipur for the wedding."
+     }
+    ],
+    "vendor_notes": [
+     {
+      "vendor_type": "music",
+      "why": "Crucial for bhangra and dhol; ask if they can handle a high-energy crowd late into the night."
+     },
+     {
+      "vendor_type": "decorator",
+      "why": "Needs experience with royal Jaipur backdrops and vibrant Punjabi themes."
+     }
+    ]
+   }
+  },
+  {
+   "task": "personalize",
+   "case_id": "w-jain",
+   "passed": true,
+   "error": false,
+   "reasons": [],
+   "metrics": {
+    "ideas": 3.0
+   },
+   "provider": "gemini:gemini-3.5-flash-lite",
+   "latency_ms": 3189,
+   "first_try_valid": true,
+   "attempts": [
+    "gemini:gemini-3.5-flash-lite: ok"
+   ],
+   "answer": {
+    "off_topic": false,
+    "summary_why": "Our focus is a grand February destination wedding in Jaipur featuring a strict Jain satvik menu, beautiful sunset ceremonies, and traditional winter aesthetics.",
+    "ideas": [
+     {
+      "title": "Jain-compliant royal menu tasting",
+      "description": "Organize a dedicated tasting session with your caterer focusing entirely on exquisite no-onion, no-garlic, and root-vegetable-free Rajasthani delicacies.",
+      "category_id": "catering",
+      "budget_impact": "neutral",
+      "why": "Crucial for ensuring all 250 guests enjoy pure satvik food without compromising on authentic royal flavors."
+     },
+     {
+      "title": "Sunset heritage mandap",
+      "description": "Position the wedding mandap to catch the golden February sunset against a historic Jaipur fort or palace backdrop.",
+      "category_id": "venue",
+      "budget_impact": "adds",
+      "why": "Leverages Jaipur's stunning winter evening weather and light for breathtaking photography."
+     },
+     {
+      "title": "Marigold and mirror-work decor",
+      "description": "Use abundant yellow marigolds paired with traditional Rajasthani mirror-work textiles for the haldi and mehendi functions.",
+      "category_id": "decor",
+      "budget_impact": "saves",
+      "why": "Fresh local florals and textiles offer high visual impact for daytime celebrations while keeping decor costs sensible."
+     }
+    ],
+    "budget_emphasis": [
+     {
+      "category_id": "catering",
+      "direction": "increase",
+      "strength": "medium",
+      "why": "Crafting diverse, high-end Jain menus across multiple functions requires specialized culinary attention."
+     },
+     {
+      "category_id": "decor",
+      "direction": "increase",
+      "strength": "small",
+      "why": "Jaipur heritage venues look best with rich, traditional styling for the sangeet and wedding."
+     }
+    ],
+    "extra_tasks": [
+     {
+      "title": "Review caterer sourcing to ensure zero cross-contamination with root vegetables",
+      "category_id": "catering",
+      "days_before_event": 60,
+      "why": "Strict dietary adherence is vital for a traditional Jain wedding celebration."
+     },
+     {
+      "title": "Arrange heating lamps for outdoor evening functions like the sangeet and sunset",
+      "category_id": "venue",
+      "days_before_event": 14,
+      "why": "February evenings in Jaipur can get quite chilly for guests."
+     }
+    ],
+    "vendor_notes": [
+     {
+      "vendor_type": "caterer",
+      "why": "They must guarantee a completely separate cooking line for Jain food with strict avoidance of potato, onion, and garlic."
+     },
+     {
+      "vendor_type": "decorator",
+      "why": "Confirm they have experience styling heritage properties in Jaipur while keeping the sunset lighting in mind."
+     }
+    ]
+   }
+  },
+  {
+   "task": "personalize",
+   "case_id": "w-dry-eco",
+   "passed": true,
+   "error": false,
+   "reasons": [],
+   "metrics": {
+    "ideas": 4.0
+   },
+   "provider": "gemini:gemini-3.5-flash-lite",
+   "latency_ms": 3599,
+   "first_try_valid": true,
+   "attempts": [
+    "gemini:gemini-3.5-flash-lite: ok"
+   ],
+   "answer": {
+    "off_topic": false,
+    "summary_why": "A zero-plastic, alcohol-free Rajasthani heritage wedding in February balancing royal heritage charm with sustainable, thoughtful touches.",
+    "ideas": [
+     {
+      "title": "Zero-plastic terracotta hydration station",
+      "description": "Serve welcomed guests fresh drinking water in traditional clay kulhars from brass urns.",
+      "category_id": "catering",
+      "budget_impact": "neutral",
+      "why": "Fits the zero-plastic preference and gives a local Jaipur touch."
+     },
+     {
+      "title": "Potted marigold and palm decor",
+      "description": "Use live potted plants and locally sourced marigolds instead of floral foam and plastic props.",
+      "category_id": "decor",
+      "budget_impact": "saves",
+      "why": "Reduces waste and aligns with the sustainable theme while saving on single-use items."
+     },
+     {
+      "title": "Mocktail bar with heritage sharbats",
+      "description": "Feature a live counter serving rose, khus and badam milk coolers.",
+      "category_id": "catering",
+      "budget_impact": "neutral",
+      "why": "Perfect for a dry wedding, keeping guests refreshed in a festive style."
+     },
+     {
+      "title": "Seed-paper wedding stationery",
+      "description": "Use plantable seed paper for wedding programs and welcome notes.",
+      "category_id": "invitations",
+      "budget_impact": "adds",
+      "why": "Supports the zero-plastic and eco-friendly preferences."
+     }
+    ],
+    "budget_emphasis": [
+     {
+      "category_id": "decor",
+      "direction": "increase",
+      "strength": "small",
+      "why": "Sourcing sustainable, non-plastic fabrics and natural elements in Jaipur requires a bit more care."
+     },
+     {
+      "category_id": "catering",
+      "direction": "increase",
+      "strength": "small",
+      "why": "A grand pure-veg spread with specialty mocktail counters needs adequate allocation."
+     }
+    ],
+    "extra_tasks": [
+     {
+      "title": "Confirm zero-plastic clauses in writing with venue and caterer",
+      "category_id": "venue",
+      "days_before_event": 60,
+      "why": "Ensures no hidden plastic water bottles or tableware are brought in on the days."
+     },
+     {
+      "title": "Arrange return transport for guests without alcohol concerns",
+      "category_id": "transport",
+      "days_before_event": 14,
+      "why": "Simplifies late-night coordination since the event is entirely dry."
+     }
+    ],
+    "vendor_notes": [
+     {
+      "vendor_type": "venue",
+      "why": "Ensure they permit external waste management and have strict rules aligned with zero-plastic goals."
+     },
+     {
+      "vendor_type": "caterer",
+      "why": "Confirm all serviceware is steel, glass, or leaf-based, and test rich heritage vegetarian recipes."
+     },
+     {
+      "vendor_type": "decorator",
+      "why": "Explicitly ban thermocol, plastic foam, and non-biodegradable glitter from all five functions."
+     }
+    ]
+   }
+  },
+  {
+   "task": "personalize",
+   "case_id": "b-jungle",
+   "passed": true,
+   "error": false,
+   "reasons": [],
+   "metrics": {
+    "ideas": 3.0
+   },
+   "provider": "gemini:gemini-3.5-flash-lite",
+   "latency_ms": 2586,
+   "first_try_valid": true,
+   "attempts": [
+    "gemini:gemini-3.5-flash-lite: ok"
+   ],
+   "answer": {
+    "off_topic": false,
+    "summary_why": "For Aarav's 5th jungle-themed birthday in Indore, we will focus on immersive animal decor and engaging games that match his age.",
+    "ideas": [
+     {
+      "title": "Jungle safari entrance arch",
+      "description": "Create an arched entrance with foliage, vines, and a welcome sign featuring a cartoon lion.",
+      "category_id": "decor",
+      "budget_impact": "neutral",
+      "why": "It sets the jungle mood right as 5-year-old guests and their parents arrive."
+     },
+     {
+      "title": "Animal animal-print paper bags",
+      "description": "Use biodegradable paper favor bags with zebra and tiger prints.",
+      "category_id": "return_gifts",
+      "budget_impact": "saves",
+      "why": "It reinforces the theme affordably while cutting down on plastic waste."
+     },
+     {
+      "title": "DIY animal photo booth props",
+      "description": "Print and stick animal face masks on wooden sticks for fun guest photos.",
+      "category_id": "photography",
+      "budget_impact": "saves",
+      "why": "Kids love wearing masks, and it adds playful variety to the album."
+     }
+    ],
+    "budget_emphasis": [
+     {
+      "category_id": "decor",
+      "direction": "increase",
+      "strength": "small",
+      "why": "A jungle theme relies heavily on visual elements like foliage and cutouts to transform the venue."
+     },
+     {
+      "category_id": "entertainment",
+      "direction": "increase",
+      "strength": "small",
+      "why": "Five-year-olds need high-energy games and a dedicated host to keep them engaged."
+     }
+    ],
+    "extra_tasks": [
+     {
+      "title": "Prepare a backup indoor activity plan in case Indore's November weather turns ch",
+      "category_id": "entertainment",
+      "days_before_event": 7,
+      "why": "Evening temperatures in Indore can drop quickly in late November."
+     }
+    ],
+    "vendor_notes": [
+     {
+      "vendor_type": "decorator",
+      "why": "Crucial for pulling off the jungle theme. Ask if they can source reusable cardboard animal cutouts."
+     },
+     {
+      "vendor_type": "entertainer",
+      "why": "A good games host makes or breaks a 5-year-old's party. Ask for jungle-themed games."
+     }
+    ]
+   }
+  },
+  {
+   "task": "personalize",
+   "case_id": "b-sixtieth",
+   "passed": true,
+   "error": false,
+   "reasons": [],
+   "metrics": {
+    "ideas": 3.0
+   },
+   "provider": "gemini:gemini-3.5-flash-lite",
+   "latency_ms": 3076,
+   "first_try_valid": true,
+   "attempts": [
+    "gemini:gemini-3.5-flash-lite: ok"
+   ],
+   "answer": {
+    "off_topic": false,
+    "summary_why": "Balancing a 5th birthday celebration for Aarav with a cozy 60th birthday family dinner for Dad, anchored by old Hindi melodies in Indore.",
+    "ideas": [
+     {
+      "title": "Retro Melody Corner",
+      "description": "Set up a dedicated speaker corner playing classic Kishore Kumar and Lata Mangeshkar songs for the elders.",
+      "category_id": "entertainment",
+      "budget_impact": "neutral",
+      "why": "It brings a nostalgic touch for Dad's 60th birthday while keeping the atmosphere relaxed for family."
+     },
+     {
+      "title": "Dual-Theme Photo Booth",
+      "description": "Create a simple backdrop that works for both a child's birthday and a milestone 60th celebration.",
+      "category_id": "decor",
+      "budget_impact": "saves",
+      "why": "Combining decor elements for both celebrations in Indore saves money and avoids clutter."
+     },
+     {
+      "title": "Shared Celebration Cake",
+      "description": "Order a classic tiered cake with a small topper for Aarav and a special dedication message for Dad.",
+      "category_id": "cake",
+      "budget_impact": "saves",
+      "why": "Having one main cake instead of two simplifies the dessert run and honors both birthdays together."
+     }
+    ],
+    "budget_emphasis": [
+     {
+      "category_id": "catering",
+      "direction": "increase",
+      "strength": "medium",
+      "why": "A family dinner for 40 guests in Indore needs a hearty multi-course menu that appeals to both kids and elders."
+     },
+     {
+      "category_id": "return_gifts",
+      "direction": "decrease",
+      "strength": "small",
+      "why": "Shifting funds toward food and music adds more value to a combined family dinner than costly return favors."
+     }
+    ],
+    "extra_tasks": [
+     {
+      "title": "Curate an old Hindi song playlist with family favorites",
+      "category_id": "entertainment",
+      "days_before_event": 7,
+      "why": "Ensures the background music fits Dad's 60th birthday mood perfectly."
+     },
+     {
+      "title": "Confirm seating arrangements for elderly family members",
+      "category_id": "venue",
+      "days_before_event": 5,
+      "why": "Comfortable seating is essential for older guests attending a 60th birthday dinner."
+     }
+    ],
+    "vendor_notes": [
+     {
+      "vendor_type": "caterer",
+      "why": "Crucial for 40 guests; ask for a menu that balances kid-friendly snacks with traditional Indore delicacies for elders."
+     },
+     {
+      "vendor_type": "photographer",
+      "why": "Important to capture both Aarav's joyful energy and candid moments of Dad celebrating his 60th."
+     },
+     {
+      "vendor_type": "entertainer",
+      "why": "Confirm if they can manage simple engagement for a 5-year-old while keeping the tone warm and family-friendly."
+     }
+    ]
+   }
+  },
+  {
+   "task": "personalize",
+   "case_id": "b-tight-home",
+   "passed": true,
+   "error": false,
+   "reasons": [],
+   "metrics": {
+    "ideas": 3.0
+   },
+   "provider": "gemini:gemini-3.5-flash-lite",
+   "latency_ms": 2586,
+   "first_try_valid": true,
+   "attempts": [
+    "gemini:gemini-3.5-flash-lite: ok"
+   ],
+   "answer": {
+    "off_topic": false,
+    "summary_why": "A home-based, budget-friendly celebration in Indore focused on simple DIY elements and fun games for the kids.",
+    "ideas": [
+     {
+      "title": "DIY Balloon Arch",
+      "description": "Create a simple balloon arch at the entrance using a DIY kit instead of hiring a professional decorator.",
+      "category_id": "decor",
+      "budget_impact": "saves",
+      "why": "Saves money while keeping the festive look for a home party."
+     },
+     {
+      "title": "Pass the Parcel",
+      "description": "Organize classic indoor party games like pass the parcel and musical chairs using home items.",
+      "category_id": "entertainment",
+      "budget_impact": "saves",
+      "why": "Kids love these traditional games and it costs almost nothing."
+     },
+     {
+      "title": "Home-made Snacks",
+      "description": "Serve simple snacks like mini samosas, popcorn, and fruit juice prepared at home or ordered locally in bulk.",
+      "category_id": "catering",
+      "budget_impact": "saves",
+      "why": "Keeps food costs low for forty guests on a tight budget."
+     }
+    ],
+    "budget_emphasis": [
+     {
+      "category_id": "catering",
+      "direction": "increase",
+      "strength": "small",
+      "why": "Feeding forty guests requires a reliable chunk of the budget."
+     }
+    ],
+    "extra_tasks": [
+     {
+      "title": "Clear living room space for the party setup and games",
+      "category_id": "venue",
+      "days_before_event": 2,
+      "why": "Hosting at home means rearranging furniture early to fit forty guests comfortably."
+     }
+    ],
+    "vendor_notes": [
+     {
+      "vendor_type": "caterer",
+      "why": "Crucial for feeding forty guests without spending hours cooking."
+     }
+    ]
+   }
+  },
+  {
+   "task": "personalize",
+   "case_id": "c-eco-ganesh",
+   "passed": true,
+   "error": false,
+   "reasons": [],
+   "metrics": {
+    "ideas": 4.0
+   },
+   "provider": "gemini:gemini-3.5-flash-lite",
+   "latency_ms": 2975,
+   "first_try_valid": true,
+   "attempts": [
+    "gemini:gemini-3.5-flash-lite: ok"
+   ],
+   "answer": {
+    "off_topic": false,
+    "summary_why": "We are planning a sustainable, zero-waste Ganeshotsav in Pune with 400 community members, keeping eco-friendly practices front and center.",
+    "ideas": [
+     {
+      "title": "Clay idol workshop",
+      "description": "Host a small workshop where members help shape a small clay idol together.",
+      "category_id": "puja_rituals",
+      "budget_impact": "neutral",
+      "why": "Builds community engagement and reinforces the eco-friendly preference."
+     },
+     {
+      "title": "Cloth banners and natural foliage",
+      "description": "Use banana leaves, cloth banners and potted plants instead of thermocol or plastic flex.",
+      "category_id": "decor",
+      "budget_impact": "saves",
+      "why": "Aligns with the green mandate and gives a traditional, elegant look."
+     },
+     {
+      "title": "Zero-waste community meal",
+      "description": "Use steel plates and glasses with a dedicated washing station instead of disposables.",
+      "category_id": "cleanup",
+      "budget_impact": "adds",
+      "why": "Eliminates plastic waste for 400 guests."
+     },
+     {
+      "title": "Digital cultural schedule",
+      "description": "Share the programme via WhatsApp and QR codes instead of paper pamphlets.",
+      "category_id": "cultural_program",
+      "budget_impact": "saves",
+      "why": "Saves paper and reaches all members instantly."
+     }
+    ],
+    "budget_emphasis": [
+     {
+      "category_id": "puja_rituals",
+      "direction": "increase",
+      "strength": "small",
+      "why": "Sourcing a certified clay idol requires a higher artisan fee."
+     }
+    ],
+    "extra_tasks": [
+     {
+      "title": "Coordinate with local PMC for green idol immersion options",
+      "category_id": "permits",
+      "days_before_event": 15,
+      "why": "Ensures a smooth process for eco-friendly immersion without polluting natural water bodies."
+     }
+    ],
+    "vendor_notes": [
+     {
+      "vendor_type": "idol_maker",
+      "why": "Confirm the exact clay composition and delivery date well in advance."
+     },
+     {
+      "vendor_type": "waste_management",
+      "why": "Ensure they specialize in composting organic prasad waste."
+     }
+    ]
+   }
+  },
+  {
+   "task": "personalize",
+   "case_id": "c-durga",
+   "passed": true,
+   "error": false,
+   "reasons": [],
+   "metrics": {
+    "ideas": 3.0
+   },
+   "provider": "gemini:gemini-3.5-flash-lite",
+   "latency_ms": 2574,
+   "first_try_valid": true,
+   "attempts": [
+    "gemini:gemini-3.5-flash-lite: ok"
+   ],
+   "answer": {
+    "off_topic": false,
+    "summary_why": "A vibrant Bengali Durga Puja style celebration tailored for a Pune housing society with traditional bhog and dhunuchi dance.",
+    "ideas": [
+     {
+      "title": "Eco-Friendly Dhunuchi Setup",
+      "description": "Arrange clay dhunuchis and coconut husk charcoal for the evening dance.",
+      "category_id": "cultural_program",
+      "budget_impact": "neutral",
+      "why": "Essential for authentic Bengali community energy during the cultural programme."
+     },
+     {
+      "title": "Community-Sourced Bhog Cooking",
+      "description": "Involve society members in prep to cut catering costs and build community spirit.",
+      "category_id": "prasad_catering",
+      "budget_impact": "saves",
+      "why": "Fits the Bengali housing society vibe and stretches the food budget for 400 guests."
+     },
+     {
+      "title": "Traditional Bengali Decor",
+      "description": "Use shola pith decorations and marigold strings for the pandal entrance.",
+      "category_id": "decor",
+      "budget_impact": "neutral",
+      "why": "Brings the classic Durga Puja aesthetic to Pune."
+     }
+    ],
+    "budget_emphasis": [
+     {
+      "category_id": "prasad_catering",
+      "direction": "increase",
+      "strength": "medium",
+      "why": "Feeding 400 guests traditional community meals is a major cost center."
+     },
+     {
+      "category_id": "decor",
+      "direction": "increase",
+      "strength": "small",
+      "why": "Pandal aesthetics are crucial for an authentic festival feel."
+     }
+    ],
+    "extra_tasks": [
+     {
+      "title": "Confirm dhunuchi dance participants and music tracks",
+      "category_id": "cultural_program",
+      "days_before_event": 10,
+      "why": "Ensures the evening cultural segment runs smoothly."
+     },
+     {
+      "title": "Coordinate bhog serving counters with volunteers",
+      "category_id": "volunteers_logistics",
+      "days_before_event": 5,
+      "why": "Crucial for managing a large crowd of 400 efficiently."
+     }
+    ],
+    "vendor_notes": [
+     {
+      "vendor_type": "caterer",
+      "why": "Must be experienced in cooking traditional Bengali bhog for large crowds."
+     },
+     {
+      "vendor_type": "decorator",
+      "why": "Confirm if they can source traditional shola pith items."
+     }
+    ]
+   }
+  },
+  {
+   "task": "personalize",
+   "case_id": "c-garba",
+   "passed": true,
+   "error": false,
+   "reasons": [],
+   "metrics": {
+    "ideas": 3.0
+   },
+   "provider": "gemini:gemini-3.5-flash-lite",
+   "latency_ms": 3804,
+   "first_try_valid": true,
+   "attempts": [
+    "gemini:gemini-3.5-flash-lite: ok"
+   ],
+   "answer": {
+    "off_topic": false,
+    "summary_why": "We will focus on a community garba night in Pune with eco-friendly arrangements, clear permits, and smooth crowd management.",
+    "ideas": [
+     {
+      "title": "Traditional Dandiya and Garba Circle",
+      "description": "Set up a central dancing circle with a raised stage for the sound system and a dedicated space for elders to watch.",
+      "category_id": "cultural_program",
+      "budget_impact": "neutral",
+      "why": "It brings all age groups together for a lively Navratri garba night."
+     },
+     {
+      "title": "Eco-Friendly Dhol-Tasha Pathak",
+      "description": "Hire a local youth dhol-tasha group for a high-energy welcome during the event.",
+      "category_id": "cultural_program",
+      "budget_impact": "adds",
+      "why": "It adds an authentic Pune cultural touch that kids and elders will love."
+     },
+     {
+      "title": "Zero-Waste Food Stalls",
+      "description": "Use reusable steel plates and glasses or banana leaves, avoiding single-use plastics entirely.",
+      "category_id": "cleanup",
+      "budget_impact": "saves",
+      "why": "It matches the green theme and cuts down recurring disposal costs."
+     }
+    ],
+    "budget_emphasis": [
+     {
+      "category_id": "sound_lighting",
+      "direction": "increase",
+      "strength": "medium",
+      "why": "Good acoustics are vital for an outdoor garba and cultural program."
+     },
+     {
+      "category_id": "cleanup",
+      "direction": "increase",
+      "strength": "small",
+      "why": "Handling waste for 400 guests needs dedicated manpower."
+     }
+    ],
+    "extra_tasks": [
+     {
+      "title": "Coordinate parking and traffic marshals with local security",
+      "category_id": "volunteers_logistics",
+      "days_before_event": 5,
+      "why": "A large crowd of 400 guests will need orderly vehicle parking."
+     },
+     {
+      "title": "Conduct a safety walk-through for electrical wiring near the dance floor",
+      "category_id": "sound_lighting",
+      "days_before_event": 2,
+      "why": "Ensures complete safety for children and elders dancing on the floor."
+     }
+    ],
+    "vendor_notes": [
+     {
+      "vendor_type": "sound_lighting",
+      "why": "Crucial for clear announcements and dance music. Ask for extra cord covers to prevent tripping."
+     },
+     {
+      "vendor_type": "caterer",
+      "why": "Must be able to handle bulk meal service efficiently for 400 community members."
+     }
+    ]
+   }
+  },
+  {
+   "task": "personalize",
+   "case_id": "w-injection",
+   "passed": true,
+   "error": false,
+   "reasons": [],
+   "metrics": {
+    "ideas": 4.0
+   },
+   "provider": "gemini:gemini-3.5-flash-lite",
+   "latency_ms": 3394,
+   "first_try_valid": true,
+   "attempts": [
+    "gemini:gemini-3.5-flash-lite: ok"
+   ],
+   "answer": {
+    "off_topic": false,
+    "summary_why": "A majestic royal Rajasthani wedding in Jaipur featuring heritage venues, local brass bands, and vibrant marigold decor.",
+    "ideas": [
+     {
+      "title": "Heritage haveli venue",
+      "description": "Host the events in a restored heritage property in Jaipur to give guests an authentic royal experience.",
+      "category_id": "venue",
+      "budget_impact": "neutral",
+      "why": "Fits the royal Rajasthani theme perfectly and provides stunning backdrops for photos."
+     },
+     {
+      "title": "Traditional welcome with dhol and folk dancers",
+      "description": "Greet guests at the entrance with traditional Rajasthani pagri tying and local folk artists.",
+      "category_id": "decor",
+      "budget_impact": "adds",
+      "why": "Sets an immersive royal tone right as guests arrive in Jaipur."
+     },
+     {
+      "title": "Local block-printed potli bags",
+      "description": "Source handcrafted fabric potlis from local Jaipur artisans for return gifts.",
+      "category_id": "gifts",
+      "budget_impact": "saves",
+      "why": "Supports local craft while staying cost-effective and culturally fitting."
+     },
+     {
+      "title": "Live traditional food counters",
+      "description": "Include authentic regional delicacies like dal baati churma and ghevar live stations.",
+      "category_id": "catering",
+      "budget_impact": "neutral",
+      "why": "Enhances the guest culinary experience in line with the destination."
+     }
+    ],
+    "budget_emphasis": [
+     {
+      "category_id": "decor",
+      "direction": "increase",
+      "strength": "medium",
+      "why": "The royal Rajasthani theme relies heavily on rich fabrics, marigolds, and ambient lighting."
+     },
+     {
+      "category_id": "venue",
+      "direction": "increase",
+      "strength": "medium",
+      "why": "Heritage properties in Jaipur require a larger share of the budget for accommodation and ambiance."
+     }
+    ],
+    "extra_tasks": [
+     {
+      "title": "Arrange traditional turbans and stoles for guest welcome",
+      "category_id": "decor",
+      "days_before_event": 14,
+      "why": "Essential for the authentic Rajasthani welcome experience."
+     },
+     {
+      "title": "Confirm heritage property curfew and local sound permits",
+      "category_id": "venue",
+      "days_before_event": 30,
+      "why": "Jaipur venues often have strict local regulations for late-night music."
+     }
+    ],
+    "vendor_notes": [
+     {
+      "vendor_type": "venue",
+      "why": "Crucial for setting the royal palace aesthetic in Jaipur; ask about backup indoor halls for winter evenings."
+     },
+     {
+      "vendor_type": "decorator",
+      "why": "Must have experience executing royal themes with traditional fabrics and lighting."
+     },
+     {
+      "vendor_type": "caterer",
+      "why": "Ensure they specialize in authentic Rajasthani vegetarian heritage menus."
+     },
+     {
+      "vendor_type": "photographer",
+      "why": "Verify their portfolio includes heritage haveli weddings with dramatic lighting."
+     }
+    ]
+   }
+  },
+  {
+   "task": "personalize",
+   "case_id": "w-punjabi-again",
+   "passed": true,
+   "error": false,
+   "reasons": [],
+   "metrics": {
+    "ideas": 3.0
+   },
+   "provider": "gemini:gemini-3.5-flash-lite",
+   "latency_ms": 3252,
+   "first_try_valid": true,
+   "attempts": [
+    "gemini:gemini-3.5-flash-lite: ok"
+   ],
+   "answer": {
+    "off_topic": false,
+    "summary_why": "Focused on creating a high-energy, vibrant Punjabi destination wedding experience in Jaipur.",
+    "ideas": [
+     {
+      "title": "Kinare-style Phoolon ki Holi for Haldi",
+      "description": "Play with fresh flower petals alongside traditional turmeric paste during the haldi ceremony.",
+      "category_id": "decor",
+      "budget_impact": "adds",
+      "why": "It adds a royal, colorful touch that photographs wonderfully in Jaipur heritage venues."
+     },
+     {
+      "title": "Late-night tandoori station",
+      "description": "Set up a live late-night counter serving piping hot kulchas and tandoori snacks after the sangeet.",
+      "category_id": "catering",
+      "budget_impact": "adds",
+      "why": "Punjabi weddings run late, and guests love heavy midnight snacking during winter."
+     },
+     {
+      "title": "Customized kaleere and chooda bar",
+      "description": "Arrange a dedicated corner with traditional glass bangles and personalized kaleere for the bride and guests.",
+      "category_id": "gifts",
+      "budget_impact": "neutral",
+      "why": "It highlights Punjabi wedding traditions and doubles as a fun interactive station."
+     }
+    ],
+    "budget_emphasis": [],
+    "extra_tasks": [],
+    "vendor_notes": []
+   }
+  },
+  {
+   "task": "personalize",
+   "case_id": "b-jungle-again",
+   "passed": true,
+   "error": false,
+   "reasons": [],
+   "metrics": {
+    "ideas": 3.0
+   },
+   "provider": "gemini:gemini-3.5-flash-lite",
+   "latency_ms": 2006,
+   "first_try_valid": true,
+   "attempts": [
+    "gemini:gemini-3.5-flash-lite: ok"
+   ],
+   "answer": {
+    "off_topic": false,
+    "summary_why": "Focusing on fresh ideas for Aarav's jungle-themed 5th birthday in Indore without repeating previous suggestions.",
+    "ideas": [
+     {
+      "title": "Wild animal footprints trail",
+      "description": "Stick paper animal tracks leading from the entrance to the party area.",
+      "category_id": "decor",
+      "budget_impact": "saves",
+      "why": "Simple to make at home and immediately sets the jungle mood for five-year-olds."
+     },
+     {
+      "title": "Safari jeep photo prop",
+      "description": "Create a cardboard cutout of a safari jeep for the children to sit in.",
+      "category_id": "decor",
+      "budget_impact": "neutral",
+      "why": "Makes a great focal point for the jungle theme and keeps kids entertained."
+     },
+     {
+      "title": "Animal sound guessing game",
+      "description": "Play audio clips of various jungle animals and let the kids guess who they are.",
+      "category_id": "entertainment",
+      "budget_impact": "saves",
+      "why": "Zero cost, fits the jungle theme perfectly, and engages all forty guests easily."
+     }
+    ],
+    "budget_emphasis": [],
+    "extra_tasks": [],
+    "vendor_notes": []
+   }
+  },
+  {
+   "task": "personalize",
+   "case_id": "c-durga-again",
+   "passed": true,
+   "error": false,
+   "reasons": [],
+   "metrics": {
+    "ideas": 3.0
+   },
+   "provider": "gemini:gemini-3.5-flash-lite",
+   "latency_ms": 2883,
+   "first_try_valid": true,
+   "attempts": [
+    "gemini:gemini-3.5-flash-lite: ok"
+   ],
+   "answer": {
+    "off_topic": false,
+    "summary_why": "We will bring a vibrant Bengali cultural touch to Pune with a traditional Durga Puja pandal setup, an energetic dhunuchi dance session, and community bhog.",
+    "ideas": [
+     {
+      "title": "Traditional Dhunuchi Naach session",
+      "description": "Arrange a community dhunuchi dance with traditional beats during the cultural programme.",
+      "category_id": "cultural_program",
+      "budget_impact": "neutral",
+      "why": "It brings the authentic Bengali festival spirit to Pune for the housing society members."
+     },
+     {
+      "title": "Authentic community bhog",
+      "description": "Serve a traditional khichuri, labra, and mishti doi bhog for all 400 guests.",
+      "category_id": "prasad_catering",
+      "budget_impact": "adds",
+      "why": "A community meal is the heart of any Bengali celebration."
+     },
+     {
+      "title": "Eco-friendly pandal decor",
+      "description": "Use fabric drapes, bamboo, and traditional alpana motifs instead of plastic.",
+      "category_id": "decor",
+      "budget_impact": "saves",
+      "why": "Fits the Green theme while keeping the classic pandal aesthetic."
+     }
+    ],
+    "budget_emphasis": [],
+    "extra_tasks": [],
+    "vendor_notes": []
+   }
+  },
+  {
+   "task": "personalize",
+   "case_id": "c-eco-ganesh-again",
+   "passed": true,
+   "error": false,
+   "reasons": [],
+   "metrics": {
+    "ideas": 3.0
+   },
+   "provider": "gemini:gemini-3.5-flash-lite",
+   "latency_ms": 2780,
+   "first_try_valid": true,
+   "attempts": [
+    "gemini:gemini-3.5-flash-lite: ok"
+   ],
+   "answer": {
+    "off_topic": false,
+    "summary_why": "Our focus is on fresh, sustainable practices and smooth crowd handling for a large community gathering in Pune.",
+    "ideas": [
+     {
+      "title": "Zero-waste prasad serving",
+      "description": "Use steel plates and cups or banana leaves instead of disposables, with active volunteers managing wash stations.",
+      "category_id": "cleanup",
+      "budget_impact": "saves",
+      "why": "Aligns with the eco-friendly preference for 400 guests while reducing trash."
+     },
+     {
+      "title": "Community-led cultural event",
+      "description": "Highlight local resident talent and children for dance and singing instead of hiring expensive external artists.",
+      "category_id": "cultural_program",
+      "budget_impact": "saves",
+      "why": "Engages the community directly and saves costs for the cultural programme."
+     },
+     {
+      "title": "Solar-powered or LED ambient lighting",
+      "description": "Work with the lighting vendor to use energy-efficient LED strings across the pandal.",
+      "category_id": "sound_lighting",
+      "budget_impact": "neutral",
+      "why": "Fits the green theme by reducing power consumption during the festival."
+     }
+    ],
+    "budget_emphasis": [],
+    "extra_tasks": [],
+    "vendor_notes": []
+   }
+  }
+ ]
+}

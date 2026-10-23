@@ -127,7 +127,7 @@ There is exactly one LLM call per user action, and answers are cached.
 
 | Task | Trigger | Input | Output | Temp | Code then does |
 |---|---|---|---|---|---|
-| `personalize` | Right after an event is created (regenerating is planned, F12) | Event details (quoted user text), category ids, existing tasks, vendor types, tone | `PlanSuggestions`: 3–5 ideas, ≤ 4 budget emphases (increase/decrease × small/medium), ≤ 5 extra tasks, ≤ 6 vendor notes, each with a why; `off_topic` | 0.8 | Emphasis → bounded weight change (±10 / ±20 %) → exact allocation; tasks deduplicated and dated (`personalize_plan`) |
+| `personalize` | Right after an event is created; "Suggest different ideas" (F12) | Event details (quoted user text), category ids, existing tasks, vendor types, tone; for F12 also `previous_ideas` (quoted titles), cache bypassed | `PlanSuggestions`: 3–5 ideas, ≤ 4 budget emphases (increase/decrease × small/medium), ≤ 5 extra tasks, ≤ 6 vendor notes, each with a why; `off_topic` | 0.8 | Emphasis → bounded weight change (±10 / ±20 %) → exact allocation; tasks deduplicated and dated (`personalize_plan`). F12 keeps only ideas whose titles differ from `previous_ideas` and replaces just the plan's ideas; budget, tasks and vendors change only through approved proposals |
 | `interpret_change` | Change request | Plan snapshot (ids, amounts, protected flags) + quoted request + today | `ChangeIntent`: status `ok` / `needs_clarification` / `off_topic`, operations, cut_priority, summary | 0.1 | Converted to a domain `ChangeSet`, then `propose()` computes the Proposal |
 | `alternatives` | "Suggest alternatives" on a shortfall | Plan snapshot + shortfall + `frees_inr`: rupees each option would free per line, computed by `freed_inr()` | `Alternatives`: items (category_id, reduce/replace/remove, small/medium/large, title, why) | 0.6 | `saving_change()` sets the line to its plan minus `estimate_saving`, never below what is spent on it; the saving and the gap left come from `propose()` on that change, and applying the option creates that proposal (F13) |
 
@@ -253,7 +253,7 @@ Every flow works as a plain form submission; htmx only enhances it.
 - **Live smoke** (manual, dev keys): `python -m scripts.ai_smoke`.
 - **Web:** HTTP flow tests for every route with and without htmx, including CSRF, ownership and rate limits, plus a label audit of every page and fragment.
 - **Browser** (`pytest -m e2e`): Playwright journeys with and without JavaScript; axe; 320 px overflow; skip link; a console free of errors and CSP violations. The app runs in a thread with a task-aware fake AI and a temporary SQLite file.
-- **AI evals** (`evals/`, real models, run by hand): 54 cases scored by code through the guardrails and change engine; results in `evals/RESULTS.md`.
+- **AI evals** (`evals/`, real models, run by hand): 60 cases scored by code through the guardrails and change engine; results in `evals/RESULTS.md`.
 - **CI** runs all of the above except the evals on every push to `main`.
 
 ## 14. Deployment and operations

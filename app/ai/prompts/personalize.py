@@ -3,13 +3,13 @@
 from typing import Any
 
 from app.ai.contexts import PersonalizeContext
-from app.ai.guardrails import MAX_REQUEST_CHARS, quote
+from app.ai.guardrails import MAX_REQUEST_CHARS, MAX_TITLE_CHARS, quote
 from app.ai.prompts import GUARDRAILS
 from app.ai.schemas import AIEmphasis, AIIdea, AISuggestedTask, AIVendorNote, PlanSuggestions
 from app.domain.budget import EmphasisDirection, EmphasisStrength
 from app.domain.models import BudgetImpact
 
-VERSION = "personalize-v1"
+VERSION = "personalize-v2"
 
 SYSTEM = f"""\
 You are Utsav, an experienced event planner for Indian families and communities.
@@ -26,6 +26,9 @@ Return:
   event and why. Do not repeat existing tasks.
 - vendor_notes: at most 6 notes on which listed vendors matter most here and what to ask.
 - summary_why: one or two sentences on your overall approach.
+If previous_ideas is given, the user asked for different ideas: return 3 to 5 new ideas
+that clearly differ from every previous one, and leave budget_emphasis, extra_tasks and
+vendor_notes empty.
 Match the requested tone. If the event details are not about an event, set off_topic to true
 and leave the lists empty.
 
@@ -35,7 +38,7 @@ and leave the lists empty.
 def build_payload(context: PersonalizeContext) -> dict[str, Any]:
     """Build the JSON request for a personalization call."""
     plan = context.plan
-    return {
+    payload: dict[str, Any] = {
         "task": "personalize",
         "tone": context.tone,
         "event": {
@@ -54,6 +57,9 @@ def build_payload(context: PersonalizeContext) -> dict[str, Any]:
         "existing_tasks": [t.title for t in plan.tasks],
         "vendors": [{"vendor_type": v.vendor_type, "name": v.name} for v in plan.vendors],
     }
+    if context.previous_ideas:
+        payload["previous_ideas"] = [quote(t, MAX_TITLE_CHARS) for t in context.previous_ideas]
+    return payload
 
 
 _EXAMPLE_PAYLOAD: dict[str, Any] = {
