@@ -21,6 +21,7 @@ After any template or CSS change, run `uv run pytest -W error`. The tests in
 | `POST /events` | 303 to the dashboard; `landing.html` with 422 on invalid input | |
 | `GET /events/{id}` | `dashboard.html` | |
 | `POST /events/{id}/personalize` | 303 to the dashboard; repeating it after standard (non-AI) ideas asks the AI again | `partials/plan_area.html` |
+| `GET /events/{id}/calendar.ics` | `.ics` download (`no-store`): the event day, unfinished tasks and vendors still to book | |
 | `POST /events/{id}/ideas` | 303 to the dashboard's `#ideas`; replaces only the ideas with different AI ideas, or keeps them with a notice | `partials/plan_area.html` |
 | `POST /events/{id}/expenses` | 303 to the dashboard; 422 with the form and its errors | `partials/plan_area.html` |
 | `POST /events/{id}/expenses/{eid}/update`, `/delete`, `/protect`, `/unprotect` | 303 to the dashboard | `partials/plan_area.html` |
@@ -66,6 +67,7 @@ Every action must work **without JavaScript**.
 | `add-expense-form` | `plan_area.html` | Carries `hx-preserve` when `keep_typed_input` is true, so an AI swap keeps what the user typed |
 | `retry-personalize` | `plan_area.html` | Asks the AI again when the ideas are standard ones |
 | `new-ideas`, `ideas-busy` | `plan_area.html` | "Suggest different ideas" button and its `hx-indicator`; shown only when the ideas came from AI |
+| `calendar-export` | `plan_area.html` | Link to the `.ics` download under the timeline heading |
 | `ideas-heading` | `plan_area.html` | Gets `tabindex="-1"` and `autofocus` when `focus_ideas` is true, so focus lands on the new ideas |
 | `{panel}-sent`, `{panel}-answer` | `ai_panel.html` | Headings naming the panel's data regions; `{panel}` is `plan-ai`, `change-ai` or `alternatives-ai`, so several panels can share a page |
 | `protect-line-{id}`, `protect-expense-{id}`, `update-{id}`, `task-{id}`, `save-{id}`, `add-expense`, `suggest-savings` | `plan_area.html` | Stable button ids: htmx returns keyboard focus to the same button after the plan area is swapped |

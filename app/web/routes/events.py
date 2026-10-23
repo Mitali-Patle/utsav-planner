@@ -1,4 +1,4 @@
-"""Create an event, show its dashboard, personalize it with AI and ask for new ideas."""
+"""Create, show, personalize and export events, and ask the AI for different ideas."""
 
 from typing import Annotated
 
@@ -6,6 +6,7 @@ from fastapi import APIRouter, Form, Request, Response, status
 from fastapi.responses import HTMLResponse
 from pydantic import ValidationError
 
+from app.domain.calendar import plan_calendar
 from app.domain.catalog import CATALOG
 from app.domain.errors import InvalidInputError
 from app.domain.models import EventType
@@ -115,6 +116,20 @@ def dashboard(
     overview = services.changes.overview(session, event_id)
     return render(
         request, "dashboard.html", dashboard_context(overview.event, overview.history, today)
+    )
+
+
+@router.get("/events/{event_id}/calendar.ics", include_in_schema=False)
+def calendar_file(event_id: str, services: ServicesDep, session: SessionDep) -> Response:
+    """The event day, unfinished tasks and vendors still to book, as an `.ics` download."""
+    stored = services.planning.get(session, event_id)
+    return Response(
+        plan_calendar(stored.plan, stored.id, stored.updated_at),
+        media_type="text/calendar",
+        headers={
+            "Content-Disposition": 'attachment; filename="utsav-plan.ics"',
+            "Cache-Control": "no-store",
+        },
     )
 
 

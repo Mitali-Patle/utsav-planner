@@ -64,6 +64,7 @@ app/
     budget.py           allocate, apply_emphasis, summarize, expenses, protection, rebalance() with reason codes
     timeline.py         deadlines, compression, rescheduling
     vendors.py          book-by dates, urgency, priority, status changes
+    calendar.py         plan_calendar(): event day, open tasks and vendors to book as RFC 5545 all-day entries (F14)
     planning.py         EventDetails, draft_plan(): complete plan without AI
     changes.py          ChangeOperation, ChangeSet, propose() → Proposal, accept()
   ai/

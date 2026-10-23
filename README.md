@@ -29,6 +29,8 @@ needed to hear about the new date, a line that was meant to stay untouched.
    tasks, and the model is told which ideas to avoid.
 3. **Track it.** Add expenses, protect lines you must not cut, tick off tasks, move vendors
    from "to contact" to "booked". Overspending, overdue tasks and urgent bookings are flagged.
+   Download the dates as a calendar file (`.ics`): the event day, unfinished tasks and
+   vendors still to book, as all-day entries.
 4. **Change it in plain words** with the Smart Change Manager:
    - "Budget dropped to ₹12,000, keep the cake as it is", "10 more guests are coming",
      "move it 3 days earlier", "put ₹10,000 into decorations", "budget 13 lakh kar do".

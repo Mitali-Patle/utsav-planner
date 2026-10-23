@@ -42,6 +42,14 @@ def test_different_ideas_replace_the_ideas_and_keep_focus_nearby(page: Page) -> 
     expect(page.locator("#status-region")).to_contain_text("Here are different ideas")
 
 
+def test_timeline_downloads_as_a_calendar_file(page: Page) -> None:
+    create_event(page)
+    with page.expect_download() as download:
+        page.get_by_role("link", name="Add these dates to your calendar").click()
+    assert download.value.suggested_filename == "utsav-plan.ics"
+    assert download.value.path().read_text(encoding="utf-8").startswith("BEGIN:VCALENDAR")
+
+
 def test_typing_survives_the_personalization_swap(page: Page) -> None:
     held: list[Route] = []
 

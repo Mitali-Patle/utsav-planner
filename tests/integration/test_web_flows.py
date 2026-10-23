@@ -707,6 +707,34 @@ def test_tasks_vendors_and_protection(engine: Engine) -> None:
     )
 
 
+# Calendar export
+
+
+def test_dashboard_offers_the_dates_as_a_calendar_file(engine: Engine) -> None:
+    client = client_for(engine, SUGGESTIONS)
+    url = create(client, token(client))
+    assert f'href="{url}/calendar.ics"' in client.get(url).text
+    response = client.get(f"{url}/calendar.ics")
+    assert response.status_code == 200
+    assert response.headers["content-type"].startswith("text/calendar")
+    assert response.headers["content-disposition"] == 'attachment; filename="utsav-plan.ics"'
+    assert response.headers["cache-control"] == "no-store"
+    body = response.text
+    assert body.startswith("BEGIN:VCALENDAR\r\n") and body.endswith("END:VCALENDAR\r\n")
+    event_day = (TODAY + timedelta(days=40)).strftime("%Y%m%d")
+    assert f"DTSTART;VALUE=DATE:{event_day}" in body
+    assert body.count("BEGIN:VEVENT") > 1
+
+
+def test_calendar_leaves_out_tasks_already_done(engine: Engine) -> None:
+    client = client_for(engine, SUGGESTIONS)
+    csrf = token(client)
+    url = create(client, csrf)
+    assert "-task-1@" in client.get(f"{url}/calendar.ics").text
+    client.post(f"{url}/tasks/task-1/done", data={"csrf_token": csrf}, headers=HTMX)
+    assert "-task-1@" not in client.get(f"{url}/calendar.ics").text
+
+
 # Privacy
 
 
@@ -717,6 +745,7 @@ def test_another_session_cannot_see_or_change_my_event(engine: Engine) -> None:
     intruder = TestClient(mine.app)
     csrf = token(intruder)
     assert intruder.get(url).status_code == 404
+    assert intruder.get(f"{url}/calendar.ics").status_code == 404
     response = intruder.post(
         f"{url}/expenses",
         data={"csrf_token": csrf, "category_id": "cake", "label": "x", "amount_inr": "1"},

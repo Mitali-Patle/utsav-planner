@@ -149,6 +149,7 @@
 
 <section id="timeline" aria-labelledby="timeline-heading">
   <h2 id="timeline-heading">Timeline</h2>
+  <p class="calendar-export"><a href="/events/{{ event.id }}/calendar.ics" id="calendar-export" download>Add these dates to your calendar</a> (.ics file: the event day, unfinished tasks and vendors still to book)</p>
   <ol class="tasks">
     {% for t in plan.tasks %}
     <li class="{{ 'done' if t.done else '' }}">
