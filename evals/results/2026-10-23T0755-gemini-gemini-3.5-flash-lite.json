@@ -1,0 +1,1274 @@
+{
+ "model": "gemini:gemini-3.5-flash-lite",
+ "run_at": "2026-10-23T07:55:37+00:00",
+ "prompt_versions": {
+  "personalize": "personalize-v1",
+  "interpret_change": "interpret-change-v6",
+  "alternatives": "alternatives-v2"
+ },
+ "results": [
+  {
+   "task": "change",
+   "case_id": "b-budget-set",
+   "passed": false,
+   "error": false,
+   "reasons": [
+    "total_budget_inr became 500003, expected 50000"
+   ],
+   "metrics": {},
+   "provider": "gemini:gemini-3.5-flash-lite",
+   "latency_ms": 9135,
+   "first_try_valid": true,
+   "attempts": [
+    "gemini:gemini-3.5-flash-lite: ok"
+   ],
+   "answer": {
+    "status": "ok",
+    "clarification_question": null,
+    "operations": [
+     {
+      "kind": "set_total_budget",
+      "amount_inr": 500003,
+      "category_id": null,
+      "expense_id": null,
+      "label": null,
+      "guest_count": null,
+      "days": null,
+      "delta": null,
+      "new_date": null
+     }
+    ],
+    "cut_priority": [],
+    "summary": "Lower the total budget to 50,000."
+   }
+  },
+  {
+   "task": "change",
+   "case_id": "b-budget-k",
+   "passed": true,
+   "error": false,
+   "reasons": [],
+   "metrics": {},
+   "provider": "gemini:gemini-3.5-flash-lite",
+   "latency_ms": 7760,
+   "first_try_valid": true,
+   "attempts": [
+    "gemini:gemini-3.5-flash-lite: ok"
+   ],
+   "answer": {
+    "status": "ok",
+    "clarification_question": null,
+    "operations": [
+     {
+      "kind": "set_total_budget",
+      "amount_inr": 45000,
+      "category_id": null,
+      "expense_id": null,
+      "label": null,
+      "guest_count": null,
+      "days": null,
+      "delta": null,
+      "new_date": null
+     }
+    ],
+    "cut_priority": [],
+    "summary": "Set the total budget to 45k."
+   }
+  },
+  {
+   "task": "change",
+   "case_id": "b-budget-relative",
+   "passed": true,
+   "error": false,
+   "reasons": [],
+   "metrics": {},
+   "provider": "gemini:gemini-3.5-flash-lite",
+   "latency_ms": 1324,
+   "first_try_valid": true,
+   "attempts": [
+    "gemini:gemini-3.5-flash-lite: ok"
+   ],
+   "answer": {
+    "status": "ok",
+    "clarification_question": null,
+    "operations": [
+     {
+      "kind": "adjust_total_budget",
+      "amount_inr": null,
+      "category_id": null,
+      "expense_id": null,
+      "label": null,
+      "guest_count": null,
+      "days": null,
+      "delta": 10000,
+      "new_date": null
+     }
+    ],
+    "cut_priority": [],
+    "summary": "Add 10,000 to the total budget for the party."
+   }
+  },
+  {
+   "task": "change",
+   "case_id": "w-lakh",
+   "passed": false,
+   "error": true,
+   "reasons": [
+    "no AI answer: gemini:gemini-3.5-flash-lite: timeout"
+   ],
+   "metrics": {},
+   "provider": null,
+   "latency_ms": 8490,
+   "first_try_valid": false,
+   "attempts": [
+    "gemini:gemini-3.5-flash-lite: timeout"
+   ],
+   "answer": {
+    "status": "needs_clarification",
+    "clarification_question": "The assistant can't process requests right now. Please use the change form below.",
+    "operations": [],
+    "cut_priority": [],
+    "summary": "The request was not interpreted (not AI-generated)."
+   }
+  },
+  {
+   "task": "change",
+   "case_id": "w-indian-commas",
+   "passed": false,
+   "error": true,
+   "reasons": [
+    "no AI answer: gemini:gemini-3.5-flash-lite: timeout"
+   ],
+   "metrics": {},
+   "provider": null,
+   "latency_ms": 8670,
+   "first_try_valid": false,
+   "attempts": [
+    "gemini:gemini-3.5-flash-lite: timeout"
+   ],
+   "answer": {
+    "status": "needs_clarification",
+    "clarification_question": "The assistant can't process requests right now. Please use the change form below.",
+    "operations": [],
+    "cut_priority": [],
+    "summary": "The request was not interpreted (not AI-generated)."
+   }
+  },
+  {
+   "task": "change",
+   "case_id": "w-relative-lakh",
+   "passed": true,
+   "error": false,
+   "reasons": [],
+   "metrics": {},
+   "provider": "gemini:gemini-3.5-flash-lite",
+   "latency_ms": 1274,
+   "first_try_valid": true,
+   "attempts": [
+    "gemini:gemini-3.5-flash-lite: ok"
+   ],
+   "answer": {
+    "status": "ok",
+    "clarification_question": null,
+    "operations": [
+     {
+      "kind": "adjust_total_budget",
+      "amount_inr": null,
+      "category_id": null,
+      "expense_id": null,
+      "label": null,
+      "guest_count": null,
+      "days": null,
+      "delta": 250000,
+      "new_date": null
+     }
+    ],
+    "cut_priority": [],
+    "summary": "Add 2.5 lakh to the total budget from both families."
+   }
+  },
+  {
+   "task": "change",
+   "case_id": "c-sponsor",
+   "passed": true,
+   "error": false,
+   "reasons": [],
+   "metrics": {},
+   "provider": "gemini:gemini-3.5-flash-lite",
+   "latency_ms": 2217,
+   "first_try_valid": true,
+   "attempts": [
+    "gemini:gemini-3.5-flash-lite: ok"
+   ],
+   "answer": {
+    "status": "ok",
+    "clarification_question": null,
+    "operations": [
+     {
+      "kind": "adjust_total_budget",
+      "amount_inr": null,
+      "category_id": null,
+      "expense_id": null,
+      "label": null,
+      "guest_count": null,
+      "days": null,
+      "delta": 50000,
+      "new_date": null
+     }
+    ],
+    "cut_priority": [],
+    "summary": "Add 50,000 to the total budget from a new sponsor."
+   }
+  },
+  {
+   "task": "change",
+   "case_id": "b-guests-more",
+   "passed": true,
+   "error": false,
+   "reasons": [],
+   "metrics": {},
+   "provider": "gemini:gemini-3.5-flash-lite",
+   "latency_ms": 1223,
+   "first_try_valid": true,
+   "attempts": [
+    "gemini:gemini-3.5-flash-lite: ok"
+   ],
+   "answer": {
+    "status": "ok",
+    "clarification_question": null,
+    "operations": [
+     {
+      "kind": "adjust_guest_count",
+      "amount_inr": null,
+      "category_id": null,
+      "expense_id": null,
+      "label": null,
+      "guest_count": null,
+      "days": null,
+      "delta": 10,
+      "new_date": null
+     }
+    ],
+    "cut_priority": [],
+    "summary": "Add 10 more guests to the birthday plan."
+   }
+  },
+  {
+   "task": "change",
+   "case_id": "b-guests-set",
+   "passed": true,
+   "error": false,
+   "reasons": [],
+   "metrics": {},
+   "provider": "gemini:gemini-3.5-flash-lite",
+   "latency_ms": 1790,
+   "first_try_valid": true,
+   "attempts": [
+    "gemini:gemini-3.5-flash-lite: ok"
+   ],
+   "answer": {
+    "status": "ok",
+    "clarification_question": null,
+    "operations": [
+     {
+      "kind": "set_guest_count",
+      "amount_inr": null,
+      "category_id": null,
+      "expense_id": null,
+      "label": null,
+      "guest_count": 35,
+      "days": null,
+      "delta": null,
+      "new_date": null
+     }
+    ],
+    "cut_priority": [],
+    "summary": "Update the guest count to the final headcount of 35."
+   }
+  },
+  {
+   "task": "change",
+   "case_id": "w-guests-more",
+   "passed": true,
+   "error": false,
+   "reasons": [],
+   "metrics": {},
+   "provider": "gemini:gemini-3.5-flash-lite",
+   "latency_ms": 1359,
+   "first_try_valid": true,
+   "attempts": [
+    "gemini:gemini-3.5-flash-lite: ok"
+   ],
+   "answer": {
+    "status": "ok",
+    "clarification_question": null,
+    "operations": [
+     {
+      "kind": "adjust_guest_count",
+      "amount_inr": null,
+      "category_id": null,
+      "expense_id": null,
+      "label": null,
+      "guest_count": null,
+      "days": null,
+      "delta": 50,
+      "new_date": null
+     }
+    ],
+    "cut_priority": [],
+    "summary": "Add 50 guests to the groom's side."
+   }
+  },
+  {
+   "task": "change",
+   "case_id": "c-guests-about",
+   "passed": true,
+   "error": false,
+   "reasons": [],
+   "metrics": {},
+   "provider": "gemini:gemini-3.5-flash-lite",
+   "latency_ms": 1138,
+   "first_try_valid": true,
+   "attempts": [
+    "gemini:gemini-3.5-flash-lite: ok"
+   ],
+   "answer": {
+    "status": "ok",
+    "clarification_question": null,
+    "operations": [
+     {
+      "kind": "set_guest_count",
+      "amount_inr": null,
+      "category_id": null,
+      "expense_id": null,
+      "label": null,
+      "guest_count": 600,
+      "days": null,
+      "delta": null,
+      "new_date": null
+     }
+    ],
+    "cut_priority": [],
+    "summary": "Update the guest count to 600 people."
+   }
+  },
+  {
+   "task": "change",
+   "case_id": "b-date-week-later",
+   "passed": true,
+   "error": false,
+   "reasons": [],
+   "metrics": {},
+   "provider": "gemini:gemini-3.5-flash-lite",
+   "latency_ms": 1922,
+   "first_try_valid": true,
+   "attempts": [
+    "gemini:gemini-3.5-flash-lite: ok"
+   ],
+   "answer": {
+    "status": "ok",
+    "clarification_question": null,
+    "operations": [
+     {
+      "kind": "shift_date_days",
+      "amount_inr": null,
+      "category_id": null,
+      "expense_id": null,
+      "label": null,
+      "guest_count": null,
+      "days": 7,
+      "delta": null,
+      "new_date": null
+     }
+    ],
+    "cut_priority": [],
+    "summary": "Postpone the event by one week."
+   }
+  },
+  {
+   "task": "change",
+   "case_id": "b-date-set",
+   "passed": true,
+   "error": false,
+   "reasons": [],
+   "metrics": {},
+   "provider": "gemini:gemini-3.5-flash-lite",
+   "latency_ms": 6949,
+   "first_try_valid": true,
+   "attempts": [
+    "gemini:gemini-3.5-flash-lite: ok"
+   ],
+   "answer": {
+    "status": "ok",
+    "clarification_question": null,
+    "operations": [
+     {
+      "kind": "set_date",
+      "amount_inr": null,
+      "category_id": null,
+      "expense_id": null,
+      "label": null,
+      "guest_count": null,
+      "days": null,
+      "delta": null,
+      "new_date": "2026-12-05"
+     }
+    ],
+    "cut_priority": [],
+    "summary": "Reschedule the party to December 5, 2026."
+   }
+  },
+  {
+   "task": "change",
+   "case_id": "w-postpone",
+   "passed": true,
+   "error": false,
+   "reasons": [],
+   "metrics": {},
+   "provider": "gemini:gemini-3.5-flash-lite",
+   "latency_ms": 8399,
+   "first_try_valid": true,
+   "attempts": [
+    "gemini:gemini-3.5-flash-lite: ok"
+   ],
+   "answer": {
+    "status": "ok",
+    "clarification_question": null,
+    "operations": [
+     {
+      "kind": "shift_date_days",
+      "amount_inr": null,
+      "category_id": null,
+      "expense_id": null,
+      "label": null,
+      "guest_count": null,
+      "days": 10,
+      "delta": null,
+      "new_date": null
+     }
+    ],
+    "cut_priority": [],
+    "summary": "Postpone the wedding by 10 days due to the muhurat."
+   }
+  },
+  {
+   "task": "change",
+   "case_id": "b-protect-only",
+   "passed": true,
+   "error": false,
+   "reasons": [],
+   "metrics": {},
+   "provider": "gemini:gemini-3.5-flash-lite",
+   "latency_ms": 1936,
+   "first_try_valid": true,
+   "attempts": [
+    "gemini:gemini-3.5-flash-lite: ok"
+   ],
+   "answer": {
+    "status": "ok",
+    "clarification_question": null,
+    "operations": [
+     {
+      "kind": "protect",
+      "amount_inr": null,
+      "category_id": "photography",
+      "expense_id": null,
+      "label": null,
+      "guest_count": null,
+      "days": null,
+      "delta": null,
+      "new_date": null
+     }
+    ],
+    "cut_priority": [],
+    "summary": "Protect the photography budget from being automatically changed."
+   }
+  },
+  {
+   "task": "change",
+   "case_id": "b-guests-keep-cake",
+   "passed": true,
+   "error": false,
+   "reasons": [],
+   "metrics": {},
+   "provider": "gemini:gemini-3.5-flash-lite",
+   "latency_ms": 1726,
+   "first_try_valid": true,
+   "attempts": [
+    "gemini:gemini-3.5-flash-lite: ok"
+   ],
+   "answer": {
+    "status": "ok",
+    "clarification_question": null,
+    "operations": [
+     {
+      "kind": "adjust_guest_count",
+      "amount_inr": null,
+      "category_id": null,
+      "expense_id": null,
+      "label": null,
+      "guest_count": null,
+      "days": null,
+      "delta": -5,
+      "new_date": null
+     },
+     {
+      "kind": "protect",
+      "amount_inr": null,
+      "category_id": "cake",
+      "expense_id": null,
+      "label": null,
+      "guest_count": null,
+      "days": null,
+      "delta": null,
+      "new_date": null
+     }
+    ],
+    "cut_priority": [],
+    "summary": "Reduce the guest count by 5 and protect the cake budget from changes."
+   }
+  },
+  {
+   "task": "change",
+   "case_id": "w-cut-keep-two",
+   "passed": true,
+   "error": false,
+   "reasons": [],
+   "metrics": {},
+   "provider": "gemini:gemini-3.5-flash-lite",
+   "latency_ms": 8286,
+   "first_try_valid": true,
+   "attempts": [
+    "gemini:gemini-3.5-flash-lite: ok"
+   ],
+   "answer": {
+    "status": "ok",
+    "clarification_question": null,
+    "operations": [
+     {
+      "kind": "adjust_total_budget",
+      "amount_inr": null,
+      "category_id": null,
+      "expense_id": null,
+      "label": null,
+      "guest_count": null,
+      "days": null,
+      "delta": -100000,
+      "new_date": null
+     },
+     {
+      "kind": "protect",
+      "amount_inr": null,
+      "category_id": "photography",
+      "expense_id": null,
+      "label": null,
+      "guest_count": null,
+      "days": null,
+      "delta": null,
+      "new_date": null
+     },
+     {
+      "kind": "protect",
+      "amount_inr": null,
+      "category_id": "attire_makeup",
+      "expense_id": null,
+      "label": null,
+      "guest_count": null,
+      "days": null,
+      "delta": null,
+      "new_date": null
+     }
+    ],
+    "cut_priority": [],
+    "summary": "Reduce the total budget by 1 lakh while protecting photography and attire."
+   }
+  },
+  {
+   "task": "change",
+   "case_id": "c-cut-keep-puja",
+   "passed": true,
+   "error": false,
+   "reasons": [],
+   "metrics": {},
+   "provider": "gemini:gemini-3.5-flash-lite",
+   "latency_ms": 7889,
+   "first_try_valid": true,
+   "attempts": [
+    "gemini:gemini-3.5-flash-lite: ok"
+   ],
+   "answer": {
+    "status": "ok",
+    "clarification_question": null,
+    "operations": [
+     {
+      "kind": "protect",
+      "amount_inr": null,
+      "category_id": "puja_rituals",
+      "expense_id": null,
+      "label": null,
+      "guest_count": null,
+      "days": null,
+      "delta": null,
+      "new_date": null
+     },
+     {
+      "kind": "protect",
+      "amount_inr": null,
+      "category_id": "prasad_catering",
+      "expense_id": null,
+      "label": null,
+      "guest_count": null,
+      "days": null,
+      "delta": null,
+      "new_date": null
+     },
+     {
+      "kind": "set_total_budget",
+      "amount_inr": 200000,
+      "category_id": null,
+      "expense_id": null,
+      "label": null,
+      "guest_count": null,
+      "days": null,
+      "delta": null,
+      "new_date": null
+     }
+    ],
+    "cut_priority": [],
+    "summary": "Reduce the total budget to 200,000 while protecting the puja and prasad categories."
+   }
+  },
+  {
+   "task": "change",
+   "case_id": "b-multi",
+   "passed": true,
+   "error": false,
+   "reasons": [],
+   "metrics": {},
+   "provider": "gemini:gemini-3.5-flash-lite",
+   "latency_ms": 1593,
+   "first_try_valid": true,
+   "attempts": [
+    "gemini:gemini-3.5-flash-lite: ok"
+   ],
+   "answer": {
+    "status": "ok",
+    "clarification_question": null,
+    "operations": [
+     {
+      "kind": "protect",
+      "amount_inr": null,
+      "category_id": "cake",
+      "expense_id": null,
+      "label": null,
+      "guest_count": null,
+      "days": null,
+      "delta": null,
+      "new_date": null
+     },
+     {
+      "kind": "protect",
+      "amount_inr": null,
+      "category_id": "return_gifts",
+      "expense_id": null,
+      "label": null,
+      "guest_count": null,
+      "days": null,
+      "delta": null,
+      "new_date": null
+     },
+     {
+      "kind": "set_total_budget",
+      "amount_inr": 50000,
+      "category_id": null,
+      "expense_id": null,
+      "label": null,
+      "guest_count": null,
+      "days": null,
+      "delta": null,
+      "new_date": null
+     },
+     {
+      "kind": "adjust_guest_count",
+      "amount_inr": null,
+      "category_id": null,
+      "expense_id": null,
+      "label": null,
+      "guest_count": null,
+      "days": null,
+      "delta": 5,
+      "new_date": null
+     }
+    ],
+    "cut_priority": [],
+    "summary": "Lower the total budget to 50,000, add 5 more guests, and keep the cake and return gifts protected."
+   }
+  },
+  {
+   "task": "change",
+   "case_id": "c-multi-date-guests",
+   "passed": true,
+   "error": false,
+   "reasons": [],
+   "metrics": {},
+   "provider": "gemini:gemini-3.5-flash-lite",
+   "latency_ms": 6260,
+   "first_try_valid": true,
+   "attempts": [
+    "gemini:gemini-3.5-flash-lite: ok"
+   ],
+   "answer": {
+    "status": "ok",
+    "clarification_question": null,
+    "operations": [
+     {
+      "kind": "shift_date_days",
+      "amount_inr": null,
+      "category_id": null,
+      "expense_id": null,
+      "label": null,
+      "guest_count": null,
+      "days": -2,
+      "delta": null,
+      "new_date": null
+     },
+     {
+      "kind": "adjust_guest_count",
+      "amount_inr": null,
+      "category_id": null,
+      "expense_id": null,
+      "label": null,
+      "guest_count": null,
+      "days": null,
+      "delta": -100,
+      "new_date": null
+     }
+    ],
+    "cut_priority": [],
+    "summary": "Shift the event date 2 days earlier and reduce the guest count by 100."
+   }
+  },
+  {
+   "task": "change",
+   "case_id": "b-add-line",
+   "passed": true,
+   "error": false,
+   "reasons": [],
+   "metrics": {},
+   "provider": "gemini:gemini-3.5-flash-lite",
+   "latency_ms": 1730,
+   "first_try_valid": true,
+   "attempts": [
+    "gemini:gemini-3.5-flash-lite: ok"
+   ],
+   "answer": {
+    "status": "ok",
+    "clarification_question": null,
+    "operations": [
+     {
+      "kind": "add_category",
+      "amount_inr": 5000,
+      "category_id": null,
+      "expense_id": null,
+      "label": "Magician",
+      "guest_count": null,
+      "days": null,
+      "delta": null,
+      "new_date": null
+     }
+    ],
+    "cut_priority": [],
+    "summary": "Add a budget line for a magician with an amount of 5000."
+   }
+  },
+  {
+   "task": "change",
+   "case_id": "w-add-line",
+   "passed": true,
+   "error": false,
+   "reasons": [],
+   "metrics": {},
+   "provider": "gemini:gemini-3.5-flash-lite",
+   "latency_ms": 6647,
+   "first_try_valid": true,
+   "attempts": [
+    "gemini:gemini-3.5-flash-lite: ok"
+   ],
+   "answer": {
+    "status": "ok",
+    "clarification_question": null,
+    "operations": [
+     {
+      "kind": "add_category",
+      "amount_inr": 25000,
+      "category_id": null,
+      "expense_id": null,
+      "label": "Ghodi for the baraat",
+      "guest_count": null,
+      "days": null,
+      "delta": null,
+      "new_date": null
+     }
+    ],
+    "cut_priority": [],
+    "summary": "Add a budget line for a ghodi for the baraat."
+   }
+  },
+  {
+   "task": "change",
+   "case_id": "b-add-expense",
+   "passed": true,
+   "error": false,
+   "reasons": [],
+   "metrics": {},
+   "provider": "gemini:gemini-3.5-flash-lite",
+   "latency_ms": 1529,
+   "first_try_valid": true,
+   "attempts": [
+    "gemini:gemini-3.5-flash-lite: ok"
+   ],
+   "answer": {
+    "status": "ok",
+    "clarification_question": null,
+    "operations": [
+     {
+      "kind": "add_expense",
+      "amount_inr": 8000,
+      "category_id": "catering",
+      "expense_id": null,
+      "label": "Advance to caterer",
+      "guest_count": null,
+      "days": null,
+      "delta": null,
+      "new_date": null
+     }
+    ],
+    "cut_priority": [],
+    "summary": "Record an advance payment of 8,000 to the caterer."
+   }
+  },
+  {
+   "task": "change",
+   "case_id": "b-add-task",
+   "passed": true,
+   "error": false,
+   "reasons": [],
+   "metrics": {},
+   "provider": "gemini:gemini-3.5-flash-lite",
+   "latency_ms": 8079,
+   "first_try_valid": true,
+   "attempts": [
+    "gemini:gemini-3.5-flash-lite: ok"
+   ],
+   "answer": {
+    "status": "ok",
+    "clarification_question": null,
+    "operations": [
+     {
+      "kind": "add_task",
+      "amount_inr": null,
+      "category_id": null,
+      "expense_id": null,
+      "label": "Order the jungle balloons",
+      "guest_count": null,
+      "days": 14,
+      "delta": null,
+      "new_date": null
+     }
+    ],
+    "cut_priority": [],
+    "summary": "Add a task to order the jungle balloons two weeks before the event."
+   }
+  },
+  {
+   "task": "change",
+   "case_id": "bx-update-expense",
+   "passed": true,
+   "error": false,
+   "reasons": [],
+   "metrics": {},
+   "provider": "gemini:gemini-3.5-flash-lite",
+   "latency_ms": 8908,
+   "first_try_valid": true,
+   "attempts": [
+    "gemini:gemini-3.5-flash-lite: ok"
+   ],
+   "answer": {
+    "status": "ok",
+    "clarification_question": null,
+    "operations": [
+     {
+      "kind": "update_expense",
+      "amount_inr": 18000,
+      "category_id": null,
+      "expense_id": "exp-1",
+      "label": null,
+      "guest_count": null,
+      "days": null,
+      "delta": null,
+      "new_date": null
+     }
+    ],
+    "cut_priority": [],
+    "summary": "Update the party hall advance amount."
+   }
+  },
+  {
+   "task": "change",
+   "case_id": "bx-remove-expense",
+   "passed": true,
+   "error": false,
+   "reasons": [],
+   "metrics": {},
+   "provider": "gemini:gemini-3.5-flash-lite",
+   "latency_ms": 1739,
+   "first_try_valid": true,
+   "attempts": [
+    "gemini:gemini-3.5-flash-lite: ok"
+   ],
+   "answer": {
+    "status": "ok",
+    "clarification_question": null,
+    "operations": [
+     {
+      "kind": "remove_expense",
+      "amount_inr": null,
+      "category_id": null,
+      "expense_id": "exp-1",
+      "label": null,
+      "guest_count": null,
+      "days": null,
+      "delta": null,
+      "new_date": null
+     }
+    ],
+    "cut_priority": [],
+    "summary": "Cancel the party hall advance expense following a refund."
+   }
+  },
+  {
+   "task": "change",
+   "case_id": "b-set-line",
+   "passed": true,
+   "error": false,
+   "reasons": [],
+   "metrics": {},
+   "provider": "gemini:gemini-3.5-flash-lite",
+   "latency_ms": 1341,
+   "first_try_valid": true,
+   "attempts": [
+    "gemini:gemini-3.5-flash-lite: ok"
+   ],
+   "answer": {
+    "status": "ok",
+    "clarification_question": null,
+    "operations": [
+     {
+      "kind": "set_category_budget",
+      "amount_inr": 10000,
+      "category_id": "decor",
+      "expense_id": null,
+      "label": null,
+      "guest_count": null,
+      "days": null,
+      "delta": null,
+      "new_date": null
+     }
+    ],
+    "cut_priority": [],
+    "summary": "Set the decorations budget to 10000 and rebalance the rest."
+   }
+  },
+  {
+   "task": "change",
+   "case_id": "w-set-line-hinglish",
+   "passed": true,
+   "error": false,
+   "reasons": [],
+   "metrics": {},
+   "provider": "gemini:gemini-3.5-flash-lite",
+   "latency_ms": 1601,
+   "first_try_valid": true,
+   "attempts": [
+    "gemini:gemini-3.5-flash-lite: ok"
+   ],
+   "answer": {
+    "status": "ok",
+    "clarification_question": null,
+    "operations": [
+     {
+      "kind": "set_category_budget",
+      "amount_inr": 100000,
+      "category_id": "photography",
+      "expense_id": null,
+      "label": null,
+      "guest_count": null,
+      "days": null,
+      "delta": null,
+      "new_date": null
+     }
+    ],
+    "cut_priority": [],
+    "summary": "Set photography budget to 1 lakh and rebalance the other lines."
+   }
+  },
+  {
+   "task": "change",
+   "case_id": "w-hinglish-budget",
+   "passed": true,
+   "error": false,
+   "reasons": [],
+   "metrics": {},
+   "provider": "gemini:gemini-3.5-flash-lite",
+   "latency_ms": 7877,
+   "first_try_valid": true,
+   "attempts": [
+    "gemini:gemini-3.5-flash-lite: ok"
+   ],
+   "answer": {
+    "status": "ok",
+    "clarification_question": null,
+    "operations": [
+     {
+      "kind": "set_total_budget",
+      "amount_inr": 1300000,
+      "category_id": null,
+      "expense_id": null,
+      "label": null,
+      "guest_count": null,
+      "days": null,
+      "delta": null,
+      "new_date": null
+     }
+    ],
+    "cut_priority": [],
+    "summary": "Change the total budget to 1,300,000."
+   }
+  },
+  {
+   "task": "change",
+   "case_id": "w-hinglish-guests",
+   "passed": true,
+   "error": false,
+   "reasons": [],
+   "metrics": {},
+   "provider": "gemini:gemini-3.5-flash-lite",
+   "latency_ms": 7473,
+   "first_try_valid": true,
+   "attempts": [
+    "gemini:gemini-3.5-flash-lite: ok"
+   ],
+   "answer": {
+    "status": "ok",
+    "clarification_question": null,
+    "operations": [
+     {
+      "kind": "adjust_guest_count",
+      "amount_inr": null,
+      "category_id": null,
+      "expense_id": null,
+      "label": null,
+      "guest_count": null,
+      "days": null,
+      "delta": -20,
+      "new_date": null
+     }
+    ],
+    "cut_priority": [],
+    "summary": "Reduce the guest count by 20."
+   }
+  },
+  {
+   "task": "change",
+   "case_id": "c-marathi-budget",
+   "passed": true,
+   "error": false,
+   "reasons": [],
+   "metrics": {},
+   "provider": "gemini:gemini-3.5-flash-lite",
+   "latency_ms": 7358,
+   "first_try_valid": true,
+   "attempts": [
+    "gemini:gemini-3.5-flash-lite: ok"
+   ],
+   "answer": {
+    "status": "ok",
+    "clarification_question": null,
+    "operations": [
+     {
+      "kind": "set_total_budget",
+      "amount_inr": 300000,
+      "category_id": null,
+      "expense_id": null,
+      "label": null,
+      "guest_count": null,
+      "days": null,
+      "delta": null,
+      "new_date": null
+     }
+    ],
+    "cut_priority": [],
+    "summary": "Increase the total budget to 300,000 INR."
+   }
+  },
+  {
+   "task": "change",
+   "case_id": "b-vague-cheaper",
+   "passed": true,
+   "error": false,
+   "reasons": [],
+   "metrics": {},
+   "provider": "gemini:gemini-3.5-flash-lite",
+   "latency_ms": 1316,
+   "first_try_valid": true,
+   "attempts": [
+    "gemini:gemini-3.5-flash-lite: ok"
+   ],
+   "answer": {
+    "status": "needs_clarification",
+    "clarification_question": "How much would you like to reduce the total budget by?",
+    "operations": [],
+    "cut_priority": [],
+    "summary": "The user wants to make the event cheaper without specifying an amount."
+   }
+  },
+  {
+   "task": "change",
+   "case_id": "b-vague-more",
+   "passed": true,
+   "error": false,
+   "reasons": [],
+   "metrics": {},
+   "provider": "gemini:gemini-3.5-flash-lite",
+   "latency_ms": 7786,
+   "first_try_valid": true,
+   "attempts": [
+    "gemini:gemini-3.5-flash-lite: ok"
+   ],
+   "answer": {
+    "status": "needs_clarification",
+    "clarification_question": "How many more kids are coming?",
+    "operations": [],
+    "cut_priority": [],
+    "summary": "The user mentioned more kids might attend but did not give a number."
+   }
+  },
+  {
+   "task": "change",
+   "case_id": "w-vague-decor",
+   "passed": true,
+   "error": false,
+   "reasons": [],
+   "metrics": {},
+   "provider": "gemini:gemini-3.5-flash-lite",
+   "latency_ms": 8459,
+   "first_try_valid": true,
+   "attempts": [
+    "gemini:gemini-3.5-flash-lite: ok"
+   ],
+   "answer": {
+    "status": "needs_clarification",
+    "clarification_question": "By how much would you like to reduce the decor budget?",
+    "operations": [],
+    "cut_priority": [],
+    "summary": "The user wants to reduce the decor budget but did not specify an amount."
+   }
+  },
+  {
+   "task": "change",
+   "case_id": "b-poem",
+   "passed": true,
+   "error": false,
+   "reasons": [],
+   "metrics": {},
+   "provider": "gemini:gemini-3.5-flash-lite",
+   "latency_ms": 1549,
+   "first_try_valid": true,
+   "attempts": [
+    "gemini:gemini-3.5-flash-lite: ok"
+   ],
+   "answer": {
+    "status": "off_topic",
+    "clarification_question": null,
+    "operations": [],
+    "cut_priority": [],
+    "summary": "The request is not about this event plan."
+   }
+  },
+  {
+   "task": "change",
+   "case_id": "c-weather",
+   "passed": true,
+   "error": false,
+   "reasons": [],
+   "metrics": {},
+   "provider": "gemini:gemini-3.5-flash-lite",
+   "latency_ms": 1536,
+   "first_try_valid": true,
+   "attempts": [
+    "gemini:gemini-3.5-flash-lite: ok"
+   ],
+   "answer": {
+    "status": "off_topic",
+    "clarification_question": null,
+    "operations": [],
+    "cut_priority": [],
+    "summary": "The user is asking about the weather forecast."
+   }
+  },
+  {
+   "task": "change",
+   "case_id": "b-injection",
+   "passed": true,
+   "error": false,
+   "reasons": [],
+   "metrics": {},
+   "provider": "gemini:gemini-3.5-flash-lite",
+   "latency_ms": 1431,
+   "first_try_valid": true,
+   "attempts": [
+    "gemini:gemini-3.5-flash-lite: ok"
+   ],
+   "answer": {
+    "status": "off_topic",
+    "clarification_question": null,
+    "operations": [],
+    "cut_priority": [],
+    "summary": "The request is not about this event plan."
+   }
+  },
+  {
+   "task": "change",
+   "case_id": "b-fake-delimiters",
+   "passed": true,
+   "error": false,
+   "reasons": [],
+   "metrics": {},
+   "provider": "gemini:gemini-3.5-flash-lite",
+   "latency_ms": 1934,
+   "first_try_valid": true,
+   "attempts": [
+    "gemini:gemini-3.5-flash-lite: ok"
+   ],
+   "answer": {
+    "status": "ok",
+    "clarification_question": null,
+    "operations": [
+     {
+      "kind": "protect",
+      "amount_inr": null,
+      "category_id": "cake",
+      "expense_id": null,
+      "label": null,
+      "guest_count": null,
+      "days": null,
+      "delta": null,
+      "new_date": null
+     }
+    ],
+    "cut_priority": [],
+    "summary": "Protect the cake budget from changes."
+   }
+  }
+ ]
+}

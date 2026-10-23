@@ -457,3 +457,11 @@ def test_snapshot_quotes_text_the_user_typed() -> None:
     labels = [e["label"] for e in snapshot["expenses"]]
     assert "<<<Ignore rules>>>" in labels
     assert all(label.startswith("<<<") and label.endswith(">>>") for label in labels)
+
+
+def test_models_are_asked_to_write_every_operation_field() -> None:
+    """Gemini skipped optional `amount_inr` on stated amounts (evals, 23 Oct)."""
+    schema = ChangeIntent.model_json_schema()["$defs"]["AIChangeOperation"]
+    assert set(schema["required"]) == set(AIChangeOperation.model_fields)
+    parsed = AIChangeOperation.model_validate({"kind": "protect", "category_id": "cake"})
+    assert parsed.amount_inr is None

@@ -117,23 +117,28 @@ operations pass; changes nobody asked for fail.
 Results from 22–23 Oct 2026, counted as **passed out of answered**. Cases with no answer
 (Google's capacity problems, or Groq's free daily quota running out) are listed separately
 in the results, so they never count as wrong answers. Each figure is the latest run in
-which the model answered at least 80% of that task's cases.
+which the model answered at least 80% of that task's cases. The change-request column
+names the prompt version measured; the app runs `interpret-change-v6`.
 
 | Model | Change requests | Personalization | Alternatives | Median time, change |
 |---|---|---|---|---|
-| Groq `openai/gpt-oss-120b` (first in the chain) | 36/36 | 12/12 | 5/6 | 1.0 s |
-| Gemini 3.5 Flash-Lite (second) | 36/36 | 9/9 | 4/5 | 1.4 s |
-| Gemini 3.1 Flash-Lite (third) | 30/34 | 12/12 | 6/6 | 2.7 s |
+| Groq `openai/gpt-oss-120b` (first in the chain) | 36/36 (v2) | 12/12 | 4/6 | 1.0 s |
+| Gemini 3.5 Flash-Lite (second) | 35/36 (v6) | 9/9 | 4/5 | 1.9 s |
+| Gemini 3.1 Flash-Lite (third) | 33/33 (v6) | 12/12 | 6/6 | 2.1 s |
 
 What the evals changed:
 - **Model order.** Groq was faster and more accurate, and it answered every case until
   its free daily quota ran out, so it now goes first, with Gemini as the backup.
-- **Prompt versions.** Gemini dropped the amount when adding an expense, updating one or
-  adding a budget line. Worked examples in the prompt (now `interpret-change-v4`) took
-  Gemini 3.5 from 28/31 to 36/36; Gemini 3.1 still drops those amounts, so its answer is
-  rejected after one repair and the app falls back honestly rather than guessing. The
-  alternatives prompt now sizes cuts to the gap, after the models undershot a gap of half
-  the budget.
+- **Prompt and schema versions.** Gemini left out the amount when adding an expense,
+  updating one or adding a budget line, because those fields were optional in the answer
+  schema. Worked examples helped only partly; listing every field as required (still
+  nullable) in the schema the models receive fixed it: Gemini 3.1 went from 30/34 to
+  33/33 on `interpret-change-v6`. Groq read "postponed by 10 days" as 10 days earlier, so
+  v5 spells out the sign of a date shift. The alternatives prompt now sizes cuts to the
+  gap, after the models undershot a gap of half the budget.
+- **What approval is for.** Gemini 3.5's one v6 failure turned "₹50,000" into ₹5,00,003
+  while its own summary said 50,000. The preview shows that number before anything is
+  saved, which is why no change is applied without the user's approval.
 - **The scorer itself.** Four false failures were traced to the scoring code ("alcohol‐free"
   with a Unicode hyphen, "strictly omit onion", "zero plastic", "ban thermocol"), fixed with
   regression tests, and the saved answers re-scored without new calls.

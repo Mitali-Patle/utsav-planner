@@ -7,8 +7,9 @@ reject them, which is gentler on a model than a hard schema failure.
 
 from datetime import date
 from enum import StrEnum
+from typing import Any
 
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, ConfigDict, Field
 
 from app.domain.budget import EmphasisDirection, EmphasisStrength, SavingAction, SavingLevel
 from app.domain.changes import ChangeKind
@@ -61,8 +62,19 @@ class PlanSuggestions(BaseModel):
     vendor_notes: list[AIVendorNote] = Field(default_factory=list)
 
 
+def _list_every_field(schema: dict[str, Any]) -> None:
+    """Mark every field required (still nullable), so a model writes each one out.
+
+    Gemini tends to skip optional fields, `amount_inr` included, even when the request
+    states an amount. Validation is unchanged: a missing field still defaults to None.
+    """
+    schema["required"] = list(schema["properties"])
+
+
 class AIChangeOperation(BaseModel):
     """One operation, in the same flat shape as the domain's `ChangeOperation`."""
+
+    model_config = ConfigDict(json_schema_extra=_list_every_field)
 
     kind: ChangeKind
     amount_inr: int | None = None

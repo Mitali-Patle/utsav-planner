@@ -23,6 +23,7 @@ All notable changes to Utsav Planner will be documented in this file.
 ### Changed
 - The change history shows what each change did (for example "Total budget ₹15,000 → ₹12,000", "3 budget lines changed").
 - Pages load with less database work (one transaction for the dashboard, three for a change request).
+- Change requests that state an amount ("add a line for a magician, ₹5,000") are understood reliably by the backup AI models, and "postponed by 10 days" always moves the date later.
 
 ### Fixed
 - Text typed into the add-expense form while the AI is still personalizing a new plan is no longer cleared when the ideas arrive.

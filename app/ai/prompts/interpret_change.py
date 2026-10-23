@@ -8,7 +8,7 @@ from app.ai.prompts import GUARDRAILS
 from app.ai.schemas import AIChangeOperation, ChangeIntent, IntentStatus
 from app.domain.changes import ChangeKind
 
-VERSION = "interpret-change-v4"
+VERSION = "interpret-change-v6"
 
 SYSTEM = f"""\
 You turn a user's change request for an event plan into operations. You do not apply them;
@@ -23,7 +23,8 @@ Operation kinds and the fields each one uses (leave all other fields out):
 - protect / unprotect: category_id or expense_id ("keep X as is", "don't touch X")
 - set_guest_count: guest_count (the new number the user states)
 - adjust_guest_count: delta (for "10 more guests" use 10, for "5 fewer" use -5)
-- shift_date_days: days (negative moves the event earlier)
+- shift_date_days: days (positive moves the event later: postpone, delay, push back;
+  negative moves it earlier: prepone, bring forward)
 - set_date: new_date (YYYY-MM-DD)
 - add_task: label, days (days before the event), optional category_id
 - add_category: label, amount_inr (only for a budget line not already in categories)

@@ -460,3 +460,10 @@ The prompts the app itself sends to the LLM live in `app/ai/prompts/`.
 - **Problem:** a new plan is shown at once and the AI ideas replace the plan area a few seconds later, which cleared anything typed into the add-expense form meanwhile.
 - **Fix:** only the personalization response marks the add-expense form `hx-preserve`, so htmx keeps the user's form (and focus) while the rest of the plan updates. Later edits still reset the form after a successful add. Chosen over per-section out-of-band swaps because it is one attribute and needs no template restructure.
 - **Test:** a browser test holds the personalization request, types an expense, releases it and checks the values and focus survive. Without the attribute it fails with an empty field.
+
+## 2026-10-23 (afternoon): interpret-change v5 and v6
+- **Tool / model:** Claude Code (Claude Opus 5.5).
+- **Groq on v4 (12:40 IST, after its quota reset):** 27 of 28 answered change requests passed before the free daily token quota ran out again; about 40 calls use it up. The retry of the previous day's unanswered cases gave personalization 12/12 and alternatives 4/6.
+- **v5:** Groq read "Wedding postponed by 10 days" as `days: -10` while its summary said "postpone". The prompt now says positive moves the event later (postpone, delay, push back) and negative earlier (prepone, bring forward).
+- **v6:** Gemini 3.5 fell to 33/38 on v5. A diagnostic call showed the cause was not the wording: Gemini skips optional schema fields, `amount_inr` included ("Add a budget line for a magician, ₹5,000" came back without an amount). The answer schema sent to models now lists every operation field as required but nullable; validation is unchanged. Gemini 3.1 went from 30/34 to 33/33, every answer valid at the first try; Gemini 3.5 35/36. Its one failure turned "₹50,000" into 500003 with a correct summary; the preview shows that to the user before approval, so no number parser was added.
+- **Next:** Groq on v6 after its quota resets.
