@@ -21,12 +21,12 @@ developer's machine in India.
 | groq:openai/gpt-oss-120b | change | 2026-10-22T18:45 | interpret-change-v2 | 36/36 (100%) | 36/36 (100%) | 0 | 1.0 s | 2.4 s |
 | groq:openai/gpt-oss-120b | personalize | 2026-10-22T16:42 | personalize-v1 | 12/12 (100%) | 12/12 (100%) | 0 | 3.4 s | 4.6 s |
 | groq:openai/gpt-oss-120b | alternatives | 2026-10-22T16:42 | alternatives-v1 | 5/6 (83%) | 6/6 (100%) | 0 | 1.6 s | 2.2 s |
-| gemini:gemini-3.5-flash-lite | change | 2026-10-22T18:03 | interpret-change-v1 | 28/31 (90%) | 28/31 (90%) | 5 | 4.1 s | 11.7 s |
+| gemini:gemini-3.5-flash-lite | change | 2026-10-22T20:16 | interpret-change-v4 | 36/36 (100%) | 35/36 (97%) | 2 | 1.4 s | 4.5 s |
 | gemini:gemini-3.5-flash-lite | personalize | 2026-10-22T18:55 | personalize-v1 | 9/9 (100%) | 9/9 (100%) | 3 | 4.6 s | 6.3 s |
 | gemini:gemini-3.5-flash-lite | alternatives | 2026-10-22T18:55 | alternatives-v2 | 4/5 (80%) | 5/5 (100%) | 1 | 3.8 s | 10.0 s |
-| gemini:gemini-3.1-flash-lite | change | 2026-10-22T20:07 | interpret-change-v4 | 2/2 (100%) | 2/2 (100%) | 36 | 2.1 s | 2.6 s |
-| gemini:gemini-3.1-flash-lite | personalize | 2026-10-22T20:07 | personalize-v1 | 4/4 (100%) | 4/4 (100%) | 8 | 4.3 s | 5.1 s |
-| gemini:gemini-3.1-flash-lite | alternatives | 2026-10-22T20:07 | alternatives-v2 | 4/4 (100%) | 4/4 (100%) | 2 | 3.9 s | 8.4 s |
+| gemini:gemini-3.1-flash-lite | change | 2026-10-22T20:07 | interpret-change-v4 | 30/34 (88%) | 30/34 (88%) | 4 | 2.7 s | 8.0 s |
+| gemini:gemini-3.1-flash-lite | personalize | 2026-10-22T20:07 | personalize-v1 | 12/12 (100%) | 12/12 (100%) | 0 | 4.3 s | 7.3 s |
+| gemini:gemini-3.1-flash-lite | alternatives | 2026-10-22T20:07 | alternatives-v2 | 6/6 (100%) | 6/6 (100%) | 0 | 2.2 s | 8.4 s |
 
 ## Failures
 
@@ -42,11 +42,9 @@ developer's machine in India.
 
 - `b-far-over`: savings cover 17% of the gap
 
-### gemini:gemini-3.5-flash-lite, change (interpret-change-v1)
+### gemini:gemini-3.5-flash-lite, change (interpret-change-v4)
 
-- `w-add-line`: answered, but the guardrails rejected the answer and its repair
-- `b-add-expense`: answered, but the guardrails rejected the answer and its repair
-- `bx-update-expense`: answered, but the guardrails rejected the answer and its repair
+- None.
 
 ### gemini:gemini-3.5-flash-lite, personalize (personalize-v1)
 
@@ -58,7 +56,10 @@ developer's machine in India.
 
 ### gemini:gemini-3.1-flash-lite, change (interpret-change-v4)
 
-- None.
+- `b-add-line`: answered, but the guardrails rejected the answer and its repair
+- `w-add-line`: answered, but the guardrails rejected the answer and its repair
+- `b-add-expense`: answered, but the guardrails rejected the answer and its repair
+- `bx-update-expense`: answered, but the guardrails rejected the answer and its repair
 
 ### gemini:gemini-3.1-flash-lite, personalize (personalize-v1)
 
@@ -79,5 +80,5 @@ alternatives, in that order.
 | 2026-10-22T18:03 | gemini:gemini-3.5-flash-lite | v1, v1, v1 | 28/31 | 8/8 | 4/6 | 9 |
 | 2026-10-22T18:45 | groq:openai/gpt-oss-120b | v1, v2, v2 | 36/36 | 5/5 | 0/0 | 13 |
 | 2026-10-22T18:55 | gemini:gemini-3.5-flash-lite | v1, v2, v2 | 24/26 | 9/9 | 4/5 | 14 |
-| 2026-10-22T20:07 | gemini:gemini-3.1-flash-lite | v1, v4, v2 | 2/2 | 4/4 | 4/4 | 46 |
-| 2026-10-22T20:16 | gemini:gemini-3.5-flash-lite | v1, v4, v2 | 6/6 | 0/0 | 0/0 | 32 |
+| 2026-10-22T20:07 | gemini:gemini-3.1-flash-lite | v1, v4, v2 | 30/34 | 12/12 | 6/6 | 4 |
+| 2026-10-22T20:16 | gemini:gemini-3.5-flash-lite | v1, v4, v2 | 36/36 | 0/0 | 0/0 | 2 |

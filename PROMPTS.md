@@ -448,3 +448,9 @@ The prompts the app itself sends to the LLM live in `app/ai/prompts/`.
 - **Gemini at night:** Google was still overloaded. Gemini 3.1 answered 10 of 56 cases and Gemini 3.5 answered 6 of 38. The runs are kept rather than deleted, because they can be completed later with `--retry-errors`.
 - **Report:** it now shows, for each model and task, the latest run in which at most 20% of cases got no answer. Outage runs no longer hide real measurements, and they stay in the run history. Rows name their run and prompt version.
 - **A third scorer false positive, found by reading the answer:** Gemini 3.1 wrote "reusable decor instead of thermocol", "eliminates plastic/thermocol waste" and "ban all plastic/thermocol usage". The negation list now includes ban, eliminate, prohibit and phase out, with a regression test built from those sentences. All saved runs were re-scored.
+
+## 2026-10-23 (morning): Gemini runs completed
+- **Tool / model:** Claude Code (Claude Opus 5.5). The scheduled 06:00 retry died with the previous session, so it was run by hand at 08:00 IST with `--retry-errors`.
+- **Gemini 3.5, `interpret-change-v4`:** 36/36 answered change requests (2 still unanswered), median 1.4 s, compared with 28/31 on v1. The worked example fixed its missing amounts on add-expense, update-expense and add-line.
+- **Gemini 3.1, first usable run:** change requests 30/34, personalization 12/12, alternatives 6/6. Its four failures are all one cause, confirmed with a diagnostic call: it leaves out `amount_inr` on add_category, add_expense and update_expense even with the examples and the repair message. It is third in the chain, and a rejected repair falls back honestly, so this is recorded as a known limitation rather than worked around by parsing numbers from user text.
+- The README eval table now covers all three models.

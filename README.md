@@ -114,30 +114,29 @@ Every answer is **scored by code**, not by another model: a change answer is app
 the app's own guardrails and change engine, and the resulting plan is checked. Equivalent
 operations pass; changes nobody asked for fail.
 
-Results on 22 Oct 2026, counted as **passed out of answered**. Cases with no answer
-(Google's capacity problems that evening, or Groq's free daily quota running out) are listed
-separately in the results, so they never count as wrong answers.
+Results from 22–23 Oct 2026, counted as **passed out of answered**. Cases with no answer
+(Google's capacity problems, or Groq's free daily quota running out) are listed separately
+in the results, so they never count as wrong answers. Each figure is the latest run in
+which the model answered at least 80% of that task's cases.
 
 | Model | Change requests | Personalization | Alternatives | Median time, change |
 |---|---|---|---|---|
 | Groq `openai/gpt-oss-120b` (first in the chain) | 36/36 | 12/12 | 5/6 | 1.0 s |
-| Gemini 3.5 Flash-Lite | 24/26 | 9/9 | 4/5 | 4.9 s |
-| Gemini 3.1 Flash-Lite | not measured yet: Google answered 503 "high demand" through every attempt | | | |
-
-Groq's personalization and alternatives figures are from its complete first run (prompt v1).
-Its run with prompt v2 passed 36/36 change requests and 5/5 personalizations before the
-free daily quota ran out; the rest is re-run after the quota resets.
+| Gemini 3.5 Flash-Lite (second) | 36/36 | 9/9 | 4/5 | 1.4 s |
+| Gemini 3.1 Flash-Lite (third) | 30/34 | 12/12 | 6/6 | 2.7 s |
 
 What the evals changed:
 - **Model order.** Groq was faster and more accurate, and it answered every case until
   its free daily quota ran out, so it now goes first, with Gemini as the backup.
-- **Prompt v2.** Gemini dropped the amount when adding an expense or budget line; a worked
-  example fixed the expense case (it still drops it for one budget-line request, which Groq
-  handles). The alternatives prompt now sizes cuts to the gap, after both models
-  undershot a gap of half the budget.
-- **The scorer itself.** Three false failures were traced to the scoring code ("alcohol‐free"
-  with a Unicode hyphen, "strictly omit onion", "zero plastic"), fixed with regression tests,
-  and the saved answers re-scored without new calls.
+- **Prompt versions.** Gemini dropped the amount when adding an expense, updating one or
+  adding a budget line. Worked examples in the prompt (now `interpret-change-v4`) took
+  Gemini 3.5 from 28/31 to 36/36; Gemini 3.1 still drops those amounts, so its answer is
+  rejected after one repair and the app falls back honestly rather than guessing. The
+  alternatives prompt now sizes cuts to the gap, after the models undershot a gap of half
+  the budget.
+- **The scorer itself.** Four false failures were traced to the scoring code ("alcohol‐free"
+  with a Unicode hyphen, "strictly omit onion", "zero plastic", "ban thermocol"), fixed with
+  regression tests, and the saved answers re-scored without new calls.
 
 Full results, every failure with its reason, and the run history:
 [`evals/RESULTS.md`](evals/RESULTS.md). Run them with

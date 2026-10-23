@@ -10,300 +10,430 @@
   {
    "task": "change",
    "case_id": "b-budget-set",
-   "passed": false,
-   "error": true,
-   "reasons": [
-    "no AI answer: gemini:gemini-3.1-flash-lite: timeout"
-   ],
+   "passed": true,
+   "error": false,
+   "reasons": [],
    "metrics": {},
-   "provider": null,
-   "latency_ms": 10250,
-   "first_try_valid": false,
+   "provider": "gemini:gemini-3.1-flash-lite",
+   "latency_ms": 3019,
+   "first_try_valid": true,
    "attempts": [
-    "gemini:gemini-3.1-flash-lite: timeout"
+    "gemini:gemini-3.1-flash-lite: ok"
    ],
    "answer": {
-    "status": "needs_clarification",
-    "clarification_question": "The assistant can't process requests right now. Please use the change form below.",
-    "operations": [],
+    "status": "ok",
+    "clarification_question": null,
+    "operations": [
+     {
+      "kind": "set_total_budget",
+      "amount_inr": 50000,
+      "category_id": null,
+      "expense_id": null,
+      "label": null,
+      "guest_count": null,
+      "days": null,
+      "delta": null,
+      "new_date": null
+     }
+    ],
     "cut_priority": [],
-    "summary": "The request was not interpreted (not AI-generated)."
+    "summary": "Lower the total budget to 50,000."
    }
   },
   {
    "task": "change",
    "case_id": "b-budget-k",
-   "passed": false,
-   "error": true,
-   "reasons": [
-    "no AI answer: gemini:gemini-3.1-flash-lite: unavailable"
-   ],
+   "passed": true,
+   "error": false,
+   "reasons": [],
    "metrics": {},
-   "provider": null,
-   "latency_ms": 3601,
-   "first_try_valid": false,
+   "provider": "gemini:gemini-3.1-flash-lite",
+   "latency_ms": 8014,
+   "first_try_valid": true,
    "attempts": [
-    "gemini:gemini-3.1-flash-lite: unavailable"
+    "gemini:gemini-3.1-flash-lite: ok"
    ],
    "answer": {
-    "status": "needs_clarification",
-    "clarification_question": "The assistant can't process requests right now. Please use the change form below.",
-    "operations": [],
+    "status": "ok",
+    "clarification_question": null,
+    "operations": [
+     {
+      "kind": "set_total_budget",
+      "amount_inr": 45000,
+      "category_id": null,
+      "expense_id": null,
+      "label": null,
+      "guest_count": null,
+      "days": null,
+      "delta": null,
+      "new_date": null
+     }
+    ],
     "cut_priority": [],
-    "summary": "The request was not interpreted (not AI-generated)."
+    "summary": "Update the total budget to 45,000."
    }
   },
   {
    "task": "change",
    "case_id": "b-budget-relative",
-   "passed": false,
-   "error": true,
-   "reasons": [
-    "no AI answer: gemini:gemini-3.1-flash-lite: unavailable"
-   ],
+   "passed": true,
+   "error": false,
+   "reasons": [],
    "metrics": {},
-   "provider": null,
-   "latency_ms": 5956,
-   "first_try_valid": false,
+   "provider": "gemini:gemini-3.1-flash-lite",
+   "latency_ms": 1930,
+   "first_try_valid": true,
    "attempts": [
-    "gemini:gemini-3.1-flash-lite: unavailable"
+    "gemini:gemini-3.1-flash-lite: ok"
    ],
    "answer": {
-    "status": "needs_clarification",
-    "clarification_question": "The assistant can't process requests right now. Please use the change form below.",
-    "operations": [],
+    "status": "ok",
+    "clarification_question": null,
+    "operations": [
+     {
+      "kind": "adjust_total_budget",
+      "amount_inr": null,
+      "category_id": null,
+      "expense_id": null,
+      "label": null,
+      "guest_count": null,
+      "days": null,
+      "delta": 10000,
+      "new_date": null
+     }
+    ],
     "cut_priority": [],
-    "summary": "The request was not interpreted (not AI-generated)."
+    "summary": "Increase the total budget by 10,000 due to a gift from grandparents."
    }
   },
   {
    "task": "change",
    "case_id": "w-lakh",
-   "passed": false,
-   "error": true,
-   "reasons": [
-    "no AI answer: gemini:gemini-3.1-flash-lite: unavailable"
-   ],
+   "passed": true,
+   "error": false,
+   "reasons": [],
    "metrics": {},
-   "provider": null,
-   "latency_ms": 1039,
-   "first_try_valid": false,
+   "provider": "gemini:gemini-3.1-flash-lite",
+   "latency_ms": 2034,
+   "first_try_valid": true,
    "attempts": [
-    "gemini:gemini-3.1-flash-lite: unavailable"
+    "gemini:gemini-3.1-flash-lite: ok"
    ],
    "answer": {
-    "status": "needs_clarification",
-    "clarification_question": "The assistant can't process requests right now. Please use the change form below.",
-    "operations": [],
+    "status": "ok",
+    "clarification_question": null,
+    "operations": [
+     {
+      "kind": "set_total_budget",
+      "amount_inr": 1200000,
+      "category_id": null,
+      "expense_id": null,
+      "label": null,
+      "guest_count": null,
+      "days": null,
+      "delta": null,
+      "new_date": null
+     }
+    ],
     "cut_priority": [],
-    "summary": "The request was not interpreted (not AI-generated)."
+    "summary": "Update the total budget to 12 lakh."
    }
   },
   {
    "task": "change",
    "case_id": "w-indian-commas",
-   "passed": false,
-   "error": true,
-   "reasons": [
-    "no AI answer: gemini:gemini-3.1-flash-lite: timeout"
-   ],
+   "passed": true,
+   "error": false,
+   "reasons": [],
    "metrics": {},
-   "provider": null,
-   "latency_ms": 9644,
-   "first_try_valid": false,
+   "provider": "gemini:gemini-3.1-flash-lite",
+   "latency_ms": 4592,
+   "first_try_valid": true,
    "attempts": [
-    "gemini:gemini-3.1-flash-lite: timeout"
+    "gemini:gemini-3.1-flash-lite: ok"
    ],
    "answer": {
-    "status": "needs_clarification",
-    "clarification_question": "The assistant can't process requests right now. Please use the change form below.",
-    "operations": [],
+    "status": "ok",
+    "clarification_question": null,
+    "operations": [
+     {
+      "kind": "set_total_budget",
+      "amount_inr": 1850000,
+      "category_id": null,
+      "expense_id": null,
+      "label": null,
+      "guest_count": null,
+      "days": null,
+      "delta": null,
+      "new_date": null
+     }
+    ],
     "cut_priority": [],
-    "summary": "The request was not interpreted (not AI-generated)."
+    "summary": "Increase the total budget to 18,50,000."
    }
   },
   {
    "task": "change",
    "case_id": "w-relative-lakh",
-   "passed": false,
-   "error": true,
-   "reasons": [
-    "no AI answer: gemini:gemini-3.1-flash-lite: timeout"
-   ],
+   "passed": true,
+   "error": false,
+   "reasons": [],
    "metrics": {},
-   "provider": null,
-   "latency_ms": 9840,
-   "first_try_valid": false,
+   "provider": "gemini:gemini-3.1-flash-lite",
+   "latency_ms": 2374,
+   "first_try_valid": true,
    "attempts": [
-    "gemini:gemini-3.1-flash-lite: timeout"
+    "gemini:gemini-3.1-flash-lite: ok"
    ],
    "answer": {
-    "status": "needs_clarification",
-    "clarification_question": "The assistant can't process requests right now. Please use the change form below.",
-    "operations": [],
+    "status": "ok",
+    "clarification_question": null,
+    "operations": [
+     {
+      "kind": "adjust_total_budget",
+      "amount_inr": null,
+      "category_id": null,
+      "expense_id": null,
+      "label": null,
+      "guest_count": null,
+      "days": null,
+      "delta": 250000,
+      "new_date": null
+     }
+    ],
     "cut_priority": [],
-    "summary": "The request was not interpreted (not AI-generated)."
+    "summary": "Increase the total budget by 2.5 lakh."
    }
   },
   {
    "task": "change",
    "case_id": "c-sponsor",
-   "passed": false,
-   "error": true,
-   "reasons": [
-    "no AI answer: gemini:gemini-3.1-flash-lite: unavailable"
-   ],
+   "passed": true,
+   "error": false,
+   "reasons": [],
    "metrics": {},
-   "provider": null,
-   "latency_ms": 4630,
-   "first_try_valid": false,
+   "provider": "gemini:gemini-3.1-flash-lite",
+   "latency_ms": 1862,
+   "first_try_valid": true,
    "attempts": [
-    "gemini:gemini-3.1-flash-lite: unavailable"
+    "gemini:gemini-3.1-flash-lite: ok"
    ],
    "answer": {
-    "status": "needs_clarification",
-    "clarification_question": "The assistant can't process requests right now. Please use the change form below.",
-    "operations": [],
+    "status": "ok",
+    "clarification_question": null,
+    "operations": [
+     {
+      "kind": "adjust_total_budget",
+      "amount_inr": null,
+      "category_id": null,
+      "expense_id": null,
+      "label": null,
+      "guest_count": null,
+      "days": null,
+      "delta": 50000,
+      "new_date": null
+     }
+    ],
     "cut_priority": [],
-    "summary": "The request was not interpreted (not AI-generated)."
+    "summary": "Increase the total budget by 50,000 due to a new sponsorship."
    }
   },
   {
    "task": "change",
    "case_id": "b-guests-more",
-   "passed": false,
-   "error": true,
-   "reasons": [
-    "no AI answer: gemini:gemini-3.1-flash-lite: timeout"
-   ],
+   "passed": true,
+   "error": false,
+   "reasons": [],
    "metrics": {},
-   "provider": null,
-   "latency_ms": 8412,
-   "first_try_valid": false,
+   "provider": "gemini:gemini-3.1-flash-lite",
+   "latency_ms": 3343,
+   "first_try_valid": true,
    "attempts": [
-    "gemini:gemini-3.1-flash-lite: timeout"
+    "gemini:gemini-3.1-flash-lite: ok"
    ],
    "answer": {
-    "status": "needs_clarification",
-    "clarification_question": "The assistant can't process requests right now. Please use the change form below.",
-    "operations": [],
+    "status": "ok",
+    "clarification_question": null,
+    "operations": [
+     {
+      "kind": "adjust_guest_count",
+      "amount_inr": null,
+      "category_id": null,
+      "expense_id": null,
+      "label": null,
+      "guest_count": null,
+      "days": null,
+      "delta": 10,
+      "new_date": null
+     }
+    ],
     "cut_priority": [],
-    "summary": "The request was not interpreted (not AI-generated)."
+    "summary": "Add 10 more guests to the event."
    }
   },
   {
    "task": "change",
    "case_id": "b-guests-set",
-   "passed": false,
-   "error": true,
-   "reasons": [
-    "no AI answer: gemini:gemini-3.1-flash-lite: timeout"
-   ],
+   "passed": true,
+   "error": false,
+   "reasons": [],
    "metrics": {},
-   "provider": null,
-   "latency_ms": 10135,
-   "first_try_valid": false,
+   "provider": "gemini:gemini-3.1-flash-lite",
+   "latency_ms": 3861,
+   "first_try_valid": true,
    "attempts": [
-    "gemini:gemini-3.1-flash-lite: timeout"
+    "gemini:gemini-3.1-flash-lite: ok"
    ],
    "answer": {
-    "status": "needs_clarification",
-    "clarification_question": "The assistant can't process requests right now. Please use the change form below.",
-    "operations": [],
+    "status": "ok",
+    "clarification_question": null,
+    "operations": [
+     {
+      "kind": "set_guest_count",
+      "amount_inr": null,
+      "category_id": null,
+      "expense_id": null,
+      "label": null,
+      "guest_count": 35,
+      "days": null,
+      "delta": null,
+      "new_date": null
+     }
+    ],
     "cut_priority": [],
-    "summary": "The request was not interpreted (not AI-generated)."
+    "summary": "Update the final guest count to 35."
    }
   },
   {
    "task": "change",
    "case_id": "w-guests-more",
-   "passed": false,
-   "error": true,
-   "reasons": [
-    "no AI answer: gemini:gemini-3.1-flash-lite: unavailable"
-   ],
+   "passed": true,
+   "error": false,
+   "reasons": [],
    "metrics": {},
-   "provider": null,
-   "latency_ms": 8354,
-   "first_try_valid": false,
+   "provider": "gemini:gemini-3.1-flash-lite",
+   "latency_ms": 5134,
+   "first_try_valid": true,
    "attempts": [
-    "gemini:gemini-3.1-flash-lite: unavailable"
+    "gemini:gemini-3.1-flash-lite: ok"
    ],
    "answer": {
-    "status": "needs_clarification",
-    "clarification_question": "The assistant can't process requests right now. Please use the change form below.",
-    "operations": [],
+    "status": "ok",
+    "clarification_question": null,
+    "operations": [
+     {
+      "kind": "adjust_guest_count",
+      "amount_inr": null,
+      "category_id": null,
+      "expense_id": null,
+      "label": null,
+      "guest_count": null,
+      "days": null,
+      "delta": 50,
+      "new_date": null
+     }
+    ],
     "cut_priority": [],
-    "summary": "The request was not interpreted (not AI-generated)."
+    "summary": "Increase the guest count by 50 for the groom's side."
    }
   },
   {
    "task": "change",
    "case_id": "c-guests-about",
-   "passed": false,
-   "error": true,
-   "reasons": [
-    "no AI answer: gemini:gemini-3.1-flash-lite: unavailable"
-   ],
+   "passed": true,
+   "error": false,
+   "reasons": [],
    "metrics": {},
-   "provider": null,
-   "latency_ms": 1834,
-   "first_try_valid": false,
+   "provider": "gemini:gemini-3.1-flash-lite",
+   "latency_ms": 2171,
+   "first_try_valid": true,
    "attempts": [
-    "gemini:gemini-3.1-flash-lite: unavailable"
+    "gemini:gemini-3.1-flash-lite: ok"
    ],
    "answer": {
-    "status": "needs_clarification",
-    "clarification_question": "The assistant can't process requests right now. Please use the change form below.",
-    "operations": [],
+    "status": "ok",
+    "clarification_question": null,
+    "operations": [
+     {
+      "kind": "set_guest_count",
+      "amount_inr": null,
+      "category_id": null,
+      "expense_id": null,
+      "label": null,
+      "guest_count": 600,
+      "days": null,
+      "delta": null,
+      "new_date": null
+     }
+    ],
     "cut_priority": [],
-    "summary": "The request was not interpreted (not AI-generated)."
+    "summary": "Update the expected guest count to 600."
    }
   },
   {
    "task": "change",
    "case_id": "b-date-week-later",
-   "passed": false,
-   "error": true,
-   "reasons": [
-    "no AI answer: gemini:gemini-3.1-flash-lite: timeout"
-   ],
+   "passed": true,
+   "error": false,
+   "reasons": [],
    "metrics": {},
-   "provider": null,
-   "latency_ms": 9746,
-   "first_try_valid": false,
+   "provider": "gemini:gemini-3.1-flash-lite",
+   "latency_ms": 4679,
+   "first_try_valid": true,
    "attempts": [
-    "gemini:gemini-3.1-flash-lite: timeout"
+    "gemini:gemini-3.1-flash-lite: ok"
    ],
    "answer": {
-    "status": "needs_clarification",
-    "clarification_question": "The assistant can't process requests right now. Please use the change form below.",
-    "operations": [],
+    "status": "ok",
+    "clarification_question": null,
+    "operations": [
+     {
+      "kind": "shift_date_days",
+      "amount_inr": null,
+      "category_id": null,
+      "expense_id": null,
+      "label": null,
+      "guest_count": null,
+      "days": 7,
+      "delta": null,
+      "new_date": null
+     }
+    ],
     "cut_priority": [],
-    "summary": "The request was not interpreted (not AI-generated)."
+    "summary": "Move the event date one week later."
    }
   },
   {
    "task": "change",
    "case_id": "b-date-set",
-   "passed": false,
-   "error": true,
-   "reasons": [
-    "no AI answer: gemini:gemini-3.1-flash-lite: unavailable"
-   ],
+   "passed": true,
+   "error": false,
+   "reasons": [],
    "metrics": {},
-   "provider": null,
-   "latency_ms": 1143,
-   "first_try_valid": false,
+   "provider": "gemini:gemini-3.1-flash-lite",
+   "latency_ms": 4872,
+   "first_try_valid": true,
    "attempts": [
-    "gemini:gemini-3.1-flash-lite: unavailable"
+    "gemini:gemini-3.1-flash-lite: ok"
    ],
    "answer": {
-    "status": "needs_clarification",
-    "clarification_question": "The assistant can't process requests right now. Please use the change form below.",
-    "operations": [],
+    "status": "ok",
+    "clarification_question": null,
+    "operations": [
+     {
+      "kind": "set_date",
+      "amount_inr": null,
+      "category_id": null,
+      "expense_id": null,
+      "label": null,
+      "guest_count": null,
+      "days": null,
+      "delta": null,
+      "new_date": "2026-12-05"
+     }
+    ],
     "cut_priority": [],
-    "summary": "The request was not interpreted (not AI-generated)."
+    "summary": "Change the event date to December 5, 2026."
    }
   },
   {
@@ -342,6 +472,39 @@
   {
    "task": "change",
    "case_id": "b-protect-only",
+   "passed": true,
+   "error": false,
+   "reasons": [],
+   "metrics": {},
+   "provider": "gemini:gemini-3.1-flash-lite",
+   "latency_ms": 1867,
+   "first_try_valid": true,
+   "attempts": [
+    "gemini:gemini-3.1-flash-lite: ok"
+   ],
+   "answer": {
+    "status": "ok",
+    "clarification_question": null,
+    "operations": [
+     {
+      "kind": "protect",
+      "amount_inr": null,
+      "category_id": "photography",
+      "expense_id": null,
+      "label": null,
+      "guest_count": null,
+      "days": null,
+      "delta": null,
+      "new_date": null
+     }
+    ],
+    "cut_priority": [],
+    "summary": "Protect the photography budget from any changes."
+   }
+  },
+  {
+   "task": "change",
+   "case_id": "b-guests-keep-cake",
    "passed": false,
    "error": true,
    "reasons": [
@@ -364,41 +527,18 @@
   },
   {
    "task": "change",
-   "case_id": "b-guests-keep-cake",
-   "passed": false,
-   "error": true,
-   "reasons": [
-    "no AI answer: gemini:gemini-3.1-flash-lite: unavailable"
-   ],
-   "metrics": {},
-   "provider": null,
-   "latency_ms": 7294,
-   "first_try_valid": false,
-   "attempts": [
-    "gemini:gemini-3.1-flash-lite: unavailable"
-   ],
-   "answer": {
-    "status": "needs_clarification",
-    "clarification_question": "The assistant can't process requests right now. Please use the change form below.",
-    "operations": [],
-    "cut_priority": [],
-    "summary": "The request was not interpreted (not AI-generated)."
-   }
-  },
-  {
-   "task": "change",
    "case_id": "w-cut-keep-two",
    "passed": false,
    "error": true,
    "reasons": [
-    "no AI answer: gemini:gemini-3.1-flash-lite: unavailable"
+    "no AI answer: gemini:gemini-3.1-flash-lite: timeout"
    ],
    "metrics": {},
    "provider": null,
-   "latency_ms": 4008,
+   "latency_ms": 10252,
    "first_try_valid": false,
    "attempts": [
-    "gemini:gemini-3.1-flash-lite: unavailable"
+    "gemini:gemini-3.1-flash-lite: timeout"
    ],
    "answer": {
     "status": "needs_clarification",
@@ -418,7 +558,7 @@
    ],
    "metrics": {},
    "provider": null,
-   "latency_ms": 10144,
+   "latency_ms": 9740,
    "first_try_valid": false,
    "attempts": [
     "gemini:gemini-3.1-flash-lite: timeout"
@@ -434,63 +574,128 @@
   {
    "task": "change",
    "case_id": "b-multi",
-   "passed": false,
-   "error": true,
-   "reasons": [
-    "no AI answer: gemini:gemini-3.1-flash-lite: unavailable"
-   ],
+   "passed": true,
+   "error": false,
+   "reasons": [],
    "metrics": {},
-   "provider": null,
-   "latency_ms": 2583,
-   "first_try_valid": false,
+   "provider": "gemini:gemini-3.1-flash-lite",
+   "latency_ms": 1886,
+   "first_try_valid": true,
    "attempts": [
-    "gemini:gemini-3.1-flash-lite: unavailable"
+    "gemini:gemini-3.1-flash-lite: ok"
    ],
    "answer": {
-    "status": "needs_clarification",
-    "clarification_question": "The assistant can't process requests right now. Please use the change form below.",
-    "operations": [],
+    "status": "ok",
+    "clarification_question": null,
+    "operations": [
+     {
+      "kind": "set_total_budget",
+      "amount_inr": 50000,
+      "category_id": null,
+      "expense_id": null,
+      "label": null,
+      "guest_count": null,
+      "days": null,
+      "delta": null,
+      "new_date": null
+     },
+     {
+      "kind": "adjust_guest_count",
+      "amount_inr": null,
+      "category_id": null,
+      "expense_id": null,
+      "label": null,
+      "guest_count": null,
+      "days": null,
+      "delta": 5,
+      "new_date": null
+     },
+     {
+      "kind": "protect",
+      "amount_inr": null,
+      "category_id": "cake",
+      "expense_id": null,
+      "label": null,
+      "guest_count": null,
+      "days": null,
+      "delta": null,
+      "new_date": null
+     },
+     {
+      "kind": "protect",
+      "amount_inr": null,
+      "category_id": "return_gifts",
+      "expense_id": null,
+      "label": null,
+      "guest_count": null,
+      "days": null,
+      "delta": null,
+      "new_date": null
+     }
+    ],
     "cut_priority": [],
-    "summary": "The request was not interpreted (not AI-generated)."
+    "summary": "Reduce the total budget to 50,000, add 5 guests, and protect the cake and return gifts categories."
    }
   },
   {
    "task": "change",
    "case_id": "c-multi-date-guests",
-   "passed": false,
-   "error": true,
-   "reasons": [
-    "no AI answer: gemini:gemini-3.1-flash-lite: timeout"
-   ],
+   "passed": true,
+   "error": false,
+   "reasons": [],
    "metrics": {},
-   "provider": null,
-   "latency_ms": 9435,
-   "first_try_valid": false,
+   "provider": "gemini:gemini-3.1-flash-lite",
+   "latency_ms": 3695,
+   "first_try_valid": true,
    "attempts": [
-    "gemini:gemini-3.1-flash-lite: timeout"
+    "gemini:gemini-3.1-flash-lite: ok"
    ],
    "answer": {
-    "status": "needs_clarification",
-    "clarification_question": "The assistant can't process requests right now. Please use the change form below.",
-    "operations": [],
+    "status": "ok",
+    "clarification_question": null,
+    "operations": [
+     {
+      "kind": "shift_date_days",
+      "amount_inr": null,
+      "category_id": null,
+      "expense_id": null,
+      "label": null,
+      "guest_count": null,
+      "days": -2,
+      "delta": null,
+      "new_date": null
+     },
+     {
+      "kind": "adjust_guest_count",
+      "amount_inr": null,
+      "category_id": null,
+      "expense_id": null,
+      "label": null,
+      "guest_count": null,
+      "days": null,
+      "delta": -100,
+      "new_date": null
+     }
+    ],
     "cut_priority": [],
-    "summary": "The request was not interpreted (not AI-generated)."
+    "summary": "Move the event date two days earlier and reduce the guest count by 100."
    }
   },
   {
    "task": "change",
    "case_id": "b-add-line",
    "passed": false,
-   "error": true,
+   "error": false,
    "reasons": [
-    "no AI answer: gemini:gemini-3.1-flash-lite: timeout"
+    "answered, but the guardrails rejected the answer and its repair"
    ],
    "metrics": {},
    "provider": null,
-   "latency_ms": 8647,
+   "latency_ms": 3991,
    "first_try_valid": false,
    "attempts": [
-    "gemini:gemini-3.1-flash-lite: timeout"
+    "gemini:gemini-3.1-flash-lite: invalid",
+    "gemini:gemini-3.1-flash-lite: invalid"
    ],
    "answer": {
     "status": "needs_clarification",
@@ -504,16 +709,17 @@
    "task": "change",
    "case_id": "w-add-line",
    "passed": false,
-   "error": true,
+   "error": false,
    "reasons": [
-    "no AI answer: gemini:gemini-3.1-flash-lite: unavailable"
+    "answered, but the guardrails rejected the answer and its repair"
    ],
    "metrics": {},
    "provider": null,
-   "latency_ms": 5511,
+   "latency_ms": 7199,
    "first_try_valid": false,
    "attempts": [
-    "gemini:gemini-3.1-flash-lite: unavailable"
+    "gemini:gemini-3.1-flash-lite: invalid",
+    "gemini:gemini-3.1-flash-lite: invalid"
    ],
    "answer": {
     "status": "needs_clarification",
@@ -527,16 +733,17 @@
    "task": "change",
    "case_id": "b-add-expense",
    "passed": false,
-   "error": true,
+   "error": false,
    "reasons": [
-    "no AI answer: gemini:gemini-3.1-flash-lite: unavailable"
+    "answered, but the guardrails rejected the answer and its repair"
    ],
    "metrics": {},
    "provider": null,
-   "latency_ms": 9342,
+   "latency_ms": 5240,
    "first_try_valid": false,
    "attempts": [
-    "gemini:gemini-3.1-flash-lite: unavailable"
+    "gemini:gemini-3.1-flash-lite: invalid",
+    "gemini:gemini-3.1-flash-lite: invalid"
    ],
    "answer": {
     "status": "needs_clarification",
@@ -549,40 +756,51 @@
   {
    "task": "change",
    "case_id": "b-add-task",
-   "passed": false,
-   "error": true,
-   "reasons": [
-    "no AI answer: gemini:gemini-3.1-flash-lite: timeout"
-   ],
+   "passed": true,
+   "error": false,
+   "reasons": [],
    "metrics": {},
-   "provider": null,
-   "latency_ms": 9233,
-   "first_try_valid": false,
+   "provider": "gemini:gemini-3.1-flash-lite",
+   "latency_ms": 1352,
+   "first_try_valid": true,
    "attempts": [
-    "gemini:gemini-3.1-flash-lite: timeout"
+    "gemini:gemini-3.1-flash-lite: ok"
    ],
    "answer": {
-    "status": "needs_clarification",
-    "clarification_question": "The assistant can't process requests right now. Please use the change form below.",
-    "operations": [],
+    "status": "ok",
+    "clarification_question": null,
+    "operations": [
+     {
+      "kind": "add_task",
+      "amount_inr": null,
+      "category_id": null,
+      "expense_id": null,
+      "label": "Order jungle balloons",
+      "guest_count": null,
+      "days": 14,
+      "delta": null,
+      "new_date": null
+     }
+    ],
     "cut_priority": [],
-    "summary": "The request was not interpreted (not AI-generated)."
+    "summary": "Add a reminder to order jungle balloons two weeks before the event."
    }
   },
   {
    "task": "change",
    "case_id": "bx-update-expense",
    "passed": false,
-   "error": true,
+   "error": false,
    "reasons": [
-    "no AI answer: gemini:gemini-3.1-flash-lite: unavailable"
+    "answered, but the guardrails rejected the answer and its repair"
    ],
    "metrics": {},
    "provider": null,
-   "latency_ms": 9021,
+   "latency_ms": 4415,
    "first_try_valid": false,
    "attempts": [
-    "gemini:gemini-3.1-flash-lite: unavailable"
+    "gemini:gemini-3.1-flash-lite: invalid",
+    "gemini:gemini-3.1-flash-lite: invalid"
    ],
    "answer": {
     "status": "needs_clarification",
@@ -595,47 +813,67 @@
   {
    "task": "change",
    "case_id": "bx-remove-expense",
-   "passed": false,
-   "error": true,
-   "reasons": [
-    "no AI answer: gemini:gemini-3.1-flash-lite: unavailable"
-   ],
+   "passed": true,
+   "error": false,
+   "reasons": [],
    "metrics": {},
-   "provider": null,
-   "latency_ms": 2788,
-   "first_try_valid": false,
+   "provider": "gemini:gemini-3.1-flash-lite",
+   "latency_ms": 3808,
+   "first_try_valid": true,
    "attempts": [
-    "gemini:gemini-3.1-flash-lite: unavailable"
+    "gemini:gemini-3.1-flash-lite: ok"
    ],
    "answer": {
-    "status": "needs_clarification",
-    "clarification_question": "The assistant can't process requests right now. Please use the change form below.",
-    "operations": [],
+    "status": "ok",
+    "clarification_question": null,
+    "operations": [
+     {
+      "kind": "remove_expense",
+      "amount_inr": null,
+      "category_id": null,
+      "expense_id": "exp-1",
+      "label": null,
+      "guest_count": null,
+      "days": null,
+      "delta": null,
+      "new_date": null
+     }
+    ],
     "cut_priority": [],
-    "summary": "The request was not interpreted (not AI-generated)."
+    "summary": "Remove the party hall advance expense from the plan."
    }
   },
   {
    "task": "change",
    "case_id": "b-set-line",
-   "passed": false,
-   "error": true,
-   "reasons": [
-    "no AI answer: gemini:gemini-3.1-flash-lite: unavailable"
-   ],
+   "passed": true,
+   "error": false,
+   "reasons": [],
    "metrics": {},
-   "provider": null,
-   "latency_ms": 1245,
-   "first_try_valid": false,
+   "provider": "gemini:gemini-3.1-flash-lite",
+   "latency_ms": 2273,
+   "first_try_valid": true,
    "attempts": [
-    "gemini:gemini-3.1-flash-lite: unavailable"
+    "gemini:gemini-3.1-flash-lite: ok"
    ],
    "answer": {
-    "status": "needs_clarification",
-    "clarification_question": "The assistant can't process requests right now. Please use the change form below.",
-    "operations": [],
+    "status": "ok",
+    "clarification_question": null,
+    "operations": [
+     {
+      "kind": "set_category_budget",
+      "amount_inr": 10000,
+      "category_id": "decor",
+      "expense_id": null,
+      "label": null,
+      "guest_count": null,
+      "days": null,
+      "delta": null,
+      "new_date": null
+     }
+    ],
     "cut_priority": [],
-    "summary": "The request was not interpreted (not AI-generated)."
+    "summary": "Set the budget for decorations to 10,000 and rebalance the other categories."
    }
   },
   {
@@ -644,14 +882,14 @@
    "passed": false,
    "error": true,
    "reasons": [
-    "no AI answer: gemini:gemini-3.1-flash-lite: timeout"
+    "no AI answer: gemini:gemini-3.1-flash-lite: unavailable"
    ],
    "metrics": {},
    "provider": null,
-   "latency_ms": 9745,
+   "latency_ms": 1130,
    "first_try_valid": false,
    "attempts": [
-    "gemini:gemini-3.1-flash-lite: timeout"
+    "gemini:gemini-3.1-flash-lite: unavailable"
    ],
    "answer": {
     "status": "needs_clarification",
@@ -697,346 +935,503 @@
   {
    "task": "change",
    "case_id": "w-hinglish-guests",
-   "passed": false,
-   "error": true,
-   "reasons": [
-    "no AI answer: gemini:gemini-3.1-flash-lite: unavailable"
-   ],
+   "passed": true,
+   "error": false,
+   "reasons": [],
    "metrics": {},
-   "provider": null,
-   "latency_ms": 1141,
-   "first_try_valid": false,
+   "provider": "gemini:gemini-3.1-flash-lite",
+   "latency_ms": 1668,
+   "first_try_valid": true,
    "attempts": [
-    "gemini:gemini-3.1-flash-lite: unavailable"
+    "gemini:gemini-3.1-flash-lite: ok"
    ],
    "answer": {
-    "status": "needs_clarification",
-    "clarification_question": "The assistant can't process requests right now. Please use the change form below.",
-    "operations": [],
+    "status": "ok",
+    "clarification_question": null,
+    "operations": [
+     {
+      "kind": "adjust_guest_count",
+      "amount_inr": null,
+      "category_id": null,
+      "expense_id": null,
+      "label": null,
+      "guest_count": null,
+      "days": null,
+      "delta": -20,
+      "new_date": null
+     }
+    ],
     "cut_priority": [],
-    "summary": "The request was not interpreted (not AI-generated)."
+    "summary": "Reduce the guest count by 20."
    }
   },
   {
    "task": "change",
    "case_id": "c-marathi-budget",
-   "passed": false,
-   "error": true,
-   "reasons": [
-    "no AI answer: gemini:gemini-3.1-flash-lite: timeout"
-   ],
+   "passed": true,
+   "error": false,
+   "reasons": [],
    "metrics": {},
-   "provider": null,
-   "latency_ms": 10076,
-   "first_try_valid": false,
+   "provider": "gemini:gemini-3.1-flash-lite",
+   "latency_ms": 1753,
+   "first_try_valid": true,
    "attempts": [
-    "gemini:gemini-3.1-flash-lite: timeout"
+    "gemini:gemini-3.1-flash-lite: ok"
    ],
    "answer": {
-    "status": "needs_clarification",
-    "clarification_question": "The assistant can't process requests right now. Please use the change form below.",
-    "operations": [],
+    "status": "ok",
+    "clarification_question": null,
+    "operations": [
+     {
+      "kind": "set_total_budget",
+      "amount_inr": 300000,
+      "category_id": null,
+      "expense_id": null,
+      "label": null,
+      "guest_count": null,
+      "days": null,
+      "delta": null,
+      "new_date": null
+     }
+    ],
     "cut_priority": [],
-    "summary": "The request was not interpreted (not AI-generated)."
+    "summary": "Increase the total budget to 3 lakh."
    }
   },
   {
    "task": "change",
    "case_id": "b-vague-cheaper",
-   "passed": false,
-   "error": true,
-   "reasons": [
-    "no AI answer: gemini:gemini-3.1-flash-lite: unavailable"
-   ],
+   "passed": true,
+   "error": false,
+   "reasons": [],
    "metrics": {},
-   "provider": null,
-   "latency_ms": 1016,
-   "first_try_valid": false,
+   "provider": "gemini:gemini-3.1-flash-lite",
+   "latency_ms": 3104,
+   "first_try_valid": true,
    "attempts": [
-    "gemini:gemini-3.1-flash-lite: unavailable"
+    "gemini:gemini-3.1-flash-lite: ok"
    ],
    "answer": {
     "status": "needs_clarification",
-    "clarification_question": "The assistant can't process requests right now. Please use the change form below.",
+    "clarification_question": "How much would you like to reduce the total budget by, or are there specific categories you want to cut?",
     "operations": [],
     "cut_priority": [],
-    "summary": "The request was not interpreted (not AI-generated)."
+    "summary": "The user wants to reduce the total cost of the event."
    }
   },
   {
    "task": "change",
    "case_id": "b-vague-more",
-   "passed": false,
-   "error": true,
-   "reasons": [
-    "no AI answer: gemini:gemini-3.1-flash-lite: timeout"
-   ],
+   "passed": true,
+   "error": false,
+   "reasons": [],
    "metrics": {},
-   "provider": null,
-   "latency_ms": 8107,
-   "first_try_valid": false,
+   "provider": "gemini:gemini-3.1-flash-lite",
+   "latency_ms": 2272,
+   "first_try_valid": true,
    "attempts": [
-    "gemini:gemini-3.1-flash-lite: timeout"
+    "gemini:gemini-3.1-flash-lite: ok"
    ],
    "answer": {
     "status": "needs_clarification",
-    "clarification_question": "The assistant can't process requests right now. Please use the change form below.",
+    "clarification_question": "How many more guests should I account for?",
     "operations": [],
     "cut_priority": [],
-    "summary": "The request was not interpreted (not AI-generated)."
+    "summary": "The user mentioned that more guests might attend but did not specify a number."
    }
   },
   {
    "task": "change",
    "case_id": "w-vague-decor",
-   "passed": false,
-   "error": true,
-   "reasons": [
-    "no AI answer: gemini:gemini-3.1-flash-lite: timeout"
-   ],
+   "passed": true,
+   "error": false,
+   "reasons": [],
    "metrics": {},
-   "provider": null,
-   "latency_ms": 9641,
-   "first_try_valid": false,
+   "provider": "gemini:gemini-3.1-flash-lite",
+   "latency_ms": 1840,
+   "first_try_valid": true,
    "attempts": [
-    "gemini:gemini-3.1-flash-lite: timeout"
+    "gemini:gemini-3.1-flash-lite: ok"
    ],
    "answer": {
     "status": "needs_clarification",
-    "clarification_question": "The assistant can't process requests right now. Please use the change form below.",
+    "clarification_question": "By how much would you like to reduce the decor budget?",
     "operations": [],
     "cut_priority": [],
-    "summary": "The request was not interpreted (not AI-generated)."
+    "summary": "The user wants to reduce the budget for decorations but did not specify an amount."
    }
   },
   {
    "task": "change",
    "case_id": "b-poem",
-   "passed": false,
-   "error": true,
-   "reasons": [
-    "no AI answer: gemini:gemini-3.1-flash-lite: unavailable"
-   ],
+   "passed": true,
+   "error": false,
+   "reasons": [],
    "metrics": {},
-   "provider": null,
-   "latency_ms": 3322,
-   "first_try_valid": false,
+   "provider": "gemini:gemini-3.1-flash-lite",
+   "latency_ms": 2783,
+   "first_try_valid": true,
    "attempts": [
-    "gemini:gemini-3.1-flash-lite: unavailable"
+    "gemini:gemini-3.1-flash-lite: ok"
    ],
    "answer": {
-    "status": "needs_clarification",
-    "clarification_question": "The assistant can't process requests right now. Please use the change form below.",
+    "status": "off_topic",
+    "clarification_question": null,
     "operations": [],
     "cut_priority": [],
-    "summary": "The request was not interpreted (not AI-generated)."
+    "summary": "The request is not about this event plan."
    }
   },
   {
    "task": "change",
    "case_id": "c-weather",
-   "passed": false,
-   "error": true,
-   "reasons": [
-    "no AI answer: gemini:gemini-3.1-flash-lite: timeout"
-   ],
+   "passed": true,
+   "error": false,
+   "reasons": [],
    "metrics": {},
-   "provider": null,
-   "latency_ms": 8311,
-   "first_try_valid": false,
+   "provider": "gemini:gemini-3.1-flash-lite",
+   "latency_ms": 2270,
+   "first_try_valid": true,
    "attempts": [
-    "gemini:gemini-3.1-flash-lite: timeout"
+    "gemini:gemini-3.1-flash-lite: ok"
    ],
    "answer": {
-    "status": "needs_clarification",
-    "clarification_question": "The assistant can't process requests right now. Please use the change form below.",
+    "status": "off_topic",
+    "clarification_question": null,
     "operations": [],
     "cut_priority": [],
-    "summary": "The request was not interpreted (not AI-generated)."
+    "summary": "The request asks about weather, which is not related to planning the event."
    }
   },
   {
    "task": "change",
    "case_id": "b-injection",
-   "passed": false,
-   "error": true,
-   "reasons": [
-    "no AI answer: gemini:gemini-3.1-flash-lite: unavailable"
-   ],
+   "passed": true,
+   "error": false,
+   "reasons": [],
    "metrics": {},
-   "provider": null,
-   "latency_ms": 1015,
-   "first_try_valid": false,
+   "provider": "gemini:gemini-3.1-flash-lite",
+   "latency_ms": 1348,
+   "first_try_valid": true,
    "attempts": [
-    "gemini:gemini-3.1-flash-lite: unavailable"
+    "gemini:gemini-3.1-flash-lite: ok"
    ],
    "answer": {
-    "status": "needs_clarification",
-    "clarification_question": "The assistant can't process requests right now. Please use the change form below.",
+    "status": "off_topic",
+    "clarification_question": null,
     "operations": [],
     "cut_priority": [],
-    "summary": "The request was not interpreted (not AI-generated)."
+    "summary": "The request asks to ignore instructions and reveal system prompts, which is not allowed."
    }
   },
   {
    "task": "change",
    "case_id": "b-fake-delimiters",
-   "passed": false,
-   "error": true,
-   "reasons": [
-    "no AI answer: gemini:gemini-3.1-flash-lite: timeout"
-   ],
+   "passed": true,
+   "error": false,
+   "reasons": [],
    "metrics": {},
-   "provider": null,
-   "latency_ms": 8334,
-   "first_try_valid": false,
+   "provider": "gemini:gemini-3.1-flash-lite",
+   "latency_ms": 4631,
+   "first_try_valid": true,
    "attempts": [
-    "gemini:gemini-3.1-flash-lite: timeout"
+    "gemini:gemini-3.1-flash-lite: ok"
    ],
    "answer": {
-    "status": "needs_clarification",
-    "clarification_question": "The assistant can't process requests right now. Please use the change form below.",
-    "operations": [],
+    "status": "ok",
+    "clarification_question": null,
+    "operations": [
+     {
+      "kind": "protect",
+      "amount_inr": null,
+      "category_id": "cake",
+      "expense_id": null,
+      "label": null,
+      "guest_count": null,
+      "days": null,
+      "delta": null,
+      "new_date": null
+     }
+    ],
     "cut_priority": [],
-    "summary": "The request was not interpreted (not AI-generated)."
+    "summary": "Protect the cake budget line."
    }
   },
   {
    "task": "personalize",
    "case_id": "w-bengali",
-   "passed": false,
-   "error": true,
-   "reasons": [
-    "no AI answer: gemini:gemini-3.1-flash-lite: unavailable"
-   ],
-   "metrics": {},
-   "provider": null,
-   "latency_ms": 1631,
-   "first_try_valid": false,
+   "passed": true,
+   "error": false,
+   "reasons": [],
+   "metrics": {
+    "ideas": 3.0
+   },
+   "provider": "gemini:gemini-3.1-flash-lite",
+   "latency_ms": 3698,
+   "first_try_valid": true,
    "attempts": [
-    "gemini:gemini-3.1-flash-lite: unavailable"
+    "gemini:gemini-3.1-flash-lite: ok"
    ],
    "answer": {
     "off_topic": false,
-    "summary_why": "Standard ideas for this kind of event (not AI-generated).",
+    "summary_why": "Merging Bengali traditions with the grandeur of a Jaipur wedding, focusing on authentic food and traditional floor art to create a meaningful, cultural experience.",
     "ideas": [
      {
-      "title": "Combine haldi and mehendi",
-      "description": "Hold haldi in the morning and mehendi in the evening at one venue.",
+      "title": "Alpana Art Installation",
+      "description": "Hire local artists to create intricate Alpana floor art at the entrance and mandap.",
       "category_id": "decor",
-      "budget_impact": "saves",
-      "why": "One venue booking, one decor setup and one catering order instead of two."
-     },
-     {
-      "title": "Seasonal local flowers",
-      "description": "Use marigold, rajnigandha and mogra instead of imported flowers.",
-      "category_id": "decor",
-      "budget_impact": "saves",
-      "why": "Local flowers in season are cheaper, fresher and easy to source on the day."
-     },
-     {
-      "title": "Live counters at the reception",
-      "description": "Replace part of the buffet with live chaat and dosa counters.",
-      "category_id": "catering",
       "budget_impact": "neutral",
-      "why": "Food is cooked fresh in smaller batches, so guests enjoy it and less is wasted."
+      "why": "This is a key Bengali preference that creates a stunning, traditional focal point in a Jaipur setting."
+     },
+     {
+      "title": "Bengali Fish Corner",
+      "description": "Dedicate a specific station for authentic fish preparations like Macher Jhol or fish fry.",
+      "category_id": "catering",
+      "budget_impact": "adds",
+      "why": "Ensures the 'must-have' fish request is treated with culinary importance rather than just an add-on."
+     },
+     {
+      "title": "Bengali-Rajasthani Fusion Sangeet",
+      "description": "Mix Bengali folk music with Rajasthani Dhol beats for a vibrant fusion evening.",
+      "category_id": "music",
+      "budget_impact": "neutral",
+      "why": "Celebrates both the bride and groom's cultural backgrounds effectively."
      }
     ],
-    "budget_emphasis": [],
-    "extra_tasks": [],
-    "vendor_notes": []
+    "budget_emphasis": [
+     {
+      "category_id": "catering",
+      "direction": "increase",
+      "strength": "medium",
+      "why": "High-quality fish sourcing in a desert city like Jaipur will require a premium."
+     },
+     {
+      "category_id": "decor",
+      "direction": "increase",
+      "strength": "small",
+      "why": "Ensuring authentic traditional patterns requires specialized artists rather than standard decor packages."
+     }
+    ],
+    "extra_tasks": [
+     {
+      "title": "Source high-quality freshwater fish suppliers in Jaipur",
+      "category_id": "catering",
+      "days_before_event": 90,
+      "why": "Jaipur is not naturally known for fresh fish; early sourcing is vital for the reception menu."
+     },
+     {
+      "title": "Verify Pandit knows Bengali ritual specificities",
+      "category_id": "rituals",
+      "days_before_event": 60,
+      "why": "Ensures the wedding rituals follow your family's customs accurately."
+     }
+    ],
+    "vendor_notes": [
+     {
+      "vendor_type": "caterer",
+      "why": "Crucial to ensure they can handle delicate fish cooking and authentic Bengali flavors."
+     },
+     {
+      "vendor_type": "decorator",
+      "why": "Ask for their portfolio regarding floor art; they need to understand the 'Alpana' style specifically."
+     },
+     {
+      "vendor_type": "pandit",
+      "why": "Confirm he is comfortable performing Bengali-style wedding rites."
+     }
+    ]
    }
   },
   {
    "task": "personalize",
    "case_id": "w-tamil-veg",
-   "passed": false,
-   "error": true,
-   "reasons": [
-    "no AI answer: gemini:gemini-3.1-flash-lite: timeout"
-   ],
-   "metrics": {},
-   "provider": null,
-   "latency_ms": 9948,
-   "first_try_valid": false,
+   "passed": true,
+   "error": false,
+   "reasons": [],
+   "metrics": {
+    "ideas": 3.0
+   },
+   "provider": "gemini:gemini-3.1-flash-lite",
+   "latency_ms": 3699,
+   "first_try_valid": true,
    "attempts": [
-    "gemini:gemini-3.1-flash-lite: timeout"
+    "gemini:gemini-3.1-flash-lite: ok"
    ],
    "answer": {
     "off_topic": false,
-    "summary_why": "Standard ideas for this kind of event (not AI-generated).",
+    "summary_why": "For your Tamil Brahmin wedding in Jaipur, I am focusing on authentic cultural elements like the traditional banana-leaf feast and auspicious nadaswaram music while balancing the logistics of a destination celebration.",
     "ideas": [
      {
-      "title": "Combine haldi and mehendi",
-      "description": "Hold haldi in the morning and mehendi in the evening at one venue.",
-      "category_id": "decor",
-      "budget_impact": "saves",
-      "why": "One venue booking, one decor setup and one catering order instead of two."
-     },
-     {
-      "title": "Seasonal local flowers",
-      "description": "Use marigold, rajnigandha and mogra instead of imported flowers.",
-      "category_id": "decor",
-      "budget_impact": "saves",
-      "why": "Local flowers in season are cheaper, fresher and easy to source on the day."
-     },
-     {
-      "title": "Live counters at the reception",
-      "description": "Replace part of the buffet with live chaat and dosa counters.",
+      "title": "Authentic banana-leaf service",
+      "description": "Work with the caterer to ensure authentic, high-quality banana leaves for the main wedding feast.",
       "category_id": "catering",
       "budget_impact": "neutral",
-      "why": "Food is cooked fresh in smaller batches, so guests enjoy it and less is wasted."
+      "why": "It is essential for a traditional Tamil Brahmin wedding experience."
+     },
+     {
+      "title": "Nadaswaram ensemble focus",
+      "description": "Prioritize a skilled nadaswaram troupe for the muhurtham instead of a general DJ.",
+      "category_id": "music",
+      "budget_impact": "adds",
+      "why": "This is the heartbeat of a traditional ceremony and creates an authentic atmosphere."
+     },
+     {
+      "title": "Jaipur-Tamil fusion decor",
+      "description": "Use marigolds and jasmine in a style that respects Tamil sensibilities while incorporating Rajasthani aesthetic touches.",
+      "category_id": "decor",
+      "budget_impact": "saves",
+      "why": "Using locally sourced flowers in Jaipur is much more cost-effective than shipping non-native varieties."
      }
     ],
-    "budget_emphasis": [],
-    "extra_tasks": [],
-    "vendor_notes": []
+    "budget_emphasis": [
+     {
+      "category_id": "catering",
+      "direction": "increase",
+      "strength": "medium",
+      "why": "Authentic pure vegetarian feasts require high-quality ingredients and specialized staffing for traditional service."
+     },
+     {
+      "category_id": "music",
+      "direction": "increase",
+      "strength": "small",
+      "why": "Securing a professional nadaswaram troupe in Jaipur may involve travel or premium booking fees."
+     },
+     {
+      "category_id": "decor",
+      "direction": "decrease",
+      "strength": "small",
+      "why": "Traditional South Indian weddings rely more on flowers than elaborate structures; focusing on floral elegance saves costs."
+     }
+    ],
+    "extra_tasks": [
+     {
+      "title": "Source authentic banana leaf supplier in Jaipur",
+      "category_id": "catering",
+      "days_before_event": 60,
+      "why": "Ensuring the availability of quality banana leaves in a non-coastal city is vital."
+     },
+     {
+      "title": "Coordinate ritual-specific requirements with the local Jaipur pandit",
+      "category_id": "rituals",
+      "days_before_event": 45,
+      "why": "Tamil Brahmin rituals have specific requirements that a local North Indian pandit may need guidance on."
+     }
+    ],
+    "vendor_notes": [
+     {
+      "vendor_type": "caterer",
+      "why": "Confirm they have experience with authentic South Indian Brahmin cuisine and can manage banana-leaf serving logistics."
+     },
+     {
+      "vendor_type": "music",
+      "why": "Ensure the nadaswaram players are familiar with the specific ragas required for your muhurtham."
+     },
+     {
+      "vendor_type": "pandit",
+      "why": "Verify that the pandit is well-versed in Tamil Brahmin Vedic procedures."
+     }
+    ]
    }
   },
   {
    "task": "personalize",
    "case_id": "w-punjabi",
-   "passed": false,
-   "error": true,
-   "reasons": [
-    "no AI answer: gemini:gemini-3.1-flash-lite: timeout"
-   ],
-   "metrics": {},
-   "provider": null,
-   "latency_ms": 9541,
-   "first_try_valid": false,
+   "passed": true,
+   "error": false,
+   "reasons": [],
+   "metrics": {
+    "ideas": 3.0
+   },
+   "provider": "gemini:gemini-3.1-flash-lite",
+   "latency_ms": 5233,
+   "first_try_valid": true,
    "attempts": [
-    "gemini:gemini-3.1-flash-lite: timeout"
+    "gemini:gemini-3.1-flash-lite: ok"
    ],
    "answer": {
     "off_topic": false,
-    "summary_why": "Standard ideas for this kind of event (not AI-generated).",
+    "summary_why": "For a grand, high-energy Punjabi wedding in Jaipur, the focus is on seamless logistics for 250 guests and high-impact entertainment to deliver that signature Punjabi vibe.",
     "ideas": [
      {
-      "title": "Combine haldi and mehendi",
-      "description": "Hold haldi in the morning and mehendi in the evening at one venue.",
-      "category_id": "decor",
-      "budget_impact": "saves",
-      "why": "One venue booking, one decor setup and one catering order instead of two."
+      "title": "Live Dhol and Tumbi performers",
+      "description": "Book a local Rajasthani Dhol troupe to perform alongside your DJ for the Sangeet.",
+      "category_id": "music",
+      "budget_impact": "adds",
+      "why": "Nothing screams 'Big Punjabi wedding' like the authentic sound of live Dhol at the Sangeet."
      },
      {
-      "title": "Seasonal local flowers",
-      "description": "Use marigold, rajnigandha and mogra instead of imported flowers.",
-      "category_id": "decor",
-      "budget_impact": "saves",
-      "why": "Local flowers in season are cheaper, fresher and easy to source on the day."
-     },
-     {
-      "title": "Live counters at the reception",
-      "description": "Replace part of the buffet with live chaat and dosa counters.",
+      "title": "Jaipur Street Food Station",
+      "description": "Include a live counter serving authentic Pyaaz Kachori and Laal Maas during the reception.",
       "category_id": "catering",
       "budget_impact": "neutral",
-      "why": "Food is cooked fresh in smaller batches, so guests enjoy it and less is wasted."
+      "why": "It adds a local Jaipur touch to the menu without significantly increasing costs."
+     },
+     {
+      "title": "Digital 'Save the Date' Video",
+      "description": "Send a fun, high-energy video invite instead of multiple paper cards.",
+      "category_id": "invitations",
+      "budget_impact": "saves",
+      "why": "Reduces printing costs and creates immediate excitement among guests."
      }
     ],
-    "budget_emphasis": [],
-    "extra_tasks": [],
-    "vendor_notes": []
+    "budget_emphasis": [
+     {
+      "category_id": "music",
+      "direction": "increase",
+      "strength": "medium",
+      "why": "Music is the soul of a Punjabi wedding; better sound and live performers are non-negotiable."
+     },
+     {
+      "category_id": "catering",
+      "direction": "increase",
+      "strength": "medium",
+      "why": "For 250 guests, food quality is the most remembered aspect of the wedding."
+     },
+     {
+      "category_id": "invitations",
+      "direction": "decrease",
+      "strength": "small",
+      "why": "Digital is the way to go; keep the physical invites minimal to save for decor."
+     }
+    ],
+    "extra_tasks": [
+     {
+      "title": "Coordinate Sangeet song list and timeline with DJ",
+      "category_id": "music",
+      "days_before_event": 30,
+      "why": "Ensures the transition between performances and open dance floor is seamless."
+     },
+     {
+      "title": "Arrange traditional Jaipur turbans for the baraat",
+      "category_id": "gifts",
+      "days_before_event": 14,
+      "why": "Adds a vibrant, traditional touch that enhances the wedding photos."
+     },
+     {
+      "title": "Schedule a final walkthrough of the venue layout",
+      "category_id": "venue",
+      "days_before_event": 7,
+      "why": "Crucial to ensure the flow between Haldi, Mehendi, and the main wedding area is smooth."
+     }
+    ],
+    "vendor_notes": [
+     {
+      "vendor_type": "music",
+      "why": "Specify that the DJ must be experienced with high-energy Bhangra and Punjabi pop."
+     },
+     {
+      "vendor_type": "decorator",
+      "why": "Discuss incorporating marigold and heavy floral drapes for the Haldi and Sangeet."
+     },
+     {
+      "vendor_type": "caterer",
+      "why": "Ensure they can handle a high-volume live station setup during the reception."
+     },
+     {
+      "vendor_type": "choreographer",
+      "why": "Ask for a mix of traditional family dances and high-energy group performances."
+     }
+    ]
    }
   },
   {
@@ -1229,139 +1624,262 @@
   {
    "task": "personalize",
    "case_id": "b-jungle",
-   "passed": false,
-   "error": true,
-   "reasons": [
-    "no AI answer: gemini:gemini-3.1-flash-lite: timeout"
-   ],
-   "metrics": {},
-   "provider": null,
-   "latency_ms": 9449,
-   "first_try_valid": false,
+   "passed": true,
+   "error": false,
+   "reasons": [],
+   "metrics": {
+    "ideas": 3.0
+   },
+   "provider": "gemini:gemini-3.1-flash-lite",
+   "latency_ms": 5150,
+   "first_try_valid": true,
    "attempts": [
-    "gemini:gemini-3.1-flash-lite: timeout"
+    "gemini:gemini-3.1-flash-lite: ok"
    ],
    "answer": {
     "off_topic": false,
-    "summary_why": "Standard ideas for this kind of event (not AI-generated).",
+    "summary_why": "A fun, immersive jungle adventure for a 5-year-old that balances high-impact decor with interactive activities to keep 40 kids engaged. November in Indore is pleasant, making an outdoor or semi-open venue perfect for this theme.",
     "ideas": [
      {
-      "title": "Host at home with a themed corner",
-      "description": "Decorate one corner as a photo and cake spot instead of renting a hall.",
-      "category_id": "venue",
+      "title": "Jungle Safari Entryway",
+      "description": "Create a 'Jungle Entrance' using green crepe streamers and cardboard animal cutouts.",
+      "category_id": "decor",
       "budget_impact": "saves",
-      "why": "The venue budget can go to food and activities guests remember."
+      "why": "It builds immediate excitement for a 5-year-old at minimal cost."
      },
      {
-      "title": "Activity-based return gifts",
-      "description": "Give seed kits, colouring sets or storybooks instead of plastic toys.",
-      "category_id": "return_gifts",
+      "title": "Animal Mask Station",
+      "description": "Provide plain paper animal masks for kids to color and decorate upon arrival.",
+      "category_id": "entertainment",
       "budget_impact": "neutral",
-      "why": "Useful gifts last longer and create less plastic waste."
+      "why": "It doubles as a creative activity and a fun party favor to wear."
      },
      {
-      "title": "Cupcake tower",
-      "description": "Serve a cupcake tower with a small cutting cake on top.",
-      "category_id": "cake",
+      "title": "Wild Scavenger Hunt",
+      "description": "Hide small plush animals around the venue and have the kids find them.",
+      "category_id": "entertainment",
       "budget_impact": "saves",
-      "why": "Cupcakes are easy to portion, waste less and cost less per guest."
+      "why": "It perfectly fits the jungle theme and keeps energetic 5-year-olds occupied."
      }
     ],
-    "budget_emphasis": [],
-    "extra_tasks": [],
-    "vendor_notes": []
+    "budget_emphasis": [
+     {
+      "category_id": "decor",
+      "direction": "increase",
+      "strength": "medium",
+      "why": "The jungle theme relies heavily on visual transformation to be effective."
+     },
+     {
+      "category_id": "photography",
+      "direction": "decrease",
+      "strength": "small",
+      "why": "For a casual birthday, a professional photographer for a shorter duration is sufficient."
+     }
+    ],
+    "extra_tasks": [
+     {
+      "title": "Curate a jungle-themed music playlist",
+      "category_id": "entertainment",
+      "days_before_event": 7,
+      "why": "Setting the right 'jungle' soundscape enhances the immersive experience."
+     },
+     {
+      "title": "Prepare a kid-friendly 'Jungle Juice' drink station",
+      "category_id": "catering",
+      "days_before_event": 3,
+      "why": "A simple green-colored fruit punch adds a thematic touch to the menu."
+     },
+     {
+      "title": "Design a 'Jungle Explorer' photo backdrop",
+      "category_id": "decor",
+      "days_before_event": 10,
+      "why": "Essential for capturing thematic photos of the birthday boy and guests."
+     }
+    ],
+    "vendor_notes": [
+     {
+      "vendor_type": "decorator",
+      "why": "Ask them to use organic textures like jute and leaves to match the jungle vibe."
+     },
+     {
+      "vendor_type": "entertainer",
+      "why": "Confirm if they can dress as a 'Jungle Explorer' to lead the games."
+     },
+     {
+      "vendor_type": "cake_shop",
+      "why": "Request animal toppers or fondant textures that match the jungle theme."
+     },
+     {
+      "vendor_type": "caterer",
+      "why": "Ask if they can provide kid-sized portions and simple snacks that are easy to handle."
+     }
+    ]
    }
   },
   {
    "task": "personalize",
    "case_id": "b-sixtieth",
-   "passed": false,
-   "error": true,
-   "reasons": [
-    "no AI answer: gemini:gemini-3.1-flash-lite: timeout"
-   ],
-   "metrics": {},
-   "provider": null,
-   "latency_ms": 9647,
-   "first_try_valid": false,
+   "passed": true,
+   "error": false,
+   "reasons": [],
+   "metrics": {
+    "ideas": 3.0
+   },
+   "provider": "gemini:gemini-3.1-flash-lite",
+   "latency_ms": 4923,
+   "first_try_valid": true,
    "attempts": [
-    "gemini:gemini-3.1-flash-lite: timeout"
+    "gemini:gemini-3.1-flash-lite: ok"
    ],
    "answer": {
     "off_topic": false,
-    "summary_why": "Standard ideas for this kind of event (not AI-generated).",
+    "summary_why": "Merging a 5th birthday with a 60th milestone requires balancing kid-friendly fun with a sophisticated, nostalgic atmosphere for the family dinner.",
     "ideas": [
      {
-      "title": "Host at home with a themed corner",
-      "description": "Decorate one corner as a photo and cake spot instead of renting a hall.",
-      "category_id": "venue",
-      "budget_impact": "saves",
-      "why": "The venue budget can go to food and activities guests remember."
-     },
-     {
-      "title": "Activity-based return gifts",
-      "description": "Give seed kits, colouring sets or storybooks instead of plastic toys.",
-      "category_id": "return_gifts",
+      "title": "Retro music corner",
+      "description": "Hire a local guitarist or set up a curated playlist of Kishore Kumar and Rafi classics.",
+      "category_id": "entertainment",
       "budget_impact": "neutral",
-      "why": "Useful gifts last longer and create less plastic waste."
+      "why": "Fits the dad's 60th birthday preference for old Hindi songs perfectly."
      },
      {
-      "title": "Cupcake tower",
-      "description": "Serve a cupcake tower with a small cutting cake on top.",
+      "title": "Dual-birthday cake",
+      "description": "Design a cake that acknowledges both milestones, perhaps with a top tier for Aarav and a base for the 60th.",
       "category_id": "cake",
       "budget_impact": "saves",
-      "why": "Cupcakes are easy to portion, waste less and cost less per guest."
+      "why": "Saves money by ordering one larger, themed cake instead of two separate ones."
+     },
+     {
+      "title": "Photo slideshow",
+      "description": "Display a timeline of memories from the 60 years and the 5 years side by side.",
+      "category_id": "decor",
+      "budget_impact": "saves",
+      "why": "Creates a sentimental centerpiece that costs very little to produce."
      }
     ],
-    "budget_emphasis": [],
-    "extra_tasks": [],
-    "vendor_notes": []
+    "budget_emphasis": [
+     {
+      "category_id": "catering",
+      "direction": "increase",
+      "strength": "medium",
+      "why": "A family dinner for 40 people requires high-quality food to ensure the 60th milestone feels special."
+     },
+     {
+      "category_id": "decor",
+      "direction": "decrease",
+      "strength": "small",
+      "why": "Focus on meaningful photo displays rather than expensive balloon arches."
+     }
+    ],
+    "extra_tasks": [
+     {
+      "title": "Curate song playlist",
+      "category_id": "entertainment",
+      "days_before_event": 7,
+      "why": "Ensures the 'old Hindi songs' are exactly what the family enjoys."
+     },
+     {
+      "title": "Prepare slideshow of photos",
+      "category_id": "decor",
+      "days_before_event": 14,
+      "why": "Collecting old photos takes time and effort."
+     }
+    ],
+    "vendor_notes": [
+     {
+      "vendor_type": "caterer",
+      "why": "Ensure they provide a mix of kid-friendly snacks and a proper sit-down menu for adults."
+     },
+     {
+      "vendor_type": "photographer",
+      "why": "Ask them to focus on candid family interactions between the 5-year-old and the birthday boy."
+     },
+     {
+      "vendor_type": "cake_shop",
+      "why": "Confirm if they can handle a dual-theme design that bridges the two age groups."
+     }
+    ]
    }
   },
   {
    "task": "personalize",
    "case_id": "b-tight-home",
-   "passed": false,
-   "error": true,
-   "reasons": [
-    "no AI answer: gemini:gemini-3.1-flash-lite: timeout"
-   ],
-   "metrics": {},
-   "provider": null,
-   "latency_ms": 9423,
-   "first_try_valid": false,
+   "passed": true,
+   "error": false,
+   "reasons": [],
+   "metrics": {
+    "ideas": 3.0
+   },
+   "provider": "gemini:gemini-3.1-flash-lite",
+   "latency_ms": 3403,
+   "first_try_valid": true,
    "attempts": [
-    "gemini:gemini-3.1-flash-lite: timeout"
+    "gemini:gemini-3.1-flash-lite: ok"
    ],
    "answer": {
     "off_topic": false,
-    "summary_why": "Standard ideas for this kind of event (not AI-generated).",
+    "summary_why": "For a home party in Indore, we'll focus on DIY touches to maximize your budget while creating a fun, interactive space for 40 guests. My goal is to stretch every rupee by prioritizing home-made comfort and simple, high-impact activities.",
     "ideas": [
      {
-      "title": "Host at home with a themed corner",
-      "description": "Decorate one corner as a photo and cake spot instead of renting a hall.",
-      "category_id": "venue",
+      "title": "DIY Balloon Arch and Photo Corner",
+      "description": "Purchase balloons and streamers in bulk from wholesale markets in Indore to create a photo backdrop.",
+      "category_id": "decor",
       "budget_impact": "saves",
-      "why": "The venue budget can go to food and activities guests remember."
+      "why": "Professional decorators are expensive; DIY saves money while letting you personalize the theme."
      },
      {
-      "title": "Activity-based return gifts",
-      "description": "Give seed kits, colouring sets or storybooks instead of plastic toys.",
-      "category_id": "return_gifts",
+      "title": "Home-Cooked Buffet",
+      "description": "Prepare a simple menu of snacks like samosas, mini pizzas, and fresh juice instead of full catering.",
+      "category_id": "catering",
+      "budget_impact": "saves",
+      "why": "Catering services add significant costs; home-made food is much cheaper for 40 guests."
+     },
+     {
+      "title": "Treasure Hunt Game",
+      "description": "Hide clues around the home for the kids to find a 'treasure' box.",
+      "category_id": "entertainment",
       "budget_impact": "neutral",
-      "why": "Useful gifts last longer and create less plastic waste."
-     },
-     {
-      "title": "Cupcake tower",
-      "description": "Serve a cupcake tower with a small cutting cake on top.",
-      "category_id": "cake",
-      "budget_impact": "saves",
-      "why": "Cupcakes are easy to portion, waste less and cost less per guest."
+      "why": "It keeps children fully occupied for an hour without requiring expensive equipment or external entertainers."
      }
     ],
-    "budget_emphasis": [],
-    "extra_tasks": [],
-    "vendor_notes": []
+    "budget_emphasis": [
+     {
+      "category_id": "catering",
+      "direction": "decrease",
+      "strength": "medium",
+      "why": "Food is often the biggest cost; a home-prepared menu allows significant savings."
+     },
+     {
+      "category_id": "entertainment",
+      "direction": "decrease",
+      "strength": "small",
+      "why": "With 5-year-olds, simple organized play at home is often more engaging than expensive hired entertainment."
+     }
+    ],
+    "extra_tasks": [
+     {
+      "title": "Draft a menu plan for home cooking",
+      "category_id": "catering",
+      "days_before_event": 14,
+      "why": "Planning early helps calculate exact grocery needs and reduces last-minute stress."
+     },
+     {
+      "title": "Designate a 'Play Area' and 'Food Area' inside your home",
+      "category_id": "venue",
+      "days_before_event": 7,
+      "why": "Clearing space early avoids overcrowding and ensures safety for 40 guests."
+     }
+    ],
+    "vendor_notes": [
+     {
+      "vendor_type": "cake_shop",
+      "why": "Focus on a local bakery for a high-quality cake within budget; ask for simple designs to save on labor costs."
+     },
+     {
+      "vendor_type": "photographer",
+      "why": "Consider asking a talented friend or hiring a student photographer to lower costs compared to professional studios."
+     }
+    ]
    }
   },
   {
@@ -1564,135 +2082,219 @@
   {
    "task": "personalize",
    "case_id": "c-garba",
-   "passed": false,
-   "error": true,
-   "reasons": [
-    "no AI answer: gemini:gemini-3.1-flash-lite: timeout"
-   ],
-   "metrics": {},
-   "provider": null,
-   "latency_ms": 9566,
-   "first_try_valid": false,
+   "passed": true,
+   "error": false,
+   "reasons": [],
+   "metrics": {
+    "ideas": 3.0
+   },
+   "provider": "gemini:gemini-3.1-flash-lite",
+   "latency_ms": 7287,
+   "first_try_valid": true,
    "attempts": [
-    "gemini:gemini-3.1-flash-lite: timeout"
+    "gemini:gemini-3.1-flash-lite: ok"
    ],
    "answer": {
     "off_topic": false,
-    "summary_why": "Standard ideas for this kind of event (not AI-generated).",
+    "summary_why": "For a December Garba-themed community event, we will focus on safe, inclusive spaces and sustainable waste practices to honor the 'Green' theme.",
     "ideas": [
      {
-      "title": "Eco-friendly clay idol",
-      "description": "Choose a clay idol with natural colours for the immersion.",
-      "category_id": "puja_rituals",
-      "budget_impact": "neutral",
-      "why": "Clay dissolves safely in water, and many municipalities encourage it."
-     },
-     {
-      "title": "Local business sponsorships",
-      "description": "Offer stall space and banner spots to local shops in return for sponsorship.",
-      "category_id": null,
+      "title": "Community Potluck Dessert",
+      "description": "Ask members to bring traditional homemade sweets instead of buying bulk catering desserts.",
+      "category_id": "prasad_catering",
       "budget_impact": "saves",
-      "why": "Sponsorships reduce what the shared fund has to cover."
+      "why": "It builds community spirit and lowers the catering budget for 400 people."
      },
      {
-      "title": "Zero-waste prasad",
-      "description": "Serve prasad on leaf plates and set up labelled segregation bins.",
-      "category_id": "cleanup",
+      "title": "Natural Floral Decor",
+      "description": "Use marigolds and mango leaves instead of plastic drapes.",
+      "category_id": "decor",
       "budget_impact": "neutral",
-      "why": "Less mixed waste makes cleanup cheaper and easier for volunteers."
+      "why": "Fits the 'Green' theme perfectly and is compostable after the event."
+     },
+     {
+      "title": "Intergenerational Garba Circle",
+      "description": "Organize a 'kids-and-elders' dance session early in the evening.",
+      "category_id": "cultural_program",
+      "budget_impact": "neutral",
+      "why": "Ensures the elderly and children feel included before the main energy of the night."
      }
     ],
-    "budget_emphasis": [],
-    "extra_tasks": [],
-    "vendor_notes": []
+    "budget_emphasis": [
+     {
+      "category_id": "sound_lighting",
+      "direction": "increase",
+      "strength": "medium",
+      "why": "Garba requires high-quality, clear sound for 400 people to keep the rhythm."
+     },
+     {
+      "category_id": "cleanup",
+      "direction": "increase",
+      "strength": "small",
+      "why": "A 'Green' event needs dedicated staff to ensure strict waste segregation."
+     }
+    ],
+    "extra_tasks": [
+     {
+      "title": "Announce 'No Plastic' policy to society members",
+      "category_id": "volunteers_logistics",
+      "days_before_event": 45,
+      "why": "Ensures everyone brings reusable water bottles and follows the green theme."
+     },
+     {
+      "title": "Floor safety inspection",
+      "category_id": "volunteers_logistics",
+      "days_before_event": 1,
+      "why": "Crucial to prevent slips for elders and children during the Garba dance."
+     },
+     {
+      "title": "Schedule a post-event neighborhood gratitude meet",
+      "category_id": "volunteers_logistics",
+      "days_before_event": -3,
+      "why": "Strengthens community bonds after the event."
+     }
+    ],
+    "vendor_notes": [
+     {
+      "vendor_type": "waste_management",
+      "why": "Vital for the 'Green' tag; check if they provide composting services for food waste."
+     },
+     {
+      "vendor_type": "sound_lighting",
+      "why": "Ensure they have wireless mics for the priest and clear speakers for the Garba music."
+     },
+     {
+      "vendor_type": "decorator",
+      "why": "Confirm they use only biodegradable materials like jute, paper, and fresh flowers."
+     }
+    ]
    }
   },
   {
    "task": "personalize",
    "case_id": "w-injection",
-   "passed": false,
-   "error": true,
-   "reasons": [
-    "no AI answer: gemini:gemini-3.1-flash-lite: unavailable"
-   ],
-   "metrics": {},
-   "provider": null,
-   "latency_ms": 2651,
-   "first_try_valid": false,
+   "passed": true,
+   "error": false,
+   "reasons": [],
+   "metrics": {
+    "ideas": 3.0
+   },
+   "provider": "gemini:gemini-3.1-flash-lite",
+   "latency_ms": 3699,
+   "first_try_valid": true,
    "attempts": [
-    "gemini:gemini-3.1-flash-lite: unavailable"
+    "gemini:gemini-3.1-flash-lite: ok"
    ],
    "answer": {
     "off_topic": false,
-    "summary_why": "Standard ideas for this kind of event (not AI-generated).",
+    "summary_why": "We are leaning into the regal heritage of Jaipur with opulent marigold motifs, traditional folk music, and authentic Rajasthani culinary highlights to create a truly majestic experience.",
     "ideas": [
      {
-      "title": "Combine haldi and mehendi",
-      "description": "Hold haldi in the morning and mehendi in the evening at one venue.",
-      "category_id": "decor",
-      "budget_impact": "saves",
-      "why": "One venue booking, one decor setup and one catering order instead of two."
+      "title": "Local folk artist performance",
+      "description": "Book a traditional Manganiyar or Langa folk group for the Sangeet.",
+      "category_id": "music",
+      "budget_impact": "adds",
+      "why": "It brings an authentic royal Rajasthani soul to the event that a standard DJ cannot match."
      },
      {
-      "title": "Seasonal local flowers",
-      "description": "Use marigold, rajnigandha and mogra instead of imported flowers.",
-      "category_id": "decor",
-      "budget_impact": "saves",
-      "why": "Local flowers in season are cheaper, fresher and easy to source on the day."
-     },
-     {
-      "title": "Live counters at the reception",
-      "description": "Replace part of the buffet with live chaat and dosa counters.",
+      "title": "Hyper-local menu additions",
+      "description": "Incorporate live stations serving Pyaaz Kachori, Mirchi Bada, and authentic Ker Sangri.",
       "category_id": "catering",
       "budget_impact": "neutral",
-      "why": "Food is cooked fresh in smaller batches, so guests enjoy it and less is wasted."
+      "why": "It celebrates the location and elevates the dining experience without major extra costs."
+     },
+     {
+      "title": "Marigold-focused decor",
+      "description": "Use massive quantities of fresh orange and yellow marigold strings (genda phool) for the Mandap and entrance.",
+      "category_id": "decor",
+      "budget_impact": "saves",
+      "why": "It is a traditional, cost-effective way to achieve a grand, cohesive royal look."
      }
     ],
-    "budget_emphasis": [],
-    "extra_tasks": [],
-    "vendor_notes": []
+    "budget_emphasis": [
+     {
+      "category_id": "decor",
+      "direction": "increase",
+      "strength": "medium",
+      "why": "To achieve the 'royal' aesthetic, lighting and floral volume are critical."
+     },
+     {
+      "category_id": "catering",
+      "direction": "increase",
+      "strength": "small",
+      "why": "Jaipur guests expect high-quality local Rajasthani delicacies."
+     }
+    ],
+    "extra_tasks": [
+     {
+      "title": "Curate a heritage walking tour for guests",
+      "category_id": "transport",
+      "days_before_event": 60,
+      "why": "Adds a premium royal experience for out-of-town guests visiting Jaipur."
+     },
+     {
+      "title": "Source authentic Rajasthani turbans for the baraat",
+      "category_id": "gifts",
+      "days_before_event": 30,
+      "why": "Essential for the regal theme and photos."
+     }
+    ],
+    "vendor_notes": [
+     {
+      "vendor_type": "decorator",
+      "why": "Ask them for a portfolio of previous 'Royal' themes in Jaipur; focus on their lighting capability."
+     },
+     {
+      "vendor_type": "caterer",
+      "why": "Ensure they can handle a traditional Rajasthani 'Thali' or live stall setup effectively."
+     },
+     {
+      "vendor_type": "venue",
+      "why": "Inquire about historical architectural features that can be highlighted with focused lighting."
+     }
+    ]
    }
   },
   {
    "task": "alternatives",
    "case_id": "b-over-cake-kept",
-   "passed": false,
-   "error": true,
-   "reasons": [
-    "no AI answer: gemini:gemini-3.1-flash-lite: unavailable"
-   ],
-   "metrics": {},
-   "provider": null,
-   "latency_ms": 939,
-   "first_try_valid": false,
+   "passed": true,
+   "error": false,
+   "reasons": [],
+   "metrics": {
+    "coverage": 1.331
+   },
+   "provider": "gemini:gemini-3.1-flash-lite",
+   "latency_ms": 1751,
+   "first_try_valid": true,
    "attempts": [
-    "gemini:gemini-3.1-flash-lite: unavailable"
+    "gemini:gemini-3.1-flash-lite: ok"
    ],
    "answer": {
     "items": [
      {
-      "category_id": "catering",
-      "action": "reduce",
-      "level": "medium",
-      "title": "Trim food and drinks",
-      "why": "One of the largest flexible lines in this plan (not AI-generated)."
-     },
-     {
       "category_id": "entertainment",
-      "action": "reduce",
-      "level": "medium",
-      "title": "Trim entertainment and games",
-      "why": "One of the largest flexible lines in this plan (not AI-generated)."
+      "action": "replace",
+      "level": "large",
+      "title": "DIY playlist and games",
+      "why": "Using a curated music list and classic party games saves significantly on professional entertainer fees for a small group."
      },
      {
-      "category_id": "venue",
+      "category_id": "decor",
       "action": "reduce",
-      "level": "medium",
-      "title": "Trim venue",
-      "why": "One of the largest flexible lines in this plan (not AI-generated)."
+      "level": "large",
+      "title": "Focus on table centerpieces only",
+      "why": "Scaling back to minimal table decor keeps the birthday vibe festive while freeing up budget."
+     },
+     {
+      "category_id": "return_gifts",
+      "action": "remove",
+      "level": "large",
+      "title": "Personalized digital thank you notes",
+      "why": "Eliminating physical gift bags for 40 guests is a practical way to manage the shortfall without impacting the party flow."
      }
     ],
-    "summary": "Your largest flexible budget lines, where savings are easiest (not AI-generated)."
+    "summary": "We can bridge the gap by streamlining entertainment and decor while replacing physical gifts with thoughtful digital alternatives."
    }
   },
   {
@@ -1887,45 +2489,39 @@
   {
    "task": "alternatives",
    "case_id": "c-small-gap",
-   "passed": false,
-   "error": true,
-   "reasons": [
-    "no AI answer: gemini:gemini-3.1-flash-lite: unavailable"
-   ],
-   "metrics": {},
-   "provider": null,
-   "latency_ms": 1348,
-   "first_try_valid": false,
+   "passed": true,
+   "error": false,
+   "reasons": [],
+   "metrics": {
+    "coverage": 2.841
+   },
+   "provider": "gemini:gemini-3.1-flash-lite",
+   "latency_ms": 1978,
+   "first_try_valid": true,
    "attempts": [
-    "gemini:gemini-3.1-flash-lite: unavailable"
+    "gemini:gemini-3.1-flash-lite: ok"
    ],
    "answer": {
     "items": [
      {
-      "category_id": "prasad_catering",
-      "action": "reduce",
-      "level": "medium",
-      "title": "Trim prasad and catering",
-      "why": "One of the largest flexible lines in this plan (not AI-generated)."
-     },
-     {
-      "category_id": "pandal_venue",
-      "action": "reduce",
-      "level": "medium",
-      "title": "Trim pandal or venue",
-      "why": "One of the largest flexible lines in this plan (not AI-generated)."
-     },
-     {
       "category_id": "sound_lighting",
       "action": "reduce",
-      "level": "medium",
-      "title": "Trim sound and lighting",
-      "why": "One of the largest flexible lines in this plan (not AI-generated)."
+      "level": "small",
+      "title": "Simplify stage lighting and audio setup",
+      "why": "Reducing the complexity of the sound system for a community event still ensures clear announcements while saving costs."
+     },
+     {
+      "category_id": "decor",
+      "action": "replace",
+      "level": "small",
+      "title": "Use reusable fabric drapes instead of fresh flowers",
+      "why": "Fabric decor is durable and cost-effective for a large community venue, maintaining a festive look without the recurring expense of fresh blooms."
      }
     ],
-    "summary": "Your largest flexible budget lines, where savings are easiest (not AI-generated)."
+    "summary": "By streamlining the technical requirements and opting for reusable decor, we can balance the budget while keeping the community celebration vibrant."
    }
   }
  ],
- "rescored_at": "2026-10-22T20:18:17+00:00"
+ "rescored_at": "2026-10-22T20:18:17+00:00",
+ "retried_at": "2026-10-23T02:36:26+00:00"
 }

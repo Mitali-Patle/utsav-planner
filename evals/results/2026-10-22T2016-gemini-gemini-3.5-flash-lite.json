@@ -10,24 +10,34 @@
   {
    "task": "change",
    "case_id": "b-budget-set",
-   "passed": false,
-   "error": true,
-   "reasons": [
-    "no AI answer: gemini:gemini-3.5-flash-lite: timeout"
-   ],
+   "passed": true,
+   "error": false,
+   "reasons": [],
    "metrics": {},
-   "provider": null,
-   "latency_ms": 10061,
-   "first_try_valid": false,
+   "provider": "gemini:gemini-3.5-flash-lite",
+   "latency_ms": 1473,
+   "first_try_valid": true,
    "attempts": [
-    "gemini:gemini-3.5-flash-lite: timeout"
+    "gemini:gemini-3.5-flash-lite: ok"
    ],
    "answer": {
-    "status": "needs_clarification",
-    "clarification_question": "The assistant can't process requests right now. Please use the change form below.",
-    "operations": [],
+    "status": "ok",
+    "clarification_question": null,
+    "operations": [
+     {
+      "kind": "set_total_budget",
+      "amount_inr": 50000,
+      "category_id": null,
+      "expense_id": null,
+      "label": null,
+      "guest_count": null,
+      "days": null,
+      "delta": null,
+      "new_date": null
+     }
+    ],
     "cut_priority": [],
-    "summary": "The request was not interpreted (not AI-generated)."
+    "summary": "Lower the total budget to 50,000."
    }
   },
   {
@@ -40,7 +50,7 @@
    ],
    "metrics": {},
    "provider": null,
-   "latency_ms": 9645,
+   "latency_ms": 9944,
    "first_try_valid": false,
    "attempts": [
     "gemini:gemini-3.5-flash-lite: timeout"
@@ -56,576 +66,926 @@
   {
    "task": "change",
    "case_id": "b-budget-relative",
-   "passed": false,
-   "error": true,
-   "reasons": [
-    "no AI answer: gemini:gemini-3.5-flash-lite: timeout"
-   ],
+   "passed": true,
+   "error": false,
+   "reasons": [],
    "metrics": {},
-   "provider": null,
-   "latency_ms": 9742,
-   "first_try_valid": false,
+   "provider": "gemini:gemini-3.5-flash-lite",
+   "latency_ms": 1373,
+   "first_try_valid": true,
    "attempts": [
-    "gemini:gemini-3.5-flash-lite: timeout"
+    "gemini:gemini-3.5-flash-lite: ok"
    ],
    "answer": {
-    "status": "needs_clarification",
-    "clarification_question": "The assistant can't process requests right now. Please use the change form below.",
-    "operations": [],
+    "status": "ok",
+    "clarification_question": null,
+    "operations": [
+     {
+      "kind": "adjust_total_budget",
+      "amount_inr": null,
+      "category_id": null,
+      "expense_id": null,
+      "label": null,
+      "guest_count": null,
+      "days": null,
+      "delta": 10000,
+      "new_date": null
+     }
+    ],
     "cut_priority": [],
-    "summary": "The request was not interpreted (not AI-generated)."
+    "summary": "Add 10,000 to the total budget from grandparents."
    }
   },
   {
    "task": "change",
    "case_id": "w-lakh",
-   "passed": false,
-   "error": true,
-   "reasons": [
-    "no AI answer: gemini:gemini-3.5-flash-lite: timeout"
-   ],
+   "passed": true,
+   "error": false,
+   "reasons": [],
    "metrics": {},
-   "provider": null,
-   "latency_ms": 9670,
-   "first_try_valid": false,
+   "provider": "gemini:gemini-3.5-flash-lite",
+   "latency_ms": 1411,
+   "first_try_valid": true,
    "attempts": [
-    "gemini:gemini-3.5-flash-lite: timeout"
+    "gemini:gemini-3.5-flash-lite: ok"
    ],
    "answer": {
-    "status": "needs_clarification",
-    "clarification_question": "The assistant can't process requests right now. Please use the change form below.",
-    "operations": [],
+    "status": "ok",
+    "clarification_question": null,
+    "operations": [
+     {
+      "kind": "set_total_budget",
+      "amount_inr": 1200000,
+      "category_id": null,
+      "expense_id": null,
+      "label": null,
+      "guest_count": null,
+      "days": null,
+      "delta": null,
+      "new_date": null
+     }
+    ],
     "cut_priority": [],
-    "summary": "The request was not interpreted (not AI-generated)."
+    "summary": "Set the total budget to 12 lakh."
    }
   },
   {
    "task": "change",
    "case_id": "w-indian-commas",
-   "passed": false,
-   "error": true,
-   "reasons": [
-    "no AI answer: gemini:gemini-3.5-flash-lite: timeout"
-   ],
+   "passed": true,
+   "error": false,
+   "reasons": [],
    "metrics": {},
-   "provider": null,
-   "latency_ms": 9818,
-   "first_try_valid": false,
+   "provider": "gemini:gemini-3.5-flash-lite",
+   "latency_ms": 1465,
+   "first_try_valid": true,
    "attempts": [
-    "gemini:gemini-3.5-flash-lite: timeout"
+    "gemini:gemini-3.5-flash-lite: ok"
    ],
    "answer": {
-    "status": "needs_clarification",
-    "clarification_question": "The assistant can't process requests right now. Please use the change form below.",
-    "operations": [],
+    "status": "ok",
+    "clarification_question": null,
+    "operations": [
+     {
+      "kind": "set_total_budget",
+      "amount_inr": 1850000,
+      "category_id": null,
+      "expense_id": null,
+      "label": null,
+      "guest_count": null,
+      "days": null,
+      "delta": null,
+      "new_date": null
+     }
+    ],
     "cut_priority": [],
-    "summary": "The request was not interpreted (not AI-generated)."
+    "summary": "Increase the total budget to 1,850,000."
    }
   },
   {
    "task": "change",
    "case_id": "w-relative-lakh",
-   "passed": false,
-   "error": true,
-   "reasons": [
-    "no AI answer: gemini:gemini-3.5-flash-lite: timeout"
-   ],
+   "passed": true,
+   "error": false,
+   "reasons": [],
    "metrics": {},
-   "provider": null,
-   "latency_ms": 9975,
-   "first_try_valid": false,
+   "provider": "gemini:gemini-3.5-flash-lite",
+   "latency_ms": 1307,
+   "first_try_valid": true,
    "attempts": [
-    "gemini:gemini-3.5-flash-lite: timeout"
+    "gemini:gemini-3.5-flash-lite: ok"
    ],
    "answer": {
-    "status": "needs_clarification",
-    "clarification_question": "The assistant can't process requests right now. Please use the change form below.",
-    "operations": [],
+    "status": "ok",
+    "clarification_question": null,
+    "operations": [
+     {
+      "kind": "adjust_total_budget",
+      "amount_inr": null,
+      "category_id": null,
+      "expense_id": null,
+      "label": null,
+      "guest_count": null,
+      "days": null,
+      "delta": 250000,
+      "new_date": null
+     }
+    ],
     "cut_priority": [],
-    "summary": "The request was not interpreted (not AI-generated)."
+    "summary": "Add 2.5 lakh to the total event budget."
    }
   },
   {
    "task": "change",
    "case_id": "c-sponsor",
-   "passed": false,
-   "error": true,
-   "reasons": [
-    "no AI answer: gemini:gemini-3.5-flash-lite: timeout"
-   ],
+   "passed": true,
+   "error": false,
+   "reasons": [],
    "metrics": {},
-   "provider": null,
-   "latency_ms": 9923,
-   "first_try_valid": false,
+   "provider": "gemini:gemini-3.5-flash-lite",
+   "latency_ms": 1588,
+   "first_try_valid": true,
    "attempts": [
-    "gemini:gemini-3.5-flash-lite: timeout"
+    "gemini:gemini-3.5-flash-lite: ok"
    ],
    "answer": {
-    "status": "needs_clarification",
-    "clarification_question": "The assistant can't process requests right now. Please use the change form below.",
-    "operations": [],
+    "status": "ok",
+    "clarification_question": null,
+    "operations": [
+     {
+      "kind": "adjust_total_budget",
+      "amount_inr": null,
+      "category_id": null,
+      "expense_id": null,
+      "label": null,
+      "guest_count": null,
+      "days": null,
+      "delta": 50000,
+      "new_date": null
+     }
+    ],
     "cut_priority": [],
-    "summary": "The request was not interpreted (not AI-generated)."
+    "summary": "Add the sponsor's contribution to increase the total budget."
    }
   },
   {
    "task": "change",
    "case_id": "b-guests-more",
-   "passed": false,
-   "error": true,
-   "reasons": [
-    "no AI answer: gemini:gemini-3.5-flash-lite: timeout"
-   ],
+   "passed": true,
+   "error": false,
+   "reasons": [],
    "metrics": {},
-   "provider": null,
-   "latency_ms": 9848,
-   "first_try_valid": false,
+   "provider": "gemini:gemini-3.5-flash-lite",
+   "latency_ms": 1144,
+   "first_try_valid": true,
    "attempts": [
-    "gemini:gemini-3.5-flash-lite: timeout"
+    "gemini:gemini-3.5-flash-lite: ok"
    ],
    "answer": {
-    "status": "needs_clarification",
-    "clarification_question": "The assistant can't process requests right now. Please use the change form below.",
-    "operations": [],
+    "status": "ok",
+    "clarification_question": null,
+    "operations": [
+     {
+      "kind": "adjust_guest_count",
+      "amount_inr": null,
+      "category_id": null,
+      "expense_id": null,
+      "label": null,
+      "guest_count": null,
+      "days": null,
+      "delta": 10,
+      "new_date": null
+     }
+    ],
     "cut_priority": [],
-    "summary": "The request was not interpreted (not AI-generated)."
+    "summary": "Add 10 more guests to the event plan."
    }
   },
   {
    "task": "change",
    "case_id": "b-guests-set",
-   "passed": false,
-   "error": true,
-   "reasons": [
-    "no AI answer: gemini:gemini-3.5-flash-lite: timeout"
-   ],
+   "passed": true,
+   "error": false,
+   "reasons": [],
    "metrics": {},
-   "provider": null,
-   "latency_ms": 9745,
-   "first_try_valid": false,
+   "provider": "gemini:gemini-3.5-flash-lite",
+   "latency_ms": 1422,
+   "first_try_valid": true,
    "attempts": [
-    "gemini:gemini-3.5-flash-lite: timeout"
+    "gemini:gemini-3.5-flash-lite: ok"
    ],
    "answer": {
-    "status": "needs_clarification",
-    "clarification_question": "The assistant can't process requests right now. Please use the change form below.",
-    "operations": [],
+    "status": "ok",
+    "clarification_question": null,
+    "operations": [
+     {
+      "kind": "set_guest_count",
+      "amount_inr": null,
+      "category_id": null,
+      "expense_id": null,
+      "label": null,
+      "guest_count": 35,
+      "days": null,
+      "delta": null,
+      "new_date": null
+     }
+    ],
     "cut_priority": [],
-    "summary": "The request was not interpreted (not AI-generated)."
+    "summary": "Set the guest count to 35."
    }
   },
   {
    "task": "change",
    "case_id": "w-guests-more",
-   "passed": false,
-   "error": true,
-   "reasons": [
-    "no AI answer: gemini:gemini-3.5-flash-lite: timeout"
-   ],
+   "passed": true,
+   "error": false,
+   "reasons": [],
    "metrics": {},
-   "provider": null,
-   "latency_ms": 9537,
-   "first_try_valid": false,
+   "provider": "gemini:gemini-3.5-flash-lite",
+   "latency_ms": 1365,
+   "first_try_valid": true,
    "attempts": [
-    "gemini:gemini-3.5-flash-lite: timeout"
+    "gemini:gemini-3.5-flash-lite: ok"
    ],
    "answer": {
-    "status": "needs_clarification",
-    "clarification_question": "The assistant can't process requests right now. Please use the change form below.",
-    "operations": [],
+    "status": "ok",
+    "clarification_question": null,
+    "operations": [
+     {
+      "kind": "adjust_guest_count",
+      "amount_inr": null,
+      "category_id": null,
+      "expense_id": null,
+      "label": null,
+      "guest_count": null,
+      "days": null,
+      "delta": 50,
+      "new_date": null
+     }
+    ],
     "cut_priority": [],
-    "summary": "The request was not interpreted (not AI-generated)."
+    "summary": "Add 50 more guests from the groom's side."
    }
   },
   {
    "task": "change",
    "case_id": "c-guests-about",
-   "passed": false,
-   "error": true,
-   "reasons": [
-    "no AI answer: gemini:gemini-3.5-flash-lite: unavailable"
-   ],
+   "passed": true,
+   "error": false,
+   "reasons": [],
    "metrics": {},
-   "provider": null,
-   "latency_ms": 193,
-   "first_try_valid": false,
+   "provider": "gemini:gemini-3.5-flash-lite",
+   "latency_ms": 1335,
+   "first_try_valid": true,
    "attempts": [
-    "gemini:gemini-3.5-flash-lite: unavailable"
+    "gemini:gemini-3.5-flash-lite: ok"
    ],
    "answer": {
-    "status": "needs_clarification",
-    "clarification_question": "The assistant can't process requests right now. Please use the change form below.",
-    "operations": [],
+    "status": "ok",
+    "clarification_question": null,
+    "operations": [
+     {
+      "kind": "set_guest_count",
+      "amount_inr": null,
+      "category_id": null,
+      "expense_id": null,
+      "label": null,
+      "guest_count": 600,
+      "days": null,
+      "delta": null,
+      "new_date": null
+     }
+    ],
     "cut_priority": [],
-    "summary": "The request was not interpreted (not AI-generated)."
+    "summary": "Update the expected number of guests."
    }
   },
   {
    "task": "change",
    "case_id": "b-date-week-later",
-   "passed": false,
-   "error": true,
-   "reasons": [
-    "no AI answer: gemini:gemini-3.5-flash-lite: unavailable"
-   ],
+   "passed": true,
+   "error": false,
+   "reasons": [],
    "metrics": {},
-   "provider": null,
-   "latency_ms": 18,
-   "first_try_valid": false,
+   "provider": "gemini:gemini-3.5-flash-lite",
+   "latency_ms": 1366,
+   "first_try_valid": true,
    "attempts": [
-    "gemini:gemini-3.5-flash-lite: unavailable"
+    "gemini:gemini-3.5-flash-lite: ok"
    ],
    "answer": {
-    "status": "needs_clarification",
-    "clarification_question": "The assistant can't process requests right now. Please use the change form below.",
-    "operations": [],
+    "status": "ok",
+    "clarification_question": null,
+    "operations": [
+     {
+      "kind": "shift_date_days",
+      "amount_inr": null,
+      "category_id": null,
+      "expense_id": null,
+      "label": null,
+      "guest_count": null,
+      "days": 7,
+      "delta": null,
+      "new_date": null
+     }
+    ],
     "cut_priority": [],
-    "summary": "The request was not interpreted (not AI-generated)."
+    "summary": "Move the party date one week later."
    }
   },
   {
    "task": "change",
    "case_id": "b-date-set",
-   "passed": false,
-   "error": true,
-   "reasons": [
-    "no AI answer: gemini:gemini-3.5-flash-lite: timeout"
-   ],
+   "passed": true,
+   "error": false,
+   "reasons": [],
    "metrics": {},
-   "provider": null,
-   "latency_ms": 9729,
-   "first_try_valid": false,
+   "provider": "gemini:gemini-3.5-flash-lite",
+   "latency_ms": 1543,
+   "first_try_valid": true,
    "attempts": [
-    "gemini:gemini-3.5-flash-lite: timeout"
+    "gemini:gemini-3.5-flash-lite: ok"
    ],
    "answer": {
-    "status": "needs_clarification",
-    "clarification_question": "The assistant can't process requests right now. Please use the change form below.",
-    "operations": [],
+    "status": "ok",
+    "clarification_question": null,
+    "operations": [
+     {
+      "kind": "set_date",
+      "amount_inr": null,
+      "category_id": null,
+      "expense_id": null,
+      "label": null,
+      "guest_count": null,
+      "days": null,
+      "delta": null,
+      "new_date": "2026-12-05"
+     }
+    ],
     "cut_priority": [],
-    "summary": "The request was not interpreted (not AI-generated)."
+    "summary": "Reschedule the party date to December 5, 2026."
    }
   },
   {
    "task": "change",
    "case_id": "w-postpone",
-   "passed": false,
-   "error": true,
-   "reasons": [
-    "no AI answer: gemini:gemini-3.5-flash-lite: timeout"
-   ],
+   "passed": true,
+   "error": false,
+   "reasons": [],
    "metrics": {},
-   "provider": null,
-   "latency_ms": 8401,
-   "first_try_valid": false,
+   "provider": "gemini:gemini-3.5-flash-lite",
+   "latency_ms": 1253,
+   "first_try_valid": true,
    "attempts": [
-    "gemini:gemini-3.5-flash-lite: timeout"
+    "gemini:gemini-3.5-flash-lite: ok"
    ],
    "answer": {
-    "status": "needs_clarification",
-    "clarification_question": "The assistant can't process requests right now. Please use the change form below.",
-    "operations": [],
+    "status": "ok",
+    "clarification_question": null,
+    "operations": [
+     {
+      "kind": "shift_date_days",
+      "amount_inr": null,
+      "category_id": null,
+      "expense_id": null,
+      "label": null,
+      "guest_count": null,
+      "days": 10,
+      "delta": null,
+      "new_date": null
+     }
+    ],
     "cut_priority": [],
-    "summary": "The request was not interpreted (not AI-generated)."
+    "summary": "Postpone the wedding by 10 days due to the muhurat."
    }
   },
   {
    "task": "change",
    "case_id": "b-protect-only",
-   "passed": false,
-   "error": true,
-   "reasons": [
-    "no AI answer: gemini:gemini-3.5-flash-lite: timeout"
-   ],
+   "passed": true,
+   "error": false,
+   "reasons": [],
    "metrics": {},
-   "provider": null,
-   "latency_ms": 9744,
-   "first_try_valid": false,
+   "provider": "gemini:gemini-3.5-flash-lite",
+   "latency_ms": 1447,
+   "first_try_valid": true,
    "attempts": [
-    "gemini:gemini-3.5-flash-lite: timeout"
+    "gemini:gemini-3.5-flash-lite: ok"
    ],
    "answer": {
-    "status": "needs_clarification",
-    "clarification_question": "The assistant can't process requests right now. Please use the change form below.",
-    "operations": [],
+    "status": "ok",
+    "clarification_question": null,
+    "operations": [
+     {
+      "kind": "protect",
+      "amount_inr": null,
+      "category_id": "photography",
+      "expense_id": null,
+      "label": null,
+      "guest_count": null,
+      "days": null,
+      "delta": null,
+      "new_date": null
+     }
+    ],
     "cut_priority": [],
-    "summary": "The request was not interpreted (not AI-generated)."
+    "summary": "Keep the photography budget as is."
    }
   },
   {
    "task": "change",
    "case_id": "b-guests-keep-cake",
-   "passed": false,
-   "error": true,
-   "reasons": [
-    "no AI answer: gemini:gemini-3.5-flash-lite: timeout"
-   ],
+   "passed": true,
+   "error": false,
+   "reasons": [],
    "metrics": {},
-   "provider": null,
-   "latency_ms": 9847,
-   "first_try_valid": false,
+   "provider": "gemini:gemini-3.5-flash-lite",
+   "latency_ms": 1756,
+   "first_try_valid": true,
    "attempts": [
-    "gemini:gemini-3.5-flash-lite: timeout"
+    "gemini:gemini-3.5-flash-lite: ok"
    ],
    "answer": {
-    "status": "needs_clarification",
-    "clarification_question": "The assistant can't process requests right now. Please use the change form below.",
-    "operations": [],
+    "status": "ok",
+    "clarification_question": null,
+    "operations": [
+     {
+      "kind": "adjust_guest_count",
+      "amount_inr": null,
+      "category_id": null,
+      "expense_id": null,
+      "label": null,
+      "guest_count": null,
+      "days": null,
+      "delta": -5,
+      "new_date": null
+     },
+     {
+      "kind": "protect",
+      "amount_inr": null,
+      "category_id": "cake",
+      "expense_id": null,
+      "label": null,
+      "guest_count": null,
+      "days": null,
+      "delta": null,
+      "new_date": null
+     }
+    ],
     "cut_priority": [],
-    "summary": "The request was not interpreted (not AI-generated)."
+    "summary": "Reduce guest count by 5 and keep the cake budget unchanged."
    }
   },
   {
    "task": "change",
    "case_id": "w-cut-keep-two",
-   "passed": false,
-   "error": true,
-   "reasons": [
-    "no AI answer: gemini:gemini-3.5-flash-lite: timeout"
-   ],
+   "passed": true,
+   "error": false,
+   "reasons": [],
    "metrics": {},
-   "provider": null,
-   "latency_ms": 9675,
-   "first_try_valid": false,
+   "provider": "gemini:gemini-3.5-flash-lite",
+   "latency_ms": 1362,
+   "first_try_valid": true,
    "attempts": [
-    "gemini:gemini-3.5-flash-lite: timeout"
+    "gemini:gemini-3.5-flash-lite: ok"
    ],
    "answer": {
-    "status": "needs_clarification",
-    "clarification_question": "The assistant can't process requests right now. Please use the change form below.",
-    "operations": [],
+    "status": "ok",
+    "clarification_question": null,
+    "operations": [
+     {
+      "kind": "protect",
+      "amount_inr": null,
+      "category_id": "photography",
+      "expense_id": null,
+      "label": null,
+      "guest_count": null,
+      "days": null,
+      "delta": null,
+      "new_date": null
+     },
+     {
+      "kind": "protect",
+      "amount_inr": null,
+      "category_id": "attire_makeup",
+      "expense_id": null,
+      "label": null,
+      "guest_count": null,
+      "days": null,
+      "delta": null,
+      "new_date": null
+     },
+     {
+      "kind": "adjust_total_budget",
+      "amount_inr": null,
+      "category_id": null,
+      "expense_id": null,
+      "label": null,
+      "guest_count": null,
+      "days": null,
+      "delta": -100000,
+      "new_date": null
+     }
+    ],
     "cut_priority": [],
-    "summary": "The request was not interpreted (not AI-generated)."
+    "summary": "Cut 1 lakh from the total budget while keeping photography and attire unchanged."
    }
   },
   {
    "task": "change",
    "case_id": "c-cut-keep-puja",
-   "passed": false,
-   "error": true,
-   "reasons": [
-    "no AI answer: gemini:gemini-3.5-flash-lite: timeout"
-   ],
+   "passed": true,
+   "error": false,
+   "reasons": [],
    "metrics": {},
-   "provider": null,
-   "latency_ms": 9711,
-   "first_try_valid": false,
+   "provider": "gemini:gemini-3.5-flash-lite",
+   "latency_ms": 1431,
+   "first_try_valid": true,
    "attempts": [
-    "gemini:gemini-3.5-flash-lite: timeout"
+    "gemini:gemini-3.5-flash-lite: ok"
    ],
    "answer": {
-    "status": "needs_clarification",
-    "clarification_question": "The assistant can't process requests right now. Please use the change form below.",
-    "operations": [],
+    "status": "ok",
+    "clarification_question": null,
+    "operations": [
+     {
+      "kind": "protect",
+      "amount_inr": null,
+      "category_id": "puja_rituals",
+      "expense_id": null,
+      "label": null,
+      "guest_count": null,
+      "days": null,
+      "delta": null,
+      "new_date": null
+     },
+     {
+      "kind": "protect",
+      "amount_inr": null,
+      "category_id": "prasad_catering",
+      "expense_id": null,
+      "label": null,
+      "guest_count": null,
+      "days": null,
+      "delta": null,
+      "new_date": null
+     },
+     {
+      "kind": "set_total_budget",
+      "amount_inr": 200000,
+      "category_id": null,
+      "expense_id": null,
+      "label": null,
+      "guest_count": null,
+      "days": null,
+      "delta": null,
+      "new_date": null
+     }
+    ],
     "cut_priority": [],
-    "summary": "The request was not interpreted (not AI-generated)."
+    "summary": "Reduce total budget to 2 lakh while keeping puja and prasad unchanged."
    }
   },
   {
    "task": "change",
    "case_id": "b-multi",
-   "passed": false,
-   "error": true,
-   "reasons": [
-    "no AI answer: gemini:gemini-3.5-flash-lite: timeout"
-   ],
+   "passed": true,
+   "error": false,
+   "reasons": [],
    "metrics": {},
-   "provider": null,
-   "latency_ms": 9876,
-   "first_try_valid": false,
+   "provider": "gemini:gemini-3.5-flash-lite",
+   "latency_ms": 1450,
+   "first_try_valid": true,
    "attempts": [
-    "gemini:gemini-3.5-flash-lite: timeout"
+    "gemini:gemini-3.5-flash-lite: ok"
    ],
    "answer": {
-    "status": "needs_clarification",
-    "clarification_question": "The assistant can't process requests right now. Please use the change form below.",
-    "operations": [],
+    "status": "ok",
+    "clarification_question": null,
+    "operations": [
+     {
+      "kind": "set_total_budget",
+      "amount_inr": 50000,
+      "category_id": null,
+      "expense_id": null,
+      "label": null,
+      "guest_count": null,
+      "days": null,
+      "delta": null,
+      "new_date": null
+     },
+     {
+      "kind": "adjust_guest_count",
+      "amount_inr": null,
+      "category_id": null,
+      "expense_id": null,
+      "label": null,
+      "guest_count": null,
+      "days": null,
+      "delta": 5,
+      "new_date": null
+     },
+     {
+      "kind": "protect",
+      "amount_inr": null,
+      "category_id": "cake",
+      "expense_id": null,
+      "label": null,
+      "guest_count": null,
+      "days": null,
+      "delta": null,
+      "new_date": null
+     },
+     {
+      "kind": "protect",
+      "amount_inr": null,
+      "category_id": "return_gifts",
+      "expense_id": null,
+      "label": null,
+      "guest_count": null,
+      "days": null,
+      "delta": null,
+      "new_date": null
+     }
+    ],
     "cut_priority": [],
-    "summary": "The request was not interpreted (not AI-generated)."
+    "summary": "Reduce the budget to 50,000, add 5 more kids to the guest count, and protect the cake and return gifts categories."
    }
   },
   {
    "task": "change",
    "case_id": "c-multi-date-guests",
-   "passed": false,
-   "error": true,
-   "reasons": [
-    "no AI answer: gemini:gemini-3.5-flash-lite: timeout"
-   ],
+   "passed": true,
+   "error": false,
+   "reasons": [],
    "metrics": {},
-   "provider": null,
-   "latency_ms": 9833,
-   "first_try_valid": false,
+   "provider": "gemini:gemini-3.5-flash-lite",
+   "latency_ms": 1444,
+   "first_try_valid": true,
    "attempts": [
-    "gemini:gemini-3.5-flash-lite: timeout"
+    "gemini:gemini-3.5-flash-lite: ok"
    ],
    "answer": {
-    "status": "needs_clarification",
-    "clarification_question": "The assistant can't process requests right now. Please use the change form below.",
-    "operations": [],
+    "status": "ok",
+    "clarification_question": null,
+    "operations": [
+     {
+      "kind": "shift_date_days",
+      "amount_inr": null,
+      "category_id": null,
+      "expense_id": null,
+      "label": null,
+      "guest_count": null,
+      "days": -2,
+      "delta": null,
+      "new_date": null
+     },
+     {
+      "kind": "adjust_guest_count",
+      "amount_inr": null,
+      "category_id": null,
+      "expense_id": null,
+      "label": null,
+      "guest_count": null,
+      "days": null,
+      "delta": -100,
+      "new_date": null
+     }
+    ],
     "cut_priority": [],
-    "summary": "The request was not interpreted (not AI-generated)."
+    "summary": "Shift the event 2 days earlier and reduce the guest count."
    }
   },
   {
    "task": "change",
    "case_id": "b-add-line",
-   "passed": false,
-   "error": true,
-   "reasons": [
-    "no AI answer: gemini:gemini-3.5-flash-lite: timeout"
-   ],
+   "passed": true,
+   "error": false,
+   "reasons": [],
    "metrics": {},
-   "provider": null,
-   "latency_ms": 9724,
-   "first_try_valid": false,
+   "provider": "gemini:gemini-3.5-flash-lite",
+   "latency_ms": 1348,
+   "first_try_valid": true,
    "attempts": [
-    "gemini:gemini-3.5-flash-lite: timeout"
+    "gemini:gemini-3.5-flash-lite: ok"
    ],
    "answer": {
-    "status": "needs_clarification",
-    "clarification_question": "The assistant can't process requests right now. Please use the change form below.",
-    "operations": [],
+    "status": "ok",
+    "clarification_question": null,
+    "operations": [
+     {
+      "kind": "add_category",
+      "amount_inr": 5000,
+      "category_id": null,
+      "expense_id": null,
+      "label": "Magician",
+      "guest_count": null,
+      "days": null,
+      "delta": null,
+      "new_date": null
+     }
+    ],
     "cut_priority": [],
-    "summary": "The request was not interpreted (not AI-generated)."
+    "summary": "Add a budget line for a magician with an amount of 5,000."
    }
   },
   {
    "task": "change",
    "case_id": "w-add-line",
-   "passed": false,
-   "error": true,
-   "reasons": [
-    "no AI answer: gemini:gemini-3.5-flash-lite: timeout"
-   ],
+   "passed": true,
+   "error": false,
+   "reasons": [],
    "metrics": {},
-   "provider": null,
-   "latency_ms": 9650,
-   "first_try_valid": false,
+   "provider": "gemini:gemini-3.5-flash-lite",
+   "latency_ms": 1545,
+   "first_try_valid": true,
    "attempts": [
-    "gemini:gemini-3.5-flash-lite: timeout"
+    "gemini:gemini-3.5-flash-lite: ok"
    ],
    "answer": {
-    "status": "needs_clarification",
-    "clarification_question": "The assistant can't process requests right now. Please use the change form below.",
-    "operations": [],
+    "status": "ok",
+    "clarification_question": null,
+    "operations": [
+     {
+      "kind": "add_category",
+      "amount_inr": 25000,
+      "category_id": null,
+      "expense_id": null,
+      "label": "Ghodi for the baraat",
+      "guest_count": null,
+      "days": null,
+      "delta": null,
+      "new_date": null
+     }
+    ],
     "cut_priority": [],
-    "summary": "The request was not interpreted (not AI-generated)."
+    "summary": "Add a budget line for a ghodi for the baraat."
    }
   },
   {
    "task": "change",
    "case_id": "b-add-expense",
-   "passed": false,
-   "error": true,
-   "reasons": [
-    "no AI answer: gemini:gemini-3.5-flash-lite: timeout"
-   ],
+   "passed": true,
+   "error": false,
+   "reasons": [],
    "metrics": {},
-   "provider": null,
-   "latency_ms": 9744,
-   "first_try_valid": false,
+   "provider": "gemini:gemini-3.5-flash-lite",
+   "latency_ms": 1558,
+   "first_try_valid": true,
    "attempts": [
-    "gemini:gemini-3.5-flash-lite: timeout"
+    "gemini:gemini-3.5-flash-lite: ok"
    ],
    "answer": {
-    "status": "needs_clarification",
-    "clarification_question": "The assistant can't process requests right now. Please use the change form below.",
-    "operations": [],
+    "status": "ok",
+    "clarification_question": null,
+    "operations": [
+     {
+      "kind": "add_expense",
+      "amount_inr": 8000,
+      "category_id": "catering",
+      "expense_id": null,
+      "label": "Caterer advance",
+      "guest_count": null,
+      "days": null,
+      "delta": null,
+      "new_date": null
+     }
+    ],
     "cut_priority": [],
-    "summary": "The request was not interpreted (not AI-generated)."
+    "summary": "Record an advance payment made to the caterer."
    }
   },
   {
    "task": "change",
    "case_id": "b-add-task",
-   "passed": false,
-   "error": true,
-   "reasons": [
-    "no AI answer: gemini:gemini-3.5-flash-lite: timeout"
-   ],
+   "passed": true,
+   "error": false,
+   "reasons": [],
    "metrics": {},
-   "provider": null,
-   "latency_ms": 9745,
+   "provider": "gemini:gemini-3.5-flash-lite",
+   "latency_ms": 3109,
    "first_try_valid": false,
    "attempts": [
-    "gemini:gemini-3.5-flash-lite: timeout"
+    "gemini:gemini-3.5-flash-lite: invalid",
+    "gemini:gemini-3.5-flash-lite: ok"
    ],
    "answer": {
-    "status": "needs_clarification",
-    "clarification_question": "The assistant can't process requests right now. Please use the change form below.",
-    "operations": [],
+    "status": "ok",
+    "clarification_question": null,
+    "operations": [
+     {
+      "kind": "add_task",
+      "amount_inr": null,
+      "category_id": null,
+      "expense_id": null,
+      "label": "Order the jungle balloons",
+      "guest_count": null,
+      "days": 14,
+      "delta": null,
+      "new_date": null
+     }
+    ],
     "cut_priority": [],
-    "summary": "The request was not interpreted (not AI-generated)."
+    "summary": "Add a task to order the jungle balloons two weeks before the event."
    }
   },
   {
    "task": "change",
    "case_id": "bx-update-expense",
-   "passed": false,
-   "error": true,
-   "reasons": [
-    "no AI answer: gemini:gemini-3.5-flash-lite: timeout"
-   ],
+   "passed": true,
+   "error": false,
+   "reasons": [],
    "metrics": {},
-   "provider": null,
-   "latency_ms": 9846,
-   "first_try_valid": false,
+   "provider": "gemini:gemini-3.5-flash-lite",
+   "latency_ms": 1323,
+   "first_try_valid": true,
    "attempts": [
-    "gemini:gemini-3.5-flash-lite: timeout"
+    "gemini:gemini-3.5-flash-lite: ok"
    ],
    "answer": {
-    "status": "needs_clarification",
-    "clarification_question": "The assistant can't process requests right now. Please use the change form below.",
-    "operations": [],
+    "status": "ok",
+    "clarification_question": null,
+    "operations": [
+     {
+      "kind": "update_expense",
+      "amount_inr": 18000,
+      "category_id": null,
+      "expense_id": "exp-1",
+      "label": null,
+      "guest_count": null,
+      "days": null,
+      "delta": null,
+      "new_date": null
+     }
+    ],
     "cut_priority": [],
-    "summary": "The request was not interpreted (not AI-generated)."
+    "summary": "Update the party hall advance amount to 18,000."
    }
   },
   {
    "task": "change",
    "case_id": "bx-remove-expense",
-   "passed": false,
-   "error": true,
-   "reasons": [
-    "no AI answer: gemini:gemini-3.5-flash-lite: timeout"
-   ],
+   "passed": true,
+   "error": false,
+   "reasons": [],
    "metrics": {},
-   "provider": null,
-   "latency_ms": 9666,
-   "first_try_valid": false,
+   "provider": "gemini:gemini-3.5-flash-lite",
+   "latency_ms": 1554,
+   "first_try_valid": true,
    "attempts": [
-    "gemini:gemini-3.5-flash-lite: timeout"
+    "gemini:gemini-3.5-flash-lite: ok"
    ],
    "answer": {
-    "status": "needs_clarification",
-    "clarification_question": "The assistant can't process requests right now. Please use the change form below.",
-    "operations": [],
+    "status": "ok",
+    "clarification_question": null,
+    "operations": [
+     {
+      "kind": "remove_expense",
+      "amount_inr": null,
+      "category_id": null,
+      "expense_id": "exp-1",
+      "label": null,
+      "guest_count": null,
+      "days": null,
+      "delta": null,
+      "new_date": null
+     }
+    ],
     "cut_priority": [],
-    "summary": "The request was not interpreted (not AI-generated)."
+    "summary": "Cancel the party hall advance as a refund was received."
    }
   },
   {
    "task": "change",
    "case_id": "b-set-line",
-   "passed": false,
-   "error": true,
-   "reasons": [
-    "no AI answer: gemini:gemini-3.5-flash-lite: timeout"
-   ],
+   "passed": true,
+   "error": false,
+   "reasons": [],
    "metrics": {},
-   "provider": null,
-   "latency_ms": 9825,
-   "first_try_valid": false,
+   "provider": "gemini:gemini-3.5-flash-lite",
+   "latency_ms": 1559,
+   "first_try_valid": true,
    "attempts": [
-    "gemini:gemini-3.5-flash-lite: timeout"
+    "gemini:gemini-3.5-flash-lite: ok"
    ],
    "answer": {
-    "status": "needs_clarification",
-    "clarification_question": "The assistant can't process requests right now. Please use the change form below.",
-    "operations": [],
+    "status": "ok",
+    "clarification_question": null,
+    "operations": [
+     {
+      "kind": "set_category_budget",
+      "amount_inr": 10000,
+      "category_id": "decor",
+      "expense_id": null,
+      "label": null,
+      "guest_count": null,
+      "days": null,
+      "delta": null,
+      "new_date": null
+     }
+    ],
     "cut_priority": [],
-    "summary": "The request was not interpreted (not AI-generated)."
+    "summary": "Set the budget for decorations to 10,000 and rebalance the other lines."
    }
   },
   {
@@ -634,13 +994,14 @@
    "passed": false,
    "error": true,
    "reasons": [
-    "no AI answer: gemini:gemini-3.5-flash-lite: timeout"
+    "no AI answer: gemini:gemini-3.5-flash-lite: invalid, gemini:gemini-3.5-flash-lite: timeout"
    ],
    "metrics": {},
    "provider": null,
-   "latency_ms": 9847,
+   "latency_ms": 11270,
    "first_try_valid": false,
    "attempts": [
+    "gemini:gemini-3.5-flash-lite: invalid",
     "gemini:gemini-3.5-flash-lite: timeout"
    ],
    "answer": {
@@ -654,47 +1015,67 @@
   {
    "task": "change",
    "case_id": "w-hinglish-budget",
-   "passed": false,
-   "error": true,
-   "reasons": [
-    "no AI answer: gemini:gemini-3.5-flash-lite: timeout"
-   ],
+   "passed": true,
+   "error": false,
+   "reasons": [],
    "metrics": {},
-   "provider": null,
-   "latency_ms": 9738,
-   "first_try_valid": false,
+   "provider": "gemini:gemini-3.5-flash-lite",
+   "latency_ms": 1247,
+   "first_try_valid": true,
    "attempts": [
-    "gemini:gemini-3.5-flash-lite: timeout"
+    "gemini:gemini-3.5-flash-lite: ok"
    ],
    "answer": {
-    "status": "needs_clarification",
-    "clarification_question": "The assistant can't process requests right now. Please use the change form below.",
-    "operations": [],
+    "status": "ok",
+    "clarification_question": null,
+    "operations": [
+     {
+      "kind": "set_total_budget",
+      "amount_inr": 1300000,
+      "category_id": null,
+      "expense_id": null,
+      "label": null,
+      "guest_count": null,
+      "days": null,
+      "delta": null,
+      "new_date": null
+     }
+    ],
     "cut_priority": [],
-    "summary": "The request was not interpreted (not AI-generated)."
+    "summary": "Change the total budget to 13 lakh."
    }
   },
   {
    "task": "change",
    "case_id": "w-hinglish-guests",
-   "passed": false,
-   "error": true,
-   "reasons": [
-    "no AI answer: gemini:gemini-3.5-flash-lite: timeout"
-   ],
+   "passed": true,
+   "error": false,
+   "reasons": [],
    "metrics": {},
-   "provider": null,
-   "latency_ms": 9957,
-   "first_try_valid": false,
+   "provider": "gemini:gemini-3.5-flash-lite",
+   "latency_ms": 1958,
+   "first_try_valid": true,
    "attempts": [
-    "gemini:gemini-3.5-flash-lite: timeout"
+    "gemini:gemini-3.5-flash-lite: ok"
    ],
    "answer": {
-    "status": "needs_clarification",
-    "clarification_question": "The assistant can't process requests right now. Please use the change form below.",
-    "operations": [],
+    "status": "ok",
+    "clarification_question": null,
+    "operations": [
+     {
+      "kind": "adjust_guest_count",
+      "amount_inr": null,
+      "category_id": null,
+      "expense_id": null,
+      "label": null,
+      "guest_count": null,
+      "days": null,
+      "delta": -20,
+      "new_date": null
+     }
+    ],
     "cut_priority": [],
-    "summary": "The request was not interpreted (not AI-generated)."
+    "summary": "Reduce the guest list by 20."
    }
   },
   {
@@ -796,24 +1177,22 @@
   {
    "task": "change",
    "case_id": "b-poem",
-   "passed": false,
-   "error": true,
-   "reasons": [
-    "no AI answer: gemini:gemini-3.5-flash-lite: timeout"
-   ],
+   "passed": true,
+   "error": false,
+   "reasons": [],
    "metrics": {},
-   "provider": null,
-   "latency_ms": 9736,
-   "first_try_valid": false,
+   "provider": "gemini:gemini-3.5-flash-lite",
+   "latency_ms": 1347,
+   "first_try_valid": true,
    "attempts": [
-    "gemini:gemini-3.5-flash-lite: timeout"
+    "gemini:gemini-3.5-flash-lite: ok"
    ],
    "answer": {
-    "status": "needs_clarification",
-    "clarification_question": "The assistant can't process requests right now. Please use the change form below.",
+    "status": "off_topic",
+    "clarification_question": null,
     "operations": [],
     "cut_priority": [],
-    "summary": "The request was not interpreted (not AI-generated)."
+    "summary": "The request is not about this event plan."
    }
   },
   {
@@ -861,26 +1240,37 @@
   {
    "task": "change",
    "case_id": "b-fake-delimiters",
-   "passed": false,
-   "error": true,
-   "reasons": [
-    "no AI answer: gemini:gemini-3.5-flash-lite: timeout"
-   ],
+   "passed": true,
+   "error": false,
+   "reasons": [],
    "metrics": {},
-   "provider": null,
-   "latency_ms": 10228,
-   "first_try_valid": false,
+   "provider": "gemini:gemini-3.5-flash-lite",
+   "latency_ms": 1352,
+   "first_try_valid": true,
    "attempts": [
-    "gemini:gemini-3.5-flash-lite: timeout"
+    "gemini:gemini-3.5-flash-lite: ok"
    ],
    "answer": {
-    "status": "needs_clarification",
-    "clarification_question": "The assistant can't process requests right now. Please use the change form below.",
-    "operations": [],
+    "status": "ok",
+    "clarification_question": null,
+    "operations": [
+     {
+      "kind": "protect",
+      "amount_inr": null,
+      "category_id": "cake",
+      "expense_id": null,
+      "label": null,
+      "guest_count": null,
+      "days": null,
+      "delta": null,
+      "new_date": null
+     }
+    ],
     "cut_priority": [],
-    "summary": "The request was not interpreted (not AI-generated)."
+    "summary": "Keep the cake budget unchanged."
    }
   }
  ],
- "rescored_at": "2026-10-22T20:18:17+00:00"
+ "rescored_at": "2026-10-22T20:18:17+00:00",
+ "retried_at": "2026-10-23T02:40:07+00:00"
 }
