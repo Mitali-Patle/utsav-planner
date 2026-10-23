@@ -14,6 +14,10 @@ from app.domain.catalog import spec_for
 
 NOT_AI = "not AI-generated"
 FALLBACK_ALTERNATIVES = 3
+NOTHING_TO_TRIM = (
+    "Every unprotected budget line is already spent, so trimming cannot close this gap; "
+    "raise the total budget or release a protected line"
+)
 
 
 def personalize_fallback(context: PersonalizeContext) -> PlanSuggestions:
@@ -46,11 +50,14 @@ def interpret_fallback(context: ChangeContext) -> ChangeIntent:
 
 
 def alternatives_fallback(context: AlternativesContext) -> Alternatives:
-    """Point to the largest flexible budget lines."""
+    """Point to the flexible budget lines with the most unspent money."""
+    plan = context.plan
     flexible = sorted(
-        (c for c in context.plan.categories if not c.protected and c.allocated_inr > 0),
-        key=lambda c: (-c.allocated_inr, c.id),
+        (c for c in plan.categories if not c.protected and plan.unspent_inr(c.id) > 0),
+        key=lambda c: (-plan.unspent_inr(c.id), c.id),
     )
+    if not flexible:
+        return Alternatives(summary=f"{NOTHING_TO_TRIM} ({NOT_AI}).", items=[])
     return Alternatives(
         summary=f"Your largest flexible budget lines, where savings are easiest ({NOT_AI}).",
         items=[

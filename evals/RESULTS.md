@@ -20,13 +20,13 @@ developer's machine in India.
 |---|---|---|---|---|---|---|---|---|
 | groq:openai/gpt-oss-120b | change | 2026-10-22T18:45 | interpret-change-v2 | 36/36 (100%) | 36/36 (100%) | 0 | 1.0 s | 2.4 s |
 | groq:openai/gpt-oss-120b | personalize | 2026-10-22T18:45 | personalize-v1 | 12/12 (100%) | 12/12 (100%) | 0 | 3.3 s | 4.0 s |
-| groq:openai/gpt-oss-120b | alternatives | 2026-10-22T18:45 | alternatives-v2 | 4/6 (67%) | 6/6 (100%) | 0 | 1.7 s | 2.0 s |
+| groq:openai/gpt-oss-120b | alternatives | 2026-10-22T18:45 | alternatives-v2 | 3/6 (50%) | 6/6 (100%) | 0 | 1.7 s | 2.0 s |
 | gemini:gemini-3.5-flash-lite | change | 2026-10-23T07:55 | interpret-change-v6 | 35/36 (97%) | 36/36 (100%) | 2 | 1.9 s | 9.1 s |
 | gemini:gemini-3.5-flash-lite | personalize | 2026-10-22T18:55 | personalize-v1 | 9/9 (100%) | 9/9 (100%) | 3 | 4.6 s | 6.3 s |
-| gemini:gemini-3.5-flash-lite | alternatives | 2026-10-22T18:55 | alternatives-v2 | 4/5 (80%) | 5/5 (100%) | 1 | 3.8 s | 10.0 s |
+| gemini:gemini-3.5-flash-lite | alternatives | 2026-10-23T18:52 | alternatives-v3 | 4/6 (67%) | 6/6 (100%) | 0 | 1.7 s | 2.5 s |
 | gemini:gemini-3.1-flash-lite | change | 2026-10-23T08:00 | interpret-change-v6 | 33/33 (100%) | 33/33 (100%) | 5 | 2.1 s | 9.4 s |
 | gemini:gemini-3.1-flash-lite | personalize | 2026-10-22T20:07 | personalize-v1 | 12/12 (100%) | 12/12 (100%) | 0 | 4.3 s | 7.3 s |
-| gemini:gemini-3.1-flash-lite | alternatives | 2026-10-22T20:07 | alternatives-v2 | 6/6 (100%) | 6/6 (100%) | 0 | 2.2 s | 8.4 s |
+| gemini:gemini-3.1-flash-lite | alternatives | 2026-10-23T14:09 | alternatives-v3 | 5/5 (100%) | 5/5 (100%) | 1 | 2.1 s | 8.5 s |
 
 ## Failures
 
@@ -41,6 +41,7 @@ developer's machine in India.
 ### groq:openai/gpt-oss-120b, alternatives (alternatives-v2)
 
 - `b-far-over`: savings cover 23% of the gap
+- `w-few-flexible`: savings cover 17% of the gap
 - `c-small-gap`: only 1 option(s)
 
 ### gemini:gemini-3.5-flash-lite, change (interpret-change-v6)
@@ -51,9 +52,10 @@ developer's machine in India.
 
 - None.
 
-### gemini:gemini-3.5-flash-lite, alternatives (alternatives-v2)
+### gemini:gemini-3.5-flash-lite, alternatives (alternatives-v3)
 
-- `c-over-puja-kept`: savings cover 49% of the gap
+- `w-over-two-kept`: savings cover 31% of the gap
+- `c-over-puja-kept`: savings cover 35% of the gap
 
 ### gemini:gemini-3.1-flash-lite, change (interpret-change-v6)
 
@@ -63,7 +65,7 @@ developer's machine in India.
 
 - None.
 
-### gemini:gemini-3.1-flash-lite, alternatives (alternatives-v2)
+### gemini:gemini-3.1-flash-lite, alternatives (alternatives-v3)
 
 - None.
 
@@ -74,9 +76,9 @@ alternatives, in that order.
 
 | Run (UTC) | Model | Prompts | Change | Personalize | Alternatives | No answer |
 |---|---|---|---|---|---|---|
-| 2026-10-22T16:42 | groq:openai/gpt-oss-120b | v1, v1, v1 | 36/36 | 12/12 | 5/6 | 0 |
-| 2026-10-22T18:03 | gemini:gemini-3.5-flash-lite | v1, v1, v1 | 28/31 | 8/8 | 4/6 | 9 |
-| 2026-10-22T18:45 | groq:openai/gpt-oss-120b | v1, v2, v2 | 36/36 | 12/12 | 4/6 | 0 |
+| 2026-10-22T16:42 | groq:openai/gpt-oss-120b | v1, v1, v1 | 36/36 | 12/12 | 4/6 | 0 |
+| 2026-10-22T18:03 | gemini:gemini-3.5-flash-lite | v1, v1, v1 | 28/31 | 8/8 | 3/6 | 9 |
+| 2026-10-22T18:45 | groq:openai/gpt-oss-120b | v1, v2, v2 | 36/36 | 12/12 | 3/6 | 0 |
 | 2026-10-22T18:55 | gemini:gemini-3.5-flash-lite | v1, v2, v2 | 24/26 | 9/9 | 4/5 | 14 |
 | 2026-10-22T20:07 | gemini:gemini-3.1-flash-lite | v1, v4, v2 | 30/34 | 12/12 | 6/6 | 4 |
 | 2026-10-22T20:16 | gemini:gemini-3.5-flash-lite | v1, v4, v2 | 36/36 | 0/0 | 0/0 | 2 |
@@ -85,3 +87,6 @@ alternatives, in that order.
 | 2026-10-23T07:47 | gemini:gemini-3.1-flash-lite | v1, v5, v2 | 33/35 | 0/0 | 0/0 | 3 |
 | 2026-10-23T07:55 | gemini:gemini-3.5-flash-lite | v1, v6, v2 | 35/36 | 0/0 | 0/0 | 2 |
 | 2026-10-23T08:00 | gemini:gemini-3.1-flash-lite | v1, v6, v2 | 33/33 | 0/0 | 0/0 | 5 |
+| 2026-10-23T14:08 | gemini:gemini-3.5-flash-lite | v1, v6, v3 | 0/0 | 0/0 | 1/1 | 5 |
+| 2026-10-23T14:09 | gemini:gemini-3.1-flash-lite | v1, v6, v3 | 0/0 | 0/0 | 5/5 | 1 |
+| 2026-10-23T18:52 | gemini:gemini-3.5-flash-lite | v1, v6, v3 | 0/0 | 0/0 | 4/6 | 0 |

@@ -2402,7 +2402,7 @@
    "error": false,
    "reasons": [],
    "metrics": {
-    "coverage": 1.261
+    "coverage": 0.655
    },
    "provider": "gemini:gemini-3.1-flash-lite",
    "latency_ms": 8410,
@@ -2444,7 +2444,7 @@
    "error": false,
    "reasons": [],
    "metrics": {
-    "coverage": 1.776
+    "coverage": 1.032
    },
    "provider": "gemini:gemini-3.1-flash-lite",
    "latency_ms": 2166,
@@ -2493,7 +2493,7 @@
    "error": false,
    "reasons": [],
    "metrics": {
-    "coverage": 2.841
+    "coverage": 1.319
    },
    "provider": "gemini:gemini-3.1-flash-lite",
    "latency_ms": 1978,
@@ -2522,6 +2522,6 @@
    }
   }
  ],
- "rescored_at": "2026-10-22T20:18:17+00:00",
+ "rescored_at": "2026-10-23T14:07:29+00:00",
  "retried_at": "2026-10-23T02:36:26+00:00"
 }

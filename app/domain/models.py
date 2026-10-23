@@ -350,6 +350,10 @@ class EventPlan(DomainModel):
         """Total of all expenses in a category."""
         return sum(e.amount_inr for e in self.expenses if e.category_id == category_id)
 
+    def unspent_inr(self, category_id: CategoryId) -> int:
+        """Planned money in a category not yet committed to expenses: what a cut can free."""
+        return max(0, self.category(category_id).allocated_inr - self.committed_inr(category_id))
+
     def protected_floor_inr(self, category_id: CategoryId) -> int:
         """Total of protected expenses in a category: its allocation may not go below this."""
         return sum(

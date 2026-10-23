@@ -561,10 +561,9 @@ def test_an_alternative_with_nothing_to_free_is_explained(engine: Engine) -> Non
             event.id,
             NewExpense(category_id=CategoryId(category), label="Paid", amount_inr=amount),
         )
-    option = app.alternatives.suggest(ME, event.id).options[0]
-    assert (option.applicable, option.saving_inr) == (False, 0)
-    spent = app.changes.propose_saving(ME, event.id, "decor", option.action, option.level)
-    unknown = app.changes.propose_saving(ME, event.id, "nope", option.action, option.level)
+    action, level = SavingAction.REDUCE, SavingLevel.MEDIUM
+    spent = app.changes.propose_saving(ME, event.id, "decor", action, level)
+    unknown = app.changes.propose_saving(ME, event.id, "nope", action, level)
     assert (spent.kind, spent.message) == (OutcomeKind.INVALID, NOTHING_TO_FREE_MESSAGE)
     assert unknown.kind is OutcomeKind.INVALID and "nope" in (unknown.message or "")
 

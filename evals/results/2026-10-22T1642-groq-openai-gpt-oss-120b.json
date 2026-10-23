@@ -2836,7 +2836,7 @@
    "error": false,
    "reasons": [],
    "metrics": {
-    "coverage": 1.849
+    "coverage": 1.443
    },
    "provider": "groq:openai/gpt-oss-120b",
    "latency_ms": 1522,
@@ -2884,10 +2884,10 @@
    "passed": false,
    "error": false,
    "reasons": [
-    "savings cover 17% of the gap"
+    "savings cover 10% of the gap"
    ],
    "metrics": {
-    "coverage": 0.17
+    "coverage": 0.103
    },
    "provider": "groq:openai/gpt-oss-120b",
    "latency_ms": 1710,
@@ -2936,7 +2936,7 @@
    "error": false,
    "reasons": [],
    "metrics": {
-    "coverage": 2.17
+    "coverage": 0.654
    },
    "provider": "groq:openai/gpt-oss-120b",
    "latency_ms": 1408,
@@ -2981,11 +2981,13 @@
   {
    "task": "alternatives",
    "case_id": "w-few-flexible",
-   "passed": true,
+   "passed": false,
    "error": false,
-   "reasons": [],
+   "reasons": [
+    "savings cover 48% of the gap"
+   ],
    "metrics": {
-    "coverage": 3.515
+    "coverage": 0.482
    },
    "provider": "groq:openai/gpt-oss-120b",
    "latency_ms": 2238,
@@ -3034,7 +3036,7 @@
    "error": false,
    "reasons": [],
    "metrics": {
-    "coverage": 1.974
+    "coverage": 1.23
    },
    "provider": "groq:openai/gpt-oss-120b",
    "latency_ms": 1615,
@@ -3126,5 +3128,5 @@
    }
   }
  ],
- "rescored_at": "2026-10-22T20:18:15+00:00"
+ "rescored_at": "2026-10-23T14:07:28+00:00"
 }

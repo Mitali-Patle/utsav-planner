@@ -2067,7 +2067,7 @@
    "error": false,
    "reasons": [],
    "metrics": {
-    "coverage": 2.113
+    "coverage": 0.597
    },
    "provider": "gemini:gemini-3.5-flash-lite",
    "latency_ms": 3811,
@@ -2175,5 +2175,5 @@
    }
   }
  ],
- "rescored_at": "2026-10-22T20:18:16+00:00"
+ "rescored_at": "2026-10-23T14:07:28+00:00"
 }

@@ -1,0 +1,264 @@
+{
+ "model": "gemini:gemini-3.1-flash-lite",
+ "run_at": "2026-10-23T14:09:43+00:00",
+ "prompt_versions": {
+  "personalize": "personalize-v1",
+  "interpret_change": "interpret-change-v6",
+  "alternatives": "alternatives-v3"
+ },
+ "results": [
+  {
+   "task": "alternatives",
+   "case_id": "b-over-cake-kept",
+   "passed": false,
+   "error": true,
+   "reasons": [
+    "no AI answer: gemini:gemini-3.1-flash-lite: timeout"
+   ],
+   "metrics": {},
+   "provider": null,
+   "latency_ms": 10412,
+   "first_try_valid": false,
+   "attempts": [
+    "gemini:gemini-3.1-flash-lite: timeout"
+   ],
+   "answer": {
+    "items": [
+     {
+      "category_id": "catering",
+      "action": "reduce",
+      "level": "medium",
+      "title": "Trim food and drinks",
+      "why": "One of the largest flexible lines in this plan (not AI-generated)."
+     },
+     {
+      "category_id": "entertainment",
+      "action": "reduce",
+      "level": "medium",
+      "title": "Trim entertainment and games",
+      "why": "One of the largest flexible lines in this plan (not AI-generated)."
+     },
+     {
+      "category_id": "decor",
+      "action": "reduce",
+      "level": "medium",
+      "title": "Trim decorations",
+      "why": "One of the largest flexible lines in this plan (not AI-generated)."
+     }
+    ],
+    "summary": "Your largest flexible budget lines, where savings are easiest (not AI-generated)."
+   }
+  },
+  {
+   "task": "alternatives",
+   "case_id": "b-far-over",
+   "passed": true,
+   "error": false,
+   "reasons": [],
+   "metrics": {
+    "coverage": 0.673
+   },
+   "provider": "gemini:gemini-3.1-flash-lite",
+   "latency_ms": 8516,
+   "first_try_valid": true,
+   "attempts": [
+    "gemini:gemini-3.1-flash-lite: ok"
+   ],
+   "answer": {
+    "items": [
+     {
+      "category_id": "catering",
+      "action": "reduce",
+      "level": "large",
+      "title": "Simplify the menu to set starters",
+      "why": "Reducing the number of appetizers maintains quality while saving significant costs for 40 guests."
+     },
+     {
+      "category_id": "entertainment",
+      "action": "replace",
+      "level": "large",
+      "title": "Curated playlist over live DJ",
+      "why": "A high-quality sound system with a curated playlist provides great energy for a birthday without the DJ fee."
+     },
+     {
+      "category_id": "decor",
+      "action": "remove",
+      "level": "large",
+      "title": "Minimalist DIY decor elements",
+      "why": "Focusing on a single focal point instead of full-room decor keeps the aesthetic clean and budget-friendly."
+     }
+    ],
+    "summary": "The gap cannot be fully closed this way, but we can significantly reduce costs by simplifying the food menu, switching to a DIY entertainment setup, and streamlining decor."
+   }
+  },
+  {
+   "task": "alternatives",
+   "case_id": "w-over-two-kept",
+   "passed": true,
+   "error": false,
+   "reasons": [],
+   "metrics": {
+    "coverage": 1.229
+   },
+   "provider": "gemini:gemini-3.1-flash-lite",
+   "latency_ms": 2110,
+   "first_try_valid": true,
+   "attempts": [
+    "gemini:gemini-3.1-flash-lite: ok"
+   ],
+   "answer": {
+    "items": [
+     {
+      "category_id": "decor",
+      "action": "replace",
+      "level": "medium",
+      "title": "Minimalist floral mandap and foliage",
+      "why": "Using lush green foliage with selective flowers creates a sophisticated, modern look for less."
+     },
+     {
+      "category_id": "music",
+      "action": "reduce",
+      "level": "medium",
+      "title": "Shorter live band set",
+      "why": "Transitioning to a curated DJ set after the main ceremony keeps the energy high while reducing performance hours."
+     },
+     {
+      "category_id": "gifts",
+      "action": "replace",
+      "level": "large",
+      "title": "Handcrafted local favors",
+      "why": "Switching to artisanal, locally sourced items provides a meaningful touch that guests appreciate."
+     },
+     {
+      "category_id": "contingency",
+      "action": "reduce",
+      "level": "medium",
+      "title": "Reallocate partial contingency",
+      "why": "Since the event is well-planned, a smaller buffer is sufficient to cover minor last-minute needs."
+     }
+    ],
+    "summary": "We can close the gap by opting for elegant, minimalist decor and reallocating unused buffer funds without compromising the core wedding experience."
+   }
+  },
+  {
+   "task": "alternatives",
+   "case_id": "w-few-flexible",
+   "passed": true,
+   "error": false,
+   "reasons": [],
+   "metrics": {
+    "coverage": 1.252
+   },
+   "provider": "gemini:gemini-3.1-flash-lite",
+   "latency_ms": 1630,
+   "first_try_valid": true,
+   "attempts": [
+    "gemini:gemini-3.1-flash-lite: ok"
+   ],
+   "answer": {
+    "items": [
+     {
+      "category_id": "gifts",
+      "action": "reduce",
+      "level": "large",
+      "title": "Optimize return gift packaging",
+      "why": "Moving from ornate boxes to elegant fabric wraps saves significantly without reducing the quality of the gift itself."
+     },
+     {
+      "category_id": "transport",
+      "action": "replace",
+      "level": "large",
+      "title": "Consolidate guest bus routes",
+      "why": "Using fewer, larger buses for guest pick-ups is more efficient and creates a communal atmosphere for the wedding party."
+     },
+     {
+      "category_id": "contingency",
+      "action": "reduce",
+      "level": "medium",
+      "title": "Partial reallocation of buffer",
+      "why": "A smaller contingency fund is sufficient since the main vendor contracts are already finalized."
+     }
+    ],
+    "summary": "We can close the gap by optimizing logistics and packaging while keeping the core wedding experience intact."
+   }
+  },
+  {
+   "task": "alternatives",
+   "case_id": "c-over-puja-kept",
+   "passed": true,
+   "error": false,
+   "reasons": [],
+   "metrics": {
+    "coverage": 0.947
+   },
+   "provider": "gemini:gemini-3.1-flash-lite",
+   "latency_ms": 1964,
+   "first_try_valid": true,
+   "attempts": [
+    "gemini:gemini-3.1-flash-lite: ok"
+   ],
+   "answer": {
+    "items": [
+     {
+      "category_id": "sound_lighting",
+      "action": "reduce",
+      "level": "medium",
+      "title": "Streamline lighting design",
+      "why": "Focusing on key areas like the stage and entrance rather than full venue coverage maintains the atmosphere while saving costs."
+     },
+     {
+      "category_id": "cultural_program",
+      "action": "replace",
+      "level": "large",
+      "title": "Feature local community talent",
+      "why": "Showcasing local performers instead of external professional acts keeps the community spirit high and reduces artist fees."
+     },
+     {
+      "category_id": "decor",
+      "action": "reduce",
+      "level": "medium",
+      "title": "Minimalist floral and fabric decor",
+      "why": "Using reusable fabric drapes and focusing on a single focal point instead of elaborate floral arrangements is cost-effective for community events."
+     }
+    ],
+    "summary": "By prioritizing core lighting, leveraging local talent for entertainment, and simplifying decor, we can balance the budget while keeping the event engaging."
+   }
+  },
+  {
+   "task": "alternatives",
+   "case_id": "c-small-gap",
+   "passed": true,
+   "error": false,
+   "reasons": [],
+   "metrics": {
+    "coverage": 1.826
+   },
+   "provider": "gemini:gemini-3.1-flash-lite",
+   "latency_ms": 2210,
+   "first_try_valid": true,
+   "attempts": [
+    "gemini:gemini-3.1-flash-lite: ok"
+   ],
+   "answer": {
+    "items": [
+     {
+      "category_id": "decor",
+      "action": "reduce",
+      "level": "small",
+      "title": "Simplify entrance floral arch",
+      "why": "Using local foliage and fewer exotic flowers keeps the aesthetic while saving costs."
+     },
+     {
+      "category_id": "volunteers_logistics",
+      "action": "reduce",
+      "level": "small",
+      "title": "Limit printed signage",
+      "why": "Digital announcements and hand-painted boards are more sustainable and cost-effective for community events."
+     }
+    ],
+    "summary": "Focus on trimming minor decorative and logistics expenses to comfortably bridge the small funding gap."
+   }
+  }
+ ],
+ "retried_at": "2026-10-23T14:11:12+00:00"
+}

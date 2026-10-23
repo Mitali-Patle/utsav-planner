@@ -26,6 +26,7 @@ All notable changes to Utsav Planner will be documented in this file.
 - Pages load with less database work (one transaction for the dashboard, three for a change request).
 - Change requests that state an amount ("add a line for a magician, ₹5,000") are understood reliably by the backup AI models, and "postponed by 10 days" always moves the date later.
 - When a change frees money or raises the total, it goes first to budget lines already spent past their plan, so the shortfall closes where it is.
+- Suggested savings skip budget lines whose money is already spent, and the standard (not AI-generated) suggestions rank lines by the money still unspent.
 
 ### Fixed
 - Text typed into the add-expense form while the AI is still personalizing a new plan is no longer cleared when the ideas arrive.

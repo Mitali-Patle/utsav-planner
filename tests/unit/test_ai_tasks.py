@@ -48,6 +48,7 @@ from app.domain.changes import _FIELDS as FIELDS
 from app.domain.changes import ChangeKind, ChangeOperation, ChangeSet, SkipReason, propose
 from app.domain.models import BudgetImpact, CategoryId, EventPlan, EventType
 from app.domain.planning import EventDetails, draft_plan
+from tests.factories import BIRTHDAY_ALLOCATIONS, make_plan
 from tests.fakes import ScriptedProvider
 
 TODAY = date(2026, 10, 22)
@@ -339,6 +340,28 @@ def test_alternatives_skip_protected_unknown_and_duplicates() -> None:
         "entertainment",
         "photography",
     ]
+
+
+def test_alternatives_skip_lines_whose_money_is_spent() -> None:
+    """Gemini suggested trimming the very line that went over its plan (live, 23 Oct)."""
+    plan = make_plan(expenses=(("catering", "Caterer advance", 7_000, False),))
+    answer = Alternatives(summary="x", items=[alternative("catering"), alternative("decor")])
+    context = AlternativesContext(plan=plan, shortfall_inr=2_000)
+    assert [i.category_id for i in check_alternatives(answer, context).items] == ["decor"]
+    payload = SUGGEST_ALTERNATIVES.build_payload(context)
+    assert payload["unspent_inr"] == {"catering": 0, "decor": 3_000, "cake": 2_000, "other": 5_000}
+
+
+def test_alternatives_fallback_ranks_by_unspent_money() -> None:
+    plan = make_plan(expenses=(("other", "Hall", 4_500, False),))
+    options = alternatives_fallback(AlternativesContext(plan=plan, shortfall_inr=500))
+    assert [i.category_id for i in options.items] == ["catering", "decor", "cake"]
+    spent = make_plan(
+        expenses=tuple((c, "Paid", a, False) for c, a in BIRTHDAY_ALLOCATIONS.items()),
+        protected=(),
+    )
+    nothing = alternatives_fallback(AlternativesContext(plan=spent, shortfall_inr=1))
+    assert nothing.items == [] and NOT_AI in nothing.summary
 
 
 def test_alternatives_with_nothing_usable_are_rejected() -> None:

@@ -11,11 +11,17 @@ from datetime import date
 from pydantic import ValidationError
 
 from app.ai.guardrails import intent_to_change_set
-from app.ai.schemas import Alternatives, ChangeIntent, IntentStatus, PlanSuggestions
-from app.domain.budget import estimate_saving, summarize
-from app.domain.changes import Proposal, propose
+from app.ai.schemas import (
+    AIAlternative,
+    Alternatives,
+    ChangeIntent,
+    IntentStatus,
+    PlanSuggestions,
+)
+from app.domain.budget import summarize
+from app.domain.changes import Proposal, propose, saving_change
 from app.domain.errors import DomainError
-from app.domain.models import BudgetCategory, EventPlan
+from app.domain.models import BudgetCategory, CategoryId, EventPlan
 from evals.cases import TODAY, AlternativesCase, ChangeCase, Outcome, PersonalizeCase
 
 MIN_IDEAS = 3
@@ -252,16 +258,20 @@ def score_personalize(case: PersonalizeCase, value: PlanSuggestions, system: str
 
 
 def score_alternatives(case: AlternativesCase, value: Alternatives) -> Verdict:
-    """Options must avoid protected lines and their estimated savings must cover the gap."""
+    """Options must avoid protected lines and what they free must cover the gap.
+
+    Each option is priced as the app prices it: the money `saving_change` takes from the
+    line, which is never more than the line's unspent money.
+    """
     shortfall = summarize(case.plan).shortfall_inr
-    lines: dict[str, BudgetCategory] = {c.id: c for c in case.plan.categories}
+    lines = {c.id for c in case.plan.categories}
     problems = [
         f"suggests cutting protected {item.category_id}"
         for item in value.items
         if item.category_id in case.protected
     ]
     saving = sum(
-        estimate_saving(lines[item.category_id].allocated_inr, item.action, item.level)
+        _frees(case.plan, CategoryId(item.category_id), item)
         for item in value.items
         if item.category_id in lines
     )
@@ -271,3 +281,9 @@ def score_alternatives(case: AlternativesCase, value: Alternatives) -> Verdict:
     if coverage < MIN_COVERAGE:
         problems.append(f"savings cover {coverage:.0%} of the gap")
     return Verdict(not problems, tuple(problems), {"coverage": round(coverage, 3)})
+
+
+def _frees(plan: EventPlan, category_id: CategoryId, item: AIAlternative) -> int:
+    change_set = saving_change(plan, category_id, item.action, item.level)
+    target = change_set.operations[0].amount_inr if change_set else None
+    return plan.category(category_id).allocated_inr - target if target is not None else 0

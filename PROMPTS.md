@@ -474,3 +474,11 @@ The prompts the app itself sends to the LLM live in `app/ai/prompts/`.
 - **Finding while designing:** a rebalance shared freed money across every line in proportion, so cutting decor to cover an overspent caterer closed only part of the gap. The rule now gives extra money first to lines spent past their plan (in proportion to each overspend), then shares the rest. No existing test or saved eval verdict changed.
 - **Built:** `saving_change()` sets the line to its plan minus the estimated saving, never below what is spent on it (a line may now be set to ₹0). The alternatives service prices each option by running `propose()` on that change, so "frees ₹X, still ₹Y short" is exactly what the preview will show. `POST /events/{id}/alternatives/apply` takes only the line, action and level; the server rebuilds the change from the saved plan.
 - **Tests:** domain (overspend first, cap at spending, protected lines, ₹0 only for a line), services (approved plan's gap equals the promised one; nothing-to-free and unknown-line messages), web flows (htmx and no-JS, tampered fields), and the browser journey now applies an option and approves it.
+
+## 2026-10-23 (night): alternatives v3
+- **Tool / model:** Claude Code (Claude Opus 5.5).
+- **Problem seen live:** on an over-budget plan whose caterer was paid past its plan, an AI option suggested trimming catering. The app priced it honestly at ₹0, but the option was useless.
+- **v3:** the payload gives `unspent_inr` per line and the prompt says spent money cannot be freed. The guardrail drops options on protected lines or lines with nothing unspent, and the standard suggestions rank lines by unspent money.
+- **Scoring:** each option is now priced exactly as the app applies it (`saving_change`, capped at money spent), not by a flat percentage. Re-scoring the saved runs made three old verdicts stricter (Groq v2 alternatives 4/6 → 3/6); the README shows the new figures.
+- **Results:** Gemini 3.1 5/5 answered; Gemini 3.5 4/6 (a first run timed out on 5 of 6 cases and was rerun later). Both failures sized cuts too small for the gap (31% and 35%, with 50% needed) although the prompt states the percentage for each level.
+- **Next:** v4 gives the model the rupees each option would free, computed by code, so it chooses rather than multiplies.

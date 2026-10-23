@@ -1,0 +1,257 @@
+{
+ "model": "gemini:gemini-3.5-flash-lite",
+ "run_at": "2026-10-23T14:08:57+00:00",
+ "prompt_versions": {
+  "personalize": "personalize-v1",
+  "interpret_change": "interpret-change-v6",
+  "alternatives": "alternatives-v3"
+ },
+ "results": [
+  {
+   "task": "alternatives",
+   "case_id": "b-over-cake-kept",
+   "passed": true,
+   "error": false,
+   "reasons": [],
+   "metrics": {
+    "coverage": 0.647
+   },
+   "provider": "gemini:gemini-3.5-flash-lite",
+   "latency_ms": 9403,
+   "first_try_valid": true,
+   "attempts": [
+    "gemini:gemini-3.5-flash-lite: ok"
+   ],
+   "answer": {
+    "items": [
+     {
+      "category_id": "catering",
+      "action": "reduce",
+      "level": "medium",
+      "title": "Streamline the food and beverage menu",
+      "why": "Fewer starter varieties for 40 guests easily covers the gap without losing quality."
+     },
+     {
+      "category_id": "entertainment",
+      "action": "replace",
+      "level": "medium",
+      "title": "DIY games instead of a professional host",
+      "why": "Fun birthday party games keep the energy high without hiring an outside emcee."
+     }
+    ],
+    "summary": "Trim food choices and switch to DIY entertainment to balance the birthday budget."
+   }
+  },
+  {
+   "task": "alternatives",
+   "case_id": "b-far-over",
+   "passed": false,
+   "error": true,
+   "reasons": [
+    "no AI answer: gemini:gemini-3.5-flash-lite: timeout"
+   ],
+   "metrics": {},
+   "provider": null,
+   "latency_ms": 10234,
+   "first_try_valid": false,
+   "attempts": [
+    "gemini:gemini-3.5-flash-lite: timeout"
+   ],
+   "answer": {
+    "items": [
+     {
+      "category_id": "catering",
+      "action": "reduce",
+      "level": "medium",
+      "title": "Trim food and drinks",
+      "why": "One of the largest flexible lines in this plan (not AI-generated)."
+     },
+     {
+      "category_id": "entertainment",
+      "action": "reduce",
+      "level": "medium",
+      "title": "Trim entertainment and games",
+      "why": "One of the largest flexible lines in this plan (not AI-generated)."
+     },
+     {
+      "category_id": "decor",
+      "action": "reduce",
+      "level": "medium",
+      "title": "Trim decorations",
+      "why": "One of the largest flexible lines in this plan (not AI-generated)."
+     }
+    ],
+    "summary": "Your largest flexible budget lines, where savings are easiest (not AI-generated)."
+   }
+  },
+  {
+   "task": "alternatives",
+   "case_id": "w-over-two-kept",
+   "passed": false,
+   "error": true,
+   "reasons": [
+    "no AI answer: gemini:gemini-3.5-flash-lite: timeout"
+   ],
+   "metrics": {},
+   "provider": null,
+   "latency_ms": 9878,
+   "first_try_valid": false,
+   "attempts": [
+    "gemini:gemini-3.5-flash-lite: timeout"
+   ],
+   "answer": {
+    "items": [
+     {
+      "category_id": "catering",
+      "action": "reduce",
+      "level": "medium",
+      "title": "Trim catering",
+      "why": "One of the largest flexible lines in this plan (not AI-generated)."
+     },
+     {
+      "category_id": "decor",
+      "action": "reduce",
+      "level": "medium",
+      "title": "Trim decor and flowers",
+      "why": "One of the largest flexible lines in this plan (not AI-generated)."
+     },
+     {
+      "category_id": "music",
+      "action": "reduce",
+      "level": "medium",
+      "title": "Trim music (dj, band or nadaswaram)",
+      "why": "One of the largest flexible lines in this plan (not AI-generated)."
+     }
+    ],
+    "summary": "Your largest flexible budget lines, where savings are easiest (not AI-generated)."
+   }
+  },
+  {
+   "task": "alternatives",
+   "case_id": "w-few-flexible",
+   "passed": false,
+   "error": true,
+   "reasons": [
+    "no AI answer: gemini:gemini-3.5-flash-lite: timeout"
+   ],
+   "metrics": {},
+   "provider": null,
+   "latency_ms": 8312,
+   "first_try_valid": false,
+   "attempts": [
+    "gemini:gemini-3.5-flash-lite: timeout"
+   ],
+   "answer": {
+    "items": [
+     {
+      "category_id": "contingency",
+      "action": "reduce",
+      "level": "medium",
+      "title": "Trim contingency",
+      "why": "One of the largest flexible lines in this plan (not AI-generated)."
+     },
+     {
+      "category_id": "gifts",
+      "action": "reduce",
+      "level": "medium",
+      "title": "Trim gifts and return gifts",
+      "why": "One of the largest flexible lines in this plan (not AI-generated)."
+     },
+     {
+      "category_id": "transport",
+      "action": "reduce",
+      "level": "medium",
+      "title": "Trim guest transport",
+      "why": "One of the largest flexible lines in this plan (not AI-generated)."
+     }
+    ],
+    "summary": "Your largest flexible budget lines, where savings are easiest (not AI-generated)."
+   }
+  },
+  {
+   "task": "alternatives",
+   "case_id": "c-over-puja-kept",
+   "passed": false,
+   "error": true,
+   "reasons": [
+    "no AI answer: gemini:gemini-3.5-flash-lite: timeout"
+   ],
+   "metrics": {},
+   "provider": null,
+   "latency_ms": 9705,
+   "first_try_valid": false,
+   "attempts": [
+    "gemini:gemini-3.5-flash-lite: timeout"
+   ],
+   "answer": {
+    "items": [
+     {
+      "category_id": "sound_lighting",
+      "action": "reduce",
+      "level": "medium",
+      "title": "Trim sound and lighting",
+      "why": "One of the largest flexible lines in this plan (not AI-generated)."
+     },
+     {
+      "category_id": "cultural_program",
+      "action": "reduce",
+      "level": "medium",
+      "title": "Trim cultural programme",
+      "why": "One of the largest flexible lines in this plan (not AI-generated)."
+     },
+     {
+      "category_id": "decor",
+      "action": "reduce",
+      "level": "medium",
+      "title": "Trim decor and flowers",
+      "why": "One of the largest flexible lines in this plan (not AI-generated)."
+     }
+    ],
+    "summary": "Your largest flexible budget lines, where savings are easiest (not AI-generated)."
+   }
+  },
+  {
+   "task": "alternatives",
+   "case_id": "c-small-gap",
+   "passed": false,
+   "error": true,
+   "reasons": [
+    "no AI answer: gemini:gemini-3.5-flash-lite: timeout"
+   ],
+   "metrics": {},
+   "provider": null,
+   "latency_ms": 9833,
+   "first_try_valid": false,
+   "attempts": [
+    "gemini:gemini-3.5-flash-lite: timeout"
+   ],
+   "answer": {
+    "items": [
+     {
+      "category_id": "prasad_catering",
+      "action": "reduce",
+      "level": "medium",
+      "title": "Trim prasad and catering",
+      "why": "One of the largest flexible lines in this plan (not AI-generated)."
+     },
+     {
+      "category_id": "pandal_venue",
+      "action": "reduce",
+      "level": "medium",
+      "title": "Trim pandal or venue",
+      "why": "One of the largest flexible lines in this plan (not AI-generated)."
+     },
+     {
+      "category_id": "cultural_program",
+      "action": "reduce",
+      "level": "medium",
+      "title": "Trim cultural programme",
+      "why": "One of the largest flexible lines in this plan (not AI-generated)."
+     }
+    ],
+    "summary": "Your largest flexible budget lines, where savings are easiest (not AI-generated)."
+   }
+  }
+ ],
+ "retried_at": "2026-10-23T14:11:01+00:00"
+}

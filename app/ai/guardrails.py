@@ -175,12 +175,13 @@ def intent_to_change_set(intent: ChangeIntent) -> ChangeSet:
 
 
 def check_alternatives(value: Alternatives, context: AlternativesContext) -> Alternatives:
-    """Keep alternatives that target flexible (unprotected, funded) categories.
+    """Keep alternatives that target flexible categories: unprotected, with unspent money.
 
     Raises:
         OutputRejectedError: If none remain.
     """
-    flexible = {c.id for c in context.plan.categories if not c.protected and c.allocated_inr > 0}
+    plan = context.plan
+    flexible = {c.id for c in plan.categories if not c.protected and plan.unspent_inr(c.id) > 0}
     seen: set[str] = set()
     items: list[AIAlternative] = []
     for item in value.items:
@@ -196,7 +197,10 @@ def check_alternatives(value: Alternatives, context: AlternativesContext) -> Alt
             )
     if not items:
         raise OutputRejectedError(
-            ["Suggest 2 to 4 alternatives using only unprotected categories with money in them."]
+            [
+                "Suggest 2 to 4 alternatives using only unprotected categories whose "
+                "unspent_inr is above 0."
+            ]
         )
     return Alternatives(
         items=items[:MAX_ALTERNATIVES], summary=_fit(value.summary, MAX_SUMMARY_CHARS)

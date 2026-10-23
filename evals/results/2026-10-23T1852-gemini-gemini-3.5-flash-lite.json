@@ -1,0 +1,246 @@
+{
+ "model": "gemini:gemini-3.5-flash-lite",
+ "run_at": "2026-10-23T18:52:35+00:00",
+ "prompt_versions": {
+  "personalize": "personalize-v1",
+  "interpret_change": "interpret-change-v6",
+  "alternatives": "alternatives-v3"
+ },
+ "results": [
+  {
+   "task": "alternatives",
+   "case_id": "b-over-cake-kept",
+   "passed": true,
+   "error": false,
+   "reasons": [],
+   "metrics": {
+    "coverage": 0.72
+   },
+   "provider": "gemini:gemini-3.5-flash-lite",
+   "latency_ms": 2466,
+   "first_try_valid": true,
+   "attempts": [
+    "gemini:gemini-3.5-flash-lite: ok"
+   ],
+   "answer": {
+    "items": [
+     {
+      "category_id": "catering",
+      "action": "reduce",
+      "level": "medium",
+      "title": "Streamline the starter menu",
+      "why": "Focusing on two popular snacks keeps guests happy while cutting kitchen costs for forty attendees."
+     },
+     {
+      "category_id": "entertainment",
+      "action": "reduce",
+      "level": "medium",
+      "title": "DIY party games",
+      "why": "A curated music playlist and fun hosting by a friend replace an expensive outside entertainer."
+     },
+     {
+      "category_id": "decor",
+      "action": "replace",
+      "level": "small",
+      "title": "Minimal balloon arrangements",
+      "why": "A simpler decor style still creates a vibrant backdrop for the birthday photos."
+     }
+    ],
+    "summary": "Adjust food variety and swap entertainment to safely cover the extra hall expenses."
+   }
+  },
+  {
+   "task": "alternatives",
+   "case_id": "b-far-over",
+   "passed": true,
+   "error": false,
+   "reasons": [],
+   "metrics": {
+    "coverage": 1.245
+   },
+   "provider": "gemini:gemini-3.5-flash-lite",
+   "latency_ms": 1950,
+   "first_try_valid": true,
+   "attempts": [
+    "gemini:gemini-3.5-flash-lite: ok"
+   ],
+   "answer": {
+    "items": [
+     {
+      "category_id": "catering",
+      "action": "remove",
+      "level": "large",
+      "title": "Trim the starter menu items",
+      "why": "Focus on fewer, richer snacks for 40 guests without reducing main course quality."
+     },
+     {
+      "category_id": "entertainment",
+      "action": "remove",
+      "level": "large",
+      "title": "Curated party playlist instead of live DJ",
+      "why": "A lively playlist keeps the birthday energy high while saving significantly."
+     },
+     {
+      "category_id": "decor",
+      "action": "remove",
+      "level": "large",
+      "title": "Focus decor on the main cake table only",
+      "why": "Concentrating balloons and flowers in one spot creates a strong visual impact for photos."
+     },
+     {
+      "category_id": "contingency",
+      "action": "remove",
+      "level": "large",
+      "title": "Reallocate the emergency buffer",
+      "why": "Absorbing the buffer directly addresses the birthday deficit safely."
+     }
+    ],
+    "summary": "We can close the gap by shifting entertainment, streamlining decor, and tapping our contingency fund, though some items cannot be fully covered this way."
+   }
+  },
+  {
+   "task": "alternatives",
+   "case_id": "w-over-two-kept",
+   "passed": false,
+   "error": false,
+   "reasons": [
+    "savings cover 31% of the gap"
+   ],
+   "metrics": {
+    "coverage": 0.31
+   },
+   "provider": "gemini:gemini-3.5-flash-lite",
+   "latency_ms": 1652,
+   "first_try_valid": true,
+   "attempts": [
+    "gemini:gemini-3.5-flash-lite: ok"
+   ],
+   "answer": {
+    "items": [
+     {
+      "category_id": "decor",
+      "action": "replace",
+      "level": "small",
+      "title": "Local marigold strings instead of imported florals",
+      "why": "February blooms are vibrant and keep the mandap stunning for 250 guests without extra cost."
+     },
+     {
+      "category_id": "music",
+      "action": "reduce",
+      "level": "small",
+      "title": "Local DJ instead of celebrity lineup",
+      "why": "A talented local DJ still keeps the sangeet floor packed."
+     }
+    ],
+    "summary": "Swap high-end floral accents and entertainment for local alternatives to bridge the gap gracefully."
+   }
+  },
+  {
+   "task": "alternatives",
+   "case_id": "w-few-flexible",
+   "passed": true,
+   "error": false,
+   "reasons": [],
+   "metrics": {
+    "coverage": 0.597
+   },
+   "provider": "gemini:gemini-3.5-flash-lite",
+   "latency_ms": 1657,
+   "first_try_valid": true,
+   "attempts": [
+    "gemini:gemini-3.5-flash-lite: ok"
+   ],
+   "answer": {
+    "items": [
+     {
+      "category_id": "gifts",
+      "action": "reduce",
+      "level": "medium",
+      "title": "Opt for simpler return gifts",
+      "why": "Practical giveaways keep guests happy while freeing funds."
+     },
+     {
+      "category_id": "transport",
+      "action": "replace",
+      "level": "large",
+      "title": "Carpooling and central pickup spots",
+      "why": "Streamlining transport logistics cuts vehicle rental overheads significantly."
+     }
+    ],
+    "summary": "Adjust peripheral categories like transport and gifts to cover the gap without affecting core celebrations."
+   }
+  },
+  {
+   "task": "alternatives",
+   "case_id": "c-over-puja-kept",
+   "passed": false,
+   "error": false,
+   "reasons": [
+    "savings cover 35% of the gap"
+   ],
+   "metrics": {
+    "coverage": 0.348
+   },
+   "provider": "gemini:gemini-3.5-flash-lite",
+   "latency_ms": 1753,
+   "first_try_valid": true,
+   "attempts": [
+    "gemini:gemini-3.5-flash-lite: ok"
+   ],
+   "answer": {
+    "items": [
+     {
+      "category_id": "sound_lighting",
+      "action": "reduce",
+      "level": "medium",
+      "title": "Optimize the sound system setup",
+      "why": "Lower the speaker count for the 400 community members while keeping speech clear."
+     },
+     {
+      "category_id": "cultural_program",
+      "action": "reduce",
+      "level": "small",
+      "title": "Trim stage backdrop rentals",
+      "why": "Simplify the cultural performance staging without affecting the community acts."
+     }
+    ],
+    "summary": "Adjust audio and staging extras to cover the pandal overrun while keeping prasad and rituals intact."
+   }
+  },
+  {
+   "task": "alternatives",
+   "case_id": "c-small-gap",
+   "passed": true,
+   "error": false,
+   "reasons": [],
+   "metrics": {
+    "coverage": 1.826
+   },
+   "provider": "gemini:gemini-3.5-flash-lite",
+   "latency_ms": 1555,
+   "first_try_valid": true,
+   "attempts": [
+    "gemini:gemini-3.5-flash-lite: ok"
+   ],
+   "answer": {
+    "items": [
+     {
+      "category_id": "decor",
+      "action": "reduce",
+      "level": "small",
+      "title": "Simplify entrance floral gate",
+      "why": "A smaller entrance arch still welcomes 400 community members warmly."
+     },
+     {
+      "category_id": "volunteers_logistics",
+      "action": "reduce",
+      "level": "small",
+      "title": "Streamline volunteer refreshments",
+      "why": "Simpler snacks for helpers keep logistics within reach without cutting the main prasad."
+     }
+    ],
+    "summary": "Trim minor decor and volunteer extras slightly to balance the community budget."
+   }
+  }
+ ]
+}
