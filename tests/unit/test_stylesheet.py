@@ -111,3 +111,11 @@ def test_every_contrast_token_is_defined() -> None:
     tokens = _themes()["light"]
     missing = {name for pair in CONTRAST_PAIRS for name in pair[:2] if name not in tokens}
     assert not missing, missing
+
+
+def test_print_hides_controls_and_shows_print_only_text() -> None:
+    print_rules = CSS[CSS.index("@media print") :]
+    for selector in (".site-main form", ".no-print", "#change-manager", ".ai-panel"):
+        assert selector in print_rules.split("display: none")[0]
+    assert re.search(r"\.print-only \{\s*display: inline", print_rules)
+    assert "display: none" in _block(".print-button[hidden]")

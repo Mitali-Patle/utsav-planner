@@ -35,7 +35,7 @@
   {% endif %}
   <table>
     <caption>Budget lines</caption>
-    <thead><tr><th scope="col">Line</th><th scope="col">Planned</th><th scope="col">Spent</th><th scope="col">Left</th><th scope="col">Protect</th></tr></thead>
+    <thead><tr><th scope="col">Line</th><th scope="col">Planned</th><th scope="col">Spent</th><th scope="col">Left</th><th scope="col" class="no-print">Protect</th></tr></thead>
     <tbody>
       {% for row in plan.categories %}
       <tr>
@@ -43,7 +43,7 @@
         <td data-label="Planned">{{ row.allocated }}</td>
         <td data-label="Spent">{{ row.spent }}</td>
         <td data-label="Left">{{ row.remaining }}{% if row.overspent %} <span class="badge badge-error">over by {{ row.overspent }}</span>{% endif %}</td>
-        <td data-label="Protect">
+        <td data-label="Protect" class="no-print">
           <form method="post" action="/events/{{ event.id }}/categories/{{ row.id }}/{{ 'unprotect' if row.protected else 'protect' }}"
                 hx-post="/events/{{ event.id }}/categories/{{ row.id }}/{{ 'unprotect' if row.protected else 'protect' }}" hx-target="#plan-area" hx-swap="outerHTML">
             {{ csrf(csrf_token) }}
@@ -90,14 +90,14 @@
   {% if plan.expenses %}
   <table>
     <caption>Committed and paid amounts</caption>
-    <thead><tr><th scope="col">Expense</th><th scope="col">Line</th><th scope="col">Amount</th><th scope="col">Actions</th></tr></thead>
+    <thead><tr><th scope="col">Expense</th><th scope="col">Line</th><th scope="col">Amount</th><th scope="col" class="no-print">Actions</th></tr></thead>
     <tbody>
       {% for e in plan.expenses %}
       <tr>
         <th scope="row">{{ e.label }}{% if e.protected %} <span class="badge">protected</span>{% endif %}</th>
         <td data-label="Line">{{ e.category }}</td>
         <td data-label="Amount">{{ e.amount }}</td>
-        <td data-label="Actions" class="actions">
+        <td data-label="Actions" class="actions no-print">
           {% if not e.protected %}
           <form method="post" action="/events/{{ event.id }}/expenses/{{ e.id }}/update"
                 hx-post="/events/{{ event.id }}/expenses/{{ e.id }}/update" hx-target="#plan-area" hx-swap="outerHTML">
@@ -155,6 +155,7 @@
     <li class="{{ 'done' if t.done else '' }}">
       <span class="task-title">{{ t.title }}</span>
       <span class="task-due">by {{ t.due }}</span>
+      {% if t.done %}<span class="badge print-only">done</span>{% endif %}
       {% if t.overdue %}<span class="badge badge-error">overdue</span>{% elif t.compressed and not t.done %}<span class="badge badge-warning">due now</span>{% endif %}
       <span class="badge{{ ' badge-ai' if t.ai else '' }}">{{ t.source }}</span>
       {% if t.why %}<p class="why">Why: {{ t.why }}</p>{% endif %}
@@ -180,6 +181,7 @@
         <th scope="row">{{ v.name }}{% if v.why %}<p class="why">Why: {{ v.why }}</p>{% endif %}</th>
         <td data-label="Book by">{{ v.book_by }}{% if v.urgent and v.status != 'booked' %} <span class="badge badge-warning">book now</span>{% endif %}</td>
         <td data-label="Status">
+          <span class="print-only">{{ v.status_label }}</span>
           <form method="post" action="/events/{{ event.id }}/vendors/{{ v.id }}/status"
                 hx-post="/events/{{ event.id }}/vendors/{{ v.id }}/status" hx-target="#plan-area" hx-swap="outerHTML">
             {{ csrf(csrf_token) }}

@@ -27,6 +27,7 @@ All notable changes to Utsav Planner will be documented in this file.
 - Change requests that state an amount ("add a line for a magician, ₹5,000") are understood reliably by the backup AI models, and "postponed by 10 days" always moves the date later.
 - When a change frees money or raises the total, it goes first to budget lines already spent past their plan, so the shortfall closes where it is.
 - Suggested savings skip budget lines whose money is already spent, and the standard (not AI-generated) suggestions rank lines by the money still unspent.
+- Printable plan: "Print or save as PDF" (shown when JavaScript is on; the browser's own print works too) prints the budget, ideas with their reasons, the timeline with done tasks marked and each vendor's status as text, in black on white whatever the screen theme, without buttons, forms or the change manager.
 - "Add these dates to your calendar" downloads an `.ics` file with the event day, unfinished tasks and vendors still to book; each entry keeps the same UID across downloads.
 - "Suggest different ideas" asks the AI for new ideas that avoid the current ones; only the ideas are replaced, and the old ones stay if no model answers.
 - AI suggestions are sized to the gap more reliably: the model is told exactly how much each option would free.

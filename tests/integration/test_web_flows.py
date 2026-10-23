@@ -735,6 +735,14 @@ def test_calendar_leaves_out_tasks_already_done(engine: Engine) -> None:
     assert "-task-1@" not in client.get(f"{url}/calendar.ics").text
 
 
+def test_dashboard_can_be_printed_with_status_text_instead_of_controls(engine: Engine) -> None:
+    client = client_for(engine, SUGGESTIONS)
+    page = client.get(create(client, token(client))).text
+    assert '<script src="/static/js/print.js" defer></script>' in page
+    assert 'id="print-plan" class="print-button" data-print hidden' in page
+    assert '<span class="print-only">To contact</span>' in page
+
+
 # Privacy
 
 

@@ -96,7 +96,7 @@ app/
     security.py         security headers middleware (CSP, HSTS in production)
     templating.py       Jinja2 with autoescape and StrictUndefined
     templates/          base, landing, dashboard, error and feature partials (contract: docs/UI_CONTRACT.md)
-public/static/          css/app.css, img/favicon.svg, vendor/htmx.min.js (+ VENDOR.md checksum)
+public/static/          css/app.css (with print rules), js/print.js (print button), img/favicon.svg, vendor/htmx.min.js (+ VENDOR.md checksum)
 scripts/                hooks/ (pre-commit checks), ai_smoke.py (manual live check), init_db.py
 evals/                  scored cases for the three AI tasks, runner, report (evals/RESULTS.md)
 .github/workflows/      ci.yml: hooks and tests, browser and axe tests, secrets, dependencies and size

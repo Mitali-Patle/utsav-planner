@@ -1,12 +1,14 @@
 {% extends "base.html" %}
 {% from "macros.html" import csrf %}
 {% block title %}{{ event.title }} - Utsav Planner{% endblock %}
+{% block head %}<script src="/static/js/print.js" defer></script>{% endblock %}
 {% block content %}
 <header class="event-header">
   <h1>{{ event.title }}</h1>
   <p>{{ event.type_label }} in {{ event.city }} on {{ event.date }} &middot; {{ event.guests }} guests &middot;
     {% if event.days_left > 0 %}{{ event.days_left }} days to go{% elif event.days_left == 0 %}today{% else %}{{ -event.days_left }} days ago{% endif %}</p>
   {% if event.preferences %}<p class="preferences">Your preferences: {{ event.preferences }}</p>{% endif %}
+  <button type="button" id="print-plan" class="print-button" data-print hidden>Print or save as PDF</button>
 </header>
 
 {% include "partials/plan_area.html" %}

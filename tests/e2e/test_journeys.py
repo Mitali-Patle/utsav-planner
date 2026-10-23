@@ -50,6 +50,26 @@ def test_timeline_downloads_as_a_calendar_file(page: Page) -> None:
     assert download.value.path().read_text(encoding="utf-8").startswith("BEGIN:VCALENDAR")
 
 
+def test_print_shows_the_plan_without_controls_in_ink_on_white(new_page: NewPage) -> None:
+    page = new_page(color_scheme="dark")
+    page.add_init_script("window.print = () => { window.printed = true; };")
+    create_event(page)
+    expect(page.get_by_role("heading", name="Rocket launch corner")).to_be_visible()
+    page.get_by_role("button", name="Print or save as PDF").click()
+    assert page.evaluate("window.printed") is True
+
+    page.emulate_media(media="print")
+    expect(page.get_by_role("heading", name="Timeline")).to_be_visible()
+    expect(page.get_by_role("cell", name="To contact").first).to_be_visible()
+    for hidden in ("Add expense", "Suggest different ideas", "Print or save as PDF"):
+        expect(page.get_by_role("button", name=hidden)).to_be_hidden()
+    expect(page.get_by_role("heading", name="Change something")).to_be_hidden()
+    colours = page.evaluate(
+        "[getComputedStyle(document.body).backgroundColor, getComputedStyle(document.body).color]"
+    )
+    assert colours == ["rgb(255, 255, 255)", "rgb(0, 0, 0)"]
+
+
 def test_typing_survives_the_personalization_swap(page: Page) -> None:
     held: list[Route] = []
 
@@ -77,6 +97,7 @@ def test_typing_survives_the_personalization_swap(page: Page) -> None:
 def test_every_step_works_without_javascript(new_page: NewPage) -> None:
     page = new_page(java_script_enabled=False)
     create_event(page)
+    expect(page.get_by_role("button", name="Print or save as PDF")).to_be_hidden()
     expect(page.get_by_role("heading", name="Personalizing your plan")).to_be_visible()
     page.get_by_role("button", name="Personalize with AI").click()
     expect(page.get_by_text("Suggested by AI, each with a reason.")).to_be_visible()

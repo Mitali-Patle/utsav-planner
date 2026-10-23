@@ -46,7 +46,9 @@ Every action must work **without JavaScript**.
 
 - Each form keeps `method="post"` and its `action`, and contains `{{ csrf(csrf_token) }}`.
 - htmx attributes (`hx-post`, `hx-target`, `hx-swap`) are added on top of a working form,
-  never in place of one. No links or buttons that work only with JavaScript.
+  never in place of one. No links or buttons that work only with JavaScript. The one
+  exception is `#print-plan`, which carries `hidden` and is shown by `print.js` only when
+  the script runs; without JavaScript the browser's own print gives the same printout.
 - `<body hx-headers=...>` sends the CSRF token on htmx requests. Keep it on `<body>`.
 - The `htmx-config` meta tag in `base.html` makes 404, 409 and 422 swap like 200, turns off
   htmx's inline indicator styles and leaves `style` out of `attributesToSettle`, so swaps never
@@ -67,6 +69,7 @@ Every action must work **without JavaScript**.
 | `add-expense-form` | `plan_area.html` | Carries `hx-preserve` when `keep_typed_input` is true, so an AI swap keeps what the user typed |
 | `retry-personalize` | `plan_area.html` | Asks the AI again when the ideas are standard ones |
 | `new-ideas`, `ideas-busy` | `plan_area.html` | "Suggest different ideas" button and its `hx-indicator`; shown only when the ideas came from AI |
+| `print-plan` | `dashboard.html` | "Print or save as PDF"; `hidden` until `/static/js/print.js` shows it and calls `window.print()` |
 | `calendar-export` | `plan_area.html` | Link to the `.ics` download under the timeline heading |
 | `ideas-heading` | `plan_area.html` | Gets `tabindex="-1"` and `autofocus` when `focus_ideas` is true, so focus lands on the new ideas |
 | `{panel}-sent`, `{panel}-answer` | `ai_panel.html` | Headings naming the panel's data regions; `{panel}` is `plan-ai`, `change-ai` or `alternatives-ai`, so several panels can share a page |
@@ -173,6 +176,7 @@ These labels are an honesty rule (AGENTS.md): AI output is labelled, non-AI outp
 | `sub-events[data-event-type]`, `sub-events-hint` | Function groups; CSS shows only the chosen event type's group |
 | `htmx-indicator` | Busy message, hidden until htmx adds `htmx-request` |
 | `sr-only`, `skip-link` | Accessibility utilities |
+| `no-print`, `print-only`, `print-button`, `calendar-export` | Print view (F15): hidden on paper, shown only on paper, the print button, the `.ics` link (hidden on paper) |
 
 ## 9. Guards
 

@@ -30,7 +30,8 @@ needed to hear about the new date, a line that was meant to stay untouched.
 3. **Track it.** Add expenses, protect lines you must not cut, tick off tasks, move vendors
    from "to contact" to "booked". Overspending, overdue tasks and urgent bookings are flagged.
    Download the dates as a calendar file (`.ics`): the event day, unfinished tasks and
-   vendors still to book, as all-day entries.
+   vendors still to book, as all-day entries. Print the plan or save it as a PDF: the
+   printout shows the budget, ideas, timeline and vendors in black on white, without buttons.
 4. **Change it in plain words** with the Smart Change Manager:
    - "Budget dropped to ₹12,000, keep the cake as it is", "10 more guests are coming",
      "move it 3 days earlier", "put ₹10,000 into decorations", "budget 13 lakh kar do".
@@ -216,8 +217,8 @@ the tests, the browser tests and the security checks on every push.
   idle functions hold nothing open. A dashboard needs one; a change request needs three
   (the rate-limit counters, reading the plan, saving the preview), with the AI call
   outside them. A test keeps these numbers from creeping up.
-- No JavaScript build: the page ships HTML, one stylesheet and htmx (52 KB, 17 KB
-  compressed), served from Vercel's CDN.
+- No JavaScript build: the page ships HTML, one stylesheet, htmx (52 KB, 17 KB
+  compressed) and a 231-byte print script, served from Vercel's CDN.
 
 ## Run it locally
 

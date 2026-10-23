@@ -1123,3 +1123,91 @@ legend {
   margin-inline: auto;
   padding-inline: var(--space-4);
 }
+
+/* Print (F15): the plan on paper. Controls are hidden and colours become ink on white,
+   whatever the screen theme. */
+.print-only,
+.print-button[hidden] {
+  display: none;
+}
+
+.print-button {
+  margin-top: var(--space-2);
+}
+
+@media print {
+  :root {
+    --color-bg: #ffffff;
+    --color-surface: #ffffff;
+    --color-surface-subtle: #ffffff;
+    --color-text: #000000;
+    --color-text-muted: #333333;
+    --color-border: #666666;
+    --color-border-subtle: #cccccc;
+    --color-primary: #000000;
+    --color-success: #000000;
+    --color-warning: #000000;
+    --color-error: #000000;
+    --color-error-bg: #ffffff;
+    --color-ai-bg: #ffffff;
+    --color-ai-text: #000000;
+    --color-why-bg: #ffffff;
+    --color-why-text: #000000;
+    --color-notice-info-bg: #ffffff;
+    --color-notice-success-bg: #ffffff;
+    --color-badge-warning-bg: #ffffff;
+    --shadow-sm: none;
+    --shadow-md: none;
+  }
+
+  .skip-link,
+  .site-header,
+  .site-footer,
+  .status-region,
+  .site-main form,
+  .no-print,
+  .print-button,
+  .calendar-export,
+  .ai-panel,
+  .htmx-indicator,
+  #personalization,
+  #plan-alternatives,
+  #add-expense-heading,
+  #change-manager,
+  #history {
+    display: none !important;
+  }
+
+  .print-only {
+    display: inline;
+  }
+
+  body {
+    font-size: 11pt;
+  }
+
+  .container {
+    max-width: none;
+    padding: 0;
+  }
+
+  a {
+    color: inherit;
+    text-decoration: none;
+  }
+
+  h2,
+  h3 {
+    break-after: avoid;
+  }
+
+  tr,
+  li,
+  .notice {
+    break-inside: avoid;
+  }
+
+  thead {
+    display: table-header-group;
+  }
+}
