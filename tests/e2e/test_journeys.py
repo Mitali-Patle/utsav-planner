@@ -85,17 +85,19 @@ def test_theme_switch_cycles_and_is_remembered(new_page: NewPage) -> None:
     page = new_page(color_scheme="dark")
     page.goto("/")
     switch = page.get_by_role("button", name=re.compile("^Theme: Auto"))
-    background = "getComputedStyle(document.body).backgroundColor"
-    dark = page.evaluate(background)
+    body = page.locator("body")
+    dark = page.evaluate("getComputedStyle(document.body).backgroundColor")
     switch.click()
     expect(page.get_by_role("button", name=re.compile("^Theme: Light"))).to_be_visible()
-    page.wait_for_function(f"{background} !== '{dark}'")
+    # Retrying CSS assertions, not wait_for_function: its polling evaluates a string,
+    # which the page's CSP (no 'unsafe-eval') blocks whenever the first check fails.
+    expect(body).not_to_have_css("background-color", dark)
     page.reload()
     expect(page.get_by_role("button", name=re.compile("^Theme: Light"))).to_be_visible()
-    assert page.evaluate(background) != dark, "the choice survives a reload"
+    expect(body).not_to_have_css("background-color", dark)
     page.get_by_role("button", name=re.compile("^Theme: Light")).click()
     expect(page.locator("html")).to_have_attribute("data-theme", "dark")
-    page.wait_for_function(f"{background} === '{dark}'")
+    expect(body).to_have_css("background-color", dark)
 
 
 def test_section_menu_marks_the_section_in_view(new_page: NewPage) -> None:
