@@ -480,16 +480,32 @@ legend {
   background: var(--color-surface-subtle);
 }
 
-.site-nav-links .nav-cta {
-  color: var(--color-primary-text);
+.site-nav-links .nav-plans {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
   min-height: 2.5rem;
   padding: var(--space-2) var(--space-4);
-  margin-left: var(--space-2);
+  border: 1.5px solid var(--color-secondary);
+  border-radius: var(--radius-sm);
+  color: var(--color-secondary);
+  font-weight: 600;
 }
 
-.site-nav-links .nav-cta:hover {
-  color: var(--color-primary-text);
-  background: var(--color-primary-hover);
+.site-nav-links .nav-plans:hover {
+  background: var(--color-surface-subtle);
+  color: var(--color-secondary);
+}
+
+.site-nav-links .nav-plans[aria-current="page"] {
+  background: var(--color-secondary);
+  color: var(--color-secondary-text);
+}
+
+.nav-icon {
+  width: 1.1rem;
+  height: 1.1rem;
+  flex-shrink: 0;
 }
 
 .theme-toggle {
@@ -519,10 +535,6 @@ legend {
 }
 
 @media (max-width: 480px) {
-  .site-nav-links .nav-cta {
-    margin-left: 0;
-  }
-
   .theme-label {
     position: absolute;
     width: 1px;
@@ -1055,19 +1067,25 @@ legend {
    Landing page
    ======================================================================== */
 
-/* Top of the home page: the pitch beside how it works (first visit) or your plans */
+/* Top of the home page: the pitch (70%) beside a panel of celebration pictures (30%) */
 .landing-top {
   display: grid;
   gap: var(--space-8);
-  align-items: center;
+  align-items: stretch;
   margin-bottom: var(--space-12);
 }
 
 @media (min-width: 1000px) {
   .landing-top {
-    grid-template-columns: minmax(0, 1fr) minmax(24rem, 34rem);
-    gap: var(--space-16);
+    grid-template-columns: minmax(0, 7fr) minmax(0, 3fr);
+    gap: var(--space-12);
   }
+}
+
+.landing-hero {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
 }
 
 .landing-hero h1 {
@@ -1075,105 +1093,174 @@ legend {
 }
 
 .landing-hero .lede {
-  max-width: 34rem;
+  max-width: 36rem;
 }
 
-.hero-note {
-  margin: var(--space-6) 0 0;
-  font-size: var(--font-size-sm);
-  color: var(--color-text-muted);
+/* How it works, as four short steps under the headline */
+.how-compact {
+  margin-top: var(--space-10);
+  padding-top: var(--space-6);
+  border-top: 1px solid var(--color-border-subtle);
 }
 
-/* Your plans: one row per plan, whole row clickable */
-.plans-panel h2 {
-  margin-bottom: var(--space-2);
-}
-
-.plan-list {
-  list-style: none;
-  margin: 0;
-  padding: 0;
-  max-height: 22rem;
-  overflow-y: auto;
-}
-
-.plan-row {
-  position: relative;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: var(--space-4);
-  padding: var(--space-4) var(--space-2);
-  margin-inline: calc(-1 * var(--space-2));
-  border-bottom: 1px solid var(--color-border-subtle);
-  border-radius: var(--radius-sm);
-  transition: background-color 0.15s ease;
-}
-
-.plan-row:last-child {
-  border-bottom: none;
-}
-
-.plan-row:hover,
-.plan-row:focus-within {
-  background: var(--color-surface-subtle);
-}
-
-.plan-row-main {
-  min-width: 0;
-}
-
-.plan-row-title {
-  font-family: var(--font-family-display);
-  font-size: var(--font-size-lg);
-  font-weight: 600;
-  color: var(--color-heading);
-  text-decoration: none;
-}
-
-.plan-row-title::after {
-  content: "";
-  position: absolute;
-  inset: 0;
-}
-
-.plan-row-meta {
-  margin: var(--space-1) 0 0;
-  font-size: var(--font-size-sm);
-  color: var(--color-text-muted);
-}
-
-.plan-row-days {
-  margin: 0;
-  flex-shrink: 0;
-  text-align: right;
+.how-compact h2 {
+  font-family: var(--font-family-base);
   font-size: var(--font-size-xs);
   font-weight: 700;
   letter-spacing: 0.08em;
   text-transform: uppercase;
   color: var(--color-text-muted);
+  margin-bottom: var(--space-4);
 }
 
-.plan-row-days strong {
-  display: block;
-  font-family: var(--font-family-display);
-  font-size: var(--font-size-2xl);
-  letter-spacing: 0;
-  line-height: 1;
-  color: var(--color-primary);
+@media (min-width: 700px) {
+  .how-compact .how {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: var(--space-5) var(--space-8);
+  }
 }
 
-/* How it works as a row of four steps, for returning visitors */
-.how-strip {
-  margin-top: var(--space-12);
-  padding-top: var(--space-8);
-  border-top: 1px solid var(--color-border-subtle);
-}
-
-@media (min-width: 900px) {
-  .how-strip .how {
+@media (min-width: 1300px) {
+  .how-compact .how {
     grid-template-columns: repeat(4, minmax(0, 1fr));
-    gap: var(--space-8);
+  }
+}
+
+/* Celebration pictures: a slow upward reel on wide screens, a sideways strip on narrow ones.
+   reel.js starts it (and its pause button); without it, or with reduced motion, it is still. */
+.reel {
+  position: relative;
+  min-width: 0;
+}
+
+.reel-window {
+  height: 15rem;
+  overflow: hidden;
+  border-radius: var(--radius-lg);
+  mask-image: linear-gradient(to right, transparent, #000 6%, #000 94%, transparent);
+}
+
+.reel-track {
+  display: flex;
+  width: max-content;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.reel-slide {
+  width: 15rem;
+  height: 15rem;
+  padding-right: var(--space-3);
+}
+
+.reel-frame {
+  position: relative;
+  height: 100%;
+  margin: 0;
+  overflow: hidden;
+  border-radius: var(--radius-md);
+  background: var(--reel-tone, var(--color-hero-bg));
+}
+
+/* Placeholders until photos are added: palette tones with the Phulkari band */
+.reel-frame::before {
+  content: "";
+  position: absolute;
+  inset: auto 0 0;
+  height: var(--motif-height);
+  background: var(--motif-phulkari) repeat-x left center;
+  opacity: 0.85;
+}
+
+.reel-tone-1 { --reel-tone: #8c1c25; }
+.reel-tone-2 { --reel-tone: #1d3443; }
+.reel-tone-3 { --reel-tone: #8a5a14; }
+.reel-tone-4 { --reel-tone: #a3304f; }
+.reel-tone-5 { --reel-tone: #23697f; }
+
+.reel-frame img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.reel-frame figcaption {
+  position: absolute;
+  inset: auto 0 var(--motif-height) 0;
+  padding: var(--space-6) var(--space-4) var(--space-3);
+  font-family: var(--font-family-display);
+  font-size: var(--font-size-lg);
+  line-height: 1.25;
+  color: #fff6ea;
+  background: linear-gradient(to top, rgb(20 12 10 / 0.7), transparent);
+}
+
+.reel.is-running .reel-track {
+  animation: reel-sideways 45s linear infinite;
+}
+
+.reel.is-paused .reel-track,
+.reel:hover .reel-track,
+.reel:focus-within .reel-track {
+  animation-play-state: paused;
+}
+
+@keyframes reel-sideways {
+  to { transform: translateX(-50%); }
+}
+
+@keyframes reel-up {
+  to { transform: translateY(-50%); }
+}
+
+.reel-toggle {
+  position: absolute;
+  right: var(--space-3);
+  bottom: var(--space-3);
+  min-height: 2.25rem;
+  padding: var(--space-1) var(--space-3);
+  font-size: var(--font-size-xs);
+  background: var(--color-surface);
+  color: var(--color-text);
+  border: 1px solid var(--color-border);
+  opacity: 0.92;
+}
+
+.reel-toggle[hidden] {
+  display: none;
+}
+
+@media (min-width: 1000px) {
+  /* The window fills the hero's height without letting the long track set it */
+  .reel {
+    min-height: 34rem;
+  }
+
+  .reel-window {
+    position: absolute;
+    inset: 0;
+    height: auto;
+    mask-image: linear-gradient(transparent, #000 8%, #000 92%, transparent);
+  }
+
+  .reel-track {
+    flex-direction: column;
+    width: 100%;
+  }
+
+  .reel-slide {
+    width: 100%;
+    height: auto;
+    aspect-ratio: 4 / 3;
+    padding: 0 0 var(--space-3);
+  }
+
+  .reel.is-running .reel-track {
+    animation-name: reel-up;
+    animation-duration: 50s;
   }
 }
 
@@ -1342,6 +1429,35 @@ legend {
 .create-form:has(#type-birthday:checked) .sample[data-event-type="birthday"],
 .create-form:has(#type-community:checked) .sample[data-event-type="community"] {
   display: block;
+}
+
+/* In side-by-side rows the inputs line up: hints and errors sit under the input
+   (they stay linked to it through aria-describedby) */
+.field-row .field {
+  display: flex;
+  flex-direction: column;
+}
+
+.field-row .field-hint {
+  order: 1;
+  margin-top: var(--space-1);
+  margin-bottom: 0;
+}
+
+.field-row .field-error {
+  order: 2;
+}
+
+/* Number fields without the spinner arrows; typing is quicker for rupees and guests */
+input[type="number"] {
+  -moz-appearance: textfield;
+  appearance: textfield;
+}
+
+input[type="number"]::-webkit-inner-spin-button,
+input[type="number"]::-webkit-outer-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
 }
 
 .field-row {
@@ -1518,6 +1634,115 @@ legend {
   display: block;
   color: var(--color-text);
   font-size: var(--font-size-base);
+}
+
+/* ========================================================================
+   My plans page
+   ======================================================================== */
+
+.plans-header {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: var(--space-4);
+  margin-bottom: var(--space-8);
+}
+
+.plans-header h1 {
+  margin-bottom: 0;
+}
+
+.add-plan {
+  min-height: 3rem;
+  padding-inline: var(--space-6);
+}
+
+.plan-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 19rem), 1fr));
+  gap: var(--space-5);
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.plan-tile {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+  padding: var(--space-6) var(--space-6) calc(var(--space-5) + var(--motif-height));
+  background: var(--color-surface);
+  border: 1px solid var(--color-border-subtle);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+}
+
+.plan-tile::after {
+  content: "";
+  position: absolute;
+  inset: auto 0 0;
+  height: var(--motif-height);
+  background: var(--motif-phulkari) repeat-x left center;
+}
+
+.plan-tile:hover,
+.plan-tile:focus-within {
+  transform: translateY(-3px);
+  box-shadow: var(--shadow-md);
+  border-color: var(--color-border);
+}
+
+.plan-tile h2 {
+  margin: 0;
+  font-size: var(--font-size-2xl);
+}
+
+.plan-tile h2 a {
+  color: var(--color-heading);
+  text-decoration: none;
+}
+
+/* The whole tile opens the plan; the title stays the link's name */
+.plan-tile h2 a::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+}
+
+.plan-tile-type,
+.plan-tile-days {
+  margin: 0;
+  font-size: var(--font-size-xs);
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--color-text-muted);
+}
+
+.plan-tile-meta {
+  margin: 0 0 var(--space-4);
+  color: var(--color-text-muted);
+}
+
+.plan-tile-days {
+  margin-top: auto;
+  padding-top: var(--space-4);
+  border-top: 1px solid var(--color-border-subtle);
+}
+
+.plan-tile-days strong {
+  font-family: var(--font-family-display);
+  font-size: var(--font-size-2xl);
+  letter-spacing: 0;
+  color: var(--color-primary);
+  margin-right: var(--space-1);
+}
+
+.empty-plans {
+  max-width: 36rem;
 }
 
 /* ========================================================================

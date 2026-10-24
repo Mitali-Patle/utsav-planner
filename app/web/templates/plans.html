@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+{% block title %}My plans - Utsav Planner{% endblock %}
+{% block content %}
+<div class="plans-header">
+  <div>
+    <p class="kicker">Private to this browser</p>
+    <h1>My plans</h1>
+  </div>
+  <a href="/#create-heading" class="button button-primary add-plan" id="add-plan">
+    <svg class="nav-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M12 5v14M5 12h14" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/></svg>
+    New plan
+  </a>
+</div>
+
+{% if events %}
+<ul class="plan-grid" role="list">
+  {% for event in events %}
+  <li class="plan-tile">
+    <p class="plan-tile-type">{{ event.type_label }} in {{ event.city }}</p>
+    <h2><a href="/events/{{ event.id }}">{{ event.title }}</a></h2>
+    <p class="plan-tile-meta">{{ event.date }} &middot; {{ event.guests }} guests</p>
+    <p class="plan-tile-days">{% if event.days_left > 0 %}<strong>{{ event.days_left }}</strong> {{ 'day' if event.days_left == 1 else 'days' }} to go{% elif event.days_left == 0 %}<strong>Today</strong>{% else %}<strong>{{ -event.days_left }}</strong> {{ 'day' if event.days_left == -1 else 'days' }} ago{% endif %}</p>
+  </li>
+  {% endfor %}
+</ul>
+{% else %}
+<section class="panel empty-plans" aria-labelledby="empty-heading">
+  <h2 id="empty-heading">No plans yet</h2>
+  <p>Start a plan for a wedding, a birthday or a community event. It is saved in this browser, with no sign-up.</p>
+  <a href="/#create-heading" class="button button-primary">Start your first plan</a>
+</section>
+{% endif %}
+{% endblock %}

@@ -53,6 +53,34 @@ def test_an_example_fills_the_form_in_one_click(page: Page) -> None:
     expect(page.get_by_role("heading", level=1)).to_have_text("Shanti Nagar Ganeshotsav")
 
 
+def test_my_plans_page_opens_a_plan_and_starts_a_new_one(page: Page) -> None:
+    create_event(page, "Diwali at the society")
+    page.get_by_role("link", name="My plans").click()
+    expect(page.get_by_role("heading", name="My plans", level=1)).to_be_visible()
+    page.get_by_role("link", name="Diwali at the society").click()
+    expect(page.get_by_role("heading", name="Diwali at the society", level=1)).to_be_visible()
+    page.get_by_role("link", name="My plans").click()
+    page.get_by_role("link", name="New plan").click()
+    expect(page.get_by_role("heading", name="Start a new plan")).to_be_visible()
+
+
+def test_picture_panel_runs_and_can_be_paused(new_page: NewPage) -> None:
+    page = new_page(reduced_motion="no-preference")
+    page.goto("/")
+    track = page.locator(".reel-track")
+    expect(track).to_have_css("animation-play-state", "running")
+    page.get_by_role("button", name="Pause pictures").click()
+    page.mouse.move(0, 0)
+    expect(track).to_have_css("animation-play-state", "paused")
+    expect(page.get_by_role("button", name="Play pictures")).to_be_visible()
+
+
+def test_picture_panel_stays_still_with_reduced_motion(page: Page) -> None:
+    page.goto("/")
+    expect(page.get_by_role("button", name="Pause pictures")).to_be_hidden()
+    expect(page.locator(".reel")).not_to_have_class("reel is-running")
+
+
 def test_theme_switch_cycles_and_is_remembered(new_page: NewPage) -> None:
     page = new_page(color_scheme="dark")
     page.goto("/")

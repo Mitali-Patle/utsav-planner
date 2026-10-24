@@ -199,8 +199,26 @@ def _friendly(error_type: str, ctx: Mapping[str, Any], fallback: str) -> str:
     return messages.get(error_type, fallback.removeprefix("Value error, ").rstrip(".") + ".")
 
 
-def landing_context(events: Sequence[StoredEvent], form: FormState, today: date) -> dict[str, Any]:
-    """Data for the landing page: the create form and this visitor's events."""
+@dataclass(frozen=True)
+class Slide:
+    """One picture in the home page's rotating panel; no image yet shows a placeholder."""
+
+    caption: str
+    image: str | None = None
+
+
+CELEBRATION_SLIDES: tuple[Slide, ...] = (
+    Slide("Wedding mandap, Jaipur"),
+    Slide("Mehendi night"),
+    Slide("A first birthday at home"),
+    Slide("Ganeshotsav in a housing society"),
+    Slide("Diwali diyas on the steps"),
+)
+"""Image files go in public/static/img/celebrations/ under the name given here."""
+
+
+def landing_context(form: FormState, today: date) -> dict[str, Any]:
+    """Data for the landing page: the create form and the celebration panel."""
     return {
         "form": form,
         "today": today.isoformat(),
@@ -214,8 +232,14 @@ def landing_context(events: Sequence[StoredEvent], form: FormState, today: date)
             }
             for t in EventType
         ],
-        "events": [_event_summary(e, today) for e in events],
+        "slides": CELEBRATION_SLIDES,
     }
+
+
+def plans_context(events: Sequence[StoredEvent], today: date) -> dict[str, Any]:
+    """Data for the My plans page: this visitor's events, soonest first."""
+    summaries = [_event_summary(e, today) for e in events]
+    return {"events": sorted(summaries, key=lambda e: (e["days_left"] < 0, abs(e["days_left"])))}
 
 
 def dashboard_context(

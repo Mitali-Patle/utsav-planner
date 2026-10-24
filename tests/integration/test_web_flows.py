@@ -219,7 +219,34 @@ def test_new_event_opens_its_dashboard_with_personalization_pending(engine: Engi
     assert "Your plan is ready" in page.text
     assert "Kids&#39; games" not in page.text
     assert_accessible(page.text)
-    assert "Aarav&#39;s 8th birthday" in client.get("/").text, "listed under Your events"
+    assert "Aarav&#39;s 8th birthday" in client.get("/plans").text, "listed under My plans"
+
+
+def test_my_plans_lists_only_this_visitors_plans(engine: Engine) -> None:
+    client = client_for(engine)
+    empty = client.get("/plans")
+    assert empty.status_code == 200
+    assert "No plans yet" in empty.text
+    assert 'href="/plans" class="nav-plans" aria-current="page"' in empty.text
+    assert_accessible(empty.text)
+    url = create(client, token(client), personalize=False)
+    page = client.get("/plans").text
+    assert f'href="{url}"' in page and "<strong>40</strong> days to go" in page
+    assert 'id="add-plan"' in page
+    assert_accessible(page)
+    stranger = TestClient(client.app)
+    assert f'href="{url}"' not in stranger.get("/plans").text
+
+
+def test_home_page_has_no_plan_list_and_a_picture_panel(engine: Engine) -> None:
+    client = client_for(engine)
+    create(client, token(client), personalize=False)
+    page = client.get("/").text
+    assert "Aarav&#39;s 8th birthday" not in page, "plans live on their own page"
+    assert 'aria-current="page"' not in page
+    assert page.count('class="reel-slide">') == len(views.CELEBRATION_SLIDES)
+    assert page.count('class="reel-slide" aria-hidden="true"') == len(views.CELEBRATION_SLIDES)
+    assert '<script src="/static/js/reel.js" defer></script>' in page
 
 
 def test_creating_events_is_limited_per_client(engine: Engine) -> None:

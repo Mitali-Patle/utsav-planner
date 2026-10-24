@@ -1,6 +1,7 @@
 {% extends "base.html" %}
 {% from "macros.html" import field, csrf %}
 {% block title %}Plan your celebration - Utsav Planner{% endblock %}
+{% block head %}<script src="/static/js/reel.js" defer></script>{% endblock %}
 {% block content %}
 <div class="landing-top">
 <div class="landing-hero">
@@ -8,30 +9,27 @@
   <h1>Plan your celebration</h1>
   <p class="lede">A budget, a timeline and a vendor checklist built in seconds, then tailored by AI,
     with a reason for every suggestion.</p>
-  {% if not events %}<p id="your-plans" class="hero-note">Your plans will appear here once you create one. No sign-up: they stay private to this browser.</p>{% endif %}
+  <section class="how-compact" aria-labelledby="how-heading">
+    <h2 id="how-heading">How it works</h2>
+    {% include "partials/how_it_works.html" %}
+  </section>
 </div>
 
-{% if events %}
-<section id="your-plans" aria-labelledby="events-heading" class="panel plans-panel">
-  <h2 id="events-heading">Your plans</h2>
-  <ul class="plan-list" role="list">
-    {% for event in events %}
-    <li class="plan-row">
-      <div class="plan-row-main">
-        <a href="/events/{{ event.id }}" class="plan-row-title">{{ event.title }}</a>
-        <p class="plan-row-meta">{{ event.type_label }} in {{ event.city }} &middot; {{ event.date }} &middot; {{ event.guests }} guests</p>
-      </div>
-      <p class="plan-row-days">{% if event.days_left > 0 %}<strong>{{ event.days_left }}</strong> {{ 'day' if event.days_left == 1 else 'days' }} to go{% elif event.days_left == 0 %}<strong>Today</strong>{% else %}{{ -event.days_left }} {{ 'day' if event.days_left == -1 else 'days' }} ago{% endif %}</p>
-    </li>
-    {% endfor %}
-  </ul>
-</section>
-{% else %}
-<section class="panel how-panel" aria-labelledby="how-heading">
-  <h2 id="how-heading">How it works</h2>
-  {% include "partials/how_it_works.html" %}
-</section>
-{% endif %}
+<div class="reel" data-reel>
+  <div class="reel-window">
+    <ul class="reel-track" role="list">
+      {% for copy in [1, 2] %}{% for slide in slides %}
+      <li class="reel-slide"{% if copy == 2 %} aria-hidden="true"{% endif %}>
+        <figure class="reel-frame reel-tone-{{ loop.index }}">
+          {% if slide.image %}<img src="/static/img/celebrations/{{ slide.image }}" alt="{{ slide.caption if copy == 1 else '' }}" width="600" height="450" loading="lazy">{% endif %}
+          <figcaption>{{ slide.caption }}</figcaption>
+        </figure>
+      </li>
+      {% endfor %}{% endfor %}
+    </ul>
+  </div>
+  <button type="button" class="reel-toggle" hidden>Pause pictures</button>
+</div>
 </div>
 
 <section aria-labelledby="create-heading" class="landing-main">
@@ -105,10 +103,4 @@
   </form>
 </section>
 
-{% if events %}
-<section class="how-strip" aria-labelledby="how-heading">
-  <h2 id="how-heading">How it works</h2>
-  {% include "partials/how_it_works.html" %}
-</section>
-{% endif %}
 {% endblock %}

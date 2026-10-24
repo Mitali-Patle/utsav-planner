@@ -196,7 +196,9 @@ Headings use a serif, and there are no web fonts, images or gradients: one hand-
 Budget lines show planned against spent as bars, the timeline runs along a stitched thread by month,
 and the printout drops the colour for black on white.
 
-The theme follows the device, and a switch in the header sets Light or Dark for this browser.
+The home page sets the headline beside a slowly scrolling panel of celebration pictures, which
+can be paused and stays still with reduced motion; "My plans" lists your plans on a page of its
+own. The theme follows the device, and a switch in the header sets Light or Dark for this browser.
 On wide screens the dashboard keeps a side menu of its sections, marking the one in view. The
 new-plan form runs in three steps, with the event type chosen on cards and a sample for each
 type. The event page eases in, and new answers fade in; with reduced motion set on the device,

@@ -85,22 +85,16 @@ def create_event(
         if not create_limit.allow(request):
             return _invalid_form(
                 request,
-                services,
-                session,
                 today,
                 FormState(values, {"form": TOO_MANY_EVENTS}),
                 status.HTTP_429_TOO_MANY_REQUESTS,
             )
         stored = services.planning.create_draft(session, details)
     except ValidationError as error:
-        return _invalid_form(
-            request, services, session, today, FormState(values, form_errors(error))
-        )
+        return _invalid_form(request, today, FormState(values, form_errors(error)))
     except InvalidInputError as error:
         field = "event_date" if error.code.startswith("event_date") else "form"
-        return _invalid_form(
-            request, services, session, today, FormState(values, {field: error.message})
-        )
+        return _invalid_form(request, today, FormState(values, {field: error.message}))
     return after_post(
         request,
         f"/events/{stored.id}",
@@ -201,12 +195,8 @@ def _sub_events_for(event_type: str, submitted: list[str]) -> list[str]:
 
 def _invalid_form(
     request: Request,
-    services: ServicesDep,
-    session: str,
     today: TodayDep,
     form: FormState,
     status_code: int = status.HTTP_422_UNPROCESSABLE_CONTENT,
 ) -> HTMLResponse:
-    events = services.planning.list_events(session)
-    context = landing_context(events, form, today)
-    return render(request, "landing.html", context, status_code)
+    return render(request, "landing.html", landing_context(form, today), status_code)

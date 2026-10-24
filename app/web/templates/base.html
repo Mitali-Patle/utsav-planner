@@ -27,7 +27,12 @@
           <span>Utsav <span class="brand-sub">Planner</span></span>
         </a>
         <ul class="site-nav-links" role="list">
-          <li><a href="/#your-plans">My plans</a></li>
+          <li>
+            <a href="/plans" class="nav-plans"{% if request.url.path == "/plans" %} aria-current="page"{% endif %}>
+              <svg class="nav-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><rect x="4" y="3.5" width="16" height="17" rx="2" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="M8 8.5h8M8 12h8M8 15.5h5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
+              My plans
+            </a>
+          </li>
           <li>
             <button type="button" id="theme-toggle" class="theme-toggle" hidden aria-label="Theme: Auto. Change theme">
               <svg class="theme-icon theme-icon-auto" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="8" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="M12 4a8 8 0 0 1 0 16z" fill="currentColor"/></svg>
@@ -36,7 +41,6 @@
               <span class="theme-label">Auto</span>
             </button>
           </li>
-          <li><a href="/#create-heading" class="button button-primary nav-cta">New plan</a></li>
         </ul>
       </nav>
     </div>
