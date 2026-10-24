@@ -47,8 +47,9 @@ Every action must work **without JavaScript**.
 - Each form keeps `method="post"` and its `action`, and contains `{{ csrf(csrf_token) }}`.
 - htmx attributes (`hx-post`, `hx-target`, `hx-swap`) are added on top of a working form,
   never in place of one. No links or buttons that work only with JavaScript. The one
-  exception is `#print-plan`, which carries `hidden` and is shown by `print.js` only when
-  the script runs; without JavaScript the browser's own print gives the same printout.
+  exceptions are `#print-plan` and `#theme-toggle`, which carry `hidden` and are shown by
+  `print.js` and `theme.js` only when the scripts run; without JavaScript the browser's own
+  print gives the same printout and the theme follows the device.
 - `<body hx-headers=...>` sends the CSRF token on htmx requests. Keep it on `<body>`.
 - The `htmx-config` meta tag in `base.html` makes 404, 409 and 422 swap like 200, turns off
   htmx's inline indicator styles and leaves `style` out of `attributesToSettle`, so swaps never
@@ -70,7 +71,10 @@ Every action must work **without JavaScript**.
 | `retry-personalize` | `plan_area.html` | Asks the AI again when the ideas are standard ones |
 | `new-ideas`, `ideas-busy` | `plan_area.html` | "Suggest different ideas" button and its `hx-indicator`; shown only when the ideas came from AI |
 | `print-plan` | `dashboard.html` | "Print or save as PDF"; `hidden` until `/static/js/print.js` shows it and calls `window.print()` |
-| `calendar-export` | `plan_area.html` | Link to the `.ics` download under the timeline heading |
+| `calendar-export` | `dashboard.html` | "Add to calendar": the `.ics` download, in the event banner |
+| `theme-toggle` | `base.html` | Header switch cycling Auto, Light and Dark; `theme.js` (loaded in `<head>`, no `defer`) applies the saved choice before paint as `data-theme` on `<html>` |
+| `your-plans` | `landing.html` | "Your plans": cards at the top when the visitor has plans, otherwise a panel; the header's "My plans" links here |
+| `type-{type}`, `type-{type}-hint` | `landing.html` | Event type cards (radio plus description); a "Fill in a sample …" link for the chosen type appears below them through CSS |
 | `ideas-heading` | `plan_area.html` | Gets `tabindex="-1"` and `autofocus` when `focus_ideas` is true, so focus lands on the new ideas |
 | `{panel}-sent`, `{panel}-answer` | `ai_panel.html` | Headings naming the panel's data regions; `{panel}` is `plan-ai`, `change-ai` or `alternatives-ai`, so several panels can share a page |
 | `protect-line-{id}`, `protect-expense-{id}`, `update-{id}`, `task-{id}`, `save-{id}`, `add-expense`, `suggest-savings` | `plan_area.html` | Stable button ids: htmx returns keyboard focus to the same button after the plan area is swapped |
@@ -169,11 +173,15 @@ These labels are an honesty rule (AGENTS.md): AI output is labelled, non-AI outp
 | `why` | The reason under every suggestion; this is the product's main idea, make it easy to spot |
 | `label-ai`, `label-not-ai`, `ai-note`, `ai-panel` | Where an answer came from |
 | `ideas`, `ideas-ai`, `summary`, `budget-meter`, `meter`, `meter-over`, `budget-table`, `month`, `tasks` (`li.done`), `task-title`, `task-due`, `actions`, `toggle` | Plan sections; `meter` is a decorative `<progress>` (the amounts are in the text) |
-| `event-header-main`, `event-header-side`, `event-meta`, `countdown`, `countdown-number`, `section-nav`, `kicker` | Dashboard banner and section links |
-| `landing-hero`, `landing-grid`, `landing-main`, `landing-side`, `panel`, `included`, `principle`, `examples-intro`, `brand-mark`, `brand-sub` | Landing page and brand |
+| `event-header-main`, `event-header-side`, `event-meta`, `event-actions`, `banner-button`, `countdown`, `countdown-number`, `kicker` | Dashboard banner |
+| `dashboard-layout`, `dashboard-main`, `section-nav` (`a[aria-current]`), `rail-cta` | Section menu: a sticky bar below 1100 px, a side rail above; `sections.js` sets `aria-current="location"` on the section in view |
+| `landing-hero`, `landing-grid`, `landing-main`, `landing-side`, `panel`, `how`, `your-plans`, `plan-cards`, `plan-card`, `plan-card-type`, `plan-card-meta`, `plan-card-countdown` | Landing page |
+| `form-step`, `step-number`, `legend-note`, `type-cards`, `type-card`, `type-card-hint`, `samples`, `sample[data-event-type]`, `field-row`, `input-adorned`, `adornment`, `functions`, `chips`, `chip`, `form-submit` | New-plan form |
+| `site-brand`, `brand-mark`, `brand-sub`, `nav-cta`, `theme-toggle`, `theme-icon`, `theme-label` | Header |
+| `ideas-new` | Ideas just replaced by "Suggest different ideas"; they fade in one after another |
 | `change-result`, `change-{kind}`, `proposal`, `proposal-actions`, `field-changes` | Change Manager |
 | `change-form`, `change-form-toggle`, `alternatives` | Fallback form and alternatives |
-| `history`, `history-status`, `event-list`, `event-header`, `preferences`, `lede`, `create-form`, `examples`, `sub-events` | Other blocks |
+| `history`, `history-status`, `event-header`, `preferences`, `lede`, `create-form`, `sub-events` | Other blocks |
 | `button-primary` | The main action of a form (create, preview, approve, add, personalize); one per form |
 | `sub-events[data-event-type]`, `sub-events-hint` | Function groups; CSS shows only the chosen event type's group |
 | `htmx-indicator` | Busy message, hidden until htmx adds `htmx-request` |

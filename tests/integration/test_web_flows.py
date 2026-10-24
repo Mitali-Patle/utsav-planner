@@ -170,7 +170,8 @@ def test_each_example_fills_the_form_and_creates_a_plan(
     page = client.get(f"/?example={example}")
     assert f'href="/?example={example}#create-heading"' in client.get("/").text
     assert f'value="{title}"' in page.text
-    assert f'id="type-{example}" name="event_type" value="{example}" checked' in page.text
+    checked = f'id="type-{example}" name="event_type" value="{example}"[^>]* checked'
+    assert re.search(checked, page.text)
     assert_accessible(page.text)
     values = views.example_form(example, TODAY).values
     response = client.post(
@@ -775,7 +776,7 @@ def test_dashboard_can_be_printed_with_status_text_instead_of_controls(engine: E
     client = client_for(engine, SUGGESTIONS)
     page = client.get(create(client, token(client))).text
     assert '<script src="/static/js/print.js" defer></script>' in page
-    assert 'id="print-plan" class="print-button" data-print hidden' in page
+    assert 'id="print-plan" class="banner-button print-button" data-print hidden' in page
     assert '<span class="print-only">To contact</span>' in page
 
 

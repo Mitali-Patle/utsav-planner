@@ -79,7 +79,7 @@ def _tokens(block: str) -> dict[str, str]:
 
 def _themes() -> dict[str, dict[str, str]]:
     light = re.search(r":root\s*\{([^}]*)\}", CSS)
-    dark = re.search(r"prefers-color-scheme:\s*dark\)\s*\{\s*:root\s*\{([^}]*)\}", CSS)
+    dark = re.search(r"prefers-color-scheme:\s*dark\)\s*\{\s*:root[^{]*\{([^}]*)\}", CSS)
     assert light and dark, "app.css must define light and dark colour tokens on :root"
     base = _tokens(light.group(1))
     return {"light": base, "dark": {**base, **_tokens(dark.group(1))}}
@@ -111,6 +111,15 @@ def test_colour_pairs_meet_wcag_contrast(theme: str) -> None:
         if fg in tokens and bg in tokens and contrast_ratio(tokens[fg], tokens[bg]) < need
     ]
     assert not failures, failures
+
+
+def test_theme_switch_dark_matches_the_device_dark_theme() -> None:
+    """The header switch's Dark and the device's dark mode must be the same palette."""
+    device = re.search(r"prefers-color-scheme:\s*dark\)\s*\{\s*:root[^{]*\{([^}]*)\}", CSS)
+    switch = re.search(r':root\[data-theme="dark"\]\s*\{([^}]*)\}', CSS)
+    assert device and switch
+    assert _tokens(device.group(1)) == _tokens(switch.group(1))
+    assert ':root:not([data-theme="light"])' in CSS, "choosing Light must override a dark device"
 
 
 def test_every_contrast_token_is_defined() -> None:

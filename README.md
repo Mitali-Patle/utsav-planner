@@ -196,6 +196,12 @@ Headings use a serif, and there are no web fonts, images or gradients: one hand-
 Budget lines show planned against spent as bars, the timeline runs along a stitched thread by month,
 and the printout drops the colour for black on white.
 
+The theme follows the device, and a switch in the header sets Light or Dark for this browser.
+On wide screens the dashboard keeps a side menu of its sections, marking the one in view. The
+new-plan form runs in three steps, with the event type chosen on cards and a sample for each
+type. The event page eases in, and new answers fade in; with reduced motion set on the device,
+nothing moves.
+
 ## Accessibility
 
 - Semantic HTML with landmarks, a skip link, one `h1` per page, labelled controls, error

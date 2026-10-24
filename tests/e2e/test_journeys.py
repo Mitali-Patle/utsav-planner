@@ -44,17 +44,45 @@ def test_different_ideas_replace_the_ideas_and_keep_focus_nearby(page: Page) -> 
 
 def test_an_example_fills_the_form_in_one_click(page: Page) -> None:
     page.goto("/")
-    page.get_by_role("link", name="Community event").click()
+    expect(page.get_by_role("link", name="Fill in a sample community event")).to_be_hidden()
+    page.get_by_label("Community event", exact=True).check()
+    page.get_by_role("link", name="Fill in a sample community event").click()
     expect(page.get_by_label("Event name")).to_have_value("Shanti Nagar Ganeshotsav")
     expect(page.get_by_label("Procession or visarjan")).to_be_checked()
     page.get_by_role("button", name="Create my plan").click()
     expect(page.get_by_role("heading", level=1)).to_have_text("Shanti Nagar Ganeshotsav")
 
 
+def test_theme_switch_cycles_and_is_remembered(new_page: NewPage) -> None:
+    page = new_page(color_scheme="dark")
+    page.goto("/")
+    switch = page.get_by_role("button", name=re.compile("^Theme: Auto"))
+    background = "getComputedStyle(document.body).backgroundColor"
+    dark = page.evaluate(background)
+    switch.click()
+    expect(page.get_by_role("button", name=re.compile("^Theme: Light"))).to_be_visible()
+    page.wait_for_function(f"{background} !== '{dark}'")
+    page.reload()
+    expect(page.get_by_role("button", name=re.compile("^Theme: Light"))).to_be_visible()
+    assert page.evaluate(background) != dark, "the choice survives a reload"
+    page.get_by_role("button", name=re.compile("^Theme: Light")).click()
+    expect(page.locator("html")).to_have_attribute("data-theme", "dark")
+    page.wait_for_function(f"{background} === '{dark}'")
+
+
+def test_section_menu_marks_the_section_in_view(new_page: NewPage) -> None:
+    page = new_page(viewport={"width": 1280, "height": 800})
+    create_event(page)
+    page.get_by_role("navigation", name="Plan sections").get_by_role("link", name="Vendors").click()
+    expect(page.locator(".section-nav a[href='#vendors']")).to_have_attribute(
+        "aria-current", "location"
+    )
+
+
 def test_timeline_downloads_as_a_calendar_file(page: Page) -> None:
     create_event(page)
     with page.expect_download() as download:
-        page.get_by_role("link", name="Add these dates to your calendar").click()
+        page.get_by_role("link", name="Add to calendar").click()
     assert download.value.suggested_filename == "utsav-plan.ics"
     assert download.value.path().read_text(encoding="utf-8").startswith("BEGIN:VCALENDAR")
 

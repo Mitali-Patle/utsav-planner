@@ -72,7 +72,7 @@
   </form>
   {% endif %}
   {% if ideas %}
-  <ul class="ideas{{ ' ideas-ai' if ai and not ai.fallback else '' }}">
+  <ul class="ideas{{ ' ideas-ai' if ai and not ai.fallback else '' }}{{ ' ideas-new' if focus_ideas else '' }}">
     {% for idea in ideas %}
     <li><h3>{{ idea.title }}</h3><p>{{ idea.description }}</p><p class="why">Why: {{ idea.why }}</p></li>
     {% endfor %}
@@ -153,7 +153,6 @@
 
 <section id="timeline" aria-labelledby="timeline-heading">
   <h2 id="timeline-heading">Timeline</h2>
-  <p class="calendar-export"><a href="/events/{{ event.id }}/calendar.ics" id="calendar-export" download>Add these dates to your calendar</a> (.ics file: the event day, unfinished tasks and vendors still to book)</p>
   {% for month in plan.task_months %}
   <h3 class="month">{{ month.label }}</h3>
   <ol class="tasks">

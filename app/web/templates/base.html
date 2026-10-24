@@ -7,6 +7,7 @@
   <meta name="htmx-config" content='{"includeIndicatorStyles": false, "attributesToSettle": ["class", "width", "height"], "responseHandling": [{"code": "204", "swap": false}, {"code": "[23]..", "swap": true}, {"code": "(404|409|422)", "swap": true, "error": false}, {"code": "...", "swap": false, "error": true}]}'>
   <title>{% block title %}Utsav Planner - AI Indian Event Planning{% endblock %}</title>
   <link rel="icon" type="image/svg+xml" href="/static/img/favicon.svg">
+  <script src="/static/js/theme.js"></script>
   <link rel="stylesheet" href="/static/css/app.css">
   <script src="/static/vendor/htmx.min.js" defer></script>
   {% block head %}{% endblock %}
@@ -26,7 +27,16 @@
           <span>Utsav <span class="brand-sub">Planner</span></span>
         </a>
         <ul class="site-nav-links" role="list">
-          <li><a href="/">Home</a></li>
+          <li><a href="/#your-plans">My plans</a></li>
+          <li>
+            <button type="button" id="theme-toggle" class="theme-toggle" hidden aria-label="Theme: Auto. Change theme">
+              <svg class="theme-icon theme-icon-auto" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="8" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="M12 4a8 8 0 0 1 0 16z" fill="currentColor"/></svg>
+              <svg class="theme-icon theme-icon-light" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="4.5" fill="currentColor"/><g stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M12 2.5v2.5M12 19v2.5M2.5 12H5M19 12h2.5M5.3 5.3l1.8 1.8M16.9 16.9l1.8 1.8M5.3 18.7l1.8-1.8M16.9 7.1l1.8-1.8"/></g></svg>
+              <svg class="theme-icon theme-icon-dark" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M20 14.5A8 8 0 0 1 9.5 4a8 8 0 1 0 10.5 10.5z" fill="currentColor"/></svg>
+              <span class="theme-label">Auto</span>
+            </button>
+          </li>
+          <li><a href="/#create-heading" class="button button-primary nav-cta">New plan</a></li>
         </ul>
       </nav>
     </div>

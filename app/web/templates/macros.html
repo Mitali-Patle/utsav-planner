@@ -1,5 +1,5 @@
 {#- Form field with its label, optional hint and error, wired for screen readers. -#}
-{% macro field(form, name, label, type="text", prefix="f", hint=None, attrs={}) -%}
+{% macro field(form, name, label, type="text", prefix="f", hint=None, attrs={}, adorn=None) -%}
 {%- set field_id = prefix ~ "-" ~ name -%}
 {%- set error = form.errors.get(name) -%}
 {%- set described = [field_id ~ "-hint" if hint else "", field_id ~ "-error" if error else ""] | select | join(" ") -%}
@@ -9,7 +9,9 @@
   {% if type == "textarea" -%}
   <textarea id="{{ field_id }}" name="{{ name }}"{% for key, value in attrs.items() %} {{ key }}="{{ value }}"{% endfor %}{% if error %} aria-invalid="true"{% endif %}{% if described %} aria-describedby="{{ described }}"{% endif %}>{{ form.values.get(name, "") }}</textarea>
   {%- else -%}
+  {% if adorn %}<div class="input-adorned"><span class="adornment" aria-hidden="true">{{ adorn }}</span>{% endif %}
   <input id="{{ field_id }}" name="{{ name }}" type="{{ type }}" value="{{ form.values.get(name, '') }}"{% for key, value in attrs.items() %} {{ key }}="{{ value }}"{% endfor %}{% if error %} aria-invalid="true"{% endif %}{% if described %} aria-describedby="{{ described }}"{% endif %}>
+  {%- if adorn %}</div>{% endif %}
   {%- endif %}
   {% if error %}<p id="{{ field_id }}-error" class="field-error">{{ error }}</p>{% endif %}
 </div>

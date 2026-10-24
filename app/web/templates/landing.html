@@ -9,13 +9,25 @@
     with a reason for every suggestion.</p>
 </div>
 
+{% if events %}
+<section id="your-plans" aria-labelledby="events-heading" class="your-plans">
+  <h2 id="events-heading">Your plans</h2>
+  <ul class="plan-cards" role="list">
+    {% for event in events %}
+    <li class="plan-card">
+      <p class="plan-card-type">{{ event.type_label }} in {{ event.city }}</p>
+      <h3><a href="/events/{{ event.id }}">{{ event.title }}</a></h3>
+      <p class="plan-card-meta">{{ event.date }} &middot; {{ event.guests }} guests</p>
+      <p class="plan-card-countdown">{% if event.days_left > 0 %}<strong>{{ event.days_left }}</strong> {{ 'day' if event.days_left == 1 else 'days' }} to go{% elif event.days_left == 0 %}<strong>Today</strong>{% else %}{{ -event.days_left }} {{ 'day' if event.days_left == -1 else 'days' }} ago{% endif %}</p>
+    </li>
+    {% endfor %}
+  </ul>
+</section>
+{% endif %}
+
 <div class="landing-grid">
 <section aria-labelledby="create-heading" class="landing-main">
   <h2 id="create-heading">Start a new plan</h2>
-  <p class="examples-intro">Start from an example, or fill in your own. You can change anything before creating the plan.</p>
-  <ul class="examples" role="list">
-    {% for name, label in examples %}<li><a href="/?example={{ name }}#create-heading">{{ label }}</a></li>{% endfor %}
-  </ul>
   {% if form.errors %}
   <div class="notice notice-error" role="alert">
     {% if form.errors | length > 1 or not form.errors.get("form") %}<p>Please check the highlighted fields.</p>{% endif %}
@@ -24,68 +36,83 @@
   {% endif %}
   <form method="post" action="/events" class="create-form" novalidate>
     {{ csrf(csrf_token) }}
-    <fieldset{% if form.errors.get("event_type") %} aria-describedby="f-event_type-error"{% endif %}>
-      <legend>What are you planning?</legend>
-      {% for value, label in event_types %}
-      <div class="choice">
-        <input type="radio" id="type-{{ value }}" name="event_type" value="{{ value }}"{% if form.values.get("event_type") == value %} checked{% endif %} required>
-        <label for="type-{{ value }}">{{ label }}</label>
-      </div>
-      {% endfor %}
-      {% if form.errors.get("event_type") %}<p id="f-event_type-error" class="field-error">Choose the kind of event.</p>{% endif %}
-    </fieldset>
-
-    {{ field(form, "title", "Event name", attrs={"maxlength": "80", "required": "required", "autocomplete": "off"}) }}
-    {{ field(form, "city", "City", attrs={"maxlength": "60", "required": "required", "autocomplete": "address-level2"}) }}
-    {{ field(form, "event_date", "Event date", type="date", attrs={"min": today, "required": "required"}) }}
-    {{ field(form, "guest_count", "Number of guests", type="number", attrs={"min": "1", "max": "5000", "inputmode": "numeric", "required": "required"}) }}
-    {{ field(form, "total_budget_inr", "Total budget in rupees", type="number", hint="Whole rupees, from ₹1,000.", attrs={"min": "1000", "inputmode": "numeric", "required": "required"}) }}
-    {{ field(form, "preferences", "Preferences (optional)", type="textarea", hint="Theme, food, culture, anything that matters, up to 500 characters. An AI model reads this, so leave out phone numbers and other personal details.", attrs={"maxlength": "500", "rows": "3"}) }}
-
-    <fieldset>
-      <legend>Functions to include (optional)</legend>
-      <p class="field-hint sub-events-hint">Only the functions for the event type you chose are used.</p>
-      {% for group in sub_events %}
-      <fieldset class="sub-events" data-event-type="{{ group.event_type }}">
-        <legend>{{ group.label }}</legend>
-        {% for value, label in group.options %}
-        <div class="choice">
-          <input type="checkbox" id="sub-{{ group.event_type }}-{{ value }}" name="sub_events" value="{{ value }}"{% if value in form.values.get("sub_events", []) %} checked{% endif %}>
-          <label for="sub-{{ group.event_type }}-{{ value }}">{{ label }}</label>
+    <fieldset class="form-step"{% if form.errors.get("event_type") %} aria-describedby="f-event_type-error"{% endif %}>
+      <legend><span class="step-number" aria-hidden="true">1</span> What are you planning?</legend>
+      <div class="type-cards">
+        {% for value, label, hint in event_types %}
+        <div class="type-card">
+          <input type="radio" id="type-{{ value }}" name="event_type" value="{{ value }}" aria-describedby="type-{{ value }}-hint"{% if form.values.get("event_type") == value %} checked{% endif %} required>
+          <label for="type-{{ value }}">{{ label }}</label>
+          <p id="type-{{ value }}-hint" class="type-card-hint">{{ hint }}</p>
         </div>
         {% endfor %}
-      </fieldset>
-      {% endfor %}
+      </div>
+      {% if form.errors.get("event_type") %}<p id="f-event_type-error" class="field-error">Choose the kind of event.</p>{% endif %}
+      <ul class="samples" role="list">
+        {% for name, label in examples %}
+        <li class="sample" data-event-type="{{ name }}"><a href="/?example={{ name }}#create-heading">Fill in a sample {{ label | lower }}</a></li>
+        {% endfor %}
+      </ul>
     </fieldset>
 
-    <button type="submit" class="button-primary">Create my plan</button>
+    <fieldset class="form-step">
+      <legend><span class="step-number" aria-hidden="true">2</span> The details</legend>
+      {{ field(form, "title", "Event name", attrs={"maxlength": "80", "required": "required", "autocomplete": "off"}) }}
+      <div class="field-row">
+        {{ field(form, "city", "City", attrs={"maxlength": "60", "required": "required", "autocomplete": "address-level2"}) }}
+        {{ field(form, "event_date", "Event date", type="date", attrs={"min": today, "required": "required"}) }}
+      </div>
+      <div class="field-row">
+        {{ field(form, "guest_count", "Number of guests", type="number", attrs={"min": "1", "max": "5000", "inputmode": "numeric", "required": "required"}) }}
+        {{ field(form, "total_budget_inr", "Total budget in rupees", type="number", hint="Whole rupees, from ₹1,000.", adorn="₹", attrs={"min": "1000", "inputmode": "numeric", "required": "required"}) }}
+      </div>
+    </fieldset>
+
+    <fieldset class="form-step">
+      <legend><span class="step-number" aria-hidden="true">3</span> Make it yours <span class="legend-note">(optional)</span></legend>
+      {{ field(form, "preferences", "Preferences", type="textarea", hint="Theme, food, culture, anything that matters, up to 500 characters. An AI model reads this, so leave out phone numbers and other personal details.", attrs={"maxlength": "500", "rows": "3"}) }}
+      <fieldset class="functions">
+        <legend>Functions to include</legend>
+        <p class="field-hint sub-events-hint">Choose the kind of event first to see its functions.</p>
+        {% for group in sub_events %}
+        <fieldset class="sub-events" data-event-type="{{ group.event_type }}">
+          <legend>{{ group.label }}</legend>
+          <div class="chips">
+            {% for value, label in group.options %}
+            <div class="chip">
+              <input type="checkbox" id="sub-{{ group.event_type }}-{{ value }}" name="sub_events" value="{{ value }}"{% if value in form.values.get("sub_events", []) %} checked{% endif %}>
+              <label for="sub-{{ group.event_type }}-{{ value }}">{{ label }}</label>
+            </div>
+            {% endfor %}
+          </div>
+        </fieldset>
+        {% endfor %}
+      </fieldset>
+    </fieldset>
+
+    <div class="form-submit">
+      <button type="submit" class="button-primary">Create my plan</button>
+      <p class="field-hint">Takes a few seconds. No sign-up: your plans stay private to this browser.</p>
+    </div>
   </form>
 </section>
 
 <div class="landing-side">
-<section aria-labelledby="included-heading" class="panel">
-  <h2 id="included-heading">In every plan</h2>
-  <ul class="included" role="list">
-    <li><strong>Budget</strong> split across the lines Indian events need, every rupee computed by code.</li>
-    <li><strong>Timeline</strong> of dated tasks that move when the date moves.</li>
-    <li><strong>Vendor checklist</strong> with who to book first, and by when.</li>
-    <li><strong>Ideas</strong> for your city, season and preferences, each with a reason.</li>
-  </ul>
-  <p class="principle">AI suggests and explains. Code calculates. Nothing in your plan changes until you approve it.</p>
-</section>
-
-<section aria-labelledby="events-heading" class="panel">
-  <h2 id="events-heading">Your events</h2>
-  {% if events %}
-  <ul class="event-list">
-    {% for event in events %}
-    <li><a href="/events/{{ event.id }}">{{ event.title }}</a> <span>{{ event.type_label }}, {{ event.date }}</span></li>
-    {% endfor %}
-  </ul>
-  {% else %}
-  <p>No events yet. Your plans are private to this browser.</p>
+  <section class="panel">
+    <h2 id="how-heading">How it works</h2>
+    <ol class="how" role="list">
+      <li><strong>Tell us about the event.</strong> Type, city, date, guests and budget.</li>
+      <li><strong>Get a complete plan at once.</strong> A budget split across the lines Indian events need, dated tasks and a vendor checklist.</li>
+      <li><strong>AI tailors it to you.</strong> Ideas for your city, season and preferences, each with a reason.</li>
+      <li><strong>Change it in your own words.</strong> "Budget is now ₹12,000, keep the cake." You see every effect first and approve it.</li>
+    </ol>
+  </section>
+  {% if not events %}
+  <section id="your-plans" class="panel" aria-labelledby="events-heading">
+    <h2 id="events-heading">Your plans</h2>
+    <p>No plans yet. Plans you create appear here, private to this browser.</p>
+  </section>
   {% endif %}
-</section>
 </div>
 </div>
 {% endblock %}

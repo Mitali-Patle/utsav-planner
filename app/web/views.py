@@ -38,6 +38,11 @@ EVENT_TYPE_LABELS: Mapping[EventType, str] = {
     EventType.BIRTHDAY: "Birthday",
     EventType.COMMUNITY: "Community event",
 }
+EVENT_TYPE_HINTS: Mapping[EventType, str] = {
+    EventType.WEDDING: "Haldi, mehendi, sangeet, the ceremony and the reception",
+    EventType.BIRTHDAY: "Cake, games and return gifts, at home or at a venue",
+    EventType.COMMUNITY: "Pujas, festivals and society events on a shared fund",
+}
 REASON_LABELS: Mapping[ChangeReason, str] = {
     ChangeReason.UNCHANGED: "No change",
     ChangeReason.ADDED: "New budget line",
@@ -200,7 +205,7 @@ def landing_context(events: Sequence[StoredEvent], form: FormState, today: date)
         "form": form,
         "today": today.isoformat(),
         "examples": [(name, example.label) for name, example in EXAMPLES.items()],
-        "event_types": [(t.value, EVENT_TYPE_LABELS[t]) for t in EventType],
+        "event_types": [(t.value, EVENT_TYPE_LABELS[t], EVENT_TYPE_HINTS[t]) for t in EventType],
         "sub_events": [
             {
                 "event_type": t.value,
@@ -209,15 +214,7 @@ def landing_context(events: Sequence[StoredEvent], form: FormState, today: date)
             }
             for t in EventType
         ],
-        "events": [
-            {
-                "id": e.id,
-                "title": e.plan.title,
-                "type_label": EVENT_TYPE_LABELS[e.plan.event_type],
-                "date": format_date(e.plan.event_date),
-            }
-            for e in events
-        ],
+        "events": [_event_summary(e, today) for e in events],
     }
 
 

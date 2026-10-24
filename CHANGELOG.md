@@ -22,6 +22,7 @@ All notable changes to Utsav Planner will be documented in this file.
 - The new-event form reminds users that an AI model reads their preferences, so personal details should be left out.
 
 ### Changed
+- UX pass: a wider layout; a header with "My plans", a theme switch (Auto, Light, Dark) and a "New plan" button; your plans as cards with a countdown at the top of the home page; a three-step new-plan form with event type cards, a sample for the chosen type, side-by-side fields and functions as chips; "How it works" in place of the developer note; "Add to calendar" and "Print or save as PDF" together in the event banner; a side menu of sections on wide screens that marks the section in view; gentle entrance and update animations, off with reduced motion.
 - New look inspired by Kalamkari chintz and Phulkari embroidery: ivory, indigo and madder palette, serif headings, a Phulkari diamond border, an event banner with a countdown, budget bars per line, sticky section navigation, a two-column landing page with one-click examples, a timeline grouped by month along a stitched thread, quieter toggles for protect and done, and compact budget rows on phones. Light and dark themes keep every tested contrast pair.
 - The change history shows what each change did (for example "Total budget ₹15,000 → ₹12,000", "3 budget lines changed").
 - Pages load with less database work (one transaction for the dashboard, three for a change request).

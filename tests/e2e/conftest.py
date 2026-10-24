@@ -130,6 +130,8 @@ def new_page(browser: Browser, base_url: str) -> Iterator[NewPage]:
     contexts: list[BrowserContext] = []
 
     def open_page(**options: Any) -> Page:
+        # Reduced motion keeps entrance animations from racing the checks.
+        options = {"reduced_motion": "reduce", **options}
         context = browser.new_context(base_url=base_url, locale="en-IN", **options)
         contexts.append(context)
         return context.new_page()
