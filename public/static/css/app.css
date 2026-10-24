@@ -108,7 +108,7 @@
   --radius-lg: 10px;
   --shadow-sm: 0 1px 2px rgb(30 42 49 / 0.06);
   --shadow-md: 0 6px 20px -8px rgb(140 28 37 / 0.18), 0 2px 6px -2px rgb(30 42 49 / 0.08);
-  --layout-max-width: 1320px;
+  --layout-max-width: 1480px;
   --nav-height: 3.25rem;
 }
 
@@ -314,7 +314,7 @@ body {
   width: 100%;
   max-width: var(--layout-max-width);
   margin-inline: auto;
-  padding-inline: var(--space-6);
+  padding-inline: clamp(var(--space-6), 3vw, var(--space-12));
 }
 
 @media (max-width: 480px) {
@@ -1055,93 +1055,98 @@ legend {
    Landing page
    ======================================================================== */
 
-.landing-hero {
-  max-width: 46rem;
-  margin-bottom: var(--space-10);
+/* Top of the home page: the pitch beside how it works (first visit) or your plans */
+.landing-top {
+  display: grid;
+  gap: var(--space-8);
+  align-items: center;
+  margin-bottom: var(--space-12);
+}
+
+@media (min-width: 1000px) {
+  .landing-top {
+    grid-template-columns: minmax(0, 1fr) minmax(24rem, 34rem);
+    gap: var(--space-16);
+  }
 }
 
 .landing-hero h1 {
   margin-bottom: var(--space-4);
 }
 
-.landing-grid {
-  display: grid;
-  gap: var(--space-10);
-  align-items: start;
+.landing-hero .lede {
+  max-width: 34rem;
 }
 
-@media (min-width: 1000px) {
-  .landing-grid {
-    grid-template-columns: minmax(0, 1fr) minmax(18rem, 24rem);
-    gap: var(--space-12);
-  }
-
-  .landing-side {
-    position: sticky;
-    top: var(--space-6);
-  }
+.hero-note {
+  margin: var(--space-6) 0 0;
+  font-size: var(--font-size-sm);
+  color: var(--color-text-muted);
 }
 
-.landing-side {
-  display: grid;
-  gap: var(--space-6);
+/* Your plans: one row per plan, whole row clickable */
+.plans-panel h2 {
+  margin-bottom: var(--space-2);
 }
 
-/* Your plans: cards to pick up where you left off */
-.your-plans {
-  margin-bottom: var(--space-12);
-}
-
-.plan-cards {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(min(100%, 16rem), 1fr));
-  gap: var(--space-4);
+.plan-list {
   list-style: none;
   margin: 0;
   padding: 0;
+  max-height: 22rem;
+  overflow-y: auto;
 }
 
-.plan-card {
+.plan-row {
   position: relative;
   display: flex;
-  flex-direction: column;
-  gap: var(--space-1);
-  padding: var(--space-5) var(--space-5) var(--space-4);
-  background: var(--color-surface);
-  border: 1px solid var(--color-border-subtle);
-  border-top: 3px solid var(--color-hero-bg);
-  border-radius: var(--radius-md);
-  transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-4);
+  padding: var(--space-4) var(--space-2);
+  margin-inline: calc(-1 * var(--space-2));
+  border-bottom: 1px solid var(--color-border-subtle);
+  border-radius: var(--radius-sm);
+  transition: background-color 0.15s ease;
 }
 
-.plan-card:hover,
-.plan-card:focus-within {
-  transform: translateY(-2px);
-  box-shadow: var(--shadow-md);
-  border-color: var(--color-border);
+.plan-row:last-child {
+  border-bottom: none;
 }
 
-.plan-card h3 {
-  margin: 0;
-  font-size: var(--font-size-xl);
+.plan-row:hover,
+.plan-row:focus-within {
+  background: var(--color-surface-subtle);
 }
 
-/* The whole card is the link's target; the link text stays the accessible name */
-.plan-card h3 a {
+.plan-row-main {
+  min-width: 0;
+}
+
+.plan-row-title {
+  font-family: var(--font-family-display);
+  font-size: var(--font-size-lg);
+  font-weight: 600;
   color: var(--color-heading);
   text-decoration: none;
 }
 
-.plan-card h3 a::after {
+.plan-row-title::after {
   content: "";
   position: absolute;
   inset: 0;
-  border-radius: var(--radius-md);
 }
 
-.plan-card-type,
-.plan-card-countdown {
+.plan-row-meta {
+  margin: var(--space-1) 0 0;
+  font-size: var(--font-size-sm);
+  color: var(--color-text-muted);
+}
+
+.plan-row-days {
   margin: 0;
+  flex-shrink: 0;
+  text-align: right;
   font-size: var(--font-size-xs);
   font-weight: 700;
   letter-spacing: 0.08em;
@@ -1149,24 +1154,27 @@ legend {
   color: var(--color-text-muted);
 }
 
-.plan-card-meta {
-  margin: 0 0 var(--space-3);
-  color: var(--color-text-muted);
-  font-size: var(--font-size-sm);
+.plan-row-days strong {
+  display: block;
+  font-family: var(--font-family-display);
+  font-size: var(--font-size-2xl);
+  letter-spacing: 0;
+  line-height: 1;
+  color: var(--color-primary);
 }
 
-.plan-card-countdown {
-  margin-top: auto;
-  padding-top: var(--space-3);
+/* How it works as a row of four steps, for returning visitors */
+.how-strip {
+  margin-top: var(--space-12);
+  padding-top: var(--space-8);
   border-top: 1px solid var(--color-border-subtle);
 }
 
-.plan-card-countdown strong {
-  font-family: var(--font-family-display);
-  font-size: var(--font-size-xl);
-  letter-spacing: 0;
-  color: var(--color-primary);
-  margin-right: var(--space-1);
+@media (min-width: 900px) {
+  .how-strip .how {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: var(--space-8);
+  }
 }
 
 /* The new-plan form, in numbered steps */
@@ -1194,6 +1202,27 @@ legend {
 
 .form-step + .form-step {
   padding-top: var(--space-4);
+}
+
+@media (min-width: 1200px) {
+  .create-form {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    column-gap: var(--space-12);
+    padding: var(--space-10);
+  }
+
+  .create-form > :first-of-type,
+  .form-submit {
+    grid-column: 1 / -1;
+  }
+
+  .create-form > .form-step + .form-step {
+    padding-top: var(--space-4);
+  }
+
+  .create-form > .form-step:not(:first-of-type) {
+    border-bottom: none;
+  }
 }
 
 .form-step > legend {
@@ -1407,6 +1436,7 @@ legend {
   outline-offset: 2px;
 }
 
+.create-form:not(:has([name="event_type"]:checked)) .sub-events,
 .create-form:has([name="event_type"]:checked) .sub-events,
 .create-form:has([name="event_type"]:checked) .sub-events-hint {
   display: none;
@@ -2222,13 +2252,12 @@ td[data-label="Status"] form label {
   }
 }
 
-.landing-hero,
+.landing-top,
 .event-header {
   animation: rise 0.5s cubic-bezier(0.2, 0.7, 0.2, 1) both;
 }
 
-.your-plans,
-.landing-grid,
+.landing-main,
 .dashboard-layout {
   animation: rise 0.6s 0.1s cubic-bezier(0.2, 0.7, 0.2, 1) both;
 }

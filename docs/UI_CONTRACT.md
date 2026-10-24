@@ -73,7 +73,7 @@ Every action must work **without JavaScript**.
 | `print-plan` | `dashboard.html` | "Print or save as PDF"; `hidden` until `/static/js/print.js` shows it and calls `window.print()` |
 | `calendar-export` | `dashboard.html` | "Add to calendar": the `.ics` download, in the event banner |
 | `theme-toggle` | `base.html` | Header switch cycling Auto, Light and Dark; `theme.js` (loaded in `<head>`, no `defer`) applies the saved choice before paint as `data-theme` on `<html>` |
-| `your-plans` | `landing.html` | "Your plans": cards at the top when the visitor has plans, otherwise a panel; the header's "My plans" links here |
+| `your-plans` | `landing.html` | "Your plans": a list beside the headline when the visitor has plans, otherwise a one-line note under it; the header's "My plans" links here |
 | `type-{type}`, `type-{type}-hint` | `landing.html` | Event type cards (radio plus description); a "Fill in a sample …" link for the chosen type appears below them through CSS |
 | `ideas-heading` | `plan_area.html` | Gets `tabindex="-1"` and `autofocus` when `focus_ideas` is true, so focus lands on the new ideas |
 | `{panel}-sent`, `{panel}-answer` | `ai_panel.html` | Headings naming the panel's data regions; `{panel}` is `plan-ai`, `change-ai` or `alternatives-ai`, so several panels can share a page |
@@ -175,7 +175,7 @@ These labels are an honesty rule (AGENTS.md): AI output is labelled, non-AI outp
 | `ideas`, `ideas-ai`, `summary`, `budget-meter`, `meter`, `meter-over`, `budget-table`, `month`, `tasks` (`li.done`), `task-title`, `task-due`, `actions`, `toggle` | Plan sections; `meter` is a decorative `<progress>` (the amounts are in the text) |
 | `event-header-main`, `event-header-side`, `event-meta`, `event-actions`, `banner-button`, `countdown`, `countdown-number`, `kicker` | Dashboard banner |
 | `dashboard-layout`, `dashboard-main`, `section-nav` (`a[aria-current]`), `rail-cta` | Section menu: a sticky bar below 1100 px, a side rail above; `sections.js` sets `aria-current="location"` on the section in view |
-| `landing-hero`, `landing-grid`, `landing-main`, `landing-side`, `panel`, `how`, `your-plans`, `plan-cards`, `plan-card`, `plan-card-type`, `plan-card-meta`, `plan-card-countdown` | Landing page |
+| `landing-top`, `landing-hero`, `hero-note`, `landing-main`, `panel`, `how-panel`, `plans-panel`, `plan-list`, `plan-row`, `plan-row-main`, `plan-row-title`, `plan-row-meta`, `plan-row-days`, `how`, `how-strip` | Landing page: the headline beside "How it works" (first visit) or "Your plans"; "How it works" moves to a four-step row at the bottom once there are plans (`partials/how_it_works.html`) |
 | `form-step`, `step-number`, `legend-note`, `type-cards`, `type-card`, `type-card-hint`, `samples`, `sample[data-event-type]`, `field-row`, `input-adorned`, `adornment`, `functions`, `chips`, `chip`, `form-submit` | New-plan form |
 | `site-brand`, `brand-mark`, `brand-sub`, `nav-cta`, `theme-toggle`, `theme-icon`, `theme-label` | Header |
 | `ideas-new` | Ideas just replaced by "Suggest different ideas"; they fade in one after another |

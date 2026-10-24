@@ -2,30 +2,38 @@
 {% from "macros.html" import field, csrf %}
 {% block title %}Plan your celebration - Utsav Planner{% endblock %}
 {% block content %}
+<div class="landing-top">
 <div class="landing-hero">
   <p class="kicker">Weddings &middot; Birthdays &middot; Community festivals</p>
   <h1>Plan your celebration</h1>
   <p class="lede">A budget, a timeline and a vendor checklist built in seconds, then tailored by AI,
     with a reason for every suggestion.</p>
+  {% if not events %}<p id="your-plans" class="hero-note">Your plans will appear here once you create one. No sign-up: they stay private to this browser.</p>{% endif %}
 </div>
 
 {% if events %}
-<section id="your-plans" aria-labelledby="events-heading" class="your-plans">
+<section id="your-plans" aria-labelledby="events-heading" class="panel plans-panel">
   <h2 id="events-heading">Your plans</h2>
-  <ul class="plan-cards" role="list">
+  <ul class="plan-list" role="list">
     {% for event in events %}
-    <li class="plan-card">
-      <p class="plan-card-type">{{ event.type_label }} in {{ event.city }}</p>
-      <h3><a href="/events/{{ event.id }}">{{ event.title }}</a></h3>
-      <p class="plan-card-meta">{{ event.date }} &middot; {{ event.guests }} guests</p>
-      <p class="plan-card-countdown">{% if event.days_left > 0 %}<strong>{{ event.days_left }}</strong> {{ 'day' if event.days_left == 1 else 'days' }} to go{% elif event.days_left == 0 %}<strong>Today</strong>{% else %}{{ -event.days_left }} {{ 'day' if event.days_left == -1 else 'days' }} ago{% endif %}</p>
+    <li class="plan-row">
+      <div class="plan-row-main">
+        <a href="/events/{{ event.id }}" class="plan-row-title">{{ event.title }}</a>
+        <p class="plan-row-meta">{{ event.type_label }} in {{ event.city }} &middot; {{ event.date }} &middot; {{ event.guests }} guests</p>
+      </div>
+      <p class="plan-row-days">{% if event.days_left > 0 %}<strong>{{ event.days_left }}</strong> {{ 'day' if event.days_left == 1 else 'days' }} to go{% elif event.days_left == 0 %}<strong>Today</strong>{% else %}{{ -event.days_left }} {{ 'day' if event.days_left == -1 else 'days' }} ago{% endif %}</p>
     </li>
     {% endfor %}
   </ul>
 </section>
+{% else %}
+<section class="panel how-panel" aria-labelledby="how-heading">
+  <h2 id="how-heading">How it works</h2>
+  {% include "partials/how_it_works.html" %}
+</section>
 {% endif %}
+</div>
 
-<div class="landing-grid">
 <section aria-labelledby="create-heading" class="landing-main">
   <h2 id="create-heading">Start a new plan</h2>
   {% if form.errors %}
@@ -92,27 +100,15 @@
 
     <div class="form-submit">
       <button type="submit" class="button-primary">Create my plan</button>
-      <p class="field-hint">Takes a few seconds. No sign-up: your plans stay private to this browser.</p>
+      <p class="field-hint">Takes a few seconds. You can change everything afterwards.</p>
     </div>
   </form>
 </section>
 
-<div class="landing-side">
-  <section class="panel">
-    <h2 id="how-heading">How it works</h2>
-    <ol class="how" role="list">
-      <li><strong>Tell us about the event.</strong> Type, city, date, guests and budget.</li>
-      <li><strong>Get a complete plan at once.</strong> A budget split across the lines Indian events need, dated tasks and a vendor checklist.</li>
-      <li><strong>AI tailors it to you.</strong> Ideas for your city, season and preferences, each with a reason.</li>
-      <li><strong>Change it in your own words.</strong> "Budget is now ₹12,000, keep the cake." You see every effect first and approve it.</li>
-    </ol>
-  </section>
-  {% if not events %}
-  <section id="your-plans" class="panel" aria-labelledby="events-heading">
-    <h2 id="events-heading">Your plans</h2>
-    <p>No plans yet. Plans you create appear here, private to this browser.</p>
-  </section>
-  {% endif %}
-</div>
-</div>
+{% if events %}
+<section class="how-strip" aria-labelledby="how-heading">
+  <h2 id="how-heading">How it works</h2>
+  {% include "partials/how_it_works.html" %}
+</section>
+{% endif %}
 {% endblock %}
