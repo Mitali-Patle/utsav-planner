@@ -4,6 +4,7 @@ import re
 from collections.abc import Iterator
 from datetime import date, timedelta
 from html.parser import HTMLParser
+from pathlib import Path
 
 import pytest
 from fastapi.testclient import TestClient
@@ -257,6 +258,19 @@ def test_home_page_has_no_plan_list_and_a_picture_panel(engine: Engine) -> None:
     assert page.count('class="reel-slide">') == len(views.CELEBRATION_SLIDES)
     assert page.count('class="reel-slide" aria-hidden="true"') == len(views.CELEBRATION_SLIDES)
     assert '<script src="/static/js/reel.js" defer></script>' in page
+
+
+def test_every_celebration_photo_exists_is_small_and_described(engine: Engine) -> None:
+    folder = Path(__file__).resolve().parents[2] / "public" / "static" / "img" / "celebrations"
+    page = client_for(engine).get("/").text
+    photos = [slide for slide in views.CELEBRATION_SLIDES if slide.image]
+    assert photos, "at least one real photo"
+    for slide in photos:
+        assert slide.image is not None
+        assert (folder / slide.image).stat().st_size < 500_000, slide.image
+        assert slide.alt, f"{slide.image} has alt text"
+        assert f'alt="{slide.alt}"' in page
+        assert page.count(f"/static/img/celebrations/{slide.image}") == 2, "copy for the loop"
 
 
 def test_creating_events_is_limited_per_client(engine: Engine) -> None:

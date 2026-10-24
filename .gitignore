@@ -46,6 +46,8 @@ node_modules/
 *.jpg
 *.jpeg
 !docs/img/*.png
+# Home page photos only; screenshots and other images stay out.
+!public/static/img/celebrations/*.jpg
 screenshots/
 recordings/
 evidence/

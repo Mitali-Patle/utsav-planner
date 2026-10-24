@@ -22,6 +22,7 @@ All notable changes to Utsav Planner will be documented in this file.
 - The new-event form reminds users that an AI model reads their preferences, so personal details should be left out.
 
 ### Changed
+- The home page's picture panel opens with two photos (Diwali diyas and a Ganeshotsav pandal, from Pexels), each with alt text and the Phulkari band; the other frames stay placeholders.
 - The budget line "₹70,000 of ₹60,000 spent" shows the true share (116%) instead of stopping at 100%.
 - The new-plan form's error summary lists each problem as a link to its field, takes focus, and an empty number or date field now says "This field is required." instead of "Enter a whole number."
 - Error pages are titled by what happened ("Not found", "Please wait a moment") and offer "Go to My plans" and "Start a new plan".

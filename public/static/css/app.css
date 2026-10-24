@@ -1228,10 +1228,12 @@ legend {
   background: var(--reel-tone, var(--color-hero-bg));
 }
 
-/* Placeholders until photos are added: palette tones with the Phulkari band */
+/* Every frame has the Phulkari band along its foot; a frame without a photo shows a
+   palette tone */
 .reel-frame::before {
   content: "";
   position: absolute;
+  z-index: 1;
   inset: auto 0 0;
   height: var(--motif-height);
   background: var(--motif-phulkari) repeat-x left center;

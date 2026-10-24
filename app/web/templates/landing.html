@@ -21,7 +21,7 @@
       {% for copy in [1, 2] %}{% for slide in slides %}
       <li class="reel-slide"{% if copy == 2 %} aria-hidden="true"{% endif %}>
         <figure class="reel-frame reel-tone-{{ loop.index }}">
-          {% if slide.image %}<img src="/static/img/celebrations/{{ slide.image }}" alt="{{ slide.caption if copy == 1 else '' }}" width="600" height="450" loading="lazy">{% endif %}
+          {% if slide.image %}<img src="/static/img/celebrations/{{ slide.image }}" alt="{{ slide.alt if copy == 1 else '' }}" width="800" height="600"{% if not loop.first or copy == 2 %} loading="lazy"{% endif %}>{% endif %}
           <figcaption>{{ slide.caption }}</figcaption>
         </figure>
       </li>
