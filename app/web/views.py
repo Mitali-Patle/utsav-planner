@@ -7,6 +7,7 @@ ready-made values.
 from collections.abc import Mapping, Sequence
 from dataclasses import dataclass, field
 from datetime import date, timedelta
+from itertools import groupby
 from typing import Any
 
 from pydantic import ValidationError
@@ -253,6 +254,20 @@ def dashboard_context(
     }
 
 
+def percent_of(part: int, whole: int) -> int:
+    """Whole-number share of `whole` for a progress bar, capped at 100.
+
+    Examples:
+        >>> percent_of(2_500, 10_000), percent_of(1, 3), percent_of(15_000, 10_000)
+        (25, 33, 100)
+        >>> percent_of(500, 0), percent_of(0, 0)
+        (100, 0)
+    """
+    if whole <= 0:
+        return 100 if part > 0 else 0
+    return min(100, part * 100 // whole)
+
+
 def plan_sections(plan: EventPlan, today: date) -> dict[str, Any]:
     """Budget, expenses, timeline and vendors: the parts that change after each edit."""
     summary = summarize(plan)
@@ -268,6 +283,7 @@ def plan_sections(plan: EventPlan, today: date) -> dict[str, Any]:
                 "remaining": format_inr(row.remaining_inr),
                 "overspent": format_inr(row.overspent_by_inr) if row.overspent_by_inr else None,
                 "protected": row.protected,
+                "spent_percent": percent_of(row.spent_inr, row.allocated_inr),
             }
             for row in summary.categories
         ],
@@ -282,7 +298,10 @@ def plan_sections(plan: EventPlan, today: date) -> dict[str, Any]:
             }
             for e in plan.expenses
         ],
-        "tasks": [_task_row(t, names, today) for t in sort_tasks(plan.tasks)],
+        "task_months": [
+            {"label": label, "tasks": [_task_row(t, names, today) for t in tasks]}
+            for label, tasks in groupby(sort_tasks(plan.tasks), key=lambda t: f"{t.due_date:%B %Y}")
+        ],
         "vendors": [_vendor_row(v) for v in sorted(plan.vendors, key=lambda v: v.priority)],
     }
 
@@ -411,6 +430,7 @@ def _summary(summary: BudgetSummary, plan: EventPlan) -> dict[str, Any]:
         "over_plan": [c.name for c in summary.categories if c.overspent_by_inr],
         "per_guest": format_inr(summary.per_guest_inr),
         "guests": plan.guest_count,
+        "spent_percent": percent_of(summary.spent_inr, summary.total_inr),
     }
 
 

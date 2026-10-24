@@ -22,6 +22,7 @@ All notable changes to Utsav Planner will be documented in this file.
 - The new-event form reminds users that an AI model reads their preferences, so personal details should be left out.
 
 ### Changed
+- New look inspired by Kalamkari chintz and Phulkari embroidery: ivory, indigo and madder palette, serif headings, a Phulkari diamond border, an event banner with a countdown, budget bars per line, sticky section navigation, a two-column landing page with one-click examples, a timeline grouped by month along a stitched thread, quieter toggles for protect and done, and compact budget rows on phones. Light and dark themes keep every tested contrast pair.
 - The change history shows what each change did (for example "Total budget ₹15,000 → ₹12,000", "3 budget lines changed").
 - Pages load with less database work (one transaction for the dashboard, three for a change request).
 - Change requests that state an amount ("add a line for a magician, ₹5,000") are understood reliably by the backup AI models, and "postponed by 10 days" always moves the date later.

@@ -62,6 +62,12 @@ CONTRAST_PAIRS: tuple[tuple[str, str, float], ...] = (
     ("--color-primary-text", "--color-primary-hover", TEXT),
     ("--color-secondary-text", "--color-secondary", TEXT),
     ("--color-secondary-text", "--color-secondary-hover", TEXT),
+    *(("--color-heading", bg, TEXT) for bg in PLAIN),
+    *(("--color-secondary", bg, TEXT) for bg in PLAIN),
+    ("--color-hero-text", "--color-hero-bg", TEXT),
+    ("--color-hero-muted", "--color-hero-bg", TEXT),
+    *(("--color-meter", track, NON_TEXT) for track in ("--color-track",)),
+    ("--color-error", "--color-track", NON_TEXT),
     *(("--color-focus", bg, NON_TEXT) for bg in PLAIN),
     *(("--color-border", bg, NON_TEXT) for bg in ("--color-bg", "--color-surface")),
 )

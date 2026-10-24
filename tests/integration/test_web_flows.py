@@ -595,7 +595,9 @@ def test_over_budget_dashboard_offers_alternatives(engine: Engine) -> None:
         },
         follow_redirects=True,
     )
-    catering = re.search(r"Food and drinks</th>\s*<td[^>]*>₹([\d,]+)", page.text)
+    catering = re.search(
+        r"Food and drinks<progress[^>]*></progress></th>\s*<td[^>]*>₹([\d,]+)", page.text
+    )
     assert catering, "the catering line is shown"
     gap = 16_000 - int(catering.group(1).replace(",", ""))
     assert f"You are over budget by ₹{gap:,}." in page.text, "the gap is catering's overspend"

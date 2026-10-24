@@ -2,15 +2,20 @@
 {% from "macros.html" import field, csrf %}
 {% block title %}Plan your celebration - Utsav Planner{% endblock %}
 {% block content %}
-<h1>Plan your celebration</h1>
-<p class="lede">Weddings, birthdays and community events: a budget, a timeline and a vendor
-  checklist built in seconds, then tailored by AI, with a reason for every suggestion.</p>
+<div class="landing-hero">
+  <p class="kicker">Weddings &middot; Birthdays &middot; Community festivals</p>
+  <h1>Plan your celebration</h1>
+  <p class="lede">A budget, a timeline and a vendor checklist built in seconds, then tailored by AI,
+    with a reason for every suggestion.</p>
+</div>
 
-<section aria-labelledby="create-heading">
+<div class="landing-grid">
+<section aria-labelledby="create-heading" class="landing-main">
   <h2 id="create-heading">Start a new plan</h2>
-  <p class="examples">Or start from an example:
-    {% for name, label in examples %}<a href="/?example={{ name }}#create-heading">{{ label }}</a>{{ ", " if not loop.last else "." }}{% endfor %}
-    You can change anything before creating the plan.</p>
+  <p class="examples-intro">Start from an example, or fill in your own. You can change anything before creating the plan.</p>
+  <ul class="examples" role="list">
+    {% for name, label in examples %}<li><a href="/?example={{ name }}#create-heading">{{ label }}</a></li>{% endfor %}
+  </ul>
   {% if form.errors %}
   <div class="notice notice-error" role="alert">
     {% if form.errors | length > 1 or not form.errors.get("form") %}<p>Please check the highlighted fields.</p>{% endif %}
@@ -57,7 +62,19 @@
   </form>
 </section>
 
-<section aria-labelledby="events-heading">
+<div class="landing-side">
+<section aria-labelledby="included-heading" class="panel">
+  <h2 id="included-heading">In every plan</h2>
+  <ul class="included" role="list">
+    <li><strong>Budget</strong> split across the lines Indian events need, every rupee computed by code.</li>
+    <li><strong>Timeline</strong> of dated tasks that move when the date moves.</li>
+    <li><strong>Vendor checklist</strong> with who to book first, and by when.</li>
+    <li><strong>Ideas</strong> for your city, season and preferences, each with a reason.</li>
+  </ul>
+  <p class="principle">AI suggests and explains. Code calculates. Nothing in your plan changes until you approve it.</p>
+</section>
+
+<section aria-labelledby="events-heading" class="panel">
   <h2 id="events-heading">Your events</h2>
   {% if events %}
   <ul class="event-list">
@@ -69,4 +86,6 @@
   <p>No events yet. Your plans are private to this browser.</p>
   {% endif %}
 </section>
+</div>
+</div>
 {% endblock %}

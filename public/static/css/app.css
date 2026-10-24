@@ -1,143 +1,173 @@
 /**
  * Utsav Planner - Main Stylesheet
- * Hand-written CSS with accessible design tokens (WCAG 2.2 AA target).
+ * Hand-written CSS with accessible design tokens (WCAG 2.2 AA, checked by tests).
  * Strict CSP compliant: no external fonts, no inline styles required.
  *
- * Design direction: warm, festive Indian feel (marigold/saffron accents),
- * calm and highly readable, mobile-first from 320 px.
+ * Design direction: Indian textile heritage, kept quiet. A Kalamkari chintz palette
+ * (ivory cotton, indigo leaves, madder red, a touch of haldi) on calm editorial
+ * typography; the Phulkari diamond border is the one ornament, used sparingly.
  */
 
 :root {
-  /* Color tokens - Light theme default (WCAG AA >= 4.5:1 contrast against bg/surface) */
-  --color-bg: #fdf8f0;
-  --color-surface: #fffaf3;
-  --color-surface-subtle: #f5efe4;
-  --color-text: #1b1e23;
-  --color-text-muted: #4b5563;
-  --color-border: #767676;
-  --color-border-subtle: #e5ddd2;
+  /* Colour tokens - light theme (contrast pairs are tested in test_stylesheet.py) */
+  --color-bg: #f7f2e8;
+  --color-surface: #fffcf6;
+  --color-surface-subtle: #f1e9db;
+  --color-text: #1e2a31;
+  --color-text-muted: #55605f;
+  --color-heading: #1d3443;
+  --color-border: #8a7f70;
+  --color-border-subtle: #e4d9c6;
 
-  /* Brand accents - Indian celebration palette (saffron/marigold & block-print indigo) */
-  --color-primary: #b04f1e;
-  --color-primary-hover: #9c4221;
-  --color-primary-text: #ffffff;
-  --color-secondary: #2b6cb0;
-  --color-secondary-hover: #2c5282;
-  --color-secondary-text: #ffffff;
+  /* Madder red for actions, indigo for structure */
+  --color-primary: #9a1f2b;
+  --color-primary-hover: #7c1621;
+  --color-primary-text: #fffcf6;
+  --color-secondary: #1d3443;
+  --color-secondary-hover: #2a4a5c;
+  --color-secondary-text: #fffcf6;
+
+  /* Saffron and haldi: decoration only, never text */
+  --color-accent: #d9822b;
+  --color-accent-soft: #e9b46a;
 
   /* Interaction and feedback */
-  --color-focus: #6b46c1;
-  --color-success: #166534;
-  --color-warning: #92400e;
-  --color-error: #b91c1c;
-  --color-error-bg: #fef2f2;
-  --color-error-border: #fca5a5;
+  --color-focus: #23697f;
+  --color-success: #2f6b3a;
+  --color-warning: #8a4b0f;
+  --color-error: #b3261e;
+  --color-error-bg: #fbeceb;
+  --color-error-border: #e7a49f;
 
   /* AI transparency */
-  --color-ai-bg: #eff6ff;
-  --color-ai-border: #93c5fd;
-  --color-ai-text: #1e40af;
+  --color-ai-bg: #eef2f1;
+  --color-ai-border: #9fb7bd;
+  --color-ai-text: #1d3443;
 
-  /* "Why" spotlight — the product's core idea */
-  --color-why-bg: #fefce8;
-  --color-why-border: #e9b308;
-  --color-why-text: #854d0e;
+  /* "Why" spotlight: the product's core idea */
+  --color-why-bg: #fbf1de;
+  --color-why-border: #d9822b;
+  --color-why-text: #5c3a0c;
 
-  /* Notice backgrounds */
-  --color-notice-info-bg: #eff6ff;
-  --color-notice-info-border: #93c5fd;
-  --color-notice-success-bg: #f0fdf4;
-  --color-notice-success-border: #86efac;
+  /* Notices and badges */
+  --color-notice-info-bg: #eef2f1;
+  --color-notice-info-border: #9fb7bd;
+  --color-notice-success-bg: #eef5ec;
+  --color-notice-success-border: #9cc5a4;
+  --color-badge-warning-bg: #fbf1de;
+  --color-badge-warning-border: #e9b46a;
 
-  /* Badge variant */
-  --color-badge-warning-bg: #fffbeb;
-  --color-badge-warning-border: #fcd34d;
+  /* Event banner: a Phulkari madder field */
+  --color-hero-bg: #8c1c25;
+  --color-hero-text: #fffaf0;
+  --color-hero-muted: #f6d9c8;
+
+  /* Budget bars */
+  --color-track: #e4d9c6;
+  --color-meter: #1d3443;
+
+  /* Phulkari border: ivory, rose and haldi diamonds on madder, edged in gold */
+  --motif-phulkari: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='64' height='20'%3E%3Crect width='64' height='20' fill='%238c1c25'/%3E%3Crect y='1' width='64' height='1' fill='%23e3a547'/%3E%3Crect y='18' width='64' height='1' fill='%23e3a547'/%3E%3Cpath d='M8 4l5 6-5 6-5-6z' fill='%23f3e5c8'/%3E%3Cpath d='M24 4l5 6-5 6-5-6z' fill='%23d8467a'/%3E%3Cpath d='M40 4l5 6-5 6-5-6z' fill='%23e3a547'/%3E%3Cpath d='M56 4l5 6-5 6-5-6z' fill='%23f3e5c8'/%3E%3C/svg%3E");
+  --motif-height: 20px;
 
   /* Spacing scale */
-  --space-1: 0.25rem;   /* 4px */
-  --space-2: 0.5rem;    /* 8px */
-  --space-3: 0.75rem;   /* 12px */
-  --space-4: 1rem;      /* 16px */
-  --space-5: 1.25rem;   /* 20px */
-  --space-6: 1.5rem;    /* 24px */
-  --space-8: 2rem;      /* 32px */
-  --space-10: 2.5rem;   /* 40px */
-  --space-12: 3rem;     /* 48px */
-  --space-16: 4rem;     /* 64px */
+  --space-1: 0.25rem;
+  --space-2: 0.5rem;
+  --space-3: 0.75rem;
+  --space-4: 1rem;
+  --space-5: 1.25rem;
+  --space-6: 1.5rem;
+  --space-8: 2rem;
+  --space-10: 2.5rem;
+  --space-12: 3rem;
+  --space-16: 4rem;
 
-  /* Type scale */
+  /* Type: a system serif for display, the system sans for reading */
   --font-family-base: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Noto Sans", Ubuntu, Cantarell, sans-serif;
+  --font-family-display: "Iowan Old Style", "Palatino Linotype", Palatino, "Book Antiqua", "URW Palladio L", "P052", Georgia, serif;
   --font-family-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
-  --font-size-xs: 0.75rem;     /* 12px */
-  --font-size-sm: 0.875rem;    /* 14px */
-  --font-size-base: 1rem;       /* 16px */
-  --font-size-lg: 1.125rem;    /* 18px */
-  --font-size-xl: 1.25rem;     /* 20px */
-  --font-size-2xl: 1.5rem;     /* 24px */
-  --font-size-3xl: 1.875rem;   /* 30px */
-  --font-size-4xl: 2.25rem;    /* 36px */
+  --font-size-xs: 0.75rem;
+  --font-size-sm: 0.875rem;
+  --font-size-base: 1rem;
+  --font-size-lg: 1.125rem;
+  --font-size-xl: 1.25rem;
+  --font-size-2xl: 1.5rem;
+  --font-size-3xl: 1.875rem;
+  --font-size-4xl: 2.5rem;
+  --font-size-5xl: 3.25rem;
 
-  --line-height-tight: 1.25;
-  --line-height-base: 1.5;
-  --line-height-relaxed: 1.625;
+  --line-height-tight: 1.2;
+  --line-height-base: 1.55;
+  --line-height-relaxed: 1.65;
 
-  /* Layout and shapes */
-  --radius-sm: 4px;
-  --radius-md: 8px;
-  --radius-lg: 12px;
-  --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
-  --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
-  --layout-max-width: 1100px;
+  /* Shapes: softened woodblock corners, hairline borders, almost no shadow */
+  --radius-sm: 3px;
+  --radius-md: 6px;
+  --radius-lg: 10px;
+  --shadow-sm: 0 1px 2px rgb(30 42 49 / 0.06);
+  --shadow-md: 0 6px 20px -8px rgb(140 28 37 / 0.18), 0 2px 6px -2px rgb(30 42 49 / 0.08);
+  --layout-max-width: 1120px;
+  --nav-height: 3.25rem;
 }
 
 /* Dark theme tokens via prefers-color-scheme */
 @media (prefers-color-scheme: dark) {
   :root {
-    --color-bg: #1a1410;
-    --color-surface: #2d2418;
-    --color-surface-subtle: #3d332a;
-    --color-text: #faf5eb;
-    --color-text-muted: #c9bfad;
-    --color-border: #94a3b8;
-    --color-border-subtle: #4a3f34;
+    --color-bg: #15110f;
+    --color-surface: #1e1915;
+    --color-surface-subtle: #29221c;
+    --color-text: #f2ebdf;
+    --color-text-muted: #c4b8a6;
+    --color-heading: #f0dfc2;
+    --color-border: #8f8476;
+    --color-border-subtle: #3a3029;
 
-    --color-primary: #ed8936;
-    --color-primary-hover: #f6ad55;
-    --color-primary-text: #1a1410;
-    --color-secondary: #63b3ed;
-    --color-secondary-hover: #90cdf4;
-    --color-secondary-text: #1a1410;
+    --color-primary: #f08f8a;
+    --color-primary-hover: #f6aca7;
+    --color-primary-text: #15110f;
+    --color-secondary: #a9c6d3;
+    --color-secondary-hover: #c6dbe4;
+    --color-secondary-text: #15110f;
 
-    --color-focus: #b794f4;
-    --color-success: #68d391;
-    --color-warning: #fcd34d;
-    --color-error: #fca5a5;
-    --color-error-bg: #450a0a;
-    --color-error-border: #991b1b;
+    --color-accent: #d98a3d;
+    --color-accent-soft: #c99a52;
 
-    --color-ai-bg: #1e293b;
-    --color-ai-border: #3b82f6;
-    --color-ai-text: #93c5fd;
+    --color-focus: #7fc3d8;
+    --color-success: #8fd19e;
+    --color-warning: #f0b866;
+    --color-error: #f39b94;
+    --color-error-bg: #3a1714;
+    --color-error-border: #8c3a33;
 
-    --color-why-bg: #422006;
-    --color-why-border: #ca8a04;
-    --color-why-text: #fde68a;
+    --color-ai-bg: #1c2628;
+    --color-ai-border: #4d7480;
+    --color-ai-text: #bcd5dc;
 
-    --color-notice-info-bg: #1e293b;
-    --color-notice-info-border: #3b82f6;
-    --color-notice-success-bg: #064e3b;
-    --color-notice-success-border: #34d399;
+    --color-why-bg: #2e2213;
+    --color-why-border: #c98a3c;
+    --color-why-text: #f3d9a6;
 
-    --color-badge-warning-bg: #422006;
-    --color-badge-warning-border: #ca8a04;
+    --color-notice-info-bg: #1c2628;
+    --color-notice-info-border: #4d7480;
+    --color-notice-success-bg: #172a1c;
+    --color-notice-success-border: #4f8f5e;
+    --color-badge-warning-bg: #2e2213;
+    --color-badge-warning-border: #c98a3c;
 
-    --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.5);
-    --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.4), 0 2px 4px -2px rgb(0 0 0 / 0.4);
+    --color-hero-bg: #6e1820;
+    --color-hero-text: #fff6ea;
+    --color-hero-muted: #f2d3c4;
+
+    --color-track: #3a3029;
+    --color-meter: #a9c6d3;
+
+    --shadow-sm: 0 1px 2px rgb(0 0 0 / 0.4);
+    --shadow-md: 0 6px 20px -8px rgb(0 0 0 / 0.6), 0 2px 6px -2px rgb(0 0 0 / 0.4);
   }
 }
 
 /* ========================================================================
-   Box sizing and base resets
+   Base
    ======================================================================== */
 
 *,
@@ -164,12 +194,9 @@ body {
   color: var(--color-text);
   display: flex;
   flex-direction: column;
-  overflow-x: hidden;
+  /* clip, not hidden: hidden would make body a scroll container and break sticky */
+  overflow-x: clip;
 }
-
-/* ========================================================================
-   Accessible Skip Link
-   ======================================================================== */
 
 .skip-link {
   position: absolute;
@@ -191,18 +218,11 @@ body {
   outline-offset: 2px;
 }
 
-/* ========================================================================
-   WCAG Focus indicator - Never remove focus outlines
-   ======================================================================== */
-
+/* Never remove focus outlines */
 :focus-visible {
   outline: 3px solid var(--color-focus);
   outline-offset: 2px;
 }
-
-/* ========================================================================
-   Screen reader utility (visually hidden)
-   ======================================================================== */
 
 .sr-only {
   position: absolute;
@@ -215,10 +235,6 @@ body {
   white-space: nowrap;
   border: 0;
 }
-
-/* ========================================================================
-   prefers-reduced-motion overrides
-   ======================================================================== */
 
 @media (prefers-reduced-motion: reduce) {
   html {
@@ -235,31 +251,112 @@ body {
   }
 }
 
-/* ========================================================================
-   Layout container
-   ======================================================================== */
-
 .container {
   width: 100%;
   max-width: var(--layout-max-width);
   margin-inline: auto;
-  padding-inline: var(--space-4);
+  padding-inline: var(--space-6);
 }
 
 @media (max-width: 480px) {
   .container {
-    padding-inline: var(--space-3);
+    padding-inline: var(--space-4);
   }
 }
 
 /* ========================================================================
-   Landmark styles
+   Typography
+   ======================================================================== */
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: var(--font-family-display);
+  font-weight: 600;
+  line-height: var(--line-height-tight);
+  letter-spacing: -0.01em;
+  color: var(--color-heading);
+  margin-top: var(--space-8);
+  margin-bottom: var(--space-3);
+}
+
+h1:first-child,
+h2:first-child,
+h3:first-child {
+  margin-top: 0;
+}
+
+h1 { font-size: var(--font-size-4xl); }
+h2 { font-size: var(--font-size-2xl); }
+h3 { font-size: var(--font-size-lg); }
+h4 { font-size: var(--font-size-base); }
+
+@media (min-width: 768px) {
+  h1 { font-size: var(--font-size-5xl); }
+  h2 { font-size: var(--font-size-3xl); }
+  h3 { font-size: var(--font-size-xl); }
+}
+
+p {
+  margin-top: 0;
+  margin-bottom: var(--space-4);
+}
+
+a {
+  color: var(--color-primary);
+  text-underline-offset: 3px;
+  text-decoration-thickness: 1px;
+}
+
+a:hover {
+  color: var(--color-primary-hover);
+  text-decoration-thickness: 2px;
+}
+
+/* Small capitals used for labels, kickers and table headings */
+.kicker,
+caption,
+th[scope="col"],
+.summary dt,
+.month,
+.section-nav a,
+legend {
+  letter-spacing: 0.08em;
+}
+
+.kicker {
+  font-size: var(--font-size-xs);
+  font-weight: 700;
+  text-transform: uppercase;
+  color: var(--color-primary);
+  margin-bottom: var(--space-2);
+}
+
+.lede {
+  font-size: var(--font-size-lg);
+  color: var(--color-text-muted);
+  max-width: 36rem;
+  line-height: var(--line-height-relaxed);
+  margin-bottom: 0;
+}
+
+/* ========================================================================
+   Site header and footer
    ======================================================================== */
 
 .site-header {
-  border-bottom: 2px solid var(--color-primary);
+  position: relative;
   background-color: var(--color-surface);
-  padding-block: var(--space-3);
+  padding-block: var(--space-4);
+  margin-bottom: var(--motif-height);
+}
+
+/* The Phulkari border: the one ornament on the page */
+.site-header::after {
+  content: "";
+  position: absolute;
+  inset-inline: 0;
+  bottom: calc(-1 * var(--motif-height));
+  height: var(--motif-height);
+  background: var(--motif-phulkari) repeat-x left center;
 }
 
 .site-nav {
@@ -271,13 +368,35 @@ body {
 }
 
 .site-brand {
-  font-size: var(--font-size-xl);
-  font-weight: 700;
-  color: var(--color-primary);
-  text-decoration: none;
   display: inline-flex;
   align-items: center;
   gap: var(--space-2);
+  font-family: var(--font-family-display);
+  font-size: var(--font-size-2xl);
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  color: var(--color-heading);
+  text-decoration: none;
+}
+
+.site-brand:hover {
+  color: var(--color-heading);
+}
+
+.brand-mark {
+  width: 1.375rem;
+  height: 1.375rem;
+  color: var(--color-primary);
+  flex-shrink: 0;
+}
+
+.brand-mark-centre {
+  fill: var(--color-accent-soft);
+}
+
+.brand-sub {
+  font-weight: 400;
+  color: var(--color-text-muted);
 }
 
 .site-nav-links {
@@ -293,105 +412,87 @@ body {
   color: var(--color-text);
   text-decoration: none;
   font-weight: 500;
-  padding: var(--space-1) var(--space-2);
+  padding: var(--space-2) var(--space-3);
   border-radius: var(--radius-sm);
 }
 
 .site-nav-links a:hover {
   color: var(--color-primary);
+  background: var(--color-surface-subtle);
 }
 
 .site-main {
   flex: 1 0 auto;
-  padding-block: var(--space-6);
+  padding-block: var(--space-10) var(--space-16);
 }
 
 .site-footer {
-  border-top: 2px solid var(--color-primary);
+  border-top: 1px solid var(--color-border-subtle);
   background-color: var(--color-surface);
-  padding-block: var(--space-6);
+  padding-block: var(--space-8);
   color: var(--color-text-muted);
   font-size: var(--font-size-sm);
   margin-top: auto;
 }
 
-/* ========================================================================
-   Typography
-   ======================================================================== */
-
-h1, h2, h3, h4, h5, h6 {
-  line-height: var(--line-height-tight);
-  color: var(--color-text);
-  margin-top: var(--space-6);
-  margin-bottom: var(--space-3);
+.site-footer p {
+  margin: 0;
 }
 
-h1:first-child,
-h2:first-child,
-h3:first-child {
-  margin-top: 0;
-}
-
-h1 { font-size: var(--font-size-3xl); }
-h2 { font-size: var(--font-size-2xl); }
-h3 { font-size: var(--font-size-xl); }
-h4 { font-size: var(--font-size-lg); }
-
-@media (min-width: 768px) {
-  h1 { font-size: var(--font-size-4xl); }
-  h2 { font-size: var(--font-size-3xl); }
-  h3 { font-size: var(--font-size-2xl); }
-}
-
-p {
-  margin-top: 0;
-  margin-bottom: var(--space-4);
-}
-
-a {
-  color: var(--color-primary);
-  text-underline-offset: 3px;
-}
-
-a:hover {
-  color: var(--color-primary-hover);
+.status-region {
+  max-width: var(--layout-max-width);
+  width: 100%;
+  margin-inline: auto;
+  padding-inline: var(--space-6);
 }
 
 /* ========================================================================
-   Accessible tables - desktop
+   Tables
    ======================================================================== */
 
 table {
   width: 100%;
   border-collapse: collapse;
-  margin-block: var(--space-4);
+  margin-block: var(--space-4) var(--space-6);
   font-size: var(--font-size-sm);
+  font-variant-numeric: tabular-nums;
 }
 
 caption {
   text-align: left;
-  font-weight: 600;
-  font-size: var(--font-size-base);
+  font-size: var(--font-size-xs);
+  font-weight: 700;
+  text-transform: uppercase;
+  color: var(--color-text-muted);
   margin-bottom: var(--space-2);
-  color: var(--color-text);
 }
 
 th, td {
-  padding: var(--space-2) var(--space-3);
+  padding: var(--space-3);
   text-align: left;
+  vertical-align: middle;
   border-bottom: 1px solid var(--color-border-subtle);
 }
 
-th {
+th[scope="col"] {
+  font-size: var(--font-size-xs);
+  font-weight: 700;
+  text-transform: uppercase;
+  color: var(--color-text-muted);
+  border-bottom: 1px solid var(--color-border);
+  padding-block: var(--space-2);
+}
+
+th[scope="row"] {
   font-weight: 600;
-  background-color: var(--color-surface-subtle);
   color: var(--color-text);
 }
 
-/* ========================================================================
-   Responsive tables - mobile cards (below 640px)
-   ======================================================================== */
+tbody tr:hover {
+  background: var(--color-surface);
+}
 
+/* Below 640px every table row becomes a card */
 @media (max-width: 640px) {
   table,
   thead,
@@ -412,7 +513,7 @@ th {
     margin-bottom: var(--space-3);
     border: 1px solid var(--color-border-subtle);
     border-radius: var(--radius-md);
-    padding: var(--space-3);
+    padding: var(--space-3) var(--space-4);
     background: var(--color-surface);
   }
 
@@ -434,20 +535,20 @@ th {
 
   td::before {
     content: attr(data-label);
-    font-weight: 600;
+    font-weight: 700;
     flex-shrink: 0;
     margin-right: var(--space-3);
     text-align: left;
     color: var(--color-text-muted);
     font-size: var(--font-size-xs);
     text-transform: uppercase;
-    letter-spacing: 0.05em;
+    letter-spacing: 0.08em;
   }
 
   th[scope="row"] {
-    font-size: var(--font-size-base);
-    font-weight: 700;
-    color: var(--color-primary);
+    font-family: var(--font-family-display);
+    font-size: var(--font-size-lg);
+    color: var(--color-heading);
     text-align: left;
     display: block;
     padding-bottom: var(--space-2);
@@ -473,10 +574,52 @@ th {
   td form input:not([type="hidden"]) {
     width: 8rem;
   }
+
+  /* Budget lines stay compact: name and toggle, then three amounts side by side */
+  .budget-table tr {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    grid-template-areas:
+      "name name protect"
+      "planned spent left";
+    column-gap: var(--space-3);
+    align-items: center;
+  }
+
+  .budget-table th[scope="row"] {
+    grid-area: name;
+    border-bottom: none;
+  }
+
+  .budget-table td {
+    display: block;
+    text-align: left;
+    border-bottom: none;
+    padding-top: var(--space-2);
+  }
+
+  .budget-table td::before {
+    display: block;
+    margin: 0;
+  }
+
+  .budget-table td[data-label="Planned"] { grid-area: planned; }
+  .budget-table td[data-label="Spent"] { grid-area: spent; }
+  .budget-table td[data-label="Left"] { grid-area: left; }
+
+  .budget-table td[data-label="Protect"] {
+    grid-area: protect;
+    justify-self: end;
+    padding-top: 0;
+  }
+
+  .budget-table td[data-label="Protect"]::before {
+    content: none;
+  }
 }
 
 /* ========================================================================
-   Form controls accessibility foundations
+   Controls
    ======================================================================== */
 
 input, select, textarea, button {
@@ -485,33 +628,38 @@ input, select, textarea, button {
   line-height: inherit;
 }
 
+/* Default button: an indigo outline, like a block-printed frame */
 button, .button {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  min-height: 44px; /* Minimum accessible touch target */
-  padding: var(--space-2) var(--space-4);
-  border-radius: var(--radius-md);
+  gap: var(--space-2);
+  min-height: 44px;
+  padding: var(--space-2) var(--space-5);
+  border-radius: var(--radius-sm);
   font-weight: 600;
   cursor: pointer;
   text-decoration: none;
-  border: 1px solid transparent;
-  background: var(--color-surface-subtle);
-  color: var(--color-text);
-  transition: background-color 0.15s, color 0.15s;
+  border: 1.5px solid var(--color-secondary);
+  background: transparent;
+  color: var(--color-secondary);
+  transition: background-color 0.15s, color 0.15s, border-color 0.15s;
 }
 
 button:hover, .button:hover {
-  background: var(--color-border-subtle);
+  background: var(--color-surface-subtle);
 }
 
 .button-primary {
   background-color: var(--color-primary);
+  border-color: var(--color-primary);
   color: var(--color-primary-text);
+  letter-spacing: 0.02em;
 }
 
 .button-primary:hover {
   background-color: var(--color-primary-hover);
+  border-color: var(--color-primary-hover);
 }
 
 .button-secondary {
@@ -523,37 +671,24 @@ button:hover, .button:hover {
   background-color: var(--color-secondary-hover);
 }
 
-/* ========================================================================
-   Status messages: .notice, .notice-info, .notice-success, .notice-error
-   ======================================================================== */
-
-.notice {
-  padding: var(--space-3) var(--space-4);
-  border-radius: var(--radius-md);
-  border-left: 4px solid var(--color-border);
-  margin-block: var(--space-4);
-  font-weight: 500;
-  background: var(--color-surface);
+/* On/off controls (protect, done): small, quiet until pressed */
+.toggle {
+  min-height: 2.25rem;
+  padding: var(--space-1) var(--space-3);
+  font-size: var(--font-size-sm);
+  border: 1px solid var(--color-border);
+  color: var(--color-text);
 }
 
-.notice-info {
-  background: var(--color-notice-info-bg);
-  border-left-color: var(--color-secondary);
+.toggle[aria-pressed="true"] {
+  background: var(--color-secondary);
+  border-color: var(--color-secondary);
+  color: var(--color-secondary-text);
 }
 
-.notice-success {
-  background: var(--color-notice-success-bg);
-  border-left-color: var(--color-success);
+.toggle[aria-pressed="true"]:hover {
+  background: var(--color-secondary-hover);
 }
-
-.notice-error {
-  background: var(--color-error-bg);
-  border-left-color: var(--color-error);
-}
-
-/* ========================================================================
-   Form layout: .field, .field-invalid, .field-hint, .field-error, .choice
-   ======================================================================== */
 
 .field {
   margin-bottom: var(--space-5);
@@ -628,27 +763,58 @@ input[type="radio"] {
 fieldset {
   border: none;
   padding: 0;
-  margin: 0 0 var(--space-4);
+  margin: 0 0 var(--space-5);
 }
 
 legend {
-  font-weight: 600;
-  font-size: var(--font-size-base);
+  font-size: var(--font-size-xs);
+  font-weight: 700;
+  text-transform: uppercase;
+  color: var(--color-text-muted);
   margin-bottom: var(--space-2);
 }
 
 /* ========================================================================
-   Badges: .badge, .badge-error, .badge-warning, .badge-ai
+   Notices, badges and the "why"
    ======================================================================== */
+
+.notice {
+  padding: var(--space-3) var(--space-4);
+  border-radius: var(--radius-sm);
+  border-left: 3px solid var(--color-border);
+  margin-block: var(--space-4);
+  font-weight: 500;
+  background: var(--color-surface);
+}
+
+.notice p:last-child {
+  margin-bottom: 0;
+}
+
+.notice-info {
+  background: var(--color-notice-info-bg);
+  border-left-color: var(--color-secondary);
+}
+
+.notice-success {
+  background: var(--color-notice-success-bg);
+  border-left-color: var(--color-success);
+}
+
+.notice-error {
+  background: var(--color-error-bg);
+  border-left-color: var(--color-error);
+}
 
 .badge {
   display: inline-block;
   font-size: var(--font-size-xs);
   font-weight: 600;
-  padding: 2px var(--space-2);
-  border-radius: 9999px;
+  padding: 1px var(--space-2);
+  border-radius: var(--radius-sm);
   border: 1px solid var(--color-border-subtle);
-  background: var(--color-surface-subtle);
+  background: transparent;
+  color: var(--color-text-muted);
   vertical-align: middle;
   white-space: nowrap;
 }
@@ -671,23 +837,21 @@ legend {
   border-color: var(--color-ai-border);
 }
 
-/* ========================================================================
-   .why - the product's core idea, made easy to spot
-   ======================================================================== */
-
 .why {
   background: var(--color-why-bg);
-  border-left: 3px solid var(--color-why-border);
+  border-left: 2px solid var(--color-why-border);
   color: var(--color-why-text);
   padding: var(--space-2) var(--space-3);
-  border-radius: var(--radius-sm);
+  border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
   font-size: var(--font-size-sm);
+  font-family: var(--font-family-base);
+  font-weight: 400;
   margin-top: var(--space-2);
   margin-bottom: var(--space-2);
 }
 
 /* ========================================================================
-   AI labels and panel: .label-ai, .label-not-ai, .ai-note, .ai-panel
+   AI labels and the "How this was generated" panel
    ======================================================================== */
 
 .label-ai {
@@ -720,7 +884,7 @@ legend {
 
 .ai-panel {
   margin-top: var(--space-6);
-  border: 2px solid var(--color-ai-border);
+  border: 1px solid var(--color-ai-border);
   border-radius: var(--radius-md);
   background: var(--color-ai-bg);
 }
@@ -761,13 +925,14 @@ legend {
 
 .ai-panel dd {
   margin: 0;
+  min-width: 0;
 }
 
 .ai-panel pre {
   overflow-x: auto;
   font-size: var(--font-size-xs);
   font-family: var(--font-family-mono);
-  background: var(--color-surface-subtle);
+  background: var(--color-surface);
   padding: var(--space-3);
   border-radius: var(--radius-sm);
   max-height: 300px;
@@ -775,102 +940,592 @@ legend {
 }
 
 /* ========================================================================
-   Plan sections: .ideas, .summary, .tasks, .task-title, .task-due, .actions
+   Landing page
    ======================================================================== */
 
-.ideas {
+.landing-hero {
+  max-width: 44rem;
+  margin-bottom: var(--space-10);
+}
+
+.landing-hero h1 {
+  margin-bottom: var(--space-4);
+}
+
+.landing-grid {
+  display: grid;
+  gap: var(--space-10);
+  align-items: start;
+}
+
+@media (min-width: 960px) {
+  .landing-grid {
+    grid-template-columns: minmax(0, 7fr) minmax(0, 5fr);
+    gap: var(--space-12);
+  }
+
+  .landing-side {
+    position: sticky;
+    top: var(--space-6);
+  }
+}
+
+.examples-intro {
+  color: var(--color-text-muted);
+  margin-bottom: var(--space-3);
+}
+
+.examples {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+  list-style: none;
+  margin: 0 0 var(--space-6);
+  padding: 0;
+}
+
+.examples a {
+  display: inline-flex;
+  align-items: center;
+  min-height: 2.25rem;
+  padding: var(--space-1) var(--space-4);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-sm);
+  background: var(--color-surface);
+  color: var(--color-heading);
+  font-weight: 600;
+  font-size: var(--font-size-sm);
+  text-decoration: none;
+}
+
+.examples a:hover {
+  border-color: var(--color-primary);
+  color: var(--color-primary);
+}
+
+.create-form {
+  background: var(--color-surface);
+  padding: var(--space-8);
+  border: 1px solid var(--color-border-subtle);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-sm);
+}
+
+@media (max-width: 480px) {
+  .create-form {
+    padding: var(--space-5);
+  }
+}
+
+.sub-events {
+  border: none;
+  padding: var(--space-2) 0;
+  margin: 0 0 var(--space-3);
+}
+
+.sub-events legend {
+  font-size: var(--font-size-xs);
+}
+
+.create-form:has([name="event_type"]:checked) .sub-events,
+.create-form:has([name="event_type"]:checked) .sub-events-hint {
+  display: none;
+}
+
+.create-form:has(#type-wedding:checked) .sub-events[data-event-type="wedding"],
+.create-form:has(#type-birthday:checked) .sub-events[data-event-type="birthday"],
+.create-form:has(#type-community:checked) .sub-events[data-event-type="community"] {
+  display: block;
+}
+
+.landing-side {
+  display: grid;
+  gap: var(--space-6);
+}
+
+.panel {
+  background: var(--color-surface);
+  border: 1px solid var(--color-border-subtle);
+  border-radius: var(--radius-lg);
+  padding: var(--space-6);
+}
+
+.panel h2 {
+  font-size: var(--font-size-xl);
+}
+
+.included {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.included li {
+  position: relative;
+  padding-left: var(--space-6);
+  margin-bottom: var(--space-3);
+  color: var(--color-text-muted);
+}
+
+.included strong {
+  color: var(--color-text);
+}
+
+/* A small Phulkari diamond as the bullet */
+.included li::before {
+  content: "";
+  position: absolute;
+  left: 0.2rem;
+  top: 0.5em;
+  width: 0.5rem;
+  height: 0.5rem;
+  background: var(--color-accent);
+  transform: rotate(45deg);
+}
+
+.principle {
+  margin: var(--space-5) 0 0;
+  padding-top: var(--space-4);
+  border-top: 1px solid var(--color-border-subtle);
+  font-family: var(--font-family-display);
+  font-size: var(--font-size-lg);
+  font-style: italic;
+  color: var(--color-heading);
+}
+
+.event-list {
   list-style: none;
   padding: 0;
   margin: 0;
 }
 
-.ideas li {
-  padding: var(--space-4);
-  background: var(--color-surface);
-  border: 1px solid var(--color-border-subtle);
-  border-radius: var(--radius-md);
-  margin-bottom: var(--space-4);
-  box-shadow: var(--shadow-sm);
+.event-list li {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  flex-wrap: wrap;
+  gap: var(--space-1) var(--space-3);
+  padding: var(--space-3) 0;
+  border-bottom: 1px solid var(--color-border-subtle);
 }
 
-.ideas h3 {
-  margin-top: 0;
+.event-list li:last-child {
+  border-bottom: none;
+}
+
+.event-list a {
+  font-weight: 600;
+}
+
+.event-list span {
+  font-size: var(--font-size-sm);
+  color: var(--color-text-muted);
+}
+
+/* ========================================================================
+   Dashboard: event banner and section navigation
+   ======================================================================== */
+
+.event-header {
+  position: relative;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: flex-end;
+  gap: var(--space-6);
+  background: var(--color-hero-bg);
+  color: var(--color-hero-text);
+  border-radius: var(--radius-lg);
+  padding: var(--space-8) var(--space-8) calc(var(--space-8) + var(--motif-height));
+  margin-bottom: var(--space-6);
+  overflow: hidden;
+  box-shadow: var(--shadow-md);
+}
+
+.event-header::after {
+  content: "";
+  position: absolute;
+  inset-inline: 0;
+  bottom: 0;
+  height: var(--motif-height);
+  background: var(--motif-phulkari) repeat-x left center;
+}
+
+.event-header h1,
+.event-header .kicker {
+  color: var(--color-hero-text);
+}
+
+.event-header .kicker {
+  opacity: 1;
+  color: var(--color-hero-muted);
+}
+
+.event-header h1 {
   margin-bottom: var(--space-2);
 }
 
+.event-header :focus-visible {
+  outline-color: var(--color-hero-text);
+}
+
+.event-header-main {
+  flex: 1 1 22rem;
+  min-width: 0;
+}
+
+.event-meta {
+  font-size: var(--font-size-lg);
+  margin-bottom: var(--space-2);
+}
+
+.event-header .preferences {
+  color: var(--color-hero-muted);
+  font-size: var(--font-size-sm);
+  font-style: italic;
+  max-width: 40rem;
+  margin-bottom: 0;
+}
+
+.event-header-side {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: var(--space-3);
+  text-align: right;
+}
+
+.countdown {
+  margin: 0;
+  color: var(--color-hero-muted);
+  font-size: var(--font-size-sm);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+
+.countdown-number {
+  display: block;
+  font-family: var(--font-family-display);
+  font-size: var(--font-size-4xl);
+  line-height: 1;
+  letter-spacing: 0;
+  text-transform: none;
+  color: var(--color-hero-text);
+}
+
+.print-button {
+  border-color: var(--color-hero-muted);
+  color: var(--color-hero-text);
+  min-height: 2.5rem;
+  font-size: var(--font-size-sm);
+}
+
+.print-button:hover {
+  background: rgb(255 255 255 / 0.12);
+}
+
+@media (max-width: 640px) {
+  .event-header {
+    padding: var(--space-6) var(--space-5) calc(var(--space-6) + var(--motif-height));
+  }
+
+  .event-header-side {
+    align-items: flex-start;
+    text-align: left;
+  }
+}
+
+.preferences {
+  font-style: italic;
+  color: var(--color-text-muted);
+  font-size: var(--font-size-sm);
+}
+
+.section-nav {
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  background: var(--color-bg);
+  border-bottom: 1px solid var(--color-border-subtle);
+  margin-bottom: var(--space-8);
+}
+
+.section-nav ul {
+  display: flex;
+  gap: var(--space-1);
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  overflow-x: auto;
+  scrollbar-width: thin;
+}
+
+.section-nav a {
+  display: block;
+  padding: var(--space-3) var(--space-3);
+  font-size: var(--font-size-xs);
+  font-weight: 700;
+  text-transform: uppercase;
+  white-space: nowrap;
+  color: var(--color-text-muted);
+  text-decoration: none;
+  border-bottom: 2px solid transparent;
+}
+
+.section-nav a:hover {
+  color: var(--color-primary);
+  border-bottom-color: var(--color-primary);
+}
+
+@media (max-width: 480px) {
+  .section-nav a {
+    padding-inline: var(--space-2);
+  }
+}
+
+/* Sections land below the sticky navigation */
+.site-main section[id] {
+  scroll-margin-top: var(--nav-height);
+}
+
+/* Each plan section reads as a chapter */
+#plan-area > section,
+#change-manager,
+#history {
+  padding-top: var(--space-8);
+  margin-top: var(--space-8);
+  border-top: 1px solid var(--color-border-subtle);
+}
+
+#plan-area > section:first-of-type {
+  border-top: none;
+  margin-top: 0;
+  padding-top: 0;
+}
+
+/* ========================================================================
+   Budget
+   ======================================================================== */
+
 .summary {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
   gap: var(--space-3);
-  margin-bottom: var(--space-6);
+  margin: 0 0 var(--space-4);
 }
 
 .summary > div {
   background: var(--color-surface);
   border: 1px solid var(--color-border-subtle);
-  border-radius: var(--radius-md);
-  padding: var(--space-3) var(--space-4);
-  text-align: center;
-  box-shadow: var(--shadow-sm);
+  border-top: 2px solid var(--color-accent);
+  border-radius: var(--radius-sm);
+  padding: var(--space-4) var(--space-5);
 }
 
 .summary dt {
-  font-size: var(--font-size-sm);
+  font-size: var(--font-size-xs);
   color: var(--color-text-muted);
   text-transform: uppercase;
-  letter-spacing: 0.05em;
-  font-weight: 600;
+  font-weight: 700;
 }
 
 .summary dd {
-  font-size: var(--font-size-2xl);
-  font-weight: 700;
-  margin: 0;
-  color: var(--color-primary);
+  font-family: var(--font-family-display);
+  font-size: var(--font-size-3xl);
+  font-weight: 600;
+  margin: var(--space-1) 0 0;
+  color: var(--color-heading);
+  font-variant-numeric: lining-nums tabular-nums;
 }
 
 @media (max-width: 480px) {
   .summary {
-    grid-template-columns: repeat(2, 1fr);
+    grid-template-columns: repeat(2, minmax(0, 1fr));
   }
+
   .summary dd {
-    font-size: var(--font-size-xl);
+    font-size: var(--font-size-2xl);
   }
+}
+
+.budget-meter {
+  margin-bottom: var(--space-6);
+}
+
+.budget-meter p {
+  font-size: var(--font-size-sm);
+  color: var(--color-text-muted);
+  margin-bottom: var(--space-2);
+}
+
+/* Planned-versus-spent bars (decorative: the amounts are always in the text) */
+.meter {
+  appearance: none;
+  -webkit-appearance: none;
+  display: block;
+  width: 100%;
+  max-width: 14rem;
+  height: 4px;
+  margin-top: var(--space-2);
+  border: none;
+  border-radius: 2px;
+  background: var(--color-track);
+  overflow: hidden;
+}
+
+.budget-meter .meter {
+  max-width: none;
+  height: 6px;
+}
+
+.meter::-webkit-progress-bar {
+  background: var(--color-track);
+  border-radius: 2px;
+}
+
+.meter::-webkit-progress-value {
+  background: var(--color-meter);
+  border-radius: 2px;
+}
+
+.meter::-moz-progress-bar {
+  background: var(--color-meter);
+  border-radius: 2px;
+}
+
+.meter-over::-webkit-progress-value {
+  background: var(--color-error);
+}
+
+.meter-over::-moz-progress-bar {
+  background: var(--color-error);
+}
+
+/* ========================================================================
+   Ideas
+   ======================================================================== */
+
+.ideas {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 17rem), 1fr));
+  gap: var(--space-4);
+  list-style: none;
+  padding: 0;
+  margin: var(--space-4) 0 0;
+}
+
+.ideas li {
+  display: flex;
+  flex-direction: column;
+  padding: var(--space-5);
+  background: var(--color-surface);
+  border: 1px solid var(--color-border-subtle);
+  border-radius: var(--radius-md);
+}
+
+/* AI-curated ideas carry a Kantha running stitch inside the frame */
+.ideas-ai li {
+  outline: 1px dashed var(--color-accent);
+  outline-offset: -6px;
+}
+
+.ideas h3 {
+  margin: 0 0 var(--space-2);
+}
+
+.ideas li p:not(.why) {
+  color: var(--color-text-muted);
+  font-size: var(--font-size-sm);
+}
+
+.ideas li .why {
+  margin-top: auto;
+  margin-bottom: 0;
+}
+
+.retry-ai {
+  margin-top: var(--space-4);
+}
+
+/* ========================================================================
+   Timeline: months along a stitched thread
+   ======================================================================== */
+
+.month {
+  font-family: var(--font-family-base);
+  font-size: var(--font-size-xs);
+  font-weight: 700;
+  text-transform: uppercase;
+  color: var(--color-text-muted);
+  margin: var(--space-6) 0 var(--space-2);
 }
 
 .tasks {
   list-style: none;
+  margin: 0 0 0 var(--space-2);
   padding: 0;
-  margin: 0;
+  border-left: 1.5px dashed var(--color-border);
 }
 
 .tasks li {
-  padding: var(--space-3) var(--space-4);
-  border-bottom: 1px solid var(--color-border-subtle);
+  position: relative;
   display: flex;
   flex-wrap: wrap;
-  align-items: baseline;
-  gap: var(--space-2);
+  align-items: center;
+  gap: var(--space-2) var(--space-3);
+  padding: var(--space-3) 0 var(--space-3) var(--space-6);
+  border-bottom: 1px solid var(--color-border-subtle);
 }
 
 .tasks li:last-child {
   border-bottom: none;
 }
 
-.tasks li.done {
-  opacity: 0.6;
+/* Diamond markers, filled with haldi when the task is done */
+.tasks li::before {
+  content: "";
+  position: absolute;
+  left: -6px;
+  top: 1.35rem;
+  width: 10px;
+  height: 10px;
+  background: var(--color-bg);
+  border: 1.5px solid var(--color-secondary);
+  transform: rotate(45deg);
+}
+
+.tasks li.done::before {
+  background: var(--color-accent);
+  border-color: var(--color-accent);
 }
 
 .tasks li.done .task-title {
   text-decoration: line-through;
+  color: var(--color-text-muted);
+}
+
+.tasks li .why {
+  order: 1;
+  flex-basis: 100%;
+  margin: 0;
+}
+
+.tasks form {
+  margin-left: auto;
 }
 
 .task-title {
   font-weight: 600;
-  flex: 1 1 200px;
+  flex: 1 1 14rem;
 }
 
 .task-due {
+  font-size: var(--font-size-sm);
+  color: var(--color-text-muted);
+  font-variant-numeric: tabular-nums;
+}
+
+.calendar-export {
   font-size: var(--font-size-sm);
   color: var(--color-text-muted);
 }
@@ -882,43 +1537,84 @@ legend {
   align-items: center;
 }
 
+/* Controls inside tables are compact so the numbers stay the focus */
+td form {
+  display: inline-flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-2);
+  margin: 0;
+}
+
+td form label {
+  font-size: var(--font-size-sm);
+  color: var(--color-text-muted);
+}
+
+td button,
+td select,
+td input:not([type="hidden"]) {
+  min-height: 2.25rem;
+  font-size: var(--font-size-sm);
+}
+
+td button {
+  padding: var(--space-1) var(--space-3);
+  border-width: 1px;
+}
+
+td input:not([type="hidden"]) {
+  width: 7rem;
+}
+
+td select {
+  padding-block: var(--space-1);
+}
+
+#add-expense-form {
+  max-width: 36rem;
+}
+
 /* ========================================================================
-   Change Manager: .change-result, .change-{kind}, .proposal,
-   .proposal-actions, .field-changes
+   Change Manager
    ======================================================================== */
+
+#change-manager > form,
+.change-form-toggle,
+.change-result {
+  max-width: 48rem;
+}
 
 .change-result {
   margin-top: var(--space-4);
-  padding: var(--space-4);
+  padding: var(--space-5);
   background: var(--color-surface);
   border: 1px solid var(--color-border-subtle);
   border-radius: var(--radius-md);
 }
 
 .change-proposal {
-  border-left: 4px solid var(--color-primary);
+  border-left: 3px solid var(--color-primary);
 }
 
 .change-clarification {
-  border-left: 4px solid var(--color-warning);
+  border-left: 3px solid var(--color-warning);
 }
 
 .change-off_topic,
 .change-invalid {
-  border-left: 4px solid var(--color-error);
+  border-left: 3px solid var(--color-error);
 }
 
 .change-unavailable,
 .change-nothing_to_change {
-  border-left: 4px solid var(--color-text-muted);
+  border-left: 3px solid var(--color-text-muted);
 }
 
 .proposal {
-  padding: var(--space-4);
-  background: var(--color-surface);
-  border: 1px solid var(--color-border-subtle);
-  border-radius: var(--radius-md);
+  padding: var(--space-4) 0 0;
   margin-top: var(--space-4);
+  border-top: 1px solid var(--color-border-subtle);
 }
 
 .proposal-actions {
@@ -946,20 +1642,15 @@ legend {
   border-bottom: none;
 }
 
-/* ========================================================================
-   Other blocks: .change-form, .change-form-toggle, .alternatives,
-   .history, .history-status, .event-list, .event-header, .preferences,
-   .lede, .create-form, .sub-events
-   ======================================================================== */
-
 .change-form {
   margin-top: var(--space-4);
 }
 
 .change-form-toggle {
-  margin-top: var(--space-4);
+  margin-top: var(--space-5);
   border: 1px solid var(--color-border-subtle);
   border-radius: var(--radius-md);
+  background: var(--color-surface);
 }
 
 .change-form-toggle summary {
@@ -977,8 +1668,9 @@ legend {
   background: var(--color-surface);
   border: 1px solid var(--color-border-subtle);
   border-radius: var(--radius-md);
-  padding: var(--space-4);
+  padding: var(--space-4) var(--space-5);
   margin-top: var(--space-4);
+  font-weight: 400;
 }
 
 .alternatives ul {
@@ -988,14 +1680,23 @@ legend {
 }
 
 .alternatives li {
-  padding-block: var(--space-3);
+  padding-block: var(--space-4);
   border-top: 1px solid var(--color-border-subtle);
 }
+
+.alternatives h4 {
+  margin: 0 0 var(--space-2);
+}
+
+/* ========================================================================
+   History
+   ======================================================================== */
 
 .history {
   list-style: none;
   padding: 0;
   margin: 0;
+  max-width: 48rem;
 }
 
 .history li {
@@ -1008,98 +1709,23 @@ legend {
   border-bottom: none;
 }
 
+.history-changes li {
+  border-bottom: none;
+  padding: var(--space-1) 0;
+}
+
 .history-status {
   font-weight: 700;
   text-transform: uppercase;
   font-size: var(--font-size-xs);
-  padding: 2px var(--space-2);
+  padding: 1px var(--space-2);
   border-radius: var(--radius-sm);
   background: var(--color-surface-subtle);
-  letter-spacing: 0.05em;
-}
-
-.event-list {
-  list-style: none;
-  padding: 0;
-  margin: 0;
-}
-
-.event-list li {
-  padding: var(--space-3) var(--space-4);
-  border: 1px solid var(--color-border-subtle);
-  border-radius: var(--radius-md);
-  margin-bottom: var(--space-3);
-  display: flex;
-  justify-content: space-between;
-  align-items: baseline;
-  flex-wrap: wrap;
-  gap: var(--space-2);
-  background: var(--color-surface);
-}
-
-.event-list a {
-  font-weight: 600;
-}
-
-.event-header {
-  padding-bottom: var(--space-4);
-  border-bottom: 2px solid var(--color-primary);
-  margin-bottom: var(--space-6);
-}
-
-.preferences {
-  font-style: italic;
-  color: var(--color-text-muted);
-  font-size: var(--font-size-sm);
-}
-
-.lede {
-  font-size: var(--font-size-lg);
-  color: var(--color-text-muted);
-  max-width: 640px;
-  line-height: var(--line-height-relaxed);
-  margin-bottom: var(--space-6);
-}
-
-.create-form {
-  background: var(--color-surface);
-  padding: var(--space-6);
-  border: 1px solid var(--color-border-subtle);
-  border-radius: var(--radius-lg);
-  max-width: 600px;
-}
-
-@media (max-width: 480px) {
-  .create-form {
-    padding: var(--space-4);
-  }
-}
-
-.sub-events {
-  border: none;
-  padding: var(--space-2) 0;
-  margin: 0 0 var(--space-3);
-}
-
-.sub-events legend {
-  font-weight: 600;
-  font-size: var(--font-size-sm);
-  color: var(--color-text-muted);
-}
-
-.create-form:has([name="event_type"]:checked) .sub-events,
-.create-form:has([name="event_type"]:checked) .sub-events-hint {
-  display: none;
-}
-
-.create-form:has(#type-wedding:checked) .sub-events[data-event-type="wedding"],
-.create-form:has(#type-birthday:checked) .sub-events[data-event-type="birthday"],
-.create-form:has(#type-community:checked) .sub-events[data-event-type="community"] {
-  display: block;
+  letter-spacing: 0.08em;
 }
 
 /* ========================================================================
-   htmx indicator and status region
+   htmx indicator
    ======================================================================== */
 
 /* Behaviour: required by docs/UI_CONTRACT.md; restyle freely but keep these rules.
@@ -1116,12 +1742,6 @@ legend {
 .htmx-indicator.htmx-request,
 .htmx-request .htmx-indicator {
   display: block;
-}
-
-.status-region {
-  max-width: var(--layout-max-width);
-  margin-inline: auto;
-  padding-inline: var(--space-4);
 }
 
 /* Print (F15): the plan on paper. Controls are hidden and colours become ink on white,
@@ -1156,12 +1776,20 @@ legend {
     --color-notice-info-bg: #ffffff;
     --color-notice-success-bg: #ffffff;
     --color-badge-warning-bg: #ffffff;
+    --color-heading: #000000;
+    --color-hero-bg: #ffffff;
+    --color-hero-text: #000000;
+    --color-hero-muted: #333333;
+    --color-track: #dddddd;
+    --color-meter: #000000;
     --shadow-sm: none;
     --shadow-md: none;
   }
 
   .skip-link,
   .site-header,
+  .section-nav,
+  .event-header::after,
   .site-footer,
   .status-region,
   .site-main form,
@@ -1184,6 +1812,16 @@ legend {
 
   body {
     font-size: 11pt;
+  }
+
+  .event-header {
+    padding: 0 0 var(--space-4);
+    border-bottom: 1px solid #000000;
+    border-radius: 0;
+  }
+
+  .ideas-ai li {
+    outline: none;
   }
 
   .container {

@@ -168,7 +168,9 @@ These labels are an honesty rule (AGENTS.md): AI output is labelled, non-AI outp
 | `badge`, `badge-error`, `badge-warning`, `badge-ai` | Short status tags |
 | `why` | The reason under every suggestion; this is the product's main idea, make it easy to spot |
 | `label-ai`, `label-not-ai`, `ai-note`, `ai-panel` | Where an answer came from |
-| `ideas`, `summary`, `tasks` (`li.done`), `task-title`, `task-due`, `actions` | Plan sections |
+| `ideas`, `ideas-ai`, `summary`, `budget-meter`, `meter`, `meter-over`, `budget-table`, `month`, `tasks` (`li.done`), `task-title`, `task-due`, `actions`, `toggle` | Plan sections; `meter` is a decorative `<progress>` (the amounts are in the text) |
+| `event-header-main`, `event-header-side`, `event-meta`, `countdown`, `countdown-number`, `section-nav`, `kicker` | Dashboard banner and section links |
+| `landing-hero`, `landing-grid`, `landing-main`, `landing-side`, `panel`, `included`, `principle`, `examples-intro`, `brand-mark`, `brand-sub` | Landing page and brand |
 | `change-result`, `change-{kind}`, `proposal`, `proposal-actions`, `field-changes` | Change Manager |
 | `change-form`, `change-form-toggle`, `alternatives` | Fallback form and alternatives |
 | `history`, `history-status`, `event-list`, `event-header`, `preferences`, `lede`, `create-form`, `examples`, `sub-events` | Other blocks |

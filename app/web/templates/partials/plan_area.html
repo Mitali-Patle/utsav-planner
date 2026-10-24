@@ -22,6 +22,10 @@
     <div><dt>Remaining</dt><dd>{{ plan.summary.remaining }}</dd></div>
     <div><dt>Per guest</dt><dd>{{ plan.summary.per_guest }}</dd></div>
   </dl>
+  <div class="budget-meter">
+    <p>{{ plan.summary.spent }} of {{ plan.summary.total }} spent ({{ plan.summary.spent_percent }}%)</p>
+    <progress class="meter{{ ' meter-over' if plan.summary.shortfall else '' }}" max="100" value="{{ plan.summary.spent_percent }}" aria-hidden="true"></progress>
+  </div>
   {% if plan.summary.shortfall %}
   <div class="notice notice-error" role="alert">
     <p>You are over budget by {{ plan.summary.shortfall }}.</p>
@@ -33,13 +37,13 @@
     <div id="plan-alternatives"></div>
   </div>
   {% endif %}
-  <table>
+  <table class="budget-table">
     <caption>Budget lines</caption>
     <thead><tr><th scope="col">Line</th><th scope="col">Planned</th><th scope="col">Spent</th><th scope="col">Left</th><th scope="col" class="no-print">Protect</th></tr></thead>
     <tbody>
       {% for row in plan.categories %}
       <tr>
-        <th scope="row">{{ row.name }}</th>
+        <th scope="row">{{ row.name }}<progress class="meter{{ ' meter-over' if row.overspent else '' }}" max="100" value="{{ row.spent_percent }}" aria-hidden="true"></progress></th>
         <td data-label="Planned">{{ row.allocated }}</td>
         <td data-label="Spent">{{ row.spent }}</td>
         <td data-label="Left">{{ row.remaining }}{% if row.overspent %} <span class="badge badge-error">over by {{ row.overspent }}</span>{% endif %}</td>
@@ -47,7 +51,7 @@
           <form method="post" action="/events/{{ event.id }}/categories/{{ row.id }}/{{ 'unprotect' if row.protected else 'protect' }}"
                 hx-post="/events/{{ event.id }}/categories/{{ row.id }}/{{ 'unprotect' if row.protected else 'protect' }}" hx-target="#plan-area" hx-swap="outerHTML">
             {{ csrf(csrf_token) }}
-            <button type="submit" id="protect-line-{{ row.id }}" aria-pressed="{{ 'true' if row.protected else 'false' }}">{{ 'Protected' if row.protected else 'Protect' }}<span class="sr-only"> {{ row.name }}</span></button>
+            <button type="submit" id="protect-line-{{ row.id }}" class="toggle" aria-pressed="{{ 'true' if row.protected else 'false' }}">{{ 'Protected' if row.protected else 'Protect' }}<span class="sr-only"> {{ row.name }}</span></button>
           </form>
         </td>
       </tr>
@@ -68,7 +72,7 @@
   </form>
   {% endif %}
   {% if ideas %}
-  <ul class="ideas">
+  <ul class="ideas{{ ' ideas-ai' if ai and not ai.fallback else '' }}">
     {% for idea in ideas %}
     <li><h3>{{ idea.title }}</h3><p>{{ idea.description }}</p><p class="why">Why: {{ idea.why }}</p></li>
     {% endfor %}
@@ -114,7 +118,7 @@
           <form method="post" action="/events/{{ event.id }}/expenses/{{ e.id }}/{{ 'unprotect' if e.protected else 'protect' }}"
                 hx-post="/events/{{ event.id }}/expenses/{{ e.id }}/{{ 'unprotect' if e.protected else 'protect' }}" hx-target="#plan-area" hx-swap="outerHTML">
             {{ csrf(csrf_token) }}
-            <button type="submit" id="protect-expense-{{ e.id }}" aria-pressed="{{ 'true' if e.protected else 'false' }}">{{ 'Unprotect' if e.protected else 'Protect' }}<span class="sr-only"> {{ e.label }}</span></button>
+            <button type="submit" id="protect-expense-{{ e.id }}" class="toggle" aria-pressed="{{ 'true' if e.protected else 'false' }}">{{ 'Unprotect' if e.protected else 'Protect' }}<span class="sr-only"> {{ e.label }}</span></button>
           </form>
         </td>
       </tr>
@@ -150,8 +154,10 @@
 <section id="timeline" aria-labelledby="timeline-heading">
   <h2 id="timeline-heading">Timeline</h2>
   <p class="calendar-export"><a href="/events/{{ event.id }}/calendar.ics" id="calendar-export" download>Add these dates to your calendar</a> (.ics file: the event day, unfinished tasks and vendors still to book)</p>
+  {% for month in plan.task_months %}
+  <h3 class="month">{{ month.label }}</h3>
   <ol class="tasks">
-    {% for t in plan.tasks %}
+    {% for t in month.tasks %}
     <li class="{{ 'done' if t.done else '' }}">
       <span class="task-title">{{ t.title }}</span>
       <span class="task-due">by {{ t.due }}</span>
@@ -162,11 +168,12 @@
       <form method="post" action="/events/{{ event.id }}/tasks/{{ t.id }}/{{ 'undone' if t.done else 'done' }}"
             hx-post="/events/{{ event.id }}/tasks/{{ t.id }}/{{ 'undone' if t.done else 'done' }}" hx-target="#plan-area" hx-swap="outerHTML">
         {{ csrf(csrf_token) }}
-        <button type="submit" id="task-{{ t.id }}" aria-pressed="{{ 'true' if t.done else 'false' }}">{{ 'Done' if t.done else 'Mark done' }}<span class="sr-only">: {{ t.title }}</span></button>
+        <button type="submit" id="task-{{ t.id }}" class="toggle" aria-pressed="{{ 'true' if t.done else 'false' }}">{{ 'Done' if t.done else 'Mark done' }}<span class="sr-only">: {{ t.title }}</span></button>
       </form>
     </li>
     {% endfor %}
   </ol>
+  {% endfor %}
 </section>
 
 <section id="vendors" aria-labelledby="vendors-heading">

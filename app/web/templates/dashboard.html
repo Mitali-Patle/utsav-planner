@@ -4,12 +4,29 @@
 {% block head %}<script src="/static/js/print.js" defer></script>{% endblock %}
 {% block content %}
 <header class="event-header">
-  <h1>{{ event.title }}</h1>
-  <p>{{ event.type_label }} in {{ event.city }} on {{ event.date }} &middot; {{ event.guests }} guests &middot;
-    {% if event.days_left > 0 %}{{ event.days_left }} days to go{% elif event.days_left == 0 %}today{% else %}{{ -event.days_left }} days ago{% endif %}</p>
-  {% if event.preferences %}<p class="preferences">Your preferences: {{ event.preferences }}</p>{% endif %}
-  <button type="button" id="print-plan" class="print-button" data-print hidden>Print or save as PDF</button>
+  <div class="event-header-main">
+    <p class="kicker">{{ event.type_label }} in {{ event.city }}</p>
+    <h1>{{ event.title }}</h1>
+    <p class="event-meta">{{ event.date }} &middot; {{ event.guests }} guests</p>
+    {% if event.preferences %}<p class="preferences">Your preferences: {{ event.preferences }}</p>{% endif %}
+  </div>
+  <div class="event-header-side">
+    <p class="countdown">{% if event.days_left > 0 %}<span class="countdown-number">{{ event.days_left }}</span> {{ 'day' if event.days_left == 1 else 'days' }} to go{% elif event.days_left == 0 %}<span class="countdown-number">Today</span>{% else %}<span class="countdown-number">{{ -event.days_left }}</span> {{ 'day' if event.days_left == -1 else 'days' }} ago{% endif %}</p>
+    <button type="button" id="print-plan" class="print-button" data-print hidden>Print or save as PDF</button>
+  </div>
 </header>
+
+<nav class="section-nav" aria-label="Plan sections">
+  <ul role="list">
+    <li><a href="#budget">Budget</a></li>
+    <li><a href="#ideas">Ideas</a></li>
+    <li><a href="#expenses">Expenses</a></li>
+    <li><a href="#timeline">Timeline</a></li>
+    <li><a href="#vendors">Vendors</a></li>
+    <li><a href="#change-manager">Change</a></li>
+    <li><a href="#history">History</a></li>
+  </ul>
+</nav>
 
 {% include "partials/plan_area.html" %}
 

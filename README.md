@@ -181,6 +181,15 @@ Full results, every failure with its reason, and the run history:
 - CI scans the whole git history for secrets (gitleaks) and audits production dependencies
   (pip-audit). Actions are pinned to commit SHAs with a read-only token.
 
+## Design
+
+The look borrows from two Indian textiles and keeps them quiet. From Kalamkari chintz come the
+ivory cotton ground, the indigo of the leaves and the madder red of the flowers. From Phulkari
+comes the one ornament, a band of embroidered diamonds under the header and the event banner.
+Headings use a serif, and there are no web fonts, images or gradients: one hand-written stylesheet.
+Budget lines show planned against spent as bars, the timeline runs along a stitched thread by month,
+and the printout drops the colour for black on white.
+
 ## Accessibility
 
 - Semantic HTML with landmarks, a skip link, one `h1` per page, labelled controls, error
