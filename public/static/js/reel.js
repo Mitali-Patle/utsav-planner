@@ -4,10 +4,11 @@
   const reel = document.querySelector("[data-reel]");
   if (!reel || window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
   const button = reel.querySelector(".reel-toggle");
+  const name = button.querySelector(".sr-only");
   reel.classList.add("is-running");
   button.hidden = false;
   button.addEventListener("click", () => {
     const paused = reel.classList.toggle("is-paused");
-    button.textContent = paused ? "Play pictures" : "Pause pictures";
+    name.textContent = paused ? "Play pictures" : "Pause pictures";
   });
 })();

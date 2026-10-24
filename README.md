@@ -200,8 +200,8 @@ one hand-written stylesheet.
 Budget lines show planned against spent as bars, the timeline runs along a stitched thread by month,
 and the printout drops the colour for black on white.
 
-The home page sets the headline beside a slowly scrolling panel of celebration pictures, which
-can be paused and stays still with reduced motion; "My plans" lists your plans on a page of its
+The home page sets the headline beside a slowly scrolling panel of celebration photos, with a
+small pause button, which stays still with reduced motion; "My plans" lists your plans on a page of its
 own. The theme follows the device, and a switch in the header sets Light or Dark for this browser.
 On wide screens the dashboard keeps a full-height side menu of its sections that fills, like a
 progress line, up to the one in view. The
@@ -209,8 +209,8 @@ new-plan form runs in three steps, with the event type chosen on cards and a sam
 type. The event page eases in, and new answers fade in; with reduced motion set on the device,
 nothing moves.
 
-The Diwali and Ganeshotsav photos are from [Pexels](https://www.pexels.com/license/), free to
-use under the Pexels licence; the other frames are placeholders in the palette's tones.
+The Diwali, birthday and Ganeshotsav photos are from
+[Pexels](https://www.pexels.com/license/), free to use under the Pexels licence.
 
 ## Accessibility
 

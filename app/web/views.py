@@ -210,32 +210,21 @@ def _friendly(error_type: str, ctx: Mapping[str, Any], fallback: str) -> str:
 
 @dataclass(frozen=True)
 class Slide:
-    """One picture in the home page's rotating panel; no image yet shows a placeholder.
+    """One photo in the home page's moving panel, described for screen readers."""
 
-    `alt` describes what the photo shows; the caption beside it names the occasion.
-    """
-
-    caption: str
-    image: str | None = None
-    alt: str = ""
+    image: str
+    alt: str
 
 
 CELEBRATION_SLIDES: tuple[Slide, ...] = (
+    Slide("diwali-diyas.jpg", "Clay diyas burning in a row at night for Diwali."),
+    Slide("birthday-cake.jpg", "A birthday cake covered in sprinkles, with lit birthday candles."),
     Slide(
-        "Diyas for Diwali",
-        "diwali-diyas.jpg",
-        "Clay diyas burning in a row at night.",
-    ),
-    Slide("Wedding mandap, Jaipur"),
-    Slide(
-        "Ganeshotsav pandal",
         "ganeshotsav-pandal.jpg",
         "A Ganesh idol in a saffron and white pandal while a devotee offers aarti.",
     ),
-    Slide("Mehendi night"),
-    Slide("A first birthday at home"),
 )
-"""Image files go in public/static/img/celebrations/ under the name given here (Pexels)."""
+"""Photos from Pexels, in public/static/img/celebrations/ (800 x 600 JPEG, under 500 KB)."""
 
 
 CREATE_FIELDS: Mapping[str, tuple[str, str]] = MappingProxyType(

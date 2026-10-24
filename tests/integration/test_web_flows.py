@@ -263,10 +263,8 @@ def test_home_page_has_no_plan_list_and_a_picture_panel(engine: Engine) -> None:
 def test_every_celebration_photo_exists_is_small_and_described(engine: Engine) -> None:
     folder = Path(__file__).resolve().parents[2] / "public" / "static" / "img" / "celebrations"
     page = client_for(engine).get("/").text
-    photos = [slide for slide in views.CELEBRATION_SLIDES if slide.image]
-    assert photos, "at least one real photo"
-    for slide in photos:
-        assert slide.image is not None
+    assert "<figcaption" not in page, "the photos carry no titles"
+    for slide in views.CELEBRATION_SLIDES:
         assert (folder / slide.image).stat().st_size < 500_000, slide.image
         assert slide.alt, f"{slide.image} has alt text"
         assert f'alt="{slide.alt}"' in page

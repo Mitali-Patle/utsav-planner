@@ -1228,8 +1228,7 @@ legend {
   background: var(--reel-tone, var(--color-hero-bg));
 }
 
-/* Every frame has the Phulkari band along its foot; a frame without a photo shows a
-   palette tone */
+/* Every photo has the Phulkari band along its foot; the tone shows while it loads */
 .reel-frame::before {
   content: "";
   position: absolute;
@@ -1243,8 +1242,6 @@ legend {
 .reel-tone-1 { --reel-tone: #8c1c25; }
 .reel-tone-2 { --reel-tone: #1d3443; }
 .reel-tone-3 { --reel-tone: #8a5a14; }
-.reel-tone-4 { --reel-tone: #a3304f; }
-.reel-tone-5 { --reel-tone: #23697f; }
 
 .reel-frame img {
   position: absolute;
@@ -1254,19 +1251,8 @@ legend {
   object-fit: cover;
 }
 
-.reel-frame figcaption {
-  position: absolute;
-  inset: auto 0 var(--motif-height) 0;
-  padding: var(--space-6) var(--space-4) var(--space-3);
-  font-family: var(--font-family-display);
-  font-size: var(--font-size-lg);
-  line-height: 1.25;
-  color: #fff6ea;
-  background: linear-gradient(to top, rgb(20 12 10 / 0.7), transparent);
-}
-
 .reel.is-running .reel-track {
-  animation: reel-sideways 45s linear infinite;
+  animation: reel-sideways 27s linear infinite;
 }
 
 .reel.is-paused .reel-track,
@@ -1283,17 +1269,42 @@ legend {
   to { transform: translateY(-50%); }
 }
 
+/* A small, quiet pause control (WCAG 2.2.2); its name is screen-reader text */
 .reel-toggle {
   position: absolute;
-  right: var(--space-3);
-  bottom: var(--space-3);
-  min-height: 2.25rem;
-  padding: var(--space-1) var(--space-3);
-  font-size: var(--font-size-xs);
-  background: var(--color-surface);
-  color: var(--color-text);
-  border: 1px solid var(--color-border);
-  opacity: 0.92;
+  z-index: 2;
+  right: var(--space-2);
+  bottom: calc(var(--motif-height) + var(--space-5));
+  display: grid;
+  place-items: center;
+  width: 2rem;
+  min-height: 2rem;
+  padding: 0;
+  border-radius: 50%;
+  background: rgb(20 12 10 / 0.55);
+  color: #fff6ea;
+  border: 1px solid rgb(255 246 234 / 0.5);
+  opacity: 0.75;
+  transition: opacity 0.15s ease, background-color 0.15s ease;
+}
+
+.reel-toggle:hover,
+.reel-toggle:focus-visible {
+  opacity: 1;
+  background: rgb(20 12 10 / 0.8);
+}
+
+.reel-toggle svg {
+  fill: currentColor;
+}
+
+.reel-icon-play,
+.reel.is-paused .reel-icon-pause {
+  display: none;
+}
+
+.reel.is-paused .reel-icon-play {
+  display: block;
 }
 
 .reel-toggle[hidden] {
@@ -1327,7 +1338,7 @@ legend {
 
   .reel.is-running .reel-track {
     animation-name: reel-up;
-    animation-duration: 50s;
+    animation-duration: 30s;
   }
 }
 
