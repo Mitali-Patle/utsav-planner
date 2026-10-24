@@ -42,6 +42,15 @@ def test_different_ideas_replace_the_ideas_and_keep_focus_nearby(page: Page) -> 
     expect(page.locator("#status-region")).to_contain_text("Here are different ideas")
 
 
+def test_an_example_fills_the_form_in_one_click(page: Page) -> None:
+    page.goto("/")
+    page.get_by_role("link", name="Community event").click()
+    expect(page.get_by_label("Event name")).to_have_value("Shanti Nagar Ganeshotsav")
+    expect(page.get_by_label("Procession or visarjan")).to_be_checked()
+    page.get_by_role("button", name="Create my plan").click()
+    expect(page.get_by_role("heading", level=1)).to_have_text("Shanti Nagar Ganeshotsav")
+
+
 def test_timeline_downloads_as_a_calendar_file(page: Page) -> None:
     create_event(page)
     with page.expect_download() as download:

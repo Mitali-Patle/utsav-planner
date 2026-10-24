@@ -17,7 +17,7 @@ After any template or CSS change, run `uv run pytest -W error`. The tests in
 
 | Method and path | Renders | htmx response |
 |---|---|---|
-| `GET /` | `landing.html` | |
+| `GET /` | `landing.html`; `?example=wedding`, `birthday` or `community` fills the form (`EXAMPLES` in `views.py`); an unknown name gives the empty form | |
 | `POST /events` | 303 to the dashboard; `landing.html` with 422 on invalid input | |
 | `GET /events/{id}` | `dashboard.html` | |
 | `POST /events/{id}/personalize` | 303 to the dashboard; repeating it after standard (non-AI) ideas asks the AI again | `partials/plan_area.html` |
@@ -171,7 +171,7 @@ These labels are an honesty rule (AGENTS.md): AI output is labelled, non-AI outp
 | `ideas`, `summary`, `tasks` (`li.done`), `task-title`, `task-due`, `actions` | Plan sections |
 | `change-result`, `change-{kind}`, `proposal`, `proposal-actions`, `field-changes` | Change Manager |
 | `change-form`, `change-form-toggle`, `alternatives` | Fallback form and alternatives |
-| `history`, `history-status`, `event-list`, `event-header`, `preferences`, `lede`, `create-form`, `sub-events` | Other blocks |
+| `history`, `history-status`, `event-list`, `event-header`, `preferences`, `lede`, `create-form`, `examples`, `sub-events` | Other blocks |
 | `button-primary` | The main action of a form (create, preview, approve, add, personalize); one per form |
 | `sub-events[data-event-type]`, `sub-events-hint` | Function groups; CSS shows only the chosen event type's group |
 | `htmx-indicator` | Busy message, hidden until htmx adds `htmx-request` |

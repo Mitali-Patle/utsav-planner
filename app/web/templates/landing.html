@@ -8,6 +8,9 @@
 
 <section aria-labelledby="create-heading">
   <h2 id="create-heading">Start a new plan</h2>
+  <p class="examples">Or start from an example:
+    {% for name, label in examples %}<a href="/?example={{ name }}#create-heading">{{ label }}</a>{{ ", " if not loop.last else "." }}{% endfor %}
+    You can change anything before creating the plan.</p>
   {% if form.errors %}
   <div class="notice notice-error" role="alert">
     {% if form.errors | length > 1 or not form.errors.get("form") %}<p>Please check the highlighted fields.</p>{% endif %}

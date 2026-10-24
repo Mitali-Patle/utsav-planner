@@ -6,7 +6,7 @@ ready-made values.
 
 from collections.abc import Mapping, Sequence
 from dataclasses import dataclass, field
-from datetime import date
+from datetime import date, timedelta
 from typing import Any
 
 from pydantic import ValidationError
@@ -83,6 +83,76 @@ class FormState:
     errors: Mapping[str, str] = field(default_factory=dict)
 
 
+@dataclass(frozen=True)
+class Example:
+    """A ready-made event that fills the new-event form, so a first visit takes one click."""
+
+    label: str
+    days_ahead: int
+    values: Mapping[str, Any]
+
+
+EXAMPLES: Mapping[str, Example] = {
+    "wedding": Example(
+        "Wedding",
+        120,
+        {
+            "event_type": "wedding",
+            "title": "Priya and Arjun's wedding",
+            "city": "Jaipur",
+            "guest_count": "250",
+            "total_budget_inr": "1500000",
+            "preferences": "Rajasthani royal theme, vegetarian food, marigold decor and a "
+            "sangeet with live dhol.",
+            "sub_events": ["haldi", "mehendi", "sangeet", "ceremony", "reception"],
+        },
+    ),
+    "birthday": Example(
+        "Birthday",
+        30,
+        {
+            "event_type": "birthday",
+            "title": "Aarav's 8th birthday",
+            "city": "Pune",
+            "guest_count": "30",
+            "total_budget_inr": "15000",
+            "preferences": "Space theme, he loves rockets. At home, no plastic decorations.",
+            "sub_events": ["kids_games"],
+        },
+    ),
+    "community": Example(
+        "Community event",
+        60,
+        {
+            "event_type": "community",
+            "title": "Shanti Nagar Ganeshotsav",
+            "city": "Mumbai",
+            "guest_count": "400",
+            "total_budget_inr": "150000",
+            "preferences": "Eco-friendly clay idol, no plastic, activities for elders and "
+            "children. Funded by 120 households.",
+            "sub_events": ["puja", "cultural_program", "community_meal", "procession"],
+        },
+    ),
+}
+
+
+def example_form(name: str | None, today: date) -> FormState:
+    """The new-event form filled with an example, or empty for an unknown name.
+
+    Examples:
+        >>> example_form("birthday", date(2026, 10, 22)).values["event_date"]
+        '2026-11-21'
+        >>> example_form("unknown", date(2026, 10, 22)).values
+        {}
+    """
+    example = EXAMPLES.get(name or "")
+    if example is None:
+        return FormState()
+    event_date = (today + timedelta(days=example.days_ahead)).isoformat()
+    return FormState(values={**example.values, "event_date": event_date})
+
+
 def form_errors(error: ValidationError) -> dict[str, str]:
     """A plain-language message per field from a Pydantic error (first message wins).
 
@@ -128,6 +198,7 @@ def landing_context(events: Sequence[StoredEvent], form: FormState, today: date)
     return {
         "form": form,
         "today": today.isoformat(),
+        "examples": [(name, example.label) for name, example in EXAMPLES.items()],
         "event_types": [(t.value, EVENT_TYPE_LABELS[t]) for t in EventType],
         "sub_events": [
             {

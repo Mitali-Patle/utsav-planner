@@ -6,7 +6,7 @@ from fastapi.responses import HTMLResponse, RedirectResponse
 from app.services import Services
 from app.web.deps import SessionDep, TodayDep
 from app.web.responses import render
-from app.web.views import FormState, landing_context
+from app.web.views import example_form, landing_context
 
 router = APIRouter(tags=["pages"])
 
@@ -24,12 +24,19 @@ def favicon() -> RedirectResponse:
 
 
 @router.get("/", response_class=HTMLResponse, include_in_schema=False)
-def home(request: Request, session: SessionDep, today: TodayDep) -> HTMLResponse:
+def home(
+    request: Request, session: SessionDep, today: TodayDep, example: str | None = None
+) -> HTMLResponse:
     """Landing page: create an event, or open one of this visitor's events.
+
+    `?example=wedding` (or `birthday`, `community`) fills the form with a ready-made event
+    that the visitor can change before creating it; it works without JavaScript.
 
     Returns:
         The rendered page.
     """
     services: Services | None = request.app.state.services
     events = services.planning.list_events(session) if services is not None else []
-    return render(request, "landing.html", landing_context(events, FormState(), today))
+    return render(
+        request, "landing.html", landing_context(events, example_form(example, today), today)
+    )

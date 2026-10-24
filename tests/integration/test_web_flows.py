@@ -20,6 +20,7 @@ from app.main import create_app
 from app.persistence.db import make_engine
 from app.persistence.tables import metadata
 from app.services import build_services
+from app.web import views
 from tests.fakes import FixedClock, ScriptedProvider
 from tests.unit.test_services import BUDGET_CUT, DECOR_CUT, DIFFERENT, SUGGESTIONS
 
@@ -152,6 +153,39 @@ def test_landing_page_is_accessible(engine: Engine) -> None:
     assert page.status_code == 200
     assert "Start a new plan" in page.text
     assert_accessible(page.text)
+
+
+@pytest.mark.parametrize(
+    ("example", "title"),
+    [
+        ("wedding", "Priya and Arjun&#39;s wedding"),
+        ("birthday", "Aarav&#39;s 8th birthday"),
+        ("community", "Shanti Nagar Ganeshotsav"),
+    ],
+)
+def test_each_example_fills_the_form_and_creates_a_plan(
+    engine: Engine, example: str, title: str
+) -> None:
+    client = client_for(engine)
+    page = client.get(f"/?example={example}")
+    assert f'href="/?example={example}#create-heading"' in client.get("/").text
+    assert f'value="{title}"' in page.text
+    assert f'id="type-{example}" name="event_type" value="{example}" checked' in page.text
+    assert_accessible(page.text)
+    values = views.example_form(example, TODAY).values
+    response = client.post(
+        "/events", data={"csrf_token": token(client), **values}, follow_redirects=False
+    )
+    assert response.status_code == 303
+    dashboard = client.get(str(response.headers["location"])).text
+    assert title in dashboard
+
+
+def test_unknown_example_shows_an_empty_form(engine: Engine) -> None:
+    page = client_for(engine).get("/?example=<script>").text
+    assert 'value=""' in page.split('name="title"')[1].split(">")[0]
+    assert " checked" not in page.split('name="event_type"')[1].split(">")[0]
+    assert "<script>" not in page.split("</head>")[1]
 
 
 def test_invalid_event_keeps_the_input_and_explains(engine: Engine) -> None:

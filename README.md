@@ -19,7 +19,8 @@ needed to hear about the new date, a line that was meant to stay untouched.
 
 ## What it does
 
-1. **Start a plan.** Choose the event type and its functions (haldi, sangeet, puja,
+1. **Start a plan.** Start from an example (a Jaipur wedding, a child's birthday in Pune, a
+   Mumbai Ganeshotsav) or choose the event type and its functions (haldi, sangeet, puja,
    community meal and so on), city, date, guests, budget and preferences. A complete draft
    appears at once from an India-specific catalog: a budget split across categories, a
    dated timeline and a vendor checklist with book-by dates.

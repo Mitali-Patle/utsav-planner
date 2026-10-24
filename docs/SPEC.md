@@ -33,7 +33,7 @@ Priority: P0 must exist for submission 1; P1 should exist for submission 1; P2 o
 
 | ID | Feature | Pri | AI role | Code role |
 |---|---|---|---|---|
-| F1 | Create event (all 3 types, sub-events; "Fill example" presets planned) | P0 | none | validation, baseline from catalog |
+| F1 | Create event (all 3 types, sub-events; one-click examples per type) | P0 | none | validation, baseline from catalog |
 | F2 | AI personalization on creation (ideas, budget emphasis, extra tasks, vendor priorities, each with why) | P0 | generates and reasons | bounds, merge, allocate, dates |
 | F3 | Budget dashboard: allocation per category, spent, remaining, ₹/guest, overspend flags | P0 | none | all math |
 | F4 | Add, edit and remove expenses; protect or unprotect items | P0 | none | math, idempotency |
