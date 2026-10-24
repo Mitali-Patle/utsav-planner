@@ -1011,26 +1011,44 @@ legend {
   margin-bottom: 0;
 }
 
+/* The record of an AI answer: a quiet link under the AI note, a panel once opened */
 .ai-panel {
-  margin-top: var(--space-6);
-  border: 1px solid var(--color-ai-border);
+  margin-top: var(--space-1);
+  border: 1px solid transparent;
   border-radius: var(--radius-md);
-  background: var(--color-ai-bg);
 }
 
 .ai-panel summary {
-  padding: var(--space-3) var(--space-4);
+  display: inline-block;
+  padding: var(--space-1) 0;
+  font-size: var(--font-size-sm);
   font-weight: 600;
   cursor: pointer;
-  color: var(--color-ai-text);
+  color: var(--color-text-muted);
   list-style: revert;
+  text-decoration: underline;
+  text-decoration-color: var(--color-border-subtle);
+  text-underline-offset: 0.2em;
+  transition: color 0.15s ease, text-decoration-color 0.15s ease;
+}
+
+.ai-panel summary:hover {
+  color: var(--color-text);
+  text-decoration-color: currentColor;
 }
 
 .ai-panel[open] {
+  margin-top: var(--space-3);
   padding: 0 var(--space-4) var(--space-4);
+  border-color: var(--color-ai-border);
+  background: var(--color-ai-bg);
 }
 
 .ai-panel[open] summary {
+  display: block;
+  padding: var(--space-3) 0;
+  color: var(--color-ai-text);
+  text-decoration: none;
   border-bottom: 1px solid var(--color-ai-border);
   margin-bottom: var(--space-3);
 }
