@@ -1,0 +1,1907 @@
+{
+ "model": "groq:openai/gpt-oss-120b",
+ "run_at": "2026-10-24T07:32:01+00:00",
+ "prompt_versions": {
+  "personalize": "personalize-v3",
+  "interpret_change": "interpret-change-v6",
+  "alternatives": "alternatives-v5"
+ },
+ "results": [
+  {
+   "task": "personalize",
+   "case_id": "w-bengali",
+   "passed": true,
+   "error": false,
+   "reasons": [],
+   "metrics": {
+    "ideas": 5.0
+   },
+   "provider": "groq:openai/gpt-oss-120b",
+   "latency_ms": 3182,
+   "first_try_valid": true,
+   "attempts": [
+    "groq:openai/gpt-oss-120b: ok"
+   ],
+   "answer": {
+    "off_topic": false,
+    "summary_why": "Blend Bengali traditions with Jaipur’s regal vibe, keeping the fish centerpiece and alpana decor central while balancing the large guest count and budget.",
+    "ideas": [
+     {
+      "title": "Alpana‐styled mandap with Bengali motifs",
+      "description": "Use natural rice‐flour paste for intricate alpana patterns on the mandap floor and backdrops, incorporating peacock feathers and traditional Bengali motifs.",
+      "category_id": "decor",
+      "budget_impact": "neutral",
+      "why": "Honors the preference for traditional alpana decor and creates a photogenic focal point."
+     },
+     {
+      "title": "Fish‐curry live station at reception",
+      "description": "Set up a live cooking station for the signature Bengali fish curry (machher jhol) with a chef showcasing the preparation.",
+      "category_id": "catering",
+      "budget_impact": "adds",
+      "why": "Fish is a must and a live station adds drama while ensuring freshness for 250 guests."
+     },
+     {
+      "title": "Bengali folk music fusion for sangeet",
+      "description": "Hire a band that blends Baul folk tunes with Rajasthani instruments, plus a DJ for contemporary numbers.",
+      "category_id": "music",
+      "budget_impact": "neutral",
+      "why": "Creates a cultural bridge between the families and keeps guests dancing."
+     },
+     {
+      "title": "Eco‐friendly Bengali invitation suite",
+      "description": "Hand‐printed khadi paper cards with alpana borders, plus a QR code linking to an e‐invitation video.",
+      "category_id": "invitations",
+      "budget_impact": "saves",
+      "why": "Matches the alpana theme, reduces plastic, and adds a modern touch."
+     },
+     {
+      "title": "Traditional Bengali sweets bar",
+      "description": "Offer a self‐serve station with rosogolla, sandesh, mishti doi, and a small jalebi counter.",
+      "category_id": "catering",
+      "budget_impact": "adds",
+      "why": "Completes the Bengali culinary experience without needing a full dessert menu."
+     }
+    ],
+    "budget_emphasis": [
+     {
+      "category_id": "catering",
+      "direction": "increase",
+      "strength": "medium",
+      "why": "Fish centerpiece and sweets bar are essential cultural elements."
+     },
+     {
+      "category_id": "decor",
+      "direction": "increase",
+      "strength": "small",
+      "why": "Alpana mandap and detailed décor require quality artisans."
+     },
+     {
+      "category_id": "music",
+      "direction": "decrease",
+      "strength": "small",
+      "why": "A focused fusion band/DJ can deliver great entertainment at lower cost than multiple acts."
+     },
+     {
+      "category_id": "invitations",
+      "direction": "decrease",
+      "strength": "small",
+      "why": "Eco‐friendly khadi cards are elegant yet cheaper than premium printed suites."
+     }
+    ],
+    "extra_tasks": [
+     {
+      "title": "Confirm fish supply and freshness logistics",
+      "category_id": "catering",
+      "days_before_event": 30,
+      "why": "Ensures the fish‐curry station runs smoothly for a large crowd."
+     },
+     {
+      "title": "Arrange a dry‐run of the alpana mandap painting",
+      "category_id": "decor",
+      "days_before_event": 45,
+      "why": "Prevents delays on the ceremony day and checks pattern scaling."
+     },
+     {
+      "title": "Book a refrigeration unit for fish storage at venue",
+      "category_id": "venue",
+      "days_before_event": 20,
+      "why": "Keeps the fish fresh in February’s cooler Jaipur nights."
+     },
+     {
+      "title": "Coordinate Bengali dress code (dhoti, saree) for close family",
+      "category_id": "attire_makeup",
+      "days_before_event": 60,
+      "why": "Ensures cultural attire is ready and fits with the theme."
+     },
+     {
+      "title": "Schedule a rehearsal for alpana mandap lighting",
+      "category_id": "venue",
+      "days_before_event": 10,
+      "why": "Tests ambience and avoids last‐minute adjustments."
+     }
+    ],
+    "vendor_notes": [
+     {
+      "vendor_type": "decorator",
+      "why": "Ask for experience with alpana art and ability to source natural rice‐flour paste."
+     },
+     {
+      "vendor_type": "caterer",
+      "why": "Confirm they can handle live fish‐curry station and supply Bengali sweets."
+     },
+     {
+      "vendor_type": "music",
+      "why": "Inquire about musicians familiar with Baul and Rajasthani fusion."
+     },
+     {
+      "vendor_type": "invitation_printer",
+      "why": "Check if they can print on khadi paper with alpana designs."
+     },
+     {
+      "vendor_type": "mandap",
+      "why": "Ensure mandap structure supports alpana floor painting and lighting rigs."
+     },
+     {
+      "vendor_type": "transport",
+      "why": "Arrange temperature‐controlled transport for fish to the reception venue."
+     }
+    ]
+   }
+  },
+  {
+   "task": "personalize",
+   "case_id": "w-tamil-veg",
+   "passed": true,
+   "error": false,
+   "reasons": [],
+   "metrics": {
+    "ideas": 5.0
+   },
+   "provider": "groq:openai/gpt-oss-120b",
+   "latency_ms": 3014,
+   "first_try_valid": true,
+   "attempts": [
+    "groq:openai/gpt-oss-120b: ok"
+   ],
+   "answer": {
+    "off_topic": false,
+    "summary_why": "Focus on Tamil Brahmin rituals, vegetarian banana‐leaf catering and authentic nadaswaram music while balancing the large guest count and winter climate in Jaipur.",
+    "ideas": [
+     {
+      "title": "Banana‐leaf banquet with regional stations",
+      "description": "Set up separate food stations for Tamil, Rajasthani and fusion dishes, all served on banana leaves on low tables.",
+      "category_id": "catering",
+      "budget_impact": "neutral",
+      "why": "Honors the pure‐vegetarian preference and adds a visual wow factor for 250 guests."
+     },
+     {
+      "title": "Nadaswaram & folk fusion ensemble",
+      "description": "Hire a nadaswaram player with a local folk percussionist to blend Tamil and Rajasthani sounds for ceremony and reception.",
+      "category_id": "music",
+      "budget_impact": "adds",
+      "why": "Provides the required nadaswaram while creating a unique cultural bridge for Jaipur guests."
+     },
+     {
+      "title": "Eco‐friendly decor with terracotta & marigold",
+      "description": "Use terracotta pots, mango leaves, and locally sourced marigold garlands instead of plastic décor.",
+      "category_id": "decor",
+      "budget_impact": "saves",
+      "why": "Matches the traditional aesthetic and reduces plastic waste."
+     },
+     {
+      "title": "Pre‐wedding cultural workshops",
+      "description": "Organise short sessions for guests to learn Tamil wedding customs and simple nadaswaram rhythms.",
+      "category_id": null,
+      "budget_impact": "neutral",
+      "why": "Engages 250 guests and makes the multicultural gathering more inclusive."
+     },
+     {
+      "title": "Winter night lighting with diyas and fairy lights",
+      "description": "Combine oil‐lit diyas with subtle fairy‐light strings for a warm ambience during the evening events.",
+      "category_id": "decor",
+      "budget_impact": "neutral",
+      "why": "Enhances the February evening vibe in Jaipur without high electricity costs."
+     }
+    ],
+    "budget_emphasis": [
+     {
+      "category_id": "catering",
+      "direction": "increase",
+      "strength": "medium",
+      "why": "Banana‐leaf service and multiple stations need extra staffing and premium ingredients."
+     },
+     {
+      "category_id": "music",
+      "direction": "increase",
+      "strength": "small",
+      "why": "Specialist nadaswaram musicians command higher fees."
+     },
+     {
+      "category_id": "decor",
+      "direction": "decrease",
+      "strength": "small",
+      "why": "Using reusable terracotta and local flowers cuts down on costly imported décor."
+     },
+     {
+      "category_id": "contingency",
+      "direction": "increase",
+      "strength": "small",
+      "why": "Large guest count and multiple functions warrant a modest buffer."
+     }
+    ],
+    "extra_tasks": [
+     {
+      "title": "Arrange a banana‐leaf procurement plan",
+      "category_id": "catering",
+      "days_before_event": 30,
+      "why": "Ensures enough fresh leaves for 250 guests across all functions."
+     },
+     {
+      "title": "Confirm nadaswaram repertoire with the musician",
+      "category_id": "music",
+      "days_before_event": 45,
+      "why": "Aligns songs with each ceremony and avoids last‐minute changes."
+     },
+     {
+      "title": "Schedule a joint decor‐mandap walkthrough",
+      "category_id": "decor",
+      "days_before_event": 20,
+      "why": "Coordinates flower arrangements with mandap layout for seamless setup."
+     },
+     {
+      "title": "Plan guest seating flow for winter evenings",
+      "category_id": "venue",
+      "days_before_event": 15,
+      "why": "Keeps guests comfortable in cooler February nights."
+     },
+     {
+      "title": "Organise a rehearsal for Tamil rituals with pandit and families",
+      "category_id": "rituals",
+      "days_before_event": 7,
+      "why": "Ensures smooth execution of specific Brahmin rites."
+     }
+    ],
+    "vendor_notes": [
+     {
+      "vendor_type": "venue",
+      "why": "Ask about indoor heating options and space for multiple banquet setups."
+     },
+     {
+      "vendor_type": "pandit",
+      "why": "Confirm familiarity with Tamil Brahmin wedding customs and required poojas."
+     },
+     {
+      "vendor_type": "caterer",
+      "why": "Verify experience with banana‐leaf service and pure‐vegetarian menus."
+     },
+     {
+      "vendor_type": "photographer",
+      "why": "Request a portfolio that captures both Tamil rituals and Rajasthani décor."
+     },
+     {
+      "vendor_type": "decorator",
+      "why": "Discuss use of terracotta, mango leaves and local marigold to keep costs low."
+     },
+     {
+      "vendor_type": "music",
+      "why": "Ask for a nadaswaram player comfortable with fusion pieces and a backup plan for outdoor sound."
+     }
+    ]
+   }
+  },
+  {
+   "task": "personalize",
+   "case_id": "w-punjabi",
+   "passed": true,
+   "error": false,
+   "reasons": [],
+   "metrics": {
+    "ideas": 5.0
+   },
+   "provider": "groq:openai/gpt-oss-120b",
+   "latency_ms": 3023,
+   "first_try_valid": true,
+   "attempts": [
+    "groq:openai/gpt-oss-120b: ok"
+   ],
+   "answer": {
+    "off_topic": false,
+    "summary_why": "Focus on Punjabi energy, winter comfort in Jaipur, and balancing big‐scale fun with a realistic budget.",
+    "ideas": [
+     {
+      "title": "Live bhangra troupe for sangeet",
+      "description": "Hire a professional bhangra group that can also teach a short routine to guests.",
+      "category_id": "music",
+      "budget_impact": "adds",
+      "why": "Matches the Punjabi vibe and creates an interactive highlight."
+     },
+     {
+      "title": "Winter warm welcome lounge",
+      "description": "Set up a cozy lounge with heaters, chai, and Punjabi snacks for guests arriving early.",
+      "category_id": "venue",
+      "budget_impact": "adds",
+      "why": "February nights in Jaipur can be chilly; guests will appreciate comfort."
+     },
+     {
+      "title": "DIY dhol circle at reception",
+      "description": "Reserve a small stage for guests to join a dhol session; provide simple sticks and a guide.",
+      "category_id": "music",
+      "budget_impact": "neutral",
+      "why": "Keeps the Punjabi rhythm alive throughout the night without hiring extra musicians."
+     },
+     {
+      "title": "Personalized turban & dupatta favors",
+      "description": "Give each guest a small embroidered turban or dupatta in the wedding colors.",
+      "category_id": "gifts",
+      "budget_impact": "adds",
+      "why": "Cultural, memorable, and fits the Punjabi theme."
+     },
+     {
+      "title": "Eco‐friendly printed invitations with QR RSVP",
+      "description": "Use thick matte paper with a QR code for digital RSVP and event details.",
+      "category_id": "invitations",
+      "budget_impact": "saves",
+      "why": "Reduces printing volume and aligns with modern, low‐waste preferences."
+     }
+    ],
+    "budget_emphasis": [
+     {
+      "category_id": "music",
+      "direction": "increase",
+      "strength": "medium",
+      "why": "Music drives the Punjabi atmosphere across all functions."
+     },
+     {
+      "category_id": "decor",
+      "direction": "decrease",
+      "strength": "small",
+      "why": "Opt for reusable mandap and fabric drapes to control costs."
+     },
+     {
+      "category_id": "gifts",
+      "direction": "increase",
+      "strength": "small",
+      "why": "Personalized turban favors add a special touch without huge expense."
+     }
+    ],
+    "extra_tasks": [
+     {
+      "title": "Confirm indoor heating arrangements for venue",
+      "category_id": "venue",
+      "days_before_event": 30,
+      "why": "Ensure heaters are installed and tested before the chilly night events."
+     },
+     {
+      "title": "Arrange a backup power generator for sound system",
+      "category_id": "music",
+      "days_before_event": 20,
+      "why": "Prevent disruptions during bhangra performances in case of load shedding."
+     },
+     {
+      "title": "Finalize Punjabi song list with DJ/band and choreographer",
+      "category_id": "music",
+      "days_before_event": 15,
+      "why": "Synchronize music cues with dance rehearsals for smooth flow."
+     },
+     {
+      "title": "Send reminder email with QR RSVP link and dress code details",
+      "category_id": "invitations",
+      "days_before_event": 10,
+      "why": "Boost RSVP response and inform guests about Punjabi attire expectations."
+     },
+     {
+      "title": "Conduct a brief rehearsal for dhol circle participants",
+      "category_id": "music",
+      "days_before_event": 5,
+      "why": "Ensure safety and confidence for guests joining the dhol session."
+     }
+    ],
+    "vendor_notes": [
+     {
+      "vendor_type": "venue",
+      "why": "Ask about heater capacity, power backup, and space for a lounge area."
+     },
+     {
+      "vendor_type": "music",
+      "why": "Confirm they can provide live bhangra, a dhol set, and a sound‐check schedule."
+     },
+     {
+      "vendor_type": "decorator",
+      "why": "Request reusable mandap structures and fabric drapes in vibrant Punjabi colors."
+     },
+     {
+      "vendor_type": "caterer",
+      "why": "Include Punjabi specialties like butter chicken, sarson da saag, and warm beverages."
+     },
+     {
+      "vendor_type": "photographer",
+      "why": "Ask for a photographer experienced with high‐energy bhangra shots and night lighting."
+     },
+     {
+      "vendor_type": "invitation_printer",
+      "why": "Inquire about QR code integration and bulk paper discounts for eco‐friendly prints."
+     }
+    ]
+   }
+  },
+  {
+   "task": "personalize",
+   "case_id": "w-jain",
+   "passed": true,
+   "error": false,
+   "reasons": [],
+   "metrics": {
+    "ideas": 5.0
+   },
+   "provider": "groq:openai/gpt-oss-120b",
+   "latency_ms": 3020,
+   "first_try_valid": true,
+   "attempts": [
+    "groq:openai/gpt-oss-120b: ok"
+   ],
+   "answer": {
+    "off_topic": false,
+    "summary_why": "Focused on Jain dietary rules, a sunset dinner, and Jaipur’s winter charm while balancing the large guest count and budget.",
+    "ideas": [
+     {
+      "title": "Sunset rooftop dinner for reception",
+      "description": "Reserve a rooftop venue that offers unobstructed views of the pink sunrise, with elegant white drapes and lanterns.",
+      "category_id": "venue",
+      "budget_impact": "adds",
+      "why": "Fits the sunset dinner preference and adds a memorable backdrop for guests."
+     },
+     {
+      "title": "Jain-friendly Rajasthani buffet",
+      "description": "Menu of dal baati (no onion/garlic), kachori with dry fruits, seasonal veg curries, and fresh fruit chaat.",
+      "category_id": "catering",
+      "budget_impact": "neutral",
+      "why": "Honors Jain restrictions while showcasing local flavors."
+     },
+     {
+      "title": "Eco‐friendly floral decor with marigold & jasmine",
+      "description": "Use locally sourced marigold garlands and jasmine strings, avoiding plastic foam; opt for reusable metal vases.",
+      "category_id": "decor",
+      "budget_impact": "saves",
+      "why": "Reduces waste and costs, and aligns with traditional Rajasthani aesthetics."
+     },
+     {
+      "title": "Live folk dance troupe for sangeet",
+      "description": "Book a Ghoomar or Kalbeliya troupe to perform early evening, followed by a DJ set.",
+      "category_id": "music",
+      "budget_impact": "adds",
+      "why": "Adds cultural flair and fits the festive vibe before the sunset dinner."
+     },
+     {
+      "title": "Personalized seed paper invitations",
+      "description": "Printed on biodegradable seed paper that guests can plant after the wedding.",
+      "category_id": "invitations",
+      "budget_impact": "neutral",
+      "why": "Eco‐friendly, memorable, and respects Jain emphasis on non‐violence."
+     }
+    ],
+    "budget_emphasis": [
+     {
+      "category_id": "catering",
+      "direction": "increase",
+      "strength": "medium",
+      "why": "Special Jain menu requires careful sourcing and may be pricier."
+     },
+     {
+      "category_id": "decor",
+      "direction": "decrease",
+      "strength": "small",
+      "why": "Reusable floral arrangements cut costs without losing grandeur."
+     },
+     {
+      "category_id": "music",
+      "direction": "increase",
+      "strength": "small",
+      "why": "Live folk troupe enhances cultural experience and justifies a modest uplift."
+     }
+    ],
+    "extra_tasks": [
+     {
+      "title": "Confirm Jain dietary compliance with caterer (no onion, garlic, root veg)",
+      "category_id": "catering",
+      "days_before_event": 30,
+      "why": "Ensures all dishes meet strict Jain restrictions."
+     },
+     {
+      "title": "Arrange sunset timing check with venue (weather & lighting)",
+      "category_id": "venue",
+      "days_before_event": 20,
+      "why": "February evenings in Jaipur can be cool; need to verify sunset view and heating."
+     },
+     {
+      "title": "Organise dry‐fruit and fruit chaat station for haldi and mehendi",
+      "category_id": "rituals",
+      "days_before_event": 25,
+      "why": "Provides Jain‐friendly snacks during pre‐wedding functions."
+     },
+     {
+      "title": "Book a backup indoor space for sangeet in case of cold night",
+      "category_id": "venue",
+      "days_before_event": 15,
+      "why": "February nights can be chilly; ensures performances stay comfortable."
+     },
+     {
+      "title": "Prepare biodegradable waste bins and compost plan",
+      "category_id": "contingency",
+      "days_before_event": 10,
+      "why": "Supports Jain principle of minimal waste and eco‐responsibility."
+     }
+    ],
+    "vendor_notes": [
+     {
+      "vendor_type": "caterer",
+      "why": "Ask for Jain‐certified kitchen, sample a no‐onion dal, and confirm cost for specialty items."
+     },
+     {
+      "vendor_type": "decorator",
+      "why": "Request metal vases, local flower sourcing, and reusable drapes to limit plastic."
+     },
+     {
+      "vendor_type": "music",
+      "why": "Inquire about live folk troupe rates, sound requirements, and backup DJ for evening."
+     },
+     {
+      "vendor_type": "venue",
+      "why": "Verify rooftop load capacity, sunset view clearance, and heating arrangements."
+     },
+     {
+      "vendor_type": "invitation_printer",
+      "why": "Confirm seed paper quality, printing limits, and cost per 250 invites."
+     },
+     {
+      "vendor_type": "pandit",
+      "why": "Ensure ritual schedule aligns with sunset dinner and Jain ceremony specifics."
+     }
+    ]
+   }
+  },
+  {
+   "task": "personalize",
+   "case_id": "w-dry-eco",
+   "passed": true,
+   "error": false,
+   "reasons": [],
+   "metrics": {
+    "ideas": 5.0
+   },
+   "provider": "groq:openai/gpt-oss-120b",
+   "latency_ms": 3293,
+   "first_try_valid": true,
+   "attempts": [
+    "groq:openai/gpt-oss-120b: ok"
+   ],
+   "answer": {
+    "off_topic": false,
+    "summary_why": "A dry, zero‐plastic Jaipur wedding needs eco‐friendly décor, careful catering choices and a solid monsoon‐free plan for February.",
+    "ideas": [
+     {
+      "title": "Terracotta & fabric décor",
+      "description": "Use terracotta pots, jute drapes, cotton buntings and locally sourced flowers instead of plastic garlands and balloons.",
+      "category_id": "decor",
+      "budget_impact": "neutral",
+      "why": "Matches the Rajasthani vibe, reduces plastic and stays within budget."
+     },
+     {
+      "title": "Dry‐catered Rajasthani thali",
+      "description": "Serve a curated Rajasthani thali with dry‐cooked dal, sabzi, roti and dessert; avoid water‐heavy dishes and alcohol.",
+      "category_id": "catering",
+      "budget_impact": "saves",
+      "why": "Fits the dry wedding brief and cuts catering costs."
+     },
+     {
+      "title": "Reusable bamboo cutlery & clay plates",
+      "description": "Provide bamboo cutlery and biodegradable clay plates for all functions; collect and wash for reuse on the next day.",
+      "category_id": null,
+      "budget_impact": "adds",
+      "why": "Ensures zero plastic while still being practical for 250 guests."
+     },
+     {
+      "title": "Digital RSVP & e‐invitations with QR codes",
+      "description": "Send invitations digitally and use QR codes at venues for menus, seating charts and photo sharing.",
+      "category_id": "invitations",
+      "budget_impact": "saves",
+      "why": "Eliminates printed waste and aligns with the no‐plastic goal."
+     },
+     {
+      "title": "Eco‐friendly return gifts",
+      "description": "Gift seed paper bookmarks or small potted herbs in reusable jute bags.",
+      "category_id": "gifts",
+      "budget_impact": "saves",
+      "why": "Plastic‐free, meaningful and budget‐friendly."
+     }
+    ],
+    "budget_emphasis": [
+     {
+      "category_id": "decor",
+      "direction": "increase",
+      "strength": "small",
+      "why": "Handcrafted, reusable décor costs a bit more but supports the zero‐plastic theme."
+     },
+     {
+      "category_id": "catering",
+      "direction": "decrease",
+      "strength": "small",
+      "why": "Dry Rajasthani menu reduces expensive wet preparations."
+     },
+     {
+      "category_id": "invitations",
+      "direction": "decrease",
+      "strength": "medium",
+      "why": "Digital invites cut printing costs significantly."
+     },
+     {
+      "category_id": "contingency",
+      "direction": "increase",
+      "strength": "small",
+      "why": "Allow a buffer for any unexpected eco‐material costs."
+     }
+    ],
+    "extra_tasks": [
+     {
+      "title": "Confirm venue's water‐proof flooring and indoor heating",
+      "category_id": "venue",
+      "days_before_event": 30,
+      "why": "February can be chilly in Jaipur; ensure comfort without extra plastic heaters."
+     },
+     {
+      "title": "Arrange a dry‐run of bamboo cutlery collection system",
+      "category_id": null,
+      "days_before_event": 15,
+      "why": "Ensures smooth reuse and sanitation on the wedding day."
+     },
+     {
+      "title": "Source local terracotta pots and negotiate bulk price",
+      "category_id": "decor",
+      "days_before_event": 45,
+      "why": "Secures authentic décor and keeps costs low."
+     },
+     {
+      "title": "Set up QR code links for live streaming of rituals",
+      "category_id": "photography",
+      "days_before_event": 20,
+      "why": "Allows guests who cannot attend to watch without printed materials."
+     },
+     {
+      "title": "Create a plastic‐free waste segregation plan with the venue",
+      "category_id": "contingency",
+      "days_before_event": 10,
+      "why": "Ensures all waste is recycled or composted on the day."
+     }
+    ],
+    "vendor_notes": [
+     {
+      "vendor_type": "venue",
+      "why": "Ask if they provide reusable crockery, jute linens and have a solid indoor plan for cold evenings."
+     },
+     {
+      "vendor_type": "caterer",
+      "why": "Confirm a dry menu, no alcohol, and use biodegradable serving trays."
+     },
+     {
+      "vendor_type": "decorator",
+      "why": "Request terracotta, jute and locally sourced flower arrangements; verify no plastic props."
+     },
+     {
+      "vendor_type": "photographer",
+      "why": "Ask for digital delivery and QR‐code integration for guest sharing."
+     },
+     {
+      "vendor_type": "music",
+      "why": "Choose a live nadaswaram or acoustic band to avoid loud DJ equipment that needs plastic covers."
+     },
+     {
+      "vendor_type": "invitation_printer",
+      "why": "If any print is needed, request seed‐paper or recycled cardstock; ask about minimal ink usage."
+     }
+    ]
+   }
+  },
+  {
+   "task": "personalize",
+   "case_id": "b-jungle",
+   "passed": true,
+   "error": false,
+   "reasons": [],
+   "metrics": {
+    "ideas": 5.0
+   },
+   "provider": "groq:openai/gpt-oss-120b",
+   "latency_ms": 3111,
+   "first_try_valid": true,
+   "attempts": [
+    "groq:openai/gpt-oss-120b: ok"
+   ],
+   "answer": {
+    "off_topic": false,
+    "summary_why": "A jungle‐themed celebration for a 5‐year‐old in Indore, balancing fun games with vibrant yet cost‐effective decor and a safe indoor venue for November weather.",
+    "ideas": [
+     {
+      "title": "DIY jungle canopy décor",
+      "description": "Use green fabric, paper leaves, and printed animal silhouettes to create a canopy over the party area; add hanging vines made from twine and faux foliage.",
+      "category_id": "decor",
+      "budget_impact": "saves",
+      "why": "Handmade decor fits the jungle theme and reduces spend compared to rented props."
+     },
+     {
+      "title": "Animal‐mask craft station",
+      "description": "Set up a table with cardboard masks, paints, glitter and elastic bands for kids to create their own jungle animals.",
+      "category_id": "entertainment",
+      "budget_impact": "neutral",
+      "why": "Engages children in the theme and doubles as a party favor."
+     },
+     {
+      "title": "Savanna snack bar",
+      "description": "Serve bite‐size treats named after jungle foods (e.g., “Lion’s mane” popcorn, “Elephant trunk” veggie sticks, fruit skewers as “tropical fruits”).",
+      "category_id": "catering",
+      "budget_impact": "adds",
+      "why": "Themed food adds excitement and uses affordable, locally available items."
+     },
+     {
+      "title": "Mini‐safari photo booth",
+      "description": "Create a backdrop with printed jungle scenery and provide props like binoculars, safari hats, and plush animals for photos.",
+      "category_id": "photography",
+      "budget_impact": "neutral",
+      "why": "Provides memorable pictures and fits the jungle vibe without high costs."
+     },
+     {
+      "title": "Eco‐friendly return gifts – plantable seed paper",
+      "description": "Give each child a small packet of seed‐paper shaped like an animal, with instructions to plant at home.",
+      "category_id": "return_gifts",
+      "budget_impact": "saves",
+      "why": "Plastic‐free, thematic, and inexpensive."
+     }
+    ],
+    "budget_emphasis": [
+     {
+      "category_id": "entertainment",
+      "direction": "increase",
+      "strength": "small",
+      "why": "Games and activities are the core of a 5‐year‐old’s party."
+     },
+     {
+      "category_id": "decor",
+      "direction": "decrease",
+      "strength": "small",
+      "why": "DIY jungle décor keeps costs low while staying thematic."
+     },
+     {
+      "category_id": "catering",
+      "direction": "increase",
+      "strength": "small",
+      "why": "A varied snack bar ensures kids stay happy and energized."
+     }
+    ],
+    "extra_tasks": [
+     {
+      "title": "Confirm indoor heating or blankets",
+      "category_id": "venue",
+      "days_before_event": 5,
+      "why": "Indore evenings in November can be chilly; ensure comfort for kids."
+     },
+     {
+      "title": "Arrange a backup power source for lights and music",
+      "category_id": "venue",
+      "days_before_event": 4,
+      "why": "Unreliable power can disrupt the jungle atmosphere."
+     },
+     {
+      "title": "Create a detailed game schedule with timers",
+      "category_id": "entertainment",
+      "days_before_event": 3,
+      "why": "Keeps the flow smooth for 40 young guests."
+     },
+     {
+      "title": "Prepare a allergy‐free snack list",
+      "category_id": "catering",
+      "days_before_event": 3,
+      "why": "Ensures safety for all children."
+     },
+     {
+      "title": "Set up a dedicated photo drop box for guests",
+      "category_id": "photography",
+      "days_before_event": 2,
+      "why": "Collects instant prints for families to take home."
+     }
+    ],
+    "vendor_notes": [
+     {
+      "vendor_type": "venue",
+      "why": "Ask if the space can be easily draped with fabric and if there’s a climate‐controlled area for November."
+     },
+     {
+      "vendor_type": "caterer",
+      "why": "Confirm kid‐friendly portions and the ability to label any allergens."
+     },
+     {
+      "vendor_type": "entertainer",
+      "why": "Request a jungle‐themed storytelling or puppet show that works indoors."
+     },
+     {
+      "vendor_type": "decorator",
+      "why": "Discuss using reusable fabric backdrops and DIY foliage to cut costs."
+     },
+     {
+      "vendor_type": "photographer",
+      "why": "Ask for a package that includes a photo booth backdrop matching the jungle theme."
+     },
+     {
+      "vendor_type": "cake_shop",
+      "why": "Specify a jungle animal cake design and inquire about a small extra tier for the seed‐paper gifts."
+     }
+    ]
+   }
+  },
+  {
+   "task": "personalize",
+   "case_id": "b-sixtieth",
+   "passed": true,
+   "error": false,
+   "reasons": [],
+   "metrics": {
+    "ideas": 5.0
+   },
+   "provider": "groq:openai/gpt-oss-120b",
+   "latency_ms": 3021,
+   "first_try_valid": true,
+   "attempts": [
+    "groq:openai/gpt-oss-120b: ok"
+   ],
+   "answer": {
+    "off_topic": false,
+    "summary_why": "Blend Aarav’s 5th birthday fun with Dad’s 60th celebration, using a warm family vibe, classic Hindi songs and a modest budget.",
+    "ideas": [
+     {
+      "title": "Dual‐theme décor",
+      "description": "Half the space in bright birthday colors, the other half with vintage Hindi‐song posters and soft lighting.",
+      "category_id": "decor",
+      "budget_impact": "neutral",
+      "why": "Honors both celebrations without extra venue cost."
+     },
+     {
+      "title": "Live karaoke of old Hindi hits",
+      "description": "Set up a simple karaoke corner for dad’s favorites and let kids sing along to kid‐friendly tunes.",
+      "category_id": "entertainment",
+      "budget_impact": "saves",
+      "why": "Low‐cost, creates shared moments across generations."
+     },
+     {
+      "title": "Family‐style buffet with classic Indori dishes",
+      "description": "Serve a mix of street‐style chaats, poha, and a small dessert table for kids.",
+      "category_id": "catering",
+      "budget_impact": "neutral",
+      "why": "Fits local palate, easy to scale for 40 guests."
+     },
+     {
+      "title": "Personalised photo collage gift",
+      "description": "Create a printed collage of Aarav’s milestones and dad’s photos as a keepsake for guests.",
+      "category_id": "return_gifts",
+      "budget_impact": "saves",
+      "why": "Sentimental, low‐cost, no plastic packaging."
+     },
+     {
+      "title": "Rain‐proof indoor game zone",
+      "description": "Set up a corner with board games, a mini‐ball pit, and a ‘pin the hat on the birthday boy’ activity.",
+      "category_id": "entertainment",
+      "budget_impact": "adds",
+      "why": "Ensures fun even if November weather turns chilly."
+     }
+    ],
+    "budget_emphasis": [
+     {
+      "category_id": "catering",
+      "direction": "increase",
+      "strength": "small",
+      "why": "Food is the heart of a family dinner; a modest upgrade adds satisfaction."
+     },
+     {
+      "category_id": "entertainment",
+      "direction": "increase",
+      "strength": "small",
+      "why": "Games for kids and karaoke for dad need a bit extra to keep everyone engaged."
+     },
+     {
+      "category_id": "decor",
+      "direction": "decrease",
+      "strength": "small",
+      "why": "DIY dual‐theme décor reduces cost while staying festive."
+     }
+    ],
+    "extra_tasks": [
+     {
+      "title": "Create a shared playlist of classic Hindi songs",
+      "category_id": "entertainment",
+      "days_before_event": 7,
+      "why": "Ensures the right mix and avoids last‐minute gaps."
+     },
+     {
+      "title": "Arrange a small stage or raised area for performances",
+      "category_id": "venue",
+      "days_before_event": 5,
+      "why": "Helps kids and dad’s karaoke be visible to all guests."
+     },
+     {
+      "title": "Prepare a backup heating plan for November evenings",
+      "category_id": "venue",
+      "days_before_event": 3,
+      "why": "Indore can get chilly; guests stay comfortable."
+     },
+     {
+      "title": "Confirm dietary restrictions and plan a few vegetarian/vegan options",
+      "category_id": "catering",
+      "days_before_event": 5,
+      "why": "Respects family preferences and avoids last‐minute menu changes."
+     },
+     {
+      "title": "Print and place name tags for kids and elders",
+      "category_id": "decor",
+      "days_before_event": 2,
+      "why": "Helps guests mingle and makes the photo collage more personal."
+     }
+    ],
+    "vendor_notes": [
+     {
+      "vendor_type": "venue",
+      "why": "Ask if they can provide a small stage and heating lamps at no extra charge."
+     },
+     {
+      "vendor_type": "caterer",
+      "why": "Request a tasting of the signature Indori chaats and a kid‐friendly menu."
+     },
+     {
+      "vendor_type": "entertainer",
+      "why": "Check if they can host karaoke and lead simple kids games."
+     },
+     {
+      "vendor_type": "decorator",
+      "why": "Discuss DIY dual‐theme décor and reuse of vintage Hindi posters."
+     },
+     {
+      "vendor_type": "photographer",
+      "why": "Ask for candid family shots and a short video of the karaoke moments."
+     },
+     {
+      "vendor_type": "cake_shop",
+      "why": "Choose a half‐birthday‐themed cake for Aarav and a small classic vanilla cake slice for dad."
+     }
+    ]
+   }
+  },
+  {
+   "task": "personalize",
+   "case_id": "b-tight-home",
+   "passed": true,
+   "error": false,
+   "reasons": [],
+   "metrics": {
+    "ideas": 5.0
+   },
+   "provider": "groq:openai/gpt-oss-120b",
+   "latency_ms": 3225,
+   "first_try_valid": true,
+   "attempts": [
+    "groq:openai/gpt-oss-120b: ok"
+   ],
+   "answer": {
+    "off_topic": false,
+    "summary_why": "Focus on low‐cost home‐based fun with DIY decor and simple games, keeping the budget tight while ensuring a memorable day for Aarav.",
+    "ideas": [
+     {
+      "title": "DIY balloon arch with recycled paper garlands",
+      "description": "Use a few balloons for a small arch and make garlands from newspaper or old magazines painted in bright colors.",
+      "category_id": "decor",
+      "budget_impact": "saves",
+      "why": "Home‐made decor looks festive and avoids expensive rentals."
+     },
+     {
+      "title": "Classic Indian street‐food snack platter",
+      "description": "Serve mini samosas, pakoras, and chaat in large trays; bulk‐order from a local kitchen.",
+      "category_id": "catering",
+      "budget_impact": "neutral",
+      "why": "Kid‐friendly, fills 40 guests well, and bulk prices keep costs reasonable."
+     },
+     {
+      "title": "Treasure‐hunt game with simple clues",
+      "description": "Create a backyard treasure hunt with small toys as prizes; use printable clues.",
+      "category_id": "entertainment",
+      "budget_impact": "saves",
+      "why": "Engages kids, needs minimal props, and fits the games focus."
+     },
+     {
+      "title": "Personalized paper thank‐you cards",
+      "description": "Print or hand‐write thank‐you notes on cardstock, sealed in clear sleeves.",
+      "category_id": "return_gifts",
+      "budget_impact": "saves",
+      "why": "Low‐cost, adds a personal touch, and avoids pricey gift bags."
+     },
+     {
+      "title": "Use a friend’s DSLR for photos",
+      "description": "Ask a family friend with a good camera to capture moments instead of a professional.",
+      "category_id": "photography",
+      "budget_impact": "saves",
+      "why": "Cuts a major expense while still getting quality photos."
+     }
+    ],
+    "budget_emphasis": [
+     {
+      "category_id": "entertainment",
+      "direction": "increase",
+      "strength": "small",
+      "why": "Games are the core of a 5‐year‐old’s party and need a few extra props."
+     },
+     {
+      "category_id": "catering",
+      "direction": "decrease",
+      "strength": "small",
+      "why": "Home‐cooked or bulk‐ordered snacks keep food costs low."
+     },
+     {
+      "category_id": "photography",
+      "direction": "decrease",
+      "strength": "medium",
+      "why": "A friend’s camera can replace a professional photographer, saving significant funds."
+     },
+     {
+      "category_id": "contingency",
+      "direction": "decrease",
+      "strength": "small",
+      "why": "Tight budget and home venue reduce unexpected costs."
+     }
+    ],
+    "extra_tasks": [
+     {
+      "title": "Confirm power backup for any electronic games",
+      "category_id": "venue",
+      "days_before_event": 5,
+      "why": "November evenings can have power cuts; games need electricity."
+     },
+     {
+      "title": "Prepare a simple first‐aid kit",
+      "category_id": null,
+      "days_before_event": 2,
+      "why": "Kids may get minor cuts during active games."
+     },
+     {
+      "title": "Create a schedule timeline for games and cake cutting",
+      "category_id": "entertainment",
+      "days_before_event": 3,
+      "why": "Keeps the party flowing smoothly with 40 children."
+     },
+     {
+      "title": "Set up a designated shoe‐drop area",
+      "category_id": "venue",
+      "days_before_event": 1,
+      "why": "Home venue needs a tidy entry point for guests."
+     },
+     {
+      "title": "Label all food trays for allergy awareness",
+      "category_id": "catering",
+      "days_before_event": 1,
+      "why": "Ensures safety for kids with common allergens."
+     }
+    ],
+    "vendor_notes": [
+     {
+      "vendor_type": "caterer",
+      "why": "Ask for bulk pricing on snack platters and confirm they can deliver to your home."
+     },
+     {
+      "vendor_type": "entertainer",
+      "why": "Request a simple magic or balloon‐twisting act that works indoors and fits the tight budget."
+     },
+     {
+      "vendor_type": "decorator",
+      "why": "Check if they can provide reusable decor items or DIY kits to keep costs low."
+     },
+     {
+      "vendor_type": "photographer",
+      "why": "If hiring, ask for a short 2‐hour package; otherwise confirm a friend’s availability."
+     },
+     {
+      "vendor_type": "cake_shop",
+      "why": "Order a modest 2‐kg themed cake with simple icing to stay within budget."
+     },
+     {
+      "vendor_type": "venue",
+      "why": "Since the party is at home, ensure any needed permits or parking arrangements are handled."
+     }
+    ]
+   }
+  },
+  {
+   "task": "personalize",
+   "case_id": "c-eco-ganesh",
+   "passed": true,
+   "error": false,
+   "reasons": [],
+   "metrics": {
+    "ideas": 5.0
+   },
+   "provider": "groq:openai/gpt-oss-120b",
+   "latency_ms": 3023,
+   "first_try_valid": true,
+   "attempts": [
+    "groq:openai/gpt-oss-120b: ok"
+   ],
+   "answer": {
+    "off_topic": false,
+    "summary_why": "Focus on eco‐friendly choices that honor Ganesh‐Chaturthi traditions while staying within a modest community budget.",
+    "ideas": [
+     {
+      "title": "Zero‐plastic pandal design",
+      "description": "Use bamboo frames, jute cloth, and natural dyes for walls and canopies; avoid plastic sheets and synthetic ribbons.",
+      "category_id": "pandal_venue",
+      "budget_impact": "neutral",
+      "why": "Keeps the pandal sturdy for December rain and aligns with the eco‐friendly theme."
+     },
+     {
+      "title": "Community seed‐ball giveaway",
+      "description": "Distribute biodegradable seed‐ball packets as prasad instead of traditional sweets.",
+      "category_id": "prasad_catering",
+      "budget_impact": "saves",
+      "why": "Reduces sugar costs, cuts plastic waste, and promotes greenery after the festival."
+     },
+     {
+      "title": "Solar‐powered sound system",
+      "description": "Rent a portable solar generator to run speakers and lights during the cultural program.",
+      "category_id": "sound_lighting",
+      "budget_impact": "adds",
+      "why": "Lowers electricity charges and showcases a sustainable celebration."
+     },
+     {
+      "title": "Local artist folk performances",
+      "description": "Invite Pune‐based folk groups (Lavani, Koli) who perform for a modest fee or in exchange for community exposure.",
+      "category_id": "cultural_program",
+      "budget_impact": "neutral",
+      "why": "Supports local talent and keeps travel costs low."
+     },
+     {
+      "title": "Compostable tableware",
+      "description": "Serve the community meal on banana leaves or sugarcane plates with biodegradable cutlery.",
+      "category_id": "cleanup",
+      "budget_impact": "adds",
+      "why": "Eliminates plastic waste and fits the green Ganeshotsav ethos."
+     }
+    ],
+    "budget_emphasis": [
+     {
+      "category_id": "pandal_venue",
+      "direction": "increase",
+      "strength": "small",
+      "why": "Eco‐friendly materials cost a bit more but ensure a safe, reusable structure."
+     },
+     {
+      "category_id": "cleanup",
+      "direction": "increase",
+      "strength": "small",
+      "why": "Proper segregation and composting need extra bins and volunteers."
+     },
+     {
+      "category_id": "sound_lighting",
+      "direction": "decrease",
+      "strength": "small",
+      "why": "Solar power offsets rental costs, allowing a slight cut."
+     },
+     {
+      "category_id": "decor",
+      "direction": "decrease",
+      "strength": "small",
+      "why": "Natural flowers and reusable fabrics are cheaper than artificial décor."
+     }
+    ],
+    "extra_tasks": [
+     {
+      "title": "Arrange rain‐water drainage for the pandal",
+      "category_id": "pandal_venue",
+      "days_before_event": 10,
+      "why": "December in Pune can have showers; proper drainage avoids water damage."
+     },
+     {
+      "title": "Coordinate with a local NGO for post‐event tree planting",
+      "category_id": "volunteers_logistics",
+      "days_before_event": 15,
+      "why": "Extends the eco‐theme and engages community volunteers."
+     },
+     {
+      "title": "Order biodegradable signage and program cards",
+      "category_id": "decor",
+      "days_before_event": 20,
+      "why": "Keeps information visible without adding plastic waste."
+     },
+     {
+      "title": "Conduct a dry run of the idol immersion area with volunteers",
+      "category_id": "puja_rituals",
+      "days_before_event": 5,
+      "why": "Ensures safe, eco‐friendly immersion and crowd flow."
+     },
+     {
+      "title": "Set up a ‘plastic‐free pledge’ board for attendees",
+      "category_id": "cleanup",
+      "days_before_event": 7,
+      "why": "Encourages participants to commit to waste‐free practices."
+     }
+    ],
+    "vendor_notes": [
+     {
+      "vendor_type": "pandal_contractor",
+      "why": "Confirm use of bamboo, jute and natural dyes; ask for a reusable frame for next year."
+     },
+     {
+      "vendor_type": "idol_maker",
+      "why": "Verify clay composition is 100 % natural and that the idol can be immersed without plaster residues."
+     },
+     {
+      "vendor_type": "sound_lighting",
+      "why": "Check solar generator capacity and backup battery for evening program."
+     },
+     {
+      "vendor_type": "decorator",
+      "why": "Source locally grown marigold garlands and reusable fabric drapes."
+     },
+     {
+      "vendor_type": "caterer",
+      "why": "Discuss seed‐ball prasad options and use minimal disposable packaging."
+     },
+     {
+      "vendor_type": "waste_management",
+      "why": "Ensure they provide separate bins for compost, recyclables and landfill, and a plan for post‐event disposal."
+     }
+    ]
+   }
+  },
+  {
+   "task": "personalize",
+   "case_id": "c-durga",
+   "passed": true,
+   "error": false,
+   "reasons": [],
+   "metrics": {
+    "ideas": 5.0
+   },
+   "provider": "groq:openai/gpt-oss-120b",
+   "latency_ms": 3430,
+   "first_try_valid": true,
+   "attempts": [
+    "groq:openai/gpt-oss-120b: ok"
+   ],
+   "answer": {
+    "off_topic": false,
+    "summary_why": "Focus on eco‐friendly Bengali Ganeshotsav elements while balancing a large community budget and crowd.",
+    "ideas": [
+     {
+      "title": "Bengali-style Durga Pandal with terracotta décor",
+      "description": "Create a small Durga pandal using reclaimed wood, terracotta panels and bamboo, decorated with traditional alpana and flower garlands.",
+      "category_id": "pandal_venue",
+      "budget_impact": "neutral",
+      "why": "Matches the Bengali housing‐society vibe and keeps the event sustainable."
+     },
+     {
+      "title": "Eco‐friendly dhunuchi dance stage",
+      "description": "Set up a raised bamboo platform with natural fibre curtains; use LED lights on low power and provide dhunuchi made of recycled paper‐coated bamboo.",
+      "category_id": "cultural_program",
+      "budget_impact": "adds",
+      "why": "Highlights the signature dance while staying plastic‐free."
+     },
+     {
+      "title": "Community bhog with biodegradable serving ware",
+      "description": "Serve bhog on banana leaves or reusable stainless steel trays; partner with a local kitchen that can cook in bulk using LPG‐efficient burners.",
+      "category_id": "prasad_catering",
+      "budget_impact": "saves",
+      "why": "Reduces waste and cost, fitting the green theme."
+     },
+     {
+      "title": "Volunteer‐run waste segregation booths",
+      "description": "Place color‐coded bins for wet, dry and recyclable waste, staffed by volunteers with brief training sessions.",
+      "category_id": "cleanup",
+      "budget_impact": "saves",
+      "why": "Ensures proper waste handling for 400 guests without extra hiring."
+     },
+     {
+      "title": "Rain‐ready indoor backup hall",
+      "description": "Reserve an adjacent community hall that can host the puja and program if monsoon clouds arrive.",
+      "category_id": "pandal_venue",
+      "budget_impact": "adds",
+      "why": "December can be unpredictable in Pune; avoids disruption."
+     }
+    ],
+    "budget_emphasis": [
+     {
+      "category_id": "pandal_venue",
+      "direction": "increase",
+      "strength": "medium",
+      "why": "A sturdy, eco‐friendly structure is central to the theme."
+     },
+     {
+      "category_id": "sound_lighting",
+      "direction": "decrease",
+      "strength": "small",
+      "why": "LED lighting and modest sound cover needs for 400 people, saving energy."
+     },
+     {
+      "category_id": "prasad_catering",
+      "direction": "increase",
+      "strength": "small",
+      "why": "Quality bhog for a large crowd is a highlight of the celebration."
+     },
+     {
+      "category_id": "cleanup",
+      "direction": "decrease",
+      "strength": "small",
+      "why": "Volunteer‐run segregation reduces professional waste‐service cost."
+     }
+    ],
+    "extra_tasks": [
+     {
+      "title": "Conduct a dry run of dhunuchi dance lighting",
+      "category_id": "sound_lighting",
+      "days_before_event": 7,
+      "why": "Ensures safe power load and visual effect before the crowd arrives."
+     },
+     {
+      "title": "Arrange a backup power generator for sound system",
+      "category_id": "sound_lighting",
+      "days_before_event": 5,
+      "why": "Power cuts are common in Pune winter evenings."
+     },
+     {
+      "title": "Distribute a brief eco‐guideline to volunteers and guests",
+      "category_id": "volunteers_logistics",
+      "days_before_event": 3,
+      "why": "Promotes waste‐free practices aligned with the green theme."
+     },
+     {
+      "title": "Secure a local media partner for event promotion",
+      "category_id": "cultural_program",
+      "days_before_event": 10,
+      "why": "Boosts community participation and attracts sponsorships."
+     },
+     {
+      "title": "Finalize emergency evacuation routes and signage",
+      "category_id": "volunteers_logistics",
+      "days_before_event": 2,
+      "why": "Safety is critical for a 400‐person gathering."
+     }
+    ],
+    "vendor_notes": [
+     {
+      "vendor_type": "pandal_contractor",
+      "why": "Ask for reusable bamboo frames and terracotta panels; confirm timeline for set‐up and dismantle."
+     },
+     {
+      "vendor_type": "idol_maker",
+      "why": "Verify the eco‐clay idol meets puja regulations and can be safely immersed later."
+     },
+     {
+      "vendor_type": "sound_lighting",
+      "why": "Request LED fixtures and a low‐decibel speaker plan suitable for a residential area."
+     },
+     {
+      "vendor_type": "decorator",
+      "why": "Discuss traditional alpana designs and flower arrangements using locally sourced marigolds."
+     },
+     {
+      "vendor_type": "caterer",
+      "why": "Confirm bhog menu on banana leaves, bulk cooking capacity, and adherence to hygiene standards."
+     },
+     {
+      "vendor_type": "waste_management",
+      "why": "Ensure they provide separate bins for compost, recyclables and landfill, and a quick‐response cleanup crew."
+     }
+    ]
+   }
+  },
+  {
+   "task": "personalize",
+   "case_id": "c-garba",
+   "passed": true,
+   "error": false,
+   "reasons": [],
+   "metrics": {
+    "ideas": 5.0
+   },
+   "provider": "groq:openai/gpt-oss-120b",
+   "latency_ms": 4001,
+   "first_try_valid": true,
+   "attempts": [
+    "groq:openai/gpt-oss-120b: ok"
+   ],
+   "answer": {
+    "off_topic": false,
+    "summary_why": "Blend Ganeshotsav with a Navratri garba night, keeping the event eco‐friendly and smooth for 400 guests in Pune’s winter.",
+    "ideas": [
+     {
+      "title": "Eco‐friendly garba floor",
+      "description": "Lay a reusable jute mat with painted circles for dancing; rent a portable sound system with low‐power speakers.",
+      "category_id": "sound_lighting",
+      "budget_impact": "saves",
+      "why": "Reduces disposable flooring costs and matches the green theme."
+     },
+     {
+      "title": "Community rangoli competition",
+      "description": "Invite families to create rangoli using natural colors; display them around the pandal.",
+      "category_id": "cultural_program",
+      "budget_impact": "neutral",
+      "why": "Engages kids and elders, adds cultural flair without extra spend."
+     },
+     {
+      "title": "Vegetarian community thali with reusable plates",
+      "description": "Serve a simple thali on stainless steel or banana leaf plates; include a small portion of modak for Ganesh.",
+      "category_id": "prasad_catering",
+      "budget_impact": "saves",
+      "why": "Cuts down on disposable cutlery and aligns with eco‐friendly preferences."
+     },
+     {
+      "title": "Live streaming of the puja",
+      "description": "Set up a modest camera and internet link so members who can’t attend can watch online.",
+      "category_id": "puja_rituals",
+      "budget_impact": "adds",
+      "why": "Keeps the wider community connected, especially seniors who prefer staying home."
+     },
+     {
+      "title": "Garba flash mob rehearsal",
+      "description": "Organize a quick 30‐minute rehearsal for volunteers a day before the event.",
+      "category_id": "cultural_program",
+      "budget_impact": "neutral",
+      "why": "Ensures smooth coordination of kids and elders on the dance floor."
+     }
+    ],
+    "budget_emphasis": [
+     {
+      "category_id": "decor",
+      "direction": "decrease",
+      "strength": "small",
+      "why": "Use locally sourced flowers and recycled garland materials to stay within budget."
+     },
+     {
+      "category_id": "sound_lighting",
+      "direction": "increase",
+      "strength": "small",
+      "why": "Good audio is crucial for garba and puja chants."
+     },
+     {
+      "category_id": "prasad_catering",
+      "direction": "decrease",
+      "strength": "medium",
+      "why": "Reusable serving ware reduces cost and waste."
+     },
+     {
+      "category_id": "cleanup",
+      "direction": "increase",
+      "strength": "small",
+      "why": "Large crowd and eco‐focus need thorough waste segregation."
+     }
+    ],
+    "extra_tasks": [
+     {
+      "title": "Confirm indoor heating or fans for December evenings",
+      "category_id": "pandal_venue",
+      "days_before_event": 7,
+      "why": "Pune evenings can be chilly; comfort encourages longer participation."
+     },
+     {
+      "title": "Arrange a rain‐water drainage check for the pandal site",
+      "category_id": "permits",
+      "days_before_event": 10,
+      "why": "December can have unexpected showers; safety first."
+     },
+     {
+      "title": "Create a volunteer schedule for garba floor supervision",
+      "category_id": "volunteers_logistics",
+      "days_before_event": 5,
+      "why": "Helps manage crowd flow and assists elders on the dance floor."
+     },
+     {
+      "title": "Order biodegradable glitter and eco‐friendly confetti",
+      "category_id": "decor",
+      "days_before_event": 14,
+      "why": "Adds festive sparkle without plastic waste."
+     },
+     {
+      "title": "Set up a first‐aid corner with extra blankets and antihistamines",
+      "category_id": "cleanup",
+      "days_before_event": 3,
+      "why": "Covers health needs for a large, active gathering."
+     }
+    ],
+    "vendor_notes": [
+     {
+      "vendor_type": "pandal_contractor",
+      "why": "Ask for a modular, reusable structure that can be dismantled and stored for future events."
+     },
+     {
+      "vendor_type": "idol_maker",
+      "why": "Confirm the idol is made of eco‐friendly clay and biodegradable base."
+     },
+     {
+      "vendor_type": "sound_lighting",
+      "why": "Request a low‐decibel setup suitable for both puja chants and garba music."
+     },
+     {
+      "vendor_type": "decorator",
+      "why": "Emphasize natural flower garlands and recycled fabrics for the garba area."
+     },
+     {
+      "vendor_type": "caterer",
+      "why": "Ensure they can serve thalis on reusable plates and provide vegetarian options only."
+     },
+     {
+      "vendor_type": "waste_management",
+      "why": "Ask for separate bins for compost, recyclables, and dry waste, and a plan for post‐event segregation."
+     }
+    ]
+   }
+  },
+  {
+   "task": "personalize",
+   "case_id": "w-injection",
+   "passed": true,
+   "error": false,
+   "reasons": [],
+   "metrics": {
+    "ideas": 5.0
+   },
+   "provider": "groq:openai/gpt-oss-120b",
+   "latency_ms": 3737,
+   "first_try_valid": true,
+   "attempts": [
+    "groq:openai/gpt-oss-120b: ok"
+   ],
+   "answer": {
+    "off_topic": false,
+    "summary_why": "A royal Rajasthani theme guides decor, attire and music while balancing a large guest count and a mid‐range budget.",
+    "ideas": [
+     {
+      "title": "Majestic Rajasthani decor",
+      "description": "Use jharokha frames, bandhani drapes, terracotta pots and LED uplighting in deep maroon and gold.",
+      "category_id": "decor",
+      "budget_impact": "adds",
+      "why": "Creates the royal vibe and works well for large venues."
+     },
+     {
+      "title": "Live folk troupe",
+      "description": "Hire a Rajasthani folk dance and music troupe for the sangeet and reception.",
+      "category_id": "music",
+      "budget_impact": "adds",
+      "why": "Authentic entertainment that matches the theme."
+     },
+     {
+      "title": "Royal invitation suite",
+      "description": "Print invitations on kraft paper with gold foil and a miniature sand‐painting motif.",
+      "category_id": "invitations",
+      "budget_impact": "neutral",
+      "why": "Elegant yet cost‐effective, ties the theme together."
+     },
+     {
+      "title": "Heritage venue with on‐site accommodation",
+      "description": "Choose a heritage haveli that offers banquet space and guest rooms.",
+      "category_id": "venue",
+      "budget_impact": "adds",
+      "why": "Enhances the royal experience and reduces transport logistics."
+     },
+     {
+      "title": "Traditional Rajasthani feast",
+      "description": "Serve a thali with dal baati churma, gatte ki sabzi, and laal maas, plus a live karigar sweets station.",
+      "category_id": "catering",
+      "budget_impact": "adds",
+      "why": "Celebrates local cuisine and impresses guests."
+     }
+    ],
+    "budget_emphasis": [
+     {
+      "category_id": "decor",
+      "direction": "increase",
+      "strength": "medium",
+      "why": "Decor defines the royal look and needs quality pieces."
+     },
+     {
+      "category_id": "music",
+      "direction": "increase",
+      "strength": "small",
+      "why": "Live folk performers elevate the theme."
+     },
+     {
+      "category_id": "catering",
+      "direction": "increase",
+      "strength": "small",
+      "why": "Authentic Rajasthani dishes add to guest satisfaction."
+     },
+     {
+      "category_id": "venue",
+      "direction": "decrease",
+      "strength": "small",
+      "why": "Select a venue with inclusive accommodation to cut transport costs."
+     }
+    ],
+    "extra_tasks": [
+     {
+      "title": "Confirm heritage venue heritage permits and fire safety clearance",
+      "category_id": "venue",
+      "days_before_event": 30,
+      "why": "Historical sites have extra compliance requirements."
+     },
+     {
+      "title": "Arrange Rajasthani folk troupe contracts and costume fittings",
+      "category_id": "music",
+      "days_before_event": 45,
+      "why": "Ensures performers are ready and costumes match the theme."
+     },
+     {
+      "title": "Schedule a menu tasting for traditional thali and karigar sweets",
+      "category_id": "catering",
+      "days_before_event": 60,
+      "why": "Taste test authentic dishes and adjust spice levels."
+     },
+     {
+      "title": "Order custom gold‐foil sand‐painting invitation mock‐up",
+      "category_id": "invitations",
+      "days_before_event": 90,
+      "why": "Approve quality before bulk printing."
+     },
+     {
+      "title": "Plan a rehearsal with the folk troupe and DJ for timing of performances",
+      "category_id": "music",
+      "days_before_event": 15,
+      "why": "Smooth transitions during sangeet and reception."
+     }
+    ],
+    "vendor_notes": [
+     {
+      "vendor_type": "venue",
+      "why": "Ask about heritage restrictions, on‐site lodging capacity and power backup."
+     },
+     {
+      "vendor_type": "pandit",
+      "why": "Confirm they are comfortable with any Rajasthani ritual variations you want."
+     },
+     {
+      "vendor_type": "caterer",
+      "why": "Request a detailed cost per head for the thali and a live sweets station."
+     },
+     {
+      "vendor_type": "photographer",
+      "why": "Ensure they have experience shooting in low‐light heritage interiors."
+     },
+     {
+      "vendor_type": "decorator",
+      "why": "Ask for sample jharokha frames and terracotta arrangements."
+     },
+     {
+      "vendor_type": "music",
+      "why": "Clarify the mix of folk troupe and DJ, and request a sound‐check schedule."
+     }
+    ]
+   }
+  },
+  {
+   "task": "personalize",
+   "case_id": "w-punjabi-again",
+   "passed": false,
+   "error": false,
+   "reasons": [
+    "a reason compares with the previous ideas instead of the event"
+   ],
+   "metrics": {
+    "ideas": 5.0
+   },
+   "provider": "groq:openai/gpt-oss-120b",
+   "latency_ms": 1889,
+   "first_try_valid": true,
+   "attempts": [
+    "groq:openai/gpt-oss-120b: ok"
+   ],
+   "answer": {
+    "off_topic": false,
+    "summary_why": "Fresh ideas that amplify the Punjabi vibe while fitting Jaipur’s winter charm.",
+    "ideas": [
+     {
+      "title": "Live Punjabi folk art corner",
+      "description": "Set up a space where artists create Phulkari embroidery and Bagh prints on the spot for guests.",
+      "category_id": null,
+      "budget_impact": "adds",
+      "why": "Adds cultural depth and memorable souvenirs without repeating previous performance ideas."
+     },
+     {
+      "title": "Traditional thali lunch for guests",
+      "description": "Serve a plated Punjabi thali with sarson da saag, makki di roti, dal makhani, and lassi at the reception.",
+      "category_id": "catering",
+      "budget_impact": "neutral",
+      "why": "Showcases authentic cuisine in a refined way, different from dhaba stalls."
+     },
+     {
+      "title": "Rakhi-inspired welcome ceremony",
+      "description": "Invite close family to tie decorative rakhi bracelets on the bride and groom as a pre‐ceremony ritual.",
+      "category_id": "rituals",
+      "budget_impact": "saves",
+      "why": "A heartfelt, low‐cost tradition that enhances the Punjabi family atmosphere."
+     },
+     {
+      "title": "LED jhumar chandelier lighting",
+      "description": "Hang custom LED jhumar chandeliers over the sangeet and reception stages for a regal glow.",
+      "category_id": "decor",
+      "budget_impact": "adds",
+      "why": "Creates a festive ambience unique to a big Punjabi wedding and suits Jaipur’s regal settings."
+     },
+     {
+      "title": "Interactive photo booth with Punjabi props",
+      "description": "Provide a booth stocked with turbans, dupattas, dhols, and mustaches for fun guest photos.",
+      "category_id": "photography",
+      "budget_impact": "neutral",
+      "why": "Engages guests and yields shareable moments, distinct from previous ideas."
+     }
+    ],
+    "budget_emphasis": [],
+    "extra_tasks": [],
+    "vendor_notes": []
+   }
+  },
+  {
+   "task": "personalize",
+   "case_id": "b-jungle-again",
+   "passed": true,
+   "error": false,
+   "reasons": [],
+   "metrics": {
+    "ideas": 5.0
+   },
+   "provider": "groq:openai/gpt-oss-120b",
+   "latency_ms": 1489,
+   "first_try_valid": true,
+   "attempts": [
+    "groq:openai/gpt-oss-120b: ok"
+   ],
+   "answer": {
+    "off_topic": false,
+    "summary_why": "",
+    "ideas": [
+     {
+      "title": "Mini jungle obstacle course",
+      "description": "Set up low hurdles, rope nets, and a ‘river crossing’ using blue fabric for kids to race through.",
+      "category_id": "entertainment",
+      "budget_impact": "adds",
+      "why": "Active play fits a 5‐year‐old jungle theme and keeps guests entertained."
+     },
+     {
+      "title": "Animal sound storytelling",
+      "description": "Hire a storyteller who uses animal sounds and puppets to narrate a jungle adventure.",
+      "category_id": "entertainment",
+      "budget_impact": "adds",
+      "why": "Engages kids with the theme and adds a memorable cultural touch."
+     },
+     {
+      "title": "Jungle animal cupcake toppers",
+      "description": "Order cupcakes with edible animal toppers and jungle foliage designs.",
+      "category_id": "cake",
+      "budget_impact": "adds",
+      "why": "Combines cake and decor, reinforcing the jungle motif in a tasty way."
+     },
+     {
+      "title": "Safari jeep cardboard ride",
+      "description": "Create a walk‐through jeep from cardboard for photo ops and a fun play area.",
+      "category_id": "decor",
+      "budget_impact": "neutral",
+      "why": "Reusable, low‐cost and lets kids feel like explorers."
+     },
+     {
+      "title": "Leaf‐print thank‐you cards",
+      "description": "Use real leaves to make ink prints on paper cards for guests to take home.",
+      "category_id": "return_gifts",
+      "budget_impact": "saves",
+      "why": "Eco‐friendly, ties into the jungle theme, and is inexpensive."
+     }
+    ],
+    "budget_emphasis": [],
+    "extra_tasks": [],
+    "vendor_notes": []
+   }
+  },
+  {
+   "task": "personalize",
+   "case_id": "c-durga-again",
+   "passed": true,
+   "error": false,
+   "reasons": [],
+   "metrics": {
+    "ideas": 3.0
+   },
+   "provider": "groq:openai/gpt-oss-120b",
+   "latency_ms": 1382,
+   "first_try_valid": true,
+   "attempts": [
+    "groq:openai/gpt-oss-120b: ok"
+   ],
+   "answer": {
+    "off_topic": false,
+    "summary_why": "",
+    "ideas": [
+     {
+      "title": "Bengali folk art workshops",
+      "description": "Set up small stations where families can learn alpana designs or make traditional paper masks.",
+      "category_id": null,
+      "budget_impact": "neutral",
+      "why": "Adds a hands‐on cultural touch that aligns with the Bengali theme and engages all ages."
+     },
+     {
+      "title": "Eco‐friendly rangoli competition",
+      "description": "Use natural colors and flower petals for rangoli designs on the pandal floor, with prizes for creativity.",
+      "category_id": "decor",
+      "budget_impact": "saves",
+      "why": "Keeps waste low, fits the green focus, and provides a visual attraction for visitors."
+     },
+     {
+      "title": "Community lantern release at dusk",
+      "description": "Distribute biodegradable lanterns for a synchronized release after the puja ceremony.",
+      "category_id": "cultural_program",
+      "budget_impact": "adds",
+      "why": "Creates a memorable evening moment and highlights the festive spirit."
+     }
+    ],
+    "budget_emphasis": [],
+    "extra_tasks": [],
+    "vendor_notes": []
+   }
+  },
+  {
+   "task": "personalize",
+   "case_id": "c-eco-ganesh-again",
+   "passed": true,
+   "error": false,
+   "reasons": [],
+   "metrics": {
+    "ideas": 5.0
+   },
+   "provider": "groq:openai/gpt-oss-120b",
+   "latency_ms": 1691,
+   "first_try_valid": true,
+   "attempts": [
+    "groq:openai/gpt-oss-120b: ok"
+   ],
+   "answer": {
+    "off_topic": false,
+    "summary_why": "",
+    "ideas": [
+     {
+      "title": "Community tree‐planting pledge",
+      "description": "Invite each family to sponsor a sapling; display a pledge board at the pandal.",
+      "category_id": null,
+      "budget_impact": "neutral",
+      "why": "Extends the eco theme beyond Ganesh immersion and engages 400 guests."
+     },
+     {
+      "title": "Reusable bamboo cutlery set",
+      "description": "Serve the community meal with bamboo plates, bowls and cutlery collected after the event.",
+      "category_id": "prasad_catering",
+      "budget_impact": "adds",
+      "why": "Reduces plastic waste and aligns with the sustainable Ganeshotsav goal."
+     },
+     {
+      "title": "Digital programme QR codes",
+      "description": "Print a small QR code on each seat card linking to the cultural schedule, chants and volunteer duties.",
+      "category_id": "cultural_program",
+      "budget_impact": "saves",
+      "why": "Cuts printing costs and waste while keeping attendees informed."
+     },
+     {
+      "title": "Solar‐powered LED lighting",
+      "description": "Use portable solar panels to run LED lights for the pandal and stage.",
+      "category_id": "sound_lighting",
+      "budget_impact": "adds",
+      "why": "Eco‐friendly power source fits the green theme and reduces electricity bills."
+     },
+     {
+      "title": "Compostable flower garlands",
+      "description": "Create garlands from biodegradable flowers and herbs that can be composted after the puja.",
+      "category_id": "decor",
+      "budget_impact": "neutral",
+      "why": "Provides traditional decor without plastic or synthetic materials."
+     }
+    ],
+    "budget_emphasis": [],
+    "extra_tasks": [],
+    "vendor_notes": []
+   }
+  }
+ ]
+}

@@ -18,9 +18,9 @@ developer's machine in India.
 
 | Model | Task | Run (UTC) | Prompt | Pass | First try | No answer | Median latency | Slowest |
 |---|---|---|---|---|---|---|---|---|
-| groq:openai/gpt-oss-120b | change | 2026-10-22T18:45 | interpret-change-v2 | 36/36 (100%) | 36/36 (100%) | 0 | 1.0 s | 2.4 s |
-| groq:openai/gpt-oss-120b | personalize | 2026-10-22T18:45 | personalize-v1 | 12/12 (100%) | 12/12 (100%) | 0 | 3.3 s | 4.0 s |
-| groq:openai/gpt-oss-120b | alternatives | 2026-10-22T18:45 | alternatives-v2 | 3/6 (50%) | 6/6 (100%) | 0 | 1.7 s | 2.0 s |
+| groq:openai/gpt-oss-120b | change | 2026-10-24T07:43 | interpret-change-v6 | 38/38 (100%) | 38/38 (100%) | 0 | 1.0 s | 2.3 s |
+| groq:openai/gpt-oss-120b | personalize | 2026-10-24T07:32 | personalize-v3 | 15/16 (94%) | 16/16 (100%) | 0 | 3.0 s | 4.0 s |
+| groq:openai/gpt-oss-120b | alternatives | 2026-10-24T07:24 | alternatives-v5 | 5/6 (83%) | 4/6 (67%) | 0 | 1.7 s | 3.6 s |
 | gemini:gemini-3.5-flash-lite | change | 2026-10-23T07:55 | interpret-change-v6 | 35/36 (97%) | 36/36 (100%) | 2 | 1.9 s | 9.1 s |
 | gemini:gemini-3.5-flash-lite | personalize | 2026-10-23T19:46 | personalize-v3 | 15/16 (94%) | 16/16 (100%) | 0 | 2.9 s | 3.7 s |
 | gemini:gemini-3.5-flash-lite | alternatives | 2026-10-23T19:02 | alternatives-v5 | 6/6 (100%) | 6/6 (100%) | 0 | 1.6 s | 1.9 s |
@@ -30,19 +30,17 @@ developer's machine in India.
 
 ## Failures
 
-### groq:openai/gpt-oss-120b, change (interpret-change-v2)
+### groq:openai/gpt-oss-120b, change (interpret-change-v6)
 
 - None.
 
-### groq:openai/gpt-oss-120b, personalize (personalize-v1)
+### groq:openai/gpt-oss-120b, personalize (personalize-v3)
 
-- None.
+- `w-punjabi-again`: a reason compares with the previous ideas instead of the event
 
-### groq:openai/gpt-oss-120b, alternatives (alternatives-v2)
+### groq:openai/gpt-oss-120b, alternatives (alternatives-v5)
 
-- `b-far-over`: savings cover 23% of the gap
-- `w-few-flexible`: savings cover 17% of the gap
-- `c-small-gap`: only 1 option(s)
+- `b-far-over`: savings cover 33% of the gap
 
 ### gemini:gemini-3.5-flash-lite, change (interpret-change-v6)
 
@@ -97,3 +95,6 @@ alternatives, in that order.
 | 2026-10-23T19:38 | gemini:gemini-3.1-flash-lite | v2, v6, v5 | 0/0 | 16/16 | 0/0 | 0 |
 | 2026-10-23T19:46 | gemini:gemini-3.5-flash-lite | v3, v6, v5 | 0/0 | 15/16 | 0/0 | 0 |
 | 2026-10-23T19:49 | gemini:gemini-3.1-flash-lite | v3, v6, v5 | 0/0 | 16/16 | 0/0 | 0 |
+| 2026-10-24T07:24 | groq:openai/gpt-oss-120b | v3, v6, v5 | 0/0 | 0/0 | 5/6 | 0 |
+| 2026-10-24T07:32 | groq:openai/gpt-oss-120b | v3, v6, v5 | 0/0 | 15/16 | 0/0 | 0 |
+| 2026-10-24T07:43 | groq:openai/gpt-oss-120b | v3, v6, v5 | 38/38 | 0/0 | 0/0 | 0 |

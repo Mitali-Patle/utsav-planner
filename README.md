@@ -134,7 +134,7 @@ least half the gap.
 
 | Model | Change requests | Personalization | Alternatives | Median time, change |
 |---|---|---|---|---|
-| Groq `openai/gpt-oss-120b` (first in the chain) | 36/36 (v2) | 12/12 (v1) | 3/6 (v2) | 1.0 s |
+| Groq `openai/gpt-oss-120b` (first in the chain) | 38/38 (v6) | 15/16 (v3) | 5/6 (v5) | 1.0 s |
 | Gemini 3.5 Flash-Lite (second) | 35/36 (v6) | 15/16 (v3) | 6/6 (v5) | 1.9 s |
 | Gemini 3.1 Flash-Lite (third) | 33/33 (v6) | 16/16 (v3) | 6/6 (v5) | 2.1 s |
 
@@ -150,10 +150,16 @@ What the evals changed:
   after the models undershot a gap of half the budget. v3 stopped suggestions on lines
   whose money was already paid (seen in a live test). v4 gives the model the rupees each
   option would free, computed by the app, instead of percentages it had to multiply, and
-  v5 asks for at least two options: Gemini 3.5 went from 4/6 on v3 to 6/6.
+  v5 asks for at least two options: Gemini 3.5 went from 4/6 on v3 to 6/6, and Groq from
+  3/6 on v2 to 5/6 (its remaining miss covers a third of a gap of half the budget).
 - **What approval is for.** Gemini 3.5's one v6 failure turned "₹50,000" into ₹5,00,003
   while its own summary said 50,000. The preview shows that number before anything is
   saved, which is why no change is applied without the user's approval.
+- **What code cannot check.** On "different ideas" Groq still once explained an idea by
+  comparing it with the old ones, which the scorer catches. The same answer suggested the
+  couple tie rakhis on each other, which is culturally wrong (rakhi is between siblings) and
+  which no rule-based scorer can catch. That is why ideas are only suggestions with reasons:
+  they never change the budget, tasks or vendors.
 - **The scorer itself.** Four false failures were traced to the scoring code ("alcohol‐free"
   with a Unicode hyphen, "strictly omit onion", "zero plastic", "ban thermocol"), fixed with
   regression tests, and the saved answers re-scored without new calls.

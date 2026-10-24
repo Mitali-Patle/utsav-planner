@@ -1,0 +1,295 @@
+{
+ "model": "groq:openai/gpt-oss-120b",
+ "run_at": "2026-10-24T07:24:30+00:00",
+ "prompt_versions": {
+  "personalize": "personalize-v3",
+  "interpret_change": "interpret-change-v6",
+  "alternatives": "alternatives-v5"
+ },
+ "results": [
+  {
+   "task": "alternatives",
+   "case_id": "b-over-cake-kept",
+   "passed": true,
+   "error": false,
+   "reasons": [],
+   "metrics": {
+    "coverage": 0.87
+   },
+   "provider": "groq:openai/gpt-oss-120b",
+   "latency_ms": 3646,
+   "first_try_valid": false,
+   "attempts": [
+    "groq:openai/gpt-oss-120b: invalid",
+    "groq:openai/gpt-oss-120b: ok"
+   ],
+   "answer": {
+    "items": [
+     {
+      "category_id": "catering",
+      "action": "reduce",
+      "level": "medium",
+      "title": "Simplify the menu to a buffet of local favorites",
+      "why": "A focused buffet serves 40 guests well and cuts costs without compromising taste."
+     },
+     {
+      "category_id": "entertainment",
+      "action": "reduce",
+      "level": "medium",
+      "title": "Swap a professional DJ for a curated playlist with a MC",
+      "why": "A lively playlist plus a host keeps the party energetic at lower cost."
+     },
+     {
+      "category_id": "decor",
+      "action": "reduce",
+      "level": "medium",
+      "title": "Use seasonal flowers and DIY balloon arches",
+      "why": "Local blooms look fresh and DIY décor adds a personal touch."
+     },
+     {
+      "category_id": "contingency",
+      "action": "reduce",
+      "level": "small",
+      "title": "Trim the contingency buffer slightly",
+      "why": "A modest reduction frees a bit of cash while still covering unexpected needs."
+     }
+    ],
+    "summary": "Trim menus, entertainment and décor modestly, and shave the contingency to free enough cash without hurting the birthday vibe."
+   }
+  },
+  {
+   "task": "alternatives",
+   "case_id": "b-far-over",
+   "passed": false,
+   "error": false,
+   "reasons": [
+    "savings cover 33% of the gap"
+   ],
+   "metrics": {
+    "coverage": 0.326
+   },
+   "provider": "groq:openai/gpt-oss-120b",
+   "latency_ms": 3633,
+   "first_try_valid": false,
+   "attempts": [
+    "groq:openai/gpt-oss-120b: invalid",
+    "groq:openai/gpt-oss-120b: ok"
+   ],
+   "answer": {
+    "items": [
+     {
+      "category_id": "catering",
+      "action": "reduce",
+      "level": "medium",
+      "title": "Scale back to a simple buffet",
+      "why": "A modest menu satisfies 40 guests while cutting food costs."
+     },
+     {
+      "category_id": "entertainment",
+      "action": "reduce",
+      "level": "medium",
+      "title": "Replace live band with a DJ",
+      "why": "A DJ provides full‐party music at a lower price."
+     },
+     {
+      "category_id": "decor",
+      "action": "reduce",
+      "level": "medium",
+      "title": "Use fewer floral arches and more fabric drapes",
+      "why": "Keeps the venue festive yet cheaper than extensive flower setups."
+     },
+     {
+      "category_id": "cake",
+      "action": "reduce",
+      "level": "medium",
+      "title": "Opt for a smaller tiered cake",
+      "why": "Reduces cake cost while still offering a beautiful centerpiece."
+     }
+    ],
+    "summary": "Trim each major non‐essential category to its medium level, preserving the party vibe while freeing enough budget."
+   }
+  },
+  {
+   "task": "alternatives",
+   "case_id": "w-over-two-kept",
+   "passed": true,
+   "error": false,
+   "reasons": [],
+   "metrics": {
+    "coverage": 1.688
+   },
+   "provider": "groq:openai/gpt-oss-120b",
+   "latency_ms": 1811,
+   "first_try_valid": true,
+   "attempts": [
+    "groq:openai/gpt-oss-120b: ok"
+   ],
+   "answer": {
+    "items": [
+     {
+      "category_id": "catering",
+      "action": "replace",
+      "level": "medium",
+      "title": "Switch to a reputable banquet hall caterer with set menu",
+      "why": "A set menu for 250 guests trims per‐plate costs while keeping taste."
+     },
+     {
+      "category_id": "music",
+      "action": "reduce",
+      "level": "small",
+      "title": "Opt for a DJ instead of a live band",
+      "why": "A skilled DJ covers all ceremony and reception music for a large crowd."
+     },
+     {
+      "category_id": "decor",
+      "action": "replace",
+      "level": "medium",
+      "title": "Use seasonal marigold & rangoli instead of premium imports",
+      "why": "Local flowers are vibrant in February and cut décor spend."
+     },
+     {
+      "category_id": "rituals",
+      "action": "reduce",
+      "level": "medium",
+      "title": "Limit extra priest assistants to essential rites",
+      "why": "Core rituals stay sacred while auxiliary services are trimmed."
+     }
+    ],
+    "summary": "Replace high‐cost caterer and décor with local alternatives and trim extras to close the gap."
+   }
+  },
+  {
+   "task": "alternatives",
+   "case_id": "w-few-flexible",
+   "passed": true,
+   "error": false,
+   "reasons": [],
+   "metrics": {
+    "coverage": 1.077
+   },
+   "provider": "groq:openai/gpt-oss-120b",
+   "latency_ms": 1464,
+   "first_try_valid": true,
+   "attempts": [
+    "groq:openai/gpt-oss-120b: ok"
+   ],
+   "answer": {
+    "items": [
+     {
+      "category_id": "contingency",
+      "action": "reduce",
+      "level": "large",
+      "title": "Trim contingency to essential buffers",
+      "why": "Keeps a safety net while freeing most of the unused reserve."
+     },
+     {
+      "category_id": "transport",
+      "action": "reduce",
+      "level": "medium",
+      "title": "Consolidate shuttles with fixed schedules",
+      "why": "Reduces the number of vehicles without affecting guest comfort."
+     },
+     {
+      "category_id": "gifts",
+      "action": "reduce",
+      "level": "small",
+      "title": "Simplify return‐gift packaging",
+      "why": "Elegant yet modest packaging saves costs while still delighting guests."
+     }
+    ],
+    "summary": "Scale back the contingency, streamline transport, and modestly simplify gifts to bridge the shortfall."
+   }
+  },
+  {
+   "task": "alternatives",
+   "case_id": "c-over-puja-kept",
+   "passed": true,
+   "error": false,
+   "reasons": [],
+   "metrics": {
+    "coverage": 0.845
+   },
+   "provider": "groq:openai/gpt-oss-120b",
+   "latency_ms": 1549,
+   "first_try_valid": true,
+   "attempts": [
+    "groq:openai/gpt-oss-120b: ok"
+   ],
+   "answer": {
+    "items": [
+     {
+      "category_id": "decor",
+      "action": "reduce",
+      "level": "medium",
+      "title": "Simplify flower arrangements",
+      "why": "Local seasonal blooms look beautiful for a community pandal."
+     },
+     {
+      "category_id": "sound_lighting",
+      "action": "reduce",
+      "level": "medium",
+      "title": "Scale back to essential audio‐visual",
+      "why": "Core speeches and bhajans need clear sound, extra effects are optional."
+     },
+     {
+      "category_id": "cultural_program",
+      "action": "reduce",
+      "level": "medium",
+      "title": "Trim program to key performances",
+      "why": "Focus on the most popular acts keeps the crowd engaged."
+     },
+     {
+      "category_id": "contingency",
+      "action": "reduce",
+      "level": "medium",
+      "title": "Lower contingency reserve",
+      "why": "A modest buffer still protects against minor overruns."
+     }
+    ],
+    "summary": "Trim décor, audio‐visual, program and contingency to modest levels while preserving the event’s spirit."
+   }
+  },
+  {
+   "task": "alternatives",
+   "case_id": "c-small-gap",
+   "passed": true,
+   "error": false,
+   "reasons": [],
+   "metrics": {
+    "coverage": 1.257
+   },
+   "provider": "groq:openai/gpt-oss-120b",
+   "latency_ms": 1311,
+   "first_try_valid": true,
+   "attempts": [
+    "groq:openai/gpt-oss-120b: ok"
+   ],
+   "answer": {
+    "items": [
+     {
+      "category_id": "permits",
+      "action": "reduce",
+      "level": "small",
+      "title": "Cut non‐essential permit fees",
+      "why": "Basic civic permits suffice for a community event."
+     },
+     {
+      "category_id": "cleanup",
+      "action": "reduce",
+      "level": "small",
+      "title": "Scale back extra waste‐management services",
+      "why": "Standard cleaning covers the venue for 400 guests."
+     },
+     {
+      "category_id": "volunteers_logistics",
+      "action": "reduce",
+      "level": "small",
+      "title": "Rely more on volunteer staff",
+      "why": "Community volunteers can handle basic logistics without extra cost."
+     }
+    ],
+    "summary": "Trim minor permit, cleanup and volunteer logistics costs to bridge the small shortfall."
+   }
+  }
+ ]
+}
