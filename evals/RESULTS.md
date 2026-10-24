@@ -18,7 +18,7 @@ developer's machine in India.
 
 | Model | Task | Run (UTC) | Prompt | Pass | First try | No answer | Median latency | Slowest |
 |---|---|---|---|---|---|---|---|---|
-| groq:openai/gpt-oss-120b | change | 2026-10-24T07:43 | interpret-change-v6 | 38/38 (100%) | 38/38 (100%) | 0 | 1.0 s | 2.3 s |
+| groq:openai/gpt-oss-120b | change | 2026-10-24T17:17 | interpret-change-v7 | 41/41 (100%) | 41/41 (100%) | 0 | 1.0 s | 1.7 s |
 | groq:openai/gpt-oss-120b | personalize | 2026-10-24T07:32 | personalize-v3 | 15/16 (94%) | 16/16 (100%) | 0 | 3.0 s | 4.0 s |
 | groq:openai/gpt-oss-120b | alternatives | 2026-10-24T07:24 | alternatives-v5 | 5/6 (83%) | 4/6 (67%) | 0 | 1.7 s | 3.6 s |
 | gemini:gemini-3.5-flash-lite | change | 2026-10-23T07:55 | interpret-change-v6 | 35/36 (97%) | 36/36 (100%) | 2 | 1.9 s | 9.1 s |
@@ -30,7 +30,7 @@ developer's machine in India.
 
 ## Failures
 
-### groq:openai/gpt-oss-120b, change (interpret-change-v6)
+### groq:openai/gpt-oss-120b, change (interpret-change-v7)
 
 - None.
 
@@ -98,3 +98,4 @@ alternatives, in that order.
 | 2026-10-24T07:24 | groq:openai/gpt-oss-120b | v3, v6, v5 | 0/0 | 0/0 | 5/6 | 0 |
 | 2026-10-24T07:32 | groq:openai/gpt-oss-120b | v3, v6, v5 | 0/0 | 15/16 | 0/0 | 0 |
 | 2026-10-24T07:43 | groq:openai/gpt-oss-120b | v3, v6, v5 | 38/38 | 0/0 | 0/0 | 0 |
+| 2026-10-24T17:17 | groq:openai/gpt-oss-120b | v3, v7, v5 | 41/41 | 0/0 | 0/0 | 0 |

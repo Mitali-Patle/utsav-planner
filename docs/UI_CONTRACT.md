@@ -117,7 +117,7 @@ strings such as `2 Dec 2026`. Templates never compute; ask for a new field inste
 
 ### `partials/change_result.html` (variable `result`)
 - `kind`: `proposal`, `clarification`, `off_topic`, `unavailable`, `invalid` or `nothing_to_change`
-- `title`, `announce` (sent to the status region), `message`, `ai_note`, `ai` (panel data or `None`), `show_form`, `event_id`, `categories_for_select`
+- `title`, `announce` (sent to the status region), `message`, `asks` (a clarifying question: the card shows an `answer-hint` pointing to `#change-request`), `ai_note`, `ai` (panel data only for a preview, otherwise `None`), `show_form`, `event_id`, `categories_for_select`
 - `proposal` (see below) or `None`
 
 ### `partials/proposal.html` (variable `proposal`)
@@ -175,7 +175,7 @@ These labels are an honesty rule (AGENTS.md): AI output is labelled, non-AI outp
 | `label-ai`, `label-not-ai`, `ai-note`, `ai-panel` | Where an answer came from |
 | `ideas`, `ideas-ai`, `summary`, `budget-meter`, `meter`, `meter-over`, `budget-table`, `month`, `tasks` (`li.done`), `task-title`, `task-due`, `actions`, `toggle` | Plan sections; `meter` is a decorative `<progress>` (the amounts are in the text) |
 | `event-header-main`, `event-header-side`, `event-meta`, `event-actions`, `banner-button`, `countdown`, `countdown-number`, `kicker` | Dashboard banner |
-| `dashboard-layout`, `dashboard-main`, `section-nav` (`a[aria-current]`), `rail-cta` | Section menu: a sticky bar below 1100 px, a side rail above; `sections.js` sets `aria-current="location"` on the section in view |
+| `dashboard-layout`, `dashboard-main`, `section-nav` (`a[aria-current]`), `rail-cta` | Section menu: a sticky bar below 1100 px, a side rail above; `sections.js` sets `aria-current="location"` on the section in view and `is-past` on the links above it, so the full-height rail fills like a progress line |
 | `landing-top`, `landing-hero`, `how-compact`, `how`, `landing-main`, `panel` | Landing page: headline and "How it works" (`partials/how_it_works.html`) on the left, 70:30 with the picture panel |
 | `reel` (`[data-reel]`, `is-running`, `is-paused`), `reel-window`, `reel-track`, `reel-slide`, `reel-frame`, `reel-tone-{n}`, `reel-toggle` | Celebration pictures: `CELEBRATION_SLIDES` in `views.py` (an image in `public/static/img/celebrations/`, or a placeholder tone); the slides are listed twice for a seamless loop, the copy `aria-hidden`; `reel.js` starts it and shows "Pause pictures" (WCAG 2.2.2); still without JavaScript or with reduced motion |
 | `plans-header`, `add-plan`, `plan-grid`, `plan-tile`, `plan-tile-type`, `plan-tile-meta`, `plan-tile-days`, `empty-plans` | My plans page |

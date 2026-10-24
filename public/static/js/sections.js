@@ -1,4 +1,5 @@
-// Marks the section in view in the dashboard's section menu (aria-current="location").
+// Marks the section in view in the dashboard's section menu (aria-current="location"),
+// and the sections above it as passed, so the side rail fills like a progress line.
 (() => {
   const links = new Map(
     [...document.querySelectorAll(".section-nav a[href^='#']")].map((link) => [
@@ -9,12 +10,15 @@
   if (!links.size || !("IntersectionObserver" in window)) return;
 
   const mark = (id) => {
+    let passed = true;
     links.forEach((link, key) => {
       if (key === id) {
+        passed = false;
         link.setAttribute("aria-current", "location");
       } else {
         link.removeAttribute("aria-current");
       }
+      link.classList.toggle("is-past", passed);
     });
   };
 

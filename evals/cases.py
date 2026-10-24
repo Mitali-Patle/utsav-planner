@@ -315,6 +315,25 @@ CHANGE_CASES: tuple[ChangeCase, ...] = (
         "Remind us to order the jungle balloons two weeks before",
         (Outcome(new_task=("balloon",)),),
     ),
+    # A detail with no money in it becomes a task for the vendor.
+    ChangeCase(
+        "b-detail-flavour",
+        birthday(),
+        "chocolate truffle flavour for the cake",
+        (Outcome(new_task=("truffle", "chocolate")),),
+    ),
+    ChangeCase(
+        "w-detail-flowers",
+        wedding(),
+        "mandap flowers should be marigold and white",
+        (Outcome(new_task=("marigold",)),),
+    ),
+    ChangeCase(
+        "c-detail-dish",
+        community(),
+        "puran poli for the bhog",
+        (Outcome(new_task=("puran",)),),
+    ),
     ChangeCase(
         "bx-update-expense",
         birthday_with_advance(),

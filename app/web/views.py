@@ -535,13 +535,24 @@ OUTCOME_TITLES: Mapping[str, str] = {
 }
 
 
+QUESTION_NOTE = "Question from the AI. Nothing in your plan has changed."
+
+
 def change_result_context(
     event_id: str,
     outcome: ChangeOutcome,
     categories: Sequence[tuple[str, str]],
 ) -> dict[str, Any]:
-    """Data for the Change Manager's answer: a preview, a question or a message."""
+    """Data for the Change Manager's answer: a preview, a question or a message.
+
+    Only a preview carries the "How this was generated" panel; a question or a refusal
+    changed nothing, so it gets one plain line instead.
+    """
     provenance = outcome.provenance
+    asks = outcome.kind is OutcomeKind.CLARIFICATION
+    note = None
+    if provenance:
+        note = QUESTION_NOTE if asks and not provenance.fallback else _ai_note(provenance)
     return {
         "event_id": event_id,
         "kind": outcome.kind.value,
@@ -552,8 +563,9 @@ def change_result_context(
         "proposal": proposal_view(outcome.proposal) if outcome.proposal else None,
         "show_form": outcome.kind is OutcomeKind.UNAVAILABLE,
         "categories_for_select": list(categories),
-        "ai_note": _ai_note(provenance) if provenance else None,
-        "ai": ai_panel(outcome.ai, "change-ai"),
+        "asks": asks,
+        "ai_note": note,
+        "ai": ai_panel(outcome.ai, "change-ai") if outcome.proposal else None,
     }
 
 

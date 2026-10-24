@@ -13,7 +13,7 @@ from sqlalchemy import Engine, event
 from app.ai.cache import MemoryCache
 from app.ai.chain import FallbackChain
 from app.ai.client import ProviderUnavailableError
-from app.ai.schemas import AIAlternative, Alternatives
+from app.ai.schemas import AIAlternative, Alternatives, ChangeIntent, IntentStatus
 from app.config import Settings
 from app.domain.budget import SavingAction, SavingLevel
 from app.main import create_app
@@ -491,6 +491,23 @@ def test_change_preview_shows_how_it_was_generated(engine: Engine) -> None:
     assert 'id="change-ai-sent"' in page.text, "the change has its own panel"
     assert 'id="plan-ai-sent"' in page.text, "next to the personalization panel"
     assert "interpret-change-v" in page.text
+    assert_accessible(page.text)
+
+
+def test_a_question_says_nothing_changed_and_how_to_answer(engine: Engine) -> None:
+    question = ChangeIntent(
+        status=IntentStatus.NEEDS_CLARIFICATION,
+        clarification_question="How many more guests are coming?",
+        summary="More guests, number unknown.",
+    )
+    client = client_for(engine, SUGGESTIONS, question)
+    csrf = token(client)
+    url = create(client, csrf)
+    page = client.post(f"{url}/changes", data={"csrf_token": csrf, "request": "more guests"})
+    assert "How many more guests are coming?" in page.text
+    assert views.QUESTION_NOTE in page.text
+    assert 'href="#change-request"' in page.text
+    assert 'id="change-ai-sent"' not in page.text, "nothing changed, so no generation panel"
     assert_accessible(page.text)
 
 
