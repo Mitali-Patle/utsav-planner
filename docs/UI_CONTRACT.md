@@ -36,7 +36,8 @@ After any template or CSS change, run `uv run pytest -W error`. The tests in
 | `POST /events/{id}/alternatives` | `dashboard.html` with alternatives for the plan's shortfall | `partials/alternatives.html` |
 | `POST /events/{id}/alternatives/apply` (fields `category_id`, `action`, `level`) | `dashboard.html` with the preview in place | `partials/change_result.html` into `#change-result` |
 
-Not-found and domain errors (404, 422) render `error.html`; for htmx requests the server
+Not-found and domain errors (404, 409, 422) render `error.html` with `heading` set by
+status (`HEADINGS` in `app/web/errors.py`) and links to My plans and a new plan; for htmx requests the server
 sends `partials/notice.html` with `HX-Retarget: #status-region`. A missing CSRF token (403)
 or a body over 32 KB (413) is stopped by the request guard before routing, with a bare
 `<p role="alert">` message.
@@ -94,13 +95,17 @@ strings such as `2 Dec 2026`. Templates never compute; ask for a new field inste
 ### `landing.html`
 - `form`: `form.values[name]`, `form.errors[name]` (and `form.errors["form"]`)
 - `today` (ISO date for the date input's `min`)
-- `event_types`: list of `(value, label)`
+- `error_links`: list of `(target id, "Label: message")` for the error summary (`error-summary`), which takes focus
+- `examples`: list of `(name, label)`; `event_types`: list of `(value, label, hint)`
 - `sub_events`: list of `{event_type, label, options: [(value, label)]}`
-- `events`: list of `{id, title, type_label, date}`
+- `slides`: the picture panel, `Slide(caption, image)`
+
+### `plans.html`
+- `events`: list of event summaries (the same shape as `event` on the dashboard), soonest first
 
 ### `dashboard.html` and `partials/plan_area.html`
 - `event`: `{id, version, title, type_label, city, date, days_left, guests, preferences}`
-- `plan.summary`: `{total, spent, remaining, per_guest, guests, shortfall, over_plan}`; `shortfall` is `None` unless over budget; `over_plan` names the lines spent past their plan
+- `plan.summary`: `{total, spent, remaining, per_guest, guests, shortfall, over_plan, spent_percent}` (`spent_percent` passes 100 when overspent; the `<progress>` clamps); `shortfall` is `None` unless over budget; `over_plan` names the lines spent past their plan
 - `plan.categories`: `{id, name, allocated, spent, remaining, overspent, protected}`
 - `plan.expenses`: `{id, label, category, amount, amount_inr, protected}`
 - `plan.tasks`: `{id, title, due, done, overdue, compressed, source, ai, why, category}`

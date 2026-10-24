@@ -14,6 +14,8 @@ STATUS_BY_ERROR: tuple[tuple[type[DomainError], int], ...] = (
 )
 DEFAULT_STATUS = 400
 NOT_FOUND = 404
+HEADINGS = {404: "Not found", 409: "This preview is out of date", 429: "Please wait a moment"}
+DEFAULT_HEADING = "Something went wrong"
 
 
 def is_htmx(request: Request) -> bool:
@@ -27,7 +29,12 @@ def render_error(request: Request, message: str, status_code: int) -> HTMLRespon
     response = templates.TemplateResponse(
         request,
         template,
-        {"kind": "error", "message": message, "status_code": status_code},
+        {
+            "kind": "error",
+            "message": message,
+            "status_code": status_code,
+            "heading": HEADINGS.get(status_code, DEFAULT_HEADING),
+        },
         status_code=status_code,
     )
     if is_htmx(request):

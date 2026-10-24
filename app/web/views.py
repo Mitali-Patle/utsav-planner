@@ -8,6 +8,7 @@ from collections.abc import Mapping, Sequence
 from dataclasses import dataclass, field
 from datetime import date, timedelta
 from itertools import groupby
+from types import MappingProxyType
 from typing import Any
 
 from pydantic import ValidationError
@@ -171,17 +172,25 @@ def form_errors(error: ValidationError) -> dict[str, str]:
         ... except ValidationError as e:
         ...     form_errors(e)
         {'guests': 'Must be at least 1.'}
+        >>> try:
+        ...     Form.model_validate({"guests": ""})
+        ... except ValidationError as e:
+        ...     form_errors(e)
+        {'guests': 'This field is required.'}
     """
     messages: dict[str, str] = {}
     for item in error.errors():
         name = str(item["loc"][0]) if item["loc"] else "form"
-        messages.setdefault(name, _friendly(item["type"], item.get("ctx") or {}, item["msg"]))
+        error_type = "missing" if item.get("input") == "" else item["type"]
+        messages.setdefault(name, _friendly(error_type, item.get("ctx") or {}, item["msg"]))
     return messages
 
 
 def _friendly(error_type: str, ctx: Mapping[str, Any], fallback: str) -> str:
     """Plain wording for the validation errors users can trigger from forms."""
-    if error_type in {"missing", "string_too_short", "too_short"} and ctx.get("min_length", 1) <= 1:
+    if error_type == "missing" or (
+        error_type in {"string_too_short", "too_short"} and ctx.get("min_length", 1) <= 1
+    ):
         return "This field is required."
     messages = {
         "string_too_short": f"Use at least {ctx.get('min_length')} characters.",
@@ -217,10 +226,44 @@ CELEBRATION_SLIDES: tuple[Slide, ...] = (
 """Image files go in public/static/img/celebrations/ under the name given here."""
 
 
+CREATE_FIELDS: Mapping[str, tuple[str, str]] = MappingProxyType(
+    {
+        "event_type": ("Event type", "type-wedding"),
+        "title": ("Event name", "f-title"),
+        "city": ("City", "f-city"),
+        "event_date": ("Event date", "f-event_date"),
+        "guest_count": ("Number of guests", "f-guest_count"),
+        "total_budget_inr": ("Total budget in rupees", "f-total_budget_inr"),
+        "preferences": ("Preferences", "f-preferences"),
+        "sub_events": ("Functions to include", "create-heading"),
+    }
+)
+"""Each new-event field's label and the id its error summary links to."""
+
+
+def error_links(errors: Mapping[str, str]) -> list[tuple[str, str]]:
+    """The error summary: (link target, "Label: message") per field.
+
+    Examples:
+        >>> error_links({"city": "This field is required.", "form": "Try again."})
+        [('f-city', 'City: This field is required.')]
+        >>> error_links({"extra": "Not allowed."})
+        [('create-heading', 'extra: Not allowed.')]
+    """
+    links = []
+    for name, message in errors.items():
+        if name == "form":
+            continue
+        label, target = CREATE_FIELDS.get(name, (name, "create-heading"))
+        links.append((target, f"{label}: {message}"))
+    return links
+
+
 def landing_context(form: FormState, today: date) -> dict[str, Any]:
     """Data for the landing page: the create form and the celebration panel."""
     return {
         "form": form,
+        "error_links": error_links(form.errors),
         "today": today.isoformat(),
         "examples": [(name, example.label) for name, example in EXAMPLES.items()],
         "event_types": [(t.value, EVENT_TYPE_LABELS[t], EVENT_TYPE_HINTS[t]) for t in EventType],
@@ -276,17 +319,19 @@ def dashboard_context(
 
 
 def percent_of(part: int, whole: int) -> int:
-    """Whole-number share of `whole` for a progress bar, capped at 100.
+    """Whole-number share of `whole`, past 100 when overspent.
+
+    The text shows the true share; a `<progress max="100">` clamps the bar itself.
 
     Examples:
         >>> percent_of(2_500, 10_000), percent_of(1, 3), percent_of(15_000, 10_000)
-        (25, 33, 100)
+        (25, 33, 150)
         >>> percent_of(500, 0), percent_of(0, 0)
         (100, 0)
     """
     if whole <= 0:
         return 100 if part > 0 else 0
-    return min(100, part * 100 // whole)
+    return part * 100 // whole
 
 
 def plan_sections(plan: EventPlan, today: date) -> dict[str, Any]:

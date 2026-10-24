@@ -699,6 +699,20 @@ tbody tr:hover {
     width: 8rem;
   }
 
+  /* The status cell's own label names the vendor, so it replaces the column name */
+  td[data-label="Status"]::before {
+    content: none;
+  }
+
+  td[data-label="Status"] form {
+    flex: 1;
+  }
+
+  td[data-label="Status"] form label {
+    text-align: left;
+    color: var(--color-text-muted);
+  }
+
   /* Budget lines stay compact: name and toggle, then three amounts side by side */
   .budget-table tr {
     display: grid;
@@ -928,6 +942,34 @@ legend {
 .notice-error {
   background: var(--color-error-bg);
   border-left-color: var(--color-error);
+}
+
+/* The new-plan form's error summary: each problem links to its field */
+.error-summary ul {
+  margin: var(--space-2) 0 0;
+  padding-left: var(--space-5);
+}
+
+.error-summary li + li {
+  margin-top: var(--space-1);
+}
+
+.error-summary a {
+  color: var(--color-primary);
+}
+
+.error-page {
+  max-width: 40rem;
+  padding-block: var(--space-12);
+}
+
+.error-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-3);
+  list-style: none;
+  margin: var(--space-6) 0 0;
+  padding: 0;
 }
 
 .badge {
@@ -1388,6 +1430,7 @@ legend {
   grid-template-columns: auto 1fr;
   column-gap: var(--space-3);
   align-items: start;
+  align-content: start;
   padding: var(--space-4);
   background: var(--color-bg);
   border: 1.5px solid var(--color-border-subtle);

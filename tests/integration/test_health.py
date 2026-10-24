@@ -13,6 +13,13 @@ def test_healthz_returns_ok(client: TestClient) -> None:
     assert response.json() == {"status": "ok"}
 
 
+def test_monitors_can_check_pages_with_head(client: TestClient) -> None:
+    for path in ("/healthz", "/", "/plans"):
+        response = client.head(path)
+        assert response.status_code == 200, path
+        assert not response.content, "HEAD has no body"
+
+
 def test_api_docs_hidden_in_production() -> None:
     settings = Settings(
         _env_file=None,

@@ -254,7 +254,7 @@ Every flow works as a plain form submission; htmx only enhances it.
 - **Live smoke** (manual, dev keys): `python -m scripts.ai_smoke`.
 - **Web:** HTTP flow tests for every route with and without htmx, including CSRF, ownership and rate limits, plus a label audit of every page and fragment.
 - **Browser** (`pytest -m e2e`): Playwright journeys with and without JavaScript; axe; 320 px overflow; skip link; a console free of errors and CSP violations. The app runs in a thread with a task-aware fake AI and a temporary SQLite file.
-- **AI evals** (`evals/`, real models, run by hand): 60 cases scored by code through the guardrails and change engine; results in `evals/RESULTS.md`.
+- **AI evals** (`evals/`, real models, run by hand): 63 cases scored by code through the guardrails and change engine; results in `evals/RESULTS.md`.
 - **CI** runs all of the above except the evals on every push to `main`.
 
 ## 14. Deployment and operations

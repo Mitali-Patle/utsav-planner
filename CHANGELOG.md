@@ -22,6 +22,11 @@ All notable changes to Utsav Planner will be documented in this file.
 - The new-event form reminds users that an AI model reads their preferences, so personal details should be left out.
 
 ### Changed
+- The budget line "₹70,000 of ₹60,000 spent" shows the true share (116%) instead of stopping at 100%.
+- The new-plan form's error summary lists each problem as a link to its field, takes focus, and an empty number or date field now says "This field is required." instead of "Enter a whole number."
+- Error pages are titled by what happened ("Not found", "Please wait a moment") and offer "Go to My plans" and "Start a new plan".
+- On phones, a vendor's status shows its own label instead of a repeated "Status" column name; the event type cards keep their descriptions aligned.
+- The home page, My plans and `/healthz` answer HEAD requests, for uptime monitors.
 - The section menu on wide screens is a full-height rail that fills, like a progress line, up to the section in view.
 - A clarifying question from the Change Manager says that nothing in the plan has changed and how to answer it, without the "How this was generated" panel; only a preview of a change carries that panel.
 - Plain details with no money in them ("cake flavour butterscotch", "marigold flowers for the mandap") become a proposed task for the right vendor instead of a question.

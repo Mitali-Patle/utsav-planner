@@ -502,3 +502,10 @@ The prompts the app itself sends to the LLM live in `app/ai/prompts/`.
 - **Problem seen by the developer:** "cake flavor butterscotch" got a clarifying question ("change the cake budget or add a note?") with no way to answer it, so nothing changed. The card also carried the full "How this was generated" panel although nothing had been generated for the plan.
 - **v7:** a detail that changes no money, guests or date becomes an `add_task` that passes it to the right vendor (14 days before unless the user says when), with one worked example. Groq 41/41, including three new cases (a cake flavour, mandap flowers, a bhog dish) and the three vague requests that must still get a question. Gemini was not rerun on v7.
 - **Interface:** only a preview shows "How this was generated"; a question says "Question from the AI. Nothing in your plan has changed." and how to answer it. The section rail runs the height of the window and fills up to the section in view.
+
+## 2026-10-25: Full review against the judging criteria
+- **Tool / model:** Claude Code (Claude Opus 5.5).
+- **Prompt (short):** review the whole website and codebase for code quality, problem alignment, security, efficiency, testing, accessibility and UI/UX, and fix what needs fixing.
+- **Method:** quality gates, live security headers and error responses, full-page screenshots of every page at 1440 px (light and dark) and 390 px.
+- **Fixed:** the spent share stopped at 100% when overspent (a wrong number on screen); empty number and date fields said "Enter a whole number" instead of "required"; the error summary now links each problem to its field and takes focus; error pages got status-specific headings and next steps; the phone vendor card repeated "Status"; type-card descriptions drifted when one wrapped; HEAD returned 405; the README's eval count and script list were out of date.
+- **Left as is (low impact):** static files revalidate on every load (no hashed names to cache safely); no robots.txt; the date input follows the browser's locale; the home page pictures are placeholders until photos arrive.

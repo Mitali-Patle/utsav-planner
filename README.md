@@ -113,9 +113,9 @@ Details: [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md) (binding design and deci
 
 ## AI quality: evals
 
-[`evals/`](evals) holds 60 cases run against the real models: 38 change requests (lakh and
-"45k" amounts, Hinglish, relative changes, dates, keep-as-is, several changes at once, vague
-and off-topic requests, prompt injection), 12 personalizations (Bengali, Tamil, Punjabi and
+[`evals/`](evals) holds 63 cases run against the real models: 41 change requests (lakh and
+"45k" amounts, Hinglish, relative changes, dates, keep-as-is, several changes at once,
+details such as a cake flavour, vague and off-topic requests, prompt injection), 12 personalizations (Bengali, Tamil, Punjabi and
 Jain weddings, a dry wedding, Ganeshotsav, Durga Puja, garba night and more, with dietary
 rules that must be respected), 4 requests for different ideas (no repeats, preferences still
 honoured) and 6 over-budget plans.
@@ -226,7 +226,7 @@ nothing moves.
 | Unit and property | Money, budget, timeline, vendors, change engine (Hypothesis checks exact totals and protection over thousands of generated plans), AI chain, providers, prompts, guardrails, services, persistence | `uv run pytest` |
 | Web | Every route through HTTP with and without htmx: CSRF, ownership, rate limits, validation, label audit of every page | `uv run pytest` |
 | Browser | Playwright journeys (one with JavaScript off), axe, phone width, keyboard, clean console | `uv run pytest -m e2e` |
-| AI evals | 60 cases against the real models | `uv run python -m evals.run --model …` |
+| AI evals | 63 cases against the real models | `uv run python -m evals.run --model …` |
 
 The AI is always faked in tests. A 95% branch-coverage gate applies to `app/`, and
 `mypy --strict` covers the app, tests and evals. GitHub Actions runs the pre-commit hooks,
@@ -245,7 +245,8 @@ the tests, the browser tests and the security checks on every push.
   (the rate-limit counters, reading the plan, saving the preview), with the AI call
   outside them. A test keeps these numbers from creeping up.
 - No JavaScript build: the page ships HTML, one stylesheet, htmx (52 KB, 17 KB
-  compressed) and a 231-byte print script, served from Vercel's CDN.
+  compressed) and four small scripts (theme switch, section menu, picture panel, print;
+  under 4 KB together), served from Vercel's CDN.
 
 ## Run it locally
 

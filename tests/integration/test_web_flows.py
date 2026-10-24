@@ -200,6 +200,16 @@ def test_invalid_event_keeps_the_input_and_explains(engine: Engine) -> None:
     assert_accessible(page.text)
 
 
+def test_empty_fields_are_listed_as_required_with_links(engine: Engine) -> None:
+    client = client_for(engine)
+    page = client.post("/events", data=event_form(token(client), guest_count="", city=""))
+    assert page.status_code == 422
+    assert '<a href="#f-city">City: This field is required.</a>' in page.text
+    assert '<a href="#f-guest_count">Number of guests: This field is required.</a>' in page.text
+    assert "Enter a whole number" not in page.text, "empty is not a number problem"
+    assert_accessible(page.text)
+
+
 def test_past_date_is_explained_on_the_date_field(engine: Engine) -> None:
     client = client_for(engine)
     page = client.post(
@@ -612,6 +622,18 @@ def test_invalid_expense_is_shown_next_to_the_form(
     page = client.post(f"{url}/expenses", data=data)
     assert page.status_code == 422
     assert_accessible(page.text)
+
+
+def test_spending_past_the_total_shows_the_true_share(engine: Engine) -> None:
+    client = client_for(engine, SUGGESTIONS)
+    csrf = token(client)
+    url = create(client, csrf)
+    page = client.post(
+        f"{url}/expenses",
+        data={"csrf_token": csrf, "category_id": "venue", "label": "Hall", "amount_inr": "18000"},
+        follow_redirects=True,
+    )
+    assert "₹18,000 of ₹15,000 spent (120%)" in page.text, "not capped at 100%"
 
 
 def test_over_budget_dashboard_offers_alternatives(engine: Engine) -> None:

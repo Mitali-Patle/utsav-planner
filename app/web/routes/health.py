@@ -22,6 +22,16 @@ def healthz() -> dict[str, str]:
     return {"status": "ok"}
 
 
+@router.head("/healthz", include_in_schema=False)
+def healthz_head() -> Response:
+    """Answer uptime monitors that check with HEAD.
+
+    Returns:
+        An empty 200 response.
+    """
+    return Response()
+
+
 @router.get("/readyz")
 def readyz(engine: EngineDep, response: Response) -> dict[str, str]:
     """Report whether the database is reachable.

@@ -23,7 +23,9 @@ def favicon() -> RedirectResponse:
     return RedirectResponse(FAVICON_PATH, status_code=status.HTTP_308_PERMANENT_REDIRECT)
 
 
-@router.get("/", response_class=HTMLResponse, include_in_schema=False)
+@router.api_route(
+    "/", methods=["GET", "HEAD"], response_class=HTMLResponse, include_in_schema=False
+)
 def home(request: Request, today: TodayDep, example: str | None = None) -> HTMLResponse:
     """Landing page: start a plan.
 
@@ -36,7 +38,9 @@ def home(request: Request, today: TodayDep, example: str | None = None) -> HTMLR
     return render(request, "landing.html", landing_context(example_form(example, today), today))
 
 
-@router.get("/plans", response_class=HTMLResponse, include_in_schema=False)
+@router.api_route(
+    "/plans", methods=["GET", "HEAD"], response_class=HTMLResponse, include_in_schema=False
+)
 def my_plans(request: Request, session: SessionDep, today: TodayDep) -> HTMLResponse:
     """This visitor's plans, soonest first, with a button to start a new one.
 

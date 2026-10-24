@@ -1,7 +1,12 @@
 {% extends "base.html" %}
-{% block title %}Something needs attention - Utsav Planner{% endblock %}
+{% block title %}{{ heading }} - Utsav Planner{% endblock %}
 {% block content %}
-<h1>Something needs attention</h1>
-{% include "partials/notice.html" %}
-<p><a href="/">Back to your events</a></p>
+<section class="error-page" aria-labelledby="error-heading">
+  <h1 id="error-heading">{{ heading }}</h1>
+  {% include "partials/notice.html" %}
+  <ul class="error-actions" role="list">
+    <li><a href="/plans" class="button button-primary">Go to My plans</a></li>
+    <li><a href="/" class="button">Start a new plan</a></li>
+  </ul>
+</section>
 {% endblock %}
