@@ -247,7 +247,11 @@ def test_different_ideas_send_the_previous_ones_and_keep_only_new_ideas() -> Non
     assert payload["previous_ideas"] == ["<<<Rocket corner>>>", "<<<Moon cake>>>"]
     answer = PlanSuggestions(
         summary_why="x",
-        ideas=[idea(title="MOON CAKE"), idea(title="Star map")],
+        ideas=[
+            idea(title="MOON CAKE"),
+            idea(title=" Rocket\u00a0  corner"),
+            idea(title="Star map"),
+        ],
         budget_emphasis=[
             AIEmphasis(
                 category_id="decor",

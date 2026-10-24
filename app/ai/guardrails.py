@@ -119,11 +119,11 @@ def check_suggestions(value: PlanSuggestions, context: PersonalizeContext) -> Pl
     plan = context.plan
     categories = {c.id for c in plan.categories}
     vendor_types = {v.vendor_type for v in plan.vendors}
-    previous = {title.casefold() for title in context.previous_ideas}
+    previous = {_same_title(title) for title in context.previous_ideas}
     ideas = [
         _clean_idea(idea, categories)
         for idea in value.ideas
-        if idea.title.strip().casefold() not in previous
+        if _same_title(idea.title) not in previous
     ][:MAX_IDEAS]
     if not ideas:
         unlike = ", none repeating previous_ideas" if previous else ""
@@ -215,6 +215,11 @@ def check_alternatives(value: Alternatives, context: AlternativesContext) -> Alt
 
 def _fit(text: str, limit: int) -> str:
     return normalize_text(text)[:limit].strip()
+
+
+def _same_title(title: str) -> str:
+    """Compare titles the way they are stored: normalized, ignoring case."""
+    return normalize_text(title).casefold()
 
 
 def _clean_idea(idea: AIIdea, categories: Set[str]) -> AIIdea:
