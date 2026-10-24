@@ -1998,10 +1998,6 @@ input[type="number"]::-webkit-outer-spin-button {
   border-bottom-color: var(--color-primary);
 }
 
-.section-nav .rail-cta {
-  display: none;
-}
-
 @media (max-width: 480px) {
   .section-nav a {
     padding-inline: var(--space-2);
@@ -2067,25 +2063,6 @@ input[type="number"]::-webkit-outer-spin-button {
   .section-nav a[aria-current] {
     border-left-color: var(--color-primary);
     color: var(--color-primary);
-  }
-
-  .section-nav .rail-cta {
-    display: flex;
-    flex: none;
-    justify-content: center;
-    margin-top: var(--space-6);
-    padding: var(--space-2) var(--space-4);
-    font-size: var(--font-size-sm);
-    font-weight: 600;
-    background: var(--color-primary);
-    border: 1.5px solid var(--color-primary);
-    color: var(--color-primary-text);
-  }
-
-  .section-nav .rail-cta:hover {
-    background: var(--color-primary-hover);
-    border-color: var(--color-primary-hover);
-    color: var(--color-primary-text);
   }
 
   .site-main section[id] {
