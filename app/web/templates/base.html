@@ -12,7 +12,8 @@
   <script src="/static/vendor/htmx.min.js" defer></script>
   {% block head %}{% endblock %}
 </head>
-<body hx-headers='{{ {"X-CSRF-Token": csrf_token} | tojson }}'>
+{%- set body_class %}{% block body_class %}{% endblock %}{% endset -%}
+<body{% if body_class %} class="{{ body_class }}"{% endif %} hx-headers='{{ {"X-CSRF-Token": csrf_token} | tojson }}'>
   <a href="#main" class="skip-link">Skip to main content</a>
 
   <header class="site-header">

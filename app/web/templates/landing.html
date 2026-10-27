@@ -1,9 +1,10 @@
 {% extends "base.html" %}
 {% from "macros.html" import field, csrf %}
 {% block title %}Plan your celebration - Utsav Planner{% endblock %}
+{% block body_class %}page-landing{% endblock %}
 {% block head %}<script src="/static/js/reel.js" defer></script>{% endblock %}
 {% block content %}
-<div class="landing-top">
+<div class="landing">
 <div class="landing-hero">
   <p class="kicker">Weddings &middot; Birthdays &middot; Community festivals</p>
   <h1>Plan your celebration</h1>
@@ -32,7 +33,6 @@
     <svg class="reel-icon-pause" viewBox="0 0 16 16" width="14" height="14" aria-hidden="true" focusable="false"><path d="M4 2h3v12H4zM9 2h3v12H9z"/></svg>
     <svg class="reel-icon-play" viewBox="0 0 16 16" width="14" height="14" aria-hidden="true" focusable="false"><path d="M4 2l10 6-10 6z"/></svg>
   </button>
-</div>
 </div>
 
 <section aria-labelledby="create-heading" class="landing-main">
@@ -106,5 +106,6 @@
     </div>
   </form>
 </section>
+</div>
 
 {% endblock %}

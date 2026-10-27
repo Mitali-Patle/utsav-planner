@@ -1133,33 +1133,50 @@ legend {
    ======================================================================== */
 
 /* Top of the home page: the pitch (70%) beside a panel of celebration pictures (30%) */
-.landing-top {
+/* Home page: the pitch, the photos, then the form. On wide screens the pitch and the
+   form share the left column, aligned to the page gutter, and the photos run down the
+   right edge of the window from the header to the footer. */
+.landing {
   display: grid;
   gap: var(--space-8);
-  align-items: stretch;
-  margin-bottom: var(--space-12);
 }
 
-/* Wide screens: a full-bleed split. The pitch stays on the page grid; the photos run
-   as one column from under the header band to the right edge of the window. */
 @media (min-width: 1000px) {
-  .landing-top {
-    grid-template-columns: minmax(0, 1fr) clamp(20rem, 34vw, 42rem);
-    gap: var(--space-16);
-    min-height: clamp(34rem, calc(100vh - 7rem), 52rem);
+  .page-landing .site-header .container,
+  .page-landing .site-main > .container,
+  .page-landing .site-footer .container,
+  .page-landing .status-region {
+    max-width: none;
+  }
+
+  .page-landing .site-main {
+    padding-bottom: 0;
+  }
+
+  .landing {
+    grid-template-columns: minmax(0, 1fr) clamp(20rem, 32vw, 48rem);
+    grid-template-rows: auto 1fr;
+    grid-template-areas:
+      "hero reel"
+      "form reel";
+    gap: var(--space-12);
     margin-top: calc(-1 * var(--space-10));
-    margin-right: calc(50% - 50vw);
+    margin-right: calc(-1 * clamp(var(--space-6), 3vw, var(--space-12)));
   }
 
   .landing-hero {
-    padding-block: var(--space-12);
+    grid-area: hero;
+    padding-top: var(--space-10);
   }
-}
 
-.landing-hero {
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
+  .landing .reel {
+    grid-area: reel;
+  }
+
+  .landing-main {
+    grid-area: form;
+    padding-bottom: var(--space-16);
+  }
 }
 
 .landing-hero h1 {
@@ -1326,13 +1343,13 @@ legend {
 }
 
 @media (min-width: 1000px) {
-  /* The window fills the hero's height without letting the long track set it */
+  /* The column runs the page's height; its window stays in view while the page scrolls */
   .reel-window {
-    position: absolute;
-    inset: 0;
-    height: auto;
+    position: sticky;
+    top: 0;
+    height: 100vh;
     border-radius: 0;
-    mask-image: linear-gradient(#000 88%, transparent);
+    mask-image: none;
   }
 
   .reel-frame {
@@ -1556,7 +1573,7 @@ input[type="number"]::-webkit-outer-spin-button {
 
 .field-row {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(min(100%, 14rem), 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 10rem), 1fr));
   column-gap: var(--space-5);
 }
 
@@ -2572,7 +2589,7 @@ td[data-label="Status"] form label {
   }
 }
 
-.landing-top,
+.landing-hero,
 .event-header {
   animation: rise 0.5s cubic-bezier(0.2, 0.7, 0.2, 1) both;
 }
