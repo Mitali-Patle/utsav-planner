@@ -23,7 +23,7 @@ All notable changes to Utsav Planner will be documented in this file.
 
 ### Changed
 - Header: a larger brand; "My Plans" and the theme switch are hairline pills, and the theme switch shows only its icon (its name is still spoken).
-- Wide screens: the home page is a split screen. The photos are pinned to the window's right edge, top to bottom, and keep cycling while the left side (header, pitch, new-plan form and footer) scrolls. The pause control appears only when reached by keyboard; pointing at or touching the photos pauses them.
+- Wide screens: the home page's photos are pinned to the window's right edge and keep cycling while the pitch and new-plan form scroll on the left; the full-width header and footer pass over them. The pause control appears only when reached by keyboard; pointing at or touching the photos pauses them.
 - The side menu drops its "Change something" button; its "Change" link already goes there.
 - The home page's picture panel shows three photos (Diwali diyas, a birthday cake and a Ganeshotsav pandal, from Pexels) without titles, each with alt text and the Phulkari band; the pause control is a small round icon.
 - The budget line "₹70,000 of ₹60,000 spent" shows the true share (116%) instead of stopping at 100%.

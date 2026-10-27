@@ -1143,9 +1143,9 @@ legend {
    ======================================================================== */
 
 /* Top of the home page: the pitch (70%) beside a panel of celebration pictures (30%) */
-/* Home page: the pitch, the photos, then the form. On wide screens it is a split
-   screen: the photos are pinned to the right edge for the window's full height and keep
-   cycling, while everything else (header and footer included) scrolls on the left. */
+/* Home page: the pitch, the photos, then the form. On wide screens the photos are pinned
+   to the window's right edge and keep cycling while the page scrolls; the full-width
+   header and footer pass over them, and the pitch and form scroll on the left. */
 .landing {
   display: grid;
   gap: var(--space-8);
@@ -1154,7 +1154,18 @@ legend {
 @media (min-width: 1000px) {
   .page-landing {
     --reel-width: clamp(20rem, 32vw, 48rem);
-    padding-right: var(--reel-width);
+  }
+
+  .page-landing .site-main,
+  .page-landing .status-region {
+    width: auto;
+    margin-right: var(--reel-width);
+  }
+
+  .page-landing .site-header,
+  .page-landing .site-footer {
+    position: relative;
+    z-index: 2;
   }
 
   .page-landing .site-header .container,
