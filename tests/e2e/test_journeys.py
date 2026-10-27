@@ -69,10 +69,14 @@ def test_picture_panel_runs_and_can_be_paused(new_page: NewPage) -> None:
     page.goto("/")
     track = page.locator(".reel-track")
     expect(track).to_have_css("animation-play-state", "running")
-    page.get_by_role("button", name="Pause pictures").click()
-    page.mouse.move(0, 0)
+    pause = page.get_by_role("button", name="Pause pictures")
+    expect(pause).to_have_css("opacity", "0")  # out of sight until reached by keyboard
+    pause.focus()
+    expect(pause).to_have_css("opacity", "1")
+    page.keyboard.press("Enter")
+    page.get_by_label("Event name").focus()
     expect(track).to_have_css("animation-play-state", "paused")
-    expect(page.get_by_role("button", name="Play pictures")).to_be_visible()
+    expect(page.get_by_role("button", name="Play pictures")).to_be_attached()
 
 
 def test_picture_panel_stays_still_with_reduced_motion(page: Page) -> None:

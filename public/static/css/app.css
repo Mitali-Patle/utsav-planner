@@ -1140,10 +1140,19 @@ legend {
   margin-bottom: var(--space-12);
 }
 
+/* Wide screens: a full-bleed split. The pitch stays on the page grid; the photos run
+   as one column from under the header band to the right edge of the window. */
 @media (min-width: 1000px) {
   .landing-top {
-    grid-template-columns: minmax(0, 7fr) minmax(0, 3fr);
-    gap: var(--space-12);
+    grid-template-columns: minmax(0, 1fr) clamp(20rem, 34vw, 42rem);
+    gap: var(--space-16);
+    min-height: clamp(34rem, calc(100vh - 7rem), 52rem);
+    margin-top: calc(-1 * var(--space-10));
+    margin-right: calc(50% - 50vw);
+  }
+
+  .landing-hero {
+    padding-block: var(--space-12);
   }
 }
 
@@ -1269,7 +1278,8 @@ legend {
   to { transform: translateY(-50%); }
 }
 
-/* A small, quiet pause control (WCAG 2.2.2); its name is screen-reader text */
+/* The pause control (WCAG 2.2.2) shows only when focused from the keyboard; pointing at
+   or touching the panel pauses it too. Its name is screen-reader text. */
 .reel-toggle {
   position: absolute;
   z-index: 2;
@@ -1288,7 +1298,11 @@ legend {
   transition: opacity 0.15s ease, background-color 0.15s ease;
 }
 
-.reel-toggle:hover,
+.reel-toggle:not(:focus-visible) {
+  opacity: 0;
+  pointer-events: none;
+}
+
 .reel-toggle:focus-visible {
   opacity: 1;
   background: rgb(20 12 10 / 0.8);
@@ -1313,15 +1327,16 @@ legend {
 
 @media (min-width: 1000px) {
   /* The window fills the hero's height without letting the long track set it */
-  .reel {
-    min-height: 34rem;
-  }
-
   .reel-window {
     position: absolute;
     inset: 0;
     height: auto;
-    mask-image: linear-gradient(transparent, #000 8%, #000 92%, transparent);
+    border-radius: 0;
+    mask-image: linear-gradient(#000 88%, transparent);
+  }
+
+  .reel-frame {
+    border-radius: 0;
   }
 
   .reel-track {

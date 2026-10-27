@@ -200,8 +200,9 @@ one hand-written stylesheet.
 Budget lines show planned against spent as bars, the timeline runs along a stitched thread by month,
 and the printout drops the colour for black on white.
 
-The home page sets the headline beside a slowly scrolling panel of celebration photos, with a
-small pause button, which stays still with reduced motion; "My plans" lists your plans on a page of its
+The home page sets the headline beside a column of celebration photos that runs to the edge of
+the window and scrolls slowly; it pauses under the pointer or from the keyboard, and stays still
+with reduced motion; "My plans" lists your plans on a page of its
 own. The theme follows the device, and a switch in the header sets Light or Dark for this browser.
 On wide screens the dashboard keeps a full-height side menu of its sections that fills, like a
 progress line, up to the one in view. The
