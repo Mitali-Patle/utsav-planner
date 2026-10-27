@@ -1349,7 +1349,7 @@ legend {
     top: 0;
     height: 100vh;
     border-radius: 0;
-    mask-image: none;
+    mask-image: linear-gradient(transparent, #000 6%, #000 94%, transparent);
   }
 
   .reel-frame {
