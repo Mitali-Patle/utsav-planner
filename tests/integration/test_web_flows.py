@@ -233,6 +233,16 @@ def test_new_event_opens_its_dashboard_with_personalization_pending(engine: Engi
     assert "Aarav&#39;s 8th birthday" in client.get("/plans").text, "listed under My plans"
 
 
+def test_session_lasts_a_year_and_renews_on_every_visit(engine: Engine) -> None:
+    client = client_for(engine)
+    first = client.get("/")
+    later = client.get("/plans")
+    for response in (first, later):
+        cookie = response.headers.get("set-cookie", "")
+        assert cookie.startswith("utsav_session="), "renewed, not only set once"
+        assert "Max-Age=31536000" in cookie
+
+
 def test_my_plans_lists_only_this_visitors_plans(engine: Engine) -> None:
     client = client_for(engine)
     empty = client.get("/plans")

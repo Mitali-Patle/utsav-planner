@@ -23,6 +23,7 @@ All notable changes to Utsav Planner will be documented in this file.
 - The new-event form reminds users that an AI model reads their preferences, so personal details should be left out.
 
 ### Changed
+- Plans stay reachable for a year after the last visit (the session cookie was 30 days), so a wedding planned months ahead is not lost between visits.
 - Every page shares the same full-width header and page grid (up to 1920 px). The logo keeps its madder red and gains a marigold centre in both themes.
 - The header stays pinned at the top while the page scrolls (from tablet width; on phones it scrolls away). The section menu, the home page's photos and in-page links all sit below it.
 - Header: a larger brand; "My Plans" and the theme switch are hairline pills, and the theme switch shows only its icon (its name is still spoken).

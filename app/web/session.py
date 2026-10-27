@@ -13,7 +13,8 @@ from app.web.guard import CSRF_SESSION_KEY
 
 SESSION_ID_KEY = "sid"
 FLASH_KEY = "flash"
-SESSION_MAX_AGE_S = 30 * 24 * 3600
+SESSION_MAX_AGE_S = 365 * 24 * 3600
+"""A year, renewed on every visit: weddings are often planned many months ahead."""
 FlashKind = Literal["info", "success", "error"]
 
 

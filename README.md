@@ -299,7 +299,10 @@ docs/            architecture, spec, UI contract
   event date.
 - The assistant gives qualitative guidance; it does not know live vendor prices. All
   amounts come from the user or from code.
-- Plans belong to one browser; there are no accounts, sharing or multi-device sync.
+- Plans belong to one browser, through a signed cookie that lasts a year and renews on every
+  visit. There are no accounts, sharing or multi-device sync, and clearing cookies or closing
+  a private window loses access to the plans. Plans no one can reach stay in the database;
+  nothing removes them yet.
 - No vendor marketplace, booking or payments. The interface is in English, though change
   requests in Hinglish work.
 - The models run on free tiers. When quotas run out, the app falls back to the next model
