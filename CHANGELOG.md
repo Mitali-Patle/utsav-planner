@@ -22,6 +22,7 @@ All notable changes to Utsav Planner will be documented in this file.
 - The new-event form reminds users that an AI model reads their preferences, so personal details should be left out.
 
 ### Changed
+- The header stays pinned at the top while the page scrolls (from tablet width; on phones it scrolls away). The section menu, the home page's photos and in-page links all sit below it.
 - Header: a larger brand; "My Plans" and the theme switch are hairline pills, and the theme switch shows only its icon (its name is still spoken).
 - Wide screens: the home page's photos are pinned to the window's right edge and keep cycling while the pitch and new-plan form scroll on the left; the full-width header and footer pass over them. The pause control appears only when reached by keyboard; pointing at or touching the photos pauses them.
 - The side menu drops its "Change something" button; its "Change" link already goes there.

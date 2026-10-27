@@ -110,6 +110,8 @@
   --shadow-md: 0 6px 20px -8px rgb(140 28 37 / 0.18), 0 2px 6px -2px rgb(30 42 49 / 0.08);
   --layout-max-width: 1480px;
   --nav-height: 3.25rem;
+  /* Height of the pinned header plus its Phulkari band; 0 where the header scrolls */
+  --header-offset: 0px;
 }
 
 /* Dark theme: follows the device unless the header switch chose Light ("data-theme"),
@@ -406,6 +408,21 @@ legend {
   background-color: var(--color-surface);
   padding-block: var(--space-4);
   margin-bottom: var(--motif-height);
+}
+
+/* From tablet width the header stays pinned while the page scrolls; on phones it wraps
+   to two rows, so it scrolls away to leave room for the content */
+@media (min-width: 641px) {
+  :root {
+    --header-offset: 6.125rem;
+    scroll-padding-top: calc(var(--header-offset) + var(--space-4));
+  }
+
+  .site-header {
+    position: sticky;
+    top: 0;
+    z-index: 20;
+  }
 }
 
 /* The Phulkari border: the one ornament on the page */
@@ -1162,7 +1179,6 @@ legend {
     margin-right: var(--reel-width);
   }
 
-  .page-landing .site-header,
   .page-landing .site-footer {
     position: relative;
     z-index: 2;
@@ -1182,7 +1198,7 @@ legend {
   .landing .reel {
     position: fixed;
     z-index: 1;
-    inset: 0 0 0 auto;
+    inset: var(--header-offset) 0 0 auto;
     width: var(--reel-width);
   }
 }
@@ -2002,7 +2018,7 @@ input[type="number"]::-webkit-outer-spin-button {
 /* Section menu: a sticky bar on narrow screens, a side rail on wide ones */
 .section-nav {
   position: sticky;
-  top: 0;
+  top: var(--header-offset);
   z-index: 10;
   background: var(--color-bg);
   border-bottom: 1px solid var(--color-border-subtle);
@@ -2054,11 +2070,11 @@ input[type="number"]::-webkit-outer-spin-button {
 
   /* A full-height rail: the line fills up to the section in view (sections.js) */
   .section-nav {
-    top: var(--space-6);
+    top: calc(var(--header-offset) + var(--space-6));
     display: flex;
     flex-direction: column;
-    height: calc(100vh - var(--space-12));
-    height: calc(100dvh - var(--space-12));
+    height: calc(100vh - var(--header-offset) - var(--space-12));
+    height: calc(100dvh - var(--header-offset) - var(--space-12));
     min-height: 24rem;
     border-bottom: none;
     background: transparent;
