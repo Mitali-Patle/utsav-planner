@@ -108,7 +108,7 @@
   --radius-lg: 10px;
   --shadow-sm: 0 1px 2px rgb(30 42 49 / 0.06);
   --shadow-md: 0 6px 20px -8px rgb(140 28 37 / 0.18), 0 2px 6px -2px rgb(30 42 49 / 0.08);
-  --layout-max-width: 1480px;
+  --layout-max-width: 120rem;
   --nav-height: 3.25rem;
   /* Height of the pinned header plus its Phulkari band; 0 where the header scrolls */
   --header-offset: 0px;
@@ -459,15 +459,16 @@ legend {
   color: var(--color-heading);
 }
 
+/* The mark keeps its madder red and marigold centre in both themes */
 .brand-mark {
   width: 1.75rem;
   height: 1.75rem;
-  color: var(--color-primary);
+  color: #9a1f2b;
   flex-shrink: 0;
 }
 
 .brand-mark-centre {
-  fill: var(--color-accent-soft);
+  fill: #f2b33d;
 }
 
 @media (max-width: 480px) {
@@ -1160,6 +1161,13 @@ legend {
    ======================================================================== */
 
 /* Top of the home page: the pitch (70%) beside a panel of celebration pictures (30%) */
+/* My Plans keeps its list at the top on phones; the photos show from 1000 px */
+@media (max-width: 999px) {
+  .container > .reel {
+    display: none;
+  }
+}
+
 /* Home page: the pitch, the photos, then the form. On wide screens the photos are pinned
    to the window's right edge and keep cycling while the page scrolls; the full-width
    header and footer pass over them, and the pitch and form scroll on the left. */
@@ -1169,25 +1177,25 @@ legend {
 }
 
 @media (min-width: 1000px) {
-  .page-landing {
+  .page-split {
     --reel-width: clamp(20rem, 32vw, 48rem);
   }
 
-  .page-landing .site-main,
-  .page-landing .status-region {
+  .page-split .site-main,
+  .page-split .status-region {
     width: auto;
     margin-right: var(--reel-width);
   }
 
-  .page-landing .site-footer {
+  .page-split .site-footer {
     position: relative;
     z-index: 2;
   }
 
-  .page-landing .site-header .container,
-  .page-landing .site-main > .container,
-  .page-landing .site-footer .container,
-  .page-landing .status-region {
+  .page-split .site-header .container,
+  .page-split .site-main > .container,
+  .page-split .site-footer .container,
+  .page-split .status-region {
     max-width: none;
   }
 
@@ -1195,7 +1203,7 @@ legend {
     gap: var(--space-12);
   }
 
-  .landing .reel {
+  .page-split .reel {
     position: fixed;
     z-index: 1;
     inset: var(--header-offset) 0 0 auto;

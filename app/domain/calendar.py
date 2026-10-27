@@ -7,9 +7,11 @@ the entries instead of duplicating them in calendars that honour UIDs.
 
 from dataclasses import dataclass
 from datetime import UTC, date, datetime, timedelta
+from urllib.parse import urlencode
 
 from app.domain.models import EventPlan, VendorStatus
 
+GOOGLE_CALENDAR_URL = "https://calendar.google.com/calendar/render"
 PRODUCT_ID = "-//Utsav Planner//Event timeline//EN"
 UID_DOMAIN = "utsav-planner"
 LINE_OCTETS = 75
@@ -125,3 +127,32 @@ def plan_calendar(plan: EventPlan, event_id: str, updated_at: datetime) -> str:
         "END:VCALENDAR",
     ]
     return "".join(f"{fold(line)}\r\n" for line in lines)
+
+
+def google_calendar_url(plan: EventPlan) -> str:
+    """A link that opens Google Calendar's new-event screen filled in with the event day.
+
+    The user saves it in their own account; nothing is sent until they click. One link
+    holds one event, so tasks and vendor dates stay in the `.ics` export.
+
+    Examples:
+        >>> from app.domain.models import EventType
+        >>> from app.domain.planning import EventDetails, draft_plan
+        >>> details = EventDetails(event_type=EventType.BIRTHDAY, title="Aarav turns 7",
+        ...     city="Pune", event_date=date(2026, 12, 13), guest_count=35,
+        ...     total_budget_inr=45_000)
+        >>> plan = draft_plan(details, today=date(2026, 10, 27))
+        >>> url = google_calendar_url(plan)
+        >>> url.startswith(GOOGLE_CALENDAR_URL + "?action=TEMPLATE&text=Aarav+turns+7")
+        True
+        >>> "dates=20261213%2F20261214" in url and "location=Pune" in url
+        True
+    """
+    query = {
+        "action": "TEMPLATE",
+        "text": plan.title,
+        "dates": f"{plan.event_date:%Y%m%d}/{plan.event_date + timedelta(days=1):%Y%m%d}",
+        "details": f"{plan.guest_count} guests. Planned with Utsav Planner.",
+        "location": plan.city,
+    }
+    return f"{GOOGLE_CALENDAR_URL}?{urlencode(query)}"

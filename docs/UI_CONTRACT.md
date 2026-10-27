@@ -73,7 +73,7 @@ Every action must work **without JavaScript**.
 | `retry-personalize` | `plan_area.html` | Asks the AI again when the ideas are standard ones |
 | `new-ideas`, `ideas-busy` | `plan_area.html` | "Suggest different ideas" button and its `hx-indicator`; shown only when the ideas came from AI |
 | `print-plan` | `dashboard.html` | "Print or save as PDF"; `hidden` until `/static/js/print.js` shows it and calls `window.print()` |
-| `calendar-export` | `dashboard.html` | "Add to calendar": the `.ics` download, in the event banner |
+| `google-calendar`, `calendar-export` | `dashboard.html` | "Add to Google Calendar" (`event.google_calendar`, from `google_calendar_url()`; new tab, `noopener noreferrer`) and "Download all dates (.ics)", in the event banner |
 | `theme-toggle` | `base.html` | Header switch cycling Auto, Light and Dark; `theme.js` (loaded in `<head>`, no `defer`) applies the saved choice before paint as `data-theme` on `<html>` |
 | `add-plan` | `plans.html` | "+ New plan": the only new-plan button; links to the form on the home page |
 | `type-{type}`, `type-{type}-hint` | `landing.html` | Event type cards (radio plus description); a "Fill in a sample …" link for the chosen type appears below them through CSS |
@@ -102,9 +102,10 @@ strings such as `2 Dec 2026`. Templates never compute; ask for a new field inste
 
 ### `plans.html`
 - `events`: list of event summaries (the same shape as `event` on the dashboard), soonest first
+- `slides`: the same photos as the home page
 
 ### `dashboard.html` and `partials/plan_area.html`
-- `event`: `{id, version, title, type_label, city, date, days_left, guests, preferences}`
+- `event`: `{id, version, title, type_label, city, date, days_left, guests, preferences, google_calendar}`
 - `plan.summary`: `{total, spent, remaining, per_guest, guests, shortfall, over_plan, spent_percent}` (`spent_percent` passes 100 when overspent; the `<progress>` clamps); `shortfall` is `None` unless over budget; `over_plan` names the lines spent past their plan
 - `plan.categories`: `{id, name, allocated, spent, remaining, overspent, protected}`
 - `plan.expenses`: `{id, label, category, amount, amount_inr, protected}`
@@ -181,7 +182,7 @@ These labels are an honesty rule (AGENTS.md): AI output is labelled, non-AI outp
 | `ideas`, `ideas-ai`, `summary`, `budget-meter`, `meter`, `meter-over`, `budget-table`, `month`, `tasks` (`li.done`), `task-title`, `task-due`, `actions`, `toggle` | Plan sections; `meter` is a decorative `<progress>` (the amounts are in the text) |
 | `event-header-main`, `event-header-side`, `event-meta`, `event-actions`, `banner-button`, `countdown`, `countdown-number`, `kicker` | Dashboard banner |
 | `dashboard-layout`, `dashboard-main`, `section-nav` (`a[aria-current]`, `a.is-past`) | Section menu: a sticky bar below 1100 px, a side rail above; `sections.js` sets `aria-current="location"` on the section in view and `is-past` on the links above it, so the full-height rail fills like a progress line |
-| `page-landing` (body), `landing`, `landing-hero`, `how-compact`, `how`, `landing-main` | Home page grid: on phones the pitch, the photos, then the form; at 1000 px and wider `page-landing` reserves `--reel-width` on the right of `site-main` and the status region, the photo column is `position: fixed` there for the window's full height, and the full-width header and footer (z-index 2) pass over it while the pitch and form scroll |
+| `page-split` (body, home and My Plans; the photos come from `partials/reel.html`), `landing`, `landing-hero`, `how-compact`, `how`, `landing-main` | Home page grid: on phones the pitch, the photos, then the form; at 1000 px and wider `page-split` reserves `--reel-width` on the right of `site-main` and the status region, the photo column is `position: fixed` there for the window's full height, and the full-width header and footer (z-index 2) pass over it while the pitch and form scroll |
 | `reel` (`[data-reel]`, `is-running`, `is-paused`), `reel-window`, `reel-track`, `reel-slide`, `reel-frame`, `reel-tone-{n}`, `reel-toggle` (`reel-icon-pause`, `reel-icon-play`, screen-reader name in `sr-only`) | Celebration photos: `CELEBRATION_SLIDES` in `views.py` (`Slide(image, alt)`, files in `public/static/img/celebrations/`, no captions; the tone shows while a photo loads); the slides are listed twice for a seamless loop, the copy `aria-hidden`; `reel.js` starts it and enables the pause icon, named "Pause pictures" or "Play pictures" and shown only on keyboard focus (WCAG 2.2.2); still without JavaScript or with reduced motion |
 | `plans-header`, `add-plan`, `plan-grid`, `plan-tile`, `plan-tile-type`, `plan-tile-meta`, `plan-tile-days`, `empty-plans` | My Plans page |
 | `form-step`, `step-number`, `legend-note`, `type-cards`, `type-card`, `type-card-hint`, `samples`, `sample[data-event-type]`, `field-row`, `input-adorned`, `adornment`, `functions`, `chips`, `chip`, `form-submit` | New-plan form |

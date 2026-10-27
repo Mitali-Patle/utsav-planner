@@ -121,9 +121,14 @@ def test_section_menu_marks_the_section_in_view(new_page: NewPage) -> None:
 def test_timeline_downloads_as_a_calendar_file(page: Page) -> None:
     create_event(page)
     with page.expect_download() as download:
-        page.get_by_role("link", name="Add to calendar").click()
+        page.get_by_role("link", name="Download all dates (.ics)").click()
     assert download.value.suggested_filename == "utsav-plan.ics"
     assert download.value.path().read_text(encoding="utf-8").startswith("BEGIN:VCALENDAR")
+    google = page.get_by_role("link", name="Add to Google Calendar")
+    expect(google).to_have_attribute("target", "_blank")
+    href = google.get_attribute("href") or ""
+    assert href.startswith("https://calendar.google.com/calendar/render?action=TEMPLATE")
+    assert "text=Aarav+turns+5" in href and "location=Indore" in href
 
 
 def test_print_shows_the_plan_without_controls_in_ink_on_white(new_page: NewPage) -> None:

@@ -14,7 +14,8 @@
   <div class="event-header-side">
     <p class="countdown">{% if event.days_left > 0 %}<span class="countdown-number">{{ event.days_left }}</span> {{ 'day' if event.days_left == 1 else 'days' }} to go{% elif event.days_left == 0 %}<span class="countdown-number">Today</span>{% else %}<span class="countdown-number">{{ -event.days_left }}</span> {{ 'day' if event.days_left == -1 else 'days' }} ago{% endif %}</p>
     <div class="event-actions">
-      <a href="/events/{{ event.id }}/calendar.ics" id="calendar-export" class="button banner-button" download>Add to calendar</a>
+      <a href="{{ event.google_calendar }}" id="google-calendar" class="button banner-button" target="_blank" rel="noopener noreferrer">Add to Google Calendar<span class="sr-only"> (opens in a new tab)</span></a>
+      <a href="/events/{{ event.id }}/calendar.ics" id="calendar-export" class="button banner-button" download>Download all dates (.ics)</a>
       <button type="button" id="print-plan" class="banner-button print-button" data-print hidden>Print or save as PDF</button>
     </div>
   </div>

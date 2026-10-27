@@ -4,6 +4,7 @@ All notable changes to Utsav Planner will be documented in this file.
 
 ## [Unreleased]
 ### Added
+- "Add to Google Calendar" on the event banner opens Google Calendar's new-event screen filled in with the event day, city and guests; "Download all dates (.ics)" keeps every task and vendor date.
 - Frontend foundational assets and base layout template (SPIKE-A01):
   - Vendored pinned htmx 2.0.4 at `public/static/vendor/htmx.min.js`.
   - Accessible design system stylesheet with WCAG 2.2 AA contrast tokens, light/dark themes via `prefers-color-scheme`, `:focus-visible` styles, `prefers-reduced-motion`, and responsive layout down to 320 px at `public/static/css/app.css`.
@@ -22,6 +23,7 @@ All notable changes to Utsav Planner will be documented in this file.
 - The new-event form reminds users that an AI model reads their preferences, so personal details should be left out.
 
 ### Changed
+- My Plans uses the home page's split layout with the pinned photos; every page shares the same full-width header and page grid (up to 1920 px). The logo keeps its madder red and gains a marigold centre in both themes.
 - The header stays pinned at the top while the page scrolls (from tablet width; on phones it scrolls away). The section menu, the home page's photos and in-page links all sit below it.
 - Header: a larger brand; "My Plans" and the theme switch are hairline pills, and the theme switch shows only its icon (its name is still spoken).
 - Wide screens: the home page's photos are pinned to the window's right edge and keep cycling while the pitch and new-plan form scroll on the left; the full-width header and footer pass over them. The pause control appears only when reached by keyboard; pointing at or touching the photos pauses them.

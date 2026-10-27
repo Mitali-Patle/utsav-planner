@@ -15,6 +15,7 @@ from pydantic import ValidationError
 
 from app.ai.client import Provenance
 from app.domain.budget import BudgetSummary, CategoryChange, ChangeReason, summarize
+from app.domain.calendar import google_calendar_url
 from app.domain.catalog import CATALOG
 from app.domain.changes import Proposal, ScheduleChange
 from app.domain.clock import INDIA_TZ
@@ -281,9 +282,12 @@ def landing_context(form: FormState, today: date) -> dict[str, Any]:
 
 
 def plans_context(events: Sequence[StoredEvent], today: date) -> dict[str, Any]:
-    """Data for the My plans page: this visitor's events, soonest first."""
+    """Data for the My Plans page: this visitor's events, soonest first, and the photos."""
     summaries = [_event_summary(e, today) for e in events]
-    return {"events": sorted(summaries, key=lambda e: (e["days_left"] < 0, abs(e["days_left"])))}
+    return {
+        "events": sorted(summaries, key=lambda e: (e["days_left"] < 0, abs(e["days_left"]))),
+        "slides": CELEBRATION_SLIDES,
+    }
 
 
 def dashboard_context(
@@ -485,6 +489,7 @@ def _event_summary(stored: StoredEvent, today: date) -> dict[str, Any]:
         "days_left": (plan.event_date - today).days,
         "guests": plan.guest_count,
         "preferences": plan.preferences,
+        "google_calendar": google_calendar_url(plan),
     }
 
 

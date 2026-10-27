@@ -30,8 +30,9 @@ needed to hear about the new date, a line that was meant to stay untouched.
    tasks, and the model is told which ideas to avoid.
 3. **Track it.** Add expenses, protect lines you must not cut, tick off tasks, move vendors
    from "to contact" to "booked". Overspending, overdue tasks and urgent bookings are flagged.
-   Download the dates as a calendar file (`.ics`): the event day, unfinished tasks and
-   vendors still to book, as all-day entries. Print the plan or save it as a PDF: the
+   Add the event day to Google Calendar in one click (Google's own new-event screen opens
+   filled in; nothing is sent until you save), or download every date as a calendar file
+   (`.ics`): the event day, unfinished tasks and vendors still to book, as all-day entries. Print the plan or save it as a PDF: the
    printout shows the budget, ideas, timeline and vendors in black on white, without buttons.
 4. **Change it in plain words** with the Smart Change Manager:
    - "Budget dropped to ₹12,000, keep the cake as it is", "10 more guests are coming",
