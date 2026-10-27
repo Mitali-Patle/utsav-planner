@@ -244,9 +244,7 @@ def test_my_plans_lists_only_this_visitors_plans(engine: Engine) -> None:
     page = client.get("/plans").text
     assert f'href="{url}"' in page and "<strong>40</strong> days to go" in page
     assert 'id="add-plan"' in page
-    assert '<body class="page-split"' in page and page.count('class="reel-slide">') == len(
-        views.CELEBRATION_SLIDES
-    ), "the same pinned photos as the home page"
+    assert "reel-slide" not in page, "the photos belong to the home page only"
     assert_accessible(page)
     dashboard = client.get(url).text
     assert "https://calendar.google.com/calendar/render?action=TEMPLATE&amp;text=" in dashboard

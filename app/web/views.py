@@ -282,12 +282,9 @@ def landing_context(form: FormState, today: date) -> dict[str, Any]:
 
 
 def plans_context(events: Sequence[StoredEvent], today: date) -> dict[str, Any]:
-    """Data for the My Plans page: this visitor's events, soonest first, and the photos."""
+    """Data for the My Plans page: this visitor's events, soonest first."""
     summaries = [_event_summary(e, today) for e in events]
-    return {
-        "events": sorted(summaries, key=lambda e: (e["days_left"] < 0, abs(e["days_left"]))),
-        "slides": CELEBRATION_SLIDES,
-    }
+    return {"events": sorted(summaries, key=lambda e: (e["days_left"] < 0, abs(e["days_left"])))}
 
 
 def dashboard_context(

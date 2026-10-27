@@ -1161,13 +1161,6 @@ legend {
    ======================================================================== */
 
 /* Top of the home page: the pitch (70%) beside a panel of celebration pictures (30%) */
-/* My Plans keeps its list at the top on phones; the photos show from 1000 px */
-@media (max-width: 999px) {
-  .container > .reel {
-    display: none;
-  }
-}
-
 /* Home page: the pitch, the photos, then the form. On wide screens the photos are pinned
    to the window's right edge and keep cycling while the page scrolls; the full-width
    header and footer pass over them, and the pitch and form scroll on the left. */

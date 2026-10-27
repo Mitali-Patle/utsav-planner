@@ -102,7 +102,6 @@ strings such as `2 Dec 2026`. Templates never compute; ask for a new field inste
 
 ### `plans.html`
 - `events`: list of event summaries (the same shape as `event` on the dashboard), soonest first
-- `slides`: the same photos as the home page
 
 ### `dashboard.html` and `partials/plan_area.html`
 - `event`: `{id, version, title, type_label, city, date, days_left, guests, preferences, google_calendar}`
@@ -182,7 +181,7 @@ These labels are an honesty rule (AGENTS.md): AI output is labelled, non-AI outp
 | `ideas`, `ideas-ai`, `summary`, `budget-meter`, `meter`, `meter-over`, `budget-table`, `month`, `tasks` (`li.done`), `task-title`, `task-due`, `actions`, `toggle` | Plan sections; `meter` is a decorative `<progress>` (the amounts are in the text) |
 | `event-header-main`, `event-header-side`, `event-meta`, `event-actions`, `banner-button`, `countdown`, `countdown-number`, `kicker` | Dashboard banner |
 | `dashboard-layout`, `dashboard-main`, `section-nav` (`a[aria-current]`, `a.is-past`) | Section menu: a sticky bar below 1100 px, a side rail above; `sections.js` sets `aria-current="location"` on the section in view and `is-past` on the links above it, so the full-height rail fills like a progress line |
-| `page-split` (body, home and My Plans; the photos come from `partials/reel.html`), `landing`, `landing-hero`, `how-compact`, `how`, `landing-main` | Home page grid: on phones the pitch, the photos, then the form; at 1000 px and wider `page-split` reserves `--reel-width` on the right of `site-main` and the status region, the photo column is `position: fixed` there for the window's full height, and the full-width header and footer (z-index 2) pass over it while the pitch and form scroll |
+| `page-split` (body, home page; the photos come from `partials/reel.html`), `landing`, `landing-hero`, `how-compact`, `how`, `landing-main` | Home page grid: on phones the pitch, the photos, then the form; at 1000 px and wider `page-split` reserves `--reel-width` on the right of `site-main` and the status region, the photo column is `position: fixed` there for the window's full height, and the full-width header and footer (z-index 2) pass over it while the pitch and form scroll |
 | `reel` (`[data-reel]`, `is-running`, `is-paused`), `reel-window`, `reel-track`, `reel-slide`, `reel-frame`, `reel-tone-{n}`, `reel-toggle` (`reel-icon-pause`, `reel-icon-play`, screen-reader name in `sr-only`) | Celebration photos: `CELEBRATION_SLIDES` in `views.py` (`Slide(image, alt)`, files in `public/static/img/celebrations/`, no captions; the tone shows while a photo loads); the slides are listed twice for a seamless loop, the copy `aria-hidden`; `reel.js` starts it and enables the pause icon, named "Pause pictures" or "Play pictures" and shown only on keyboard focus (WCAG 2.2.2); still without JavaScript or with reduced motion |
 | `plans-header`, `add-plan`, `plan-grid`, `plan-tile`, `plan-tile-type`, `plan-tile-meta`, `plan-tile-days`, `empty-plans` | My Plans page |
 | `form-step`, `step-number`, `legend-note`, `type-cards`, `type-card`, `type-card-hint`, `samples`, `sample[data-event-type]`, `field-row`, `input-adorned`, `adornment`, `functions`, `chips`, `chip`, `form-submit` | New-plan form |
