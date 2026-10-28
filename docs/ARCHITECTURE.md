@@ -59,7 +59,7 @@ app/
     text.py             normalize_text (keeps ZWJ/ZWNJ for Indian scripts, strips control and bidi-override characters)
     money.py            format_inr (lakh/crore grouping), largest_remainder_split (exact, no floats)
     models.py           EventPlan and parts (frozen, tuples, typed ids), limits, evolve(), id_sequence()
-    catalog.py          India catalog per event type: categories, tasks, vendors, sub-events, fallback ideas (sources cited)
+    catalog/            India catalog: one module per event type (wedding, birthday, community), specs, vendor questions; sources cited in __init__
     baseline.py         opening budget from event type, sub-events and guest-count bands
     budget.py           allocate, apply_emphasis, summarize, the total-budget rule
     expenses.py         add, update and remove expenses; protection; duplicate detection

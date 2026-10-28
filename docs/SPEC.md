@@ -108,6 +108,6 @@ in Chromium (`pytest -m e2e`); evals run the real models (`evals/`).
 User accounts and multi-device sync; real vendor marketplaces or booking; payments; live vendor prices (the AI gives qualitative guidance and code uses the user's own numbers); multilingual UI.
 
 ## 10. Assumptions
-- Baseline category weights, task offsets and vendor lead times are documented planning heuristics for India (in `app/domain/catalog.py`). Users can change any number.
+- Baseline category weights, task offsets and vendor lead times are documented planning heuristics for India (in `app/domain/catalog/`). Users can change any number.
 - Free-tier AI quotas are limited, so results are cached and rate-limited, and there is a labelled fallback.
 - Free-tier AI providers may keep or review inputs, so the new-event form asks users not to enter phone numbers or other personal details.

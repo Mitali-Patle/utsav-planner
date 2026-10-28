@@ -319,7 +319,7 @@ docs/            architecture, spec, UI contract
 
 - Budget splits, deadlines and lead times are **planning heuristics** drawn from published
   Indian planning guides (sources are cited in
-  [`app/domain/catalog.py`](app/domain/catalog.py)). Users can change the total, guest count,
+  [`app/domain/catalog/`](app/domain/catalog/__init__.py)). Users can change the total, guest count,
   event date, any line's planned amount and every expense; task and vendor dates follow the
   event date.
 - The assistant gives qualitative guidance; it does not know live vendor prices. All
