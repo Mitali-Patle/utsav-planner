@@ -31,7 +31,8 @@ from app.domain.models import BudgetImpact, CategoryId, EventType, TaskId, TaskS
 from app.domain.planning import EventDetails
 from app.domain.savings import SavingAction, SavingLevel
 from app.persistence.db import make_engine
-from app.persistence.repositories import ProposalRepository, ProposalStatus, StoredEvent
+from app.persistence.events import StoredEvent
+from app.persistence.proposals import ProposalRepository, ProposalStatus
 from app.persistence.tables import metadata
 from app.services import Services, build_services
 from app.services.alternatives import _price

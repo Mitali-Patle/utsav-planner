@@ -11,7 +11,7 @@ from app.domain.money import format_inr
 from app.domain.proposal import ExpenseChange, FieldChange, Proposal, ScheduleChange
 from app.domain.rebalance import CategoryChange, ChangeReason
 from app.domain.savings import describe_saving
-from app.persistence.repositories import StoredProposal
+from app.persistence.proposals import StoredProposal
 from app.services.alternatives import AlternativesView
 from app.services.change_manager import ChangeOutcome, OutcomeKind
 from app.web.views.formatting import (

@@ -9,7 +9,8 @@ from app.ai.chain import FallbackChain
 from app.ai.providers import build_providers
 from app.config import Settings
 from app.domain.clock import Clock
-from app.persistence.repositories import Database, SqlCacheStore
+from app.persistence.cache_store import SqlCacheStore
+from app.persistence.repositories import Database
 from app.services.alternatives import AlternativesService
 from app.services.change_manager import ChangeManager
 from app.services.edits import PlanEditor

@@ -18,7 +18,8 @@ from app.domain.expenses import (
 from app.domain.models import CategoryId, EventPlan, ExpenseId, TaskId, VendorId, VendorStatus
 from app.domain.timeline import NewTask, add_own_task, remove_own_task, set_task_done
 from app.domain.vendors import NewVendor, add_own_vendor, remove_own_vendor, set_vendor_status
-from app.persistence.repositories import Database, StoredEvent
+from app.persistence.events import StoredEvent
+from app.persistence.repositories import Database
 
 
 class PlanEditor:

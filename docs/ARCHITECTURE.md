@@ -88,8 +88,13 @@ app/
   content/persona.py    persona copy, tone and presets (planned)
   persistence/
     db.py               engine (NullPool, psycopg 3), readiness check
-    tables.py, repositories.py   events, proposals, ai_cache, rate_limits; Database.transaction() unit of work;
-                        ownership enforced in SQL; optimistic versioning; SqlCacheStore; RateLimiter
+    tables.py           events, proposals, ai_cache, rate_limits
+    repositories.py     Database.transaction(): one unit of work per request
+    events.py           EventRepository: ownership enforced in SQL, optimistic versioning
+    proposals.py        ProposalRepository: pending, approved, rejected and stale previews
+    cache_store.py      SqlCacheStore: the AI answer cache in Postgres
+    rate_limits.py      RateLimiter: per-client counters
+    common.py           utc_now, owner_key (hashed session), dialect-aware upsert
   web/
     routes/health.py    /healthz (no database), /readyz (database)
     routes/             pages (/, favicon), events (create, dashboard, personalize), edits, changes

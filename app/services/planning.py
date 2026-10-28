@@ -28,7 +28,8 @@ from app.domain.planning import (
     is_untouched,
     personalize_plan,
 )
-from app.persistence.repositories import Database, StoredEvent
+from app.persistence.events import StoredEvent
+from app.persistence.repositories import Database
 
 logger = logging.getLogger(__name__)
 

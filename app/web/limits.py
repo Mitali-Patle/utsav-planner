@@ -14,7 +14,7 @@ from fastapi import Request
 from sqlalchemy.exc import SQLAlchemyError
 
 from app.config import Settings
-from app.persistence.repositories import Counter
+from app.persistence.rate_limits import Counter
 
 logger = logging.getLogger(__name__)
 

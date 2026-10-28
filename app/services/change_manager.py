@@ -35,12 +35,9 @@ from app.domain.savings import (
     saving_change,
     saving_option,
 )
-from app.persistence.repositories import (
-    Database,
-    ProposalStatus,
-    StoredEvent,
-    StoredProposal,
-)
+from app.persistence.events import StoredEvent
+from app.persistence.proposals import ProposalStatus, StoredProposal
+from app.persistence.repositories import Database
 from app.services.planning import ai_record
 
 OUT_OF_DATE = (

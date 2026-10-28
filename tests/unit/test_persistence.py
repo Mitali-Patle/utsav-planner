@@ -13,16 +13,12 @@ from app.domain.change_set import ChangeKind, ChangeOperation, ChangeSet
 from app.domain.changes import propose
 from app.domain.errors import NotFoundError, StaleProposalError
 from app.domain.proposal import Proposal
+from app.persistence.cache_store import SqlCacheStore
+from app.persistence.common import owner_key
 from app.persistence.db import make_engine
-from app.persistence.repositories import (
-    Counter,
-    Database,
-    ProposalRepository,
-    ProposalStatus,
-    RateLimiter,
-    SqlCacheStore,
-    owner_key,
-)
+from app.persistence.proposals import ProposalRepository, ProposalStatus
+from app.persistence.rate_limits import Counter, RateLimiter
+from app.persistence.repositories import Database
 from app.persistence.tables import events, metadata, rate_limits
 from tests.factories import make_plan
 
@@ -218,7 +214,7 @@ def test_each_event_keeps_only_its_newest_proposals(
     db: Database, now: Now, monkeypatch: pytest.MonkeyPatch
 ) -> None:
     """Bounded storage however many previews are made (review, 23 Oct)."""
-    monkeypatch.setattr("app.persistence.repositories.MAX_PROPOSALS_PER_EVENT", 2)
+    monkeypatch.setattr("app.persistence.proposals.MAX_PROPOSALS_PER_EVENT", 2)
     with db.transaction() as repos:
         event = repos.events.create("s", make_plan())
         made = []

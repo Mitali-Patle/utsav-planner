@@ -16,7 +16,7 @@ from app.config import Settings
 from app.domain.errors import InvalidInputError, NotFoundError, StaleProposalError
 from app.main import create_app
 from app.persistence.db import make_engine
-from app.persistence.repositories import Counter, RateLimiter
+from app.persistence.rate_limits import Counter, RateLimiter
 from app.persistence.tables import metadata
 from app.web.guard import MAX_BODY_BYTES, RequestGuardMiddleware
 from app.web.limits import AIRateLimit, EventCreationLimit, client_ip

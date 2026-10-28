@@ -20,7 +20,8 @@ from app.domain.models import (
 from app.domain.money import format_inr
 from app.domain.timeline import is_overdue, sort_tasks
 from app.domain.vendors import ALLOWED_STATUS_CHANGES, OWN_VENDOR_TYPE
-from app.persistence.repositories import StoredEvent, StoredProposal
+from app.persistence.events import StoredEvent
+from app.persistence.proposals import StoredProposal
 from app.web.views.formatting import (
     EVENT_TYPE_LABELS,
     TASK_SOURCE_LABELS,

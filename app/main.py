@@ -11,7 +11,7 @@ from starlette.middleware.sessions import SessionMiddleware
 from app.config import Settings, get_settings
 from app.domain.clock import Clock, SystemClock
 from app.persistence.db import make_engine
-from app.persistence.repositories import RateLimiter
+from app.persistence.rate_limits import RateLimiter
 from app.services import Services, build_services
 from app.web.errors import register_error_handlers
 from app.web.guard import RequestGuardMiddleware

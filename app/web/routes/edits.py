@@ -14,7 +14,7 @@ from app.domain.expenses import NewExpense
 from app.domain.models import CategoryId, ExpenseId, TaskId, VendorId, VendorStatus
 from app.domain.timeline import NewTask
 from app.domain.vendors import NewVendor
-from app.persistence.repositories import StoredEvent
+from app.persistence.events import StoredEvent
 from app.web.deps import Visit, VisitDep
 from app.web.errors import is_htmx
 from app.web.responses import Notice, after_post, render
