@@ -304,12 +304,16 @@ uv run playwright install chromium && uv run pytest -m e2e
 
 ```
 app/
-  domain/        pure logic: catalog, budget, timeline, vendors, planning, change engine
+  domain/        pure logic, no I/O: catalog/ (one module per event type), budget, expenses,
+                 rebalance, savings, timeline, vendors, planning, calendar, and the change
+                 engine (change_set -> changes.propose -> proposal)
   ai/            providers, fallback chain, cache, prompts, schemas, guardrails, fallbacks
   services/      use cases: planning, change manager, edits, alternatives
-  persistence/   Postgres tables, repositories, unit of work
-  web/           routes, security middleware, sessions, view models, templates
-public/static/   CSS, favicon, vendored htmx (checksum-tested)
+  persistence/   one module per store (events, proposals, cache, rate limits) and the
+                 unit of work (repositories.Database)
+  web/           routes, a shared request context (deps.Visit), security middleware,
+                 sessions, views/ (one module per page or concern), templates
+public/static/   CSS, small scripts, photos, vendored htmx (checksum-tested)
 tests/           unit, integration and browser tests
 evals/           AI evaluation cases, scoring, runner and results
 docs/            architecture, spec, UI contract
