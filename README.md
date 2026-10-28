@@ -29,7 +29,10 @@ needed to hear about the new date, a line that was meant to stay untouched.
    Not inspired? "Suggest different ideas" replaces only the ideas, never the budget or
    tasks, and the model is told which ideas to avoid.
 3. **Track it.** Add expenses, protect lines you must not cut, tick off tasks, move vendors
-   from "to contact" to "booked". Overspending, overdue tasks and urgent bookings are flagged.
+   from "to contact" to "booked". Add anything you want to remember to the timeline ("Collect
+   the cake stand") or a vendor the checklist doesn't include (a magician, a dhol player), with
+   your own date; they move with the event like everything else and can be removed again.
+   Overspending, overdue tasks and urgent bookings are flagged.
    Add the event day to Google Calendar in one click (Google's own new-event screen opens
    filled in; nothing is sent until you save), or download every date as a calendar file
    (`.ics`): the event day, unfinished tasks and vendors still to book, as all-day entries. Print the plan or save it as a PDF: the

@@ -52,6 +52,7 @@ Priority: P0 must exist for submission 1; P1 should exist for submission 1; P2 o
 | F17 | Follow-up tasks for booked vendors when the date or guest count changes | P0 | none | creates due-today tasks in the proposal |
 | F18 | Relative changes ("10 more guests", "cut ₹2,000") | P0 | copies the number | computes the result |
 | F19 | Set one budget line's planned amount ("put ₹10,000 into decorations"), through the Change Manager or the form | P0 | interprets | pins the line, rebalances the others, keeps the total exact |
+| F20 | Your own timeline tasks and vendors: a title and a date, added directly, removable (only the ones you added) | P1 | none | dates kept as offsets from the event, limits, re-ranking |
 
 ## 5. Coverage matrix (4 capabilities × 3 event types)
 Every cell must be demonstrable in the live app and named in the README.

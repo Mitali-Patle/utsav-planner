@@ -5,7 +5,7 @@ import re
 import pytest
 from playwright.sync_api import Page, Route, expect
 
-from tests.e2e.helpers import VAGUE, NewPage, create_event
+from tests.e2e.helpers import EVENT_DATE, VAGUE, NewPage, create_event
 
 pytestmark = pytest.mark.e2e
 
@@ -118,6 +118,28 @@ def test_section_menu_marks_the_section_in_view(new_page: NewPage) -> None:
     assert rail["height"] > 600, "the window less the pinned header"
 
 
+def test_your_own_task_and_vendor_join_the_plan_and_can_be_removed(page: Page) -> None:
+    create_event(page)
+    timeline = page.locator("#timeline")
+    timeline.get_by_label("What to remember").fill("Pick up the rangoli colours")
+    timeline.get_by_label("By when").fill(EVENT_DATE)
+    timeline.get_by_role("button", name="Add to timeline").click()
+    expect(page.locator("#status-region")).to_contain_text("Added Pick up the rangoli colours")
+    task = page.locator("#timeline li", has_text="Pick up the rangoli colours")
+    expect(task).to_contain_text("Added by you")
+
+    vendors = page.locator("#vendors")
+    vendors.get_by_label("Vendor or service").fill("Puppet show")
+    vendors.get_by_label("Book by").fill(EVENT_DATE)
+    vendors.get_by_role("button", name="Add to checklist").click()
+    expect(page.locator("#vendors tbody")).to_contain_text("Puppet show")
+
+    task.get_by_role("button", name="Remove task: Pick up the rangoli colours").click()
+    expect(page.locator("#timeline")).not_to_contain_text("Pick up the rangoli colours")
+    page.locator("#vendors").get_by_role("button", name="Remove Puppet show").click()
+    expect(page.locator("#vendors tbody")).not_to_contain_text("Puppet show")
+
+
 def test_timeline_downloads_as_a_calendar_file(page: Page) -> None:
     create_event(page)
     with page.expect_download() as download:
@@ -140,7 +162,8 @@ def test_print_shows_the_plan_without_controls_in_ink_on_white(new_page: NewPage
     assert page.evaluate("window.printed") is True
 
     page.emulate_media(media="print")
-    expect(page.get_by_role("heading", name="Timeline")).to_be_visible()
+    expect(page.get_by_role("heading", name="Timeline", exact=True)).to_be_visible()
+    expect(page.get_by_role("heading", name="Add to your timeline")).to_be_hidden()
     expect(page.get_by_role("cell", name="To contact").first).to_be_visible()
     for hidden in ("Add expense", "Suggest different ideas", "Print or save as PDF"):
         expect(page.get_by_role("button", name=hidden)).to_be_hidden()

@@ -2362,6 +2362,48 @@ input[type="number"]::-webkit-outer-spin-button {
   margin-left: auto;
 }
 
+.tasks form + form {
+  margin-left: 0;
+}
+
+/* Remove, on items the user added: quieter than the main actions */
+.button-quiet {
+  background: transparent;
+  border-color: transparent;
+  color: var(--color-text-muted);
+  font-weight: 500;
+  text-decoration: underline;
+  text-underline-offset: 0.2em;
+  padding-inline: var(--space-2);
+}
+
+.button-quiet:hover {
+  background: transparent;
+  color: var(--color-primary);
+}
+
+/* Adding your own task or vendor */
+#add-task-heading,
+#add-vendor-heading {
+  margin-top: var(--space-8);
+}
+
+.own-remove {
+  display: inline;
+}
+
+.own-remove .button-quiet {
+  min-height: 1.5rem;
+  padding-block: 0;
+  font-family: var(--font-family-base);
+  font-size: var(--font-size-sm);
+}
+
+.own-item-form {
+  max-width: 40rem;
+  margin-top: var(--space-3);
+}
+
 .task-title {
   font-weight: 600;
   flex: 1 1 14rem;

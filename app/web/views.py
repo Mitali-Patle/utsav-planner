@@ -20,6 +20,7 @@ from app.domain.catalog import CATALOG
 from app.domain.changes import Proposal, ScheduleChange
 from app.domain.clock import INDIA_TZ
 from app.domain.models import (
+    MAX_DAYS_AFTER,
     CategoryId,
     EventPlan,
     EventType,
@@ -30,7 +31,7 @@ from app.domain.models import (
 )
 from app.domain.money import format_inr
 from app.domain.timeline import is_overdue, sort_tasks
-from app.domain.vendors import ALLOWED_STATUS_CHANGES
+from app.domain.vendors import ALLOWED_STATUS_CHANGES, OWN_VENDOR_TYPE
 from app.persistence.repositories import StoredEvent, StoredProposal
 from app.services.alternatives import AlternativesView
 from app.services.change_manager import ChangeOutcome, OutcomeKind
@@ -89,6 +90,15 @@ class FormState:
 
     values: Mapping[str, Any] = field(default_factory=dict)
     errors: Mapping[str, str] = field(default_factory=dict)
+
+
+@dataclass(frozen=True)
+class PlanForms:
+    """The dashboard's add forms, each empty unless it is being shown again with errors."""
+
+    expense: FormState = field(default_factory=FormState)
+    task: FormState = field(default_factory=FormState)
+    vendor: FormState = field(default_factory=FormState)
 
 
 @dataclass(frozen=True)
@@ -292,10 +302,11 @@ def dashboard_context(
     history: Sequence[StoredProposal],
     today: date,
     *,
-    expense_form: FormState | None = None,
+    forms: PlanForms | None = None,
 ) -> dict[str, Any]:
-    """Data for the event dashboard."""
+    """Data for the event dashboard; `forms` carries an add form's rejected input."""
     plan = stored.plan
+    forms = forms or PlanForms()
     return {
         "event": _event_summary(stored, today),
         "plan": plan_sections(plan, today),
@@ -311,7 +322,12 @@ def dashboard_context(
         "ai": ai_panel(stored.ai),
         "personalization_pending": stored.ai is None,
         "history": [history_row(p) for p in history],
-        "expense_form": expense_form or FormState(),
+        "expense_form": forms.expense,
+        "task_form": forms.task,
+        "vendor_form": forms.vendor,
+        "min_date": today.isoformat(),
+        "max_date": (plan.event_date + timedelta(days=MAX_DAYS_AFTER)).isoformat(),
+        "event_day": plan.event_date.isoformat(),
         "keep_typed_input": False,
         "focus_ideas": False,
         "categories_for_select": [(c.id, c.name) for c in plan.categories],
@@ -522,6 +538,7 @@ def _task_row(task: Task, names: Mapping[CategoryId, str], today: date) -> dict[
         "compressed": task.compressed,
         "source": TASK_SOURCE_LABELS[task.source],
         "ai": task.source is TaskSource.AI,
+        "own": task.source is TaskSource.USER,
         "why": task.why,
         "category": names.get(task.category_id) if task.category_id else None,
     }
@@ -541,6 +558,7 @@ def _vendor_row(vendor: VendorItem) -> dict[str, Any]:
             for s in sorted(ALLOWED_STATUS_CHANGES[vendor.status])
         ],
         "why": vendor.why,
+        "own": vendor.vendor_type == OWN_VENDOR_TYPE,
     }
 
 

@@ -7,14 +7,22 @@ from types import MappingProxyType
 from app.domain.catalog import VendorSpec
 from app.domain.errors import InvalidInputError
 from app.domain.models import (
+    MAX_LEAD_DAYS,
+    MAX_PRIORITY,
+    DomainModel,
     EventPlan,
+    ShortText,
     VendorId,
     VendorItem,
     VendorStatus,
     evolve,
     id_sequence,
+    next_id,
 )
 from app.domain.timeline import deadline
+
+OWN_VENDOR_TYPE = "own"
+"""vendor_type of vendors the user added; only these can be removed."""
 
 ALLOWED_STATUS_CHANGES: Mapping[VendorStatus, frozenset[VendorStatus]] = MappingProxyType(
     {
@@ -117,3 +125,69 @@ def set_vendor_status(plan: EventPlan, vendor_id: VendorId, status: VendorStatus
         )
     vendors = tuple(evolve(v, status=status) if v.id == vendor_id else v for v in plan.vendors)
     return plan.with_changes(vendors=prioritize(vendors))
+
+
+class NewVendor(DomainModel):
+    """A vendor the user wants on the checklist, with the date to book them by."""
+
+    name: ShortText
+    book_by: date
+
+
+def add_own_vendor(plan: EventPlan, draft: NewVendor, today: date) -> tuple[EventPlan, VendorItem]:
+    """Add the user's own vendor and re-rank the checklist.
+
+    The lead time is kept, so the book-by date moves with the event like every other vendor.
+
+    Raises:
+        InvalidInputError: If the date is in the past, after the event or too far before
+            it, or the checklist is full.
+
+    Examples:
+        >>> from app.domain.models import EventType
+        >>> from app.domain.planning import EventDetails, draft_plan
+        >>> plan = draft_plan(EventDetails(event_type=EventType.BIRTHDAY, title="Aarav",
+        ...     city="Pune", event_date=date(2026, 12, 13), guest_count=30,
+        ...     total_budget_inr=40_000), today=date(2026, 10, 28))
+        >>> plan, vendor = add_own_vendor(plan, NewVendor(name="Magician",
+        ...     book_by=date(2026, 11, 1)), today=date(2026, 10, 28))
+        >>> vendor.lead_days, plan.vendor(vendor.id).priority
+        (42, 1)
+    """
+    if len(plan.vendors) >= MAX_PRIORITY:
+        raise InvalidInputError(
+            f"A checklist can have at most {MAX_PRIORITY} vendors.", code="too_many_vendors"
+        )
+    if draft.book_by < today:
+        raise InvalidInputError("Choose today or a later date.", code="date_in_past")
+    lead = (plan.event_date - draft.book_by).days
+    if lead < 0:
+        raise InvalidInputError("Choose a date on or before the event day.", code="after_event")
+    if lead > MAX_LEAD_DAYS:
+        raise InvalidInputError(
+            f"Choose a date within {MAX_LEAD_DAYS} days of the event.", code="date_too_early"
+        )
+    vendor = VendorItem(
+        id=VendorId(next_id("vendor", (v.id for v in plan.vendors))),
+        vendor_type=OWN_VENDOR_TYPE,
+        name=draft.name,
+        lead_days=lead,
+        book_by=draft.book_by,
+        priority=1,
+    )
+    plan = plan.with_changes(vendors=prioritize((*plan.vendors, vendor)))
+    return plan, plan.vendor(vendor.id)
+
+
+def remove_own_vendor(plan: EventPlan, vendor_id: VendorId) -> EventPlan:
+    """Remove a vendor the user added and re-rank the rest.
+
+    Raises:
+        NotFoundError: If the vendor does not exist.
+        InvalidInputError: If the vendor came with the plan.
+    """
+    if plan.vendor(vendor_id).vendor_type != OWN_VENDOR_TYPE:
+        raise InvalidInputError("Only vendors you added can be removed.", code="not_removable")
+    return plan.with_changes(
+        vendors=prioritize(tuple(v for v in plan.vendors if v.id != vendor_id))
+    )

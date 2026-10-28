@@ -5,6 +5,7 @@ the plan, applies one domain function and saves the next version in a single tra
 """
 
 from collections.abc import Callable
+from datetime import date
 
 from app.domain.budget import (
     NewExpense,
@@ -15,8 +16,8 @@ from app.domain.budget import (
     update_expense,
 )
 from app.domain.models import CategoryId, EventPlan, ExpenseId, TaskId, VendorId, VendorStatus
-from app.domain.timeline import set_task_done
-from app.domain.vendors import set_vendor_status
+from app.domain.timeline import NewTask, add_own_task, remove_own_task, set_task_done
+from app.domain.vendors import NewVendor, add_own_vendor, remove_own_vendor, set_vendor_status
 from app.persistence.repositories import Database, StoredEvent
 
 
@@ -72,6 +73,24 @@ class PlanEditor:
         return self._edit(
             session_id, event_id, lambda plan: set_task_done(plan, task_id, done=done)
         )
+
+    def add_task(self, session_id: str, event_id: str, draft: NewTask, today: date) -> StoredEvent:
+        """Add the user's own task to the timeline."""
+        return self._edit(session_id, event_id, lambda plan: add_own_task(plan, draft, today)[0])
+
+    def remove_task(self, session_id: str, event_id: str, task_id: TaskId) -> StoredEvent:
+        """Remove a task the user added."""
+        return self._edit(session_id, event_id, lambda plan: remove_own_task(plan, task_id))
+
+    def add_vendor(
+        self, session_id: str, event_id: str, draft: NewVendor, today: date
+    ) -> StoredEvent:
+        """Add the user's own vendor to the checklist."""
+        return self._edit(session_id, event_id, lambda plan: add_own_vendor(plan, draft, today)[0])
+
+    def remove_vendor(self, session_id: str, event_id: str, vendor_id: VendorId) -> StoredEvent:
+        """Remove a vendor the user added."""
+        return self._edit(session_id, event_id, lambda plan: remove_own_vendor(plan, vendor_id))
 
     def set_vendor_status(
         self, session_id: str, event_id: str, vendor_id: VendorId, status: VendorStatus

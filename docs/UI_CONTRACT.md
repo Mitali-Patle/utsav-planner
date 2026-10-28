@@ -29,6 +29,8 @@ After any template or CSS change, run `uv run pytest -W error`. The tests in
 | `POST /events/{id}/categories/{cid}/protect`, `/unprotect` | 303 to the dashboard | `partials/plan_area.html` |
 | `POST /events/{id}/tasks/{tid}/done`, `/undone` | 303 to the dashboard | `partials/plan_area.html` |
 | `POST /events/{id}/vendors/{vid}/status` | 303 to the dashboard | `partials/plan_area.html` |
+| `POST /events/{id}/tasks` (fields `title`, `due_date`), `POST /events/{id}/vendors` (fields `name`, `book_by`) | 303 to the dashboard; 422 with the form shown again (`task_form`, `vendor_form`) | `partials/plan_area.html` |
+| `POST /events/{id}/tasks/{tid}/remove`, `POST /events/{id}/vendors/{vid}/remove` | 303 to the dashboard; 422 for items that came with the plan | `partials/plan_area.html` |
 | `POST /events/{id}/changes` (field `request`) | `dashboard.html` with the answer in place | `partials/change_result.html` |
 | `POST /events/{id}/changes/form` | `dashboard.html` with the answer in place | `partials/change_result.html` |
 | `POST /events/{id}/proposals/{pid}/approve` | 303 to the dashboard; 409 or 422 with the reason | `HX-Redirect` to the dashboard; 409 or 422 with `change_result.html` |
@@ -108,8 +110,9 @@ strings such as `2 Dec 2026`. Templates never compute; ask for a new field inste
 - `plan.summary`: `{total, spent, remaining, per_guest, guests, shortfall, over_plan, spent_percent}` (`spent_percent` passes 100 when overspent; the `<progress>` clamps); `shortfall` is `None` unless over budget; `over_plan` names the lines spent past their plan
 - `plan.categories`: `{id, name, allocated, spent, remaining, overspent, protected}`
 - `plan.expenses`: `{id, label, category, amount, amount_inr, protected}`
-- `plan.tasks`: `{id, title, due, done, overdue, compressed, source, ai, why, category}`
-- `plan.vendors`: `{id, name, priority, book_by, urgent, status, status_label, next: [(value, label)], why}`
+- `plan.tasks`: `{id, title, due, done, overdue, compressed, source, ai, own, why, category}`; `own` marks tasks the user added (they get a Remove button)
+- `task_form`, `vendor_form`: the add forms' values and errors; `min_date`, `max_date` (event day + 30), `event_day` bound their date inputs
+- `plan.vendors`: `{id, name, priority, book_by, urgent, status, status_label, next: [(value, label)], why, own}`; `own` marks vendors the user added (badge and Remove)
 - `ideas`: `{title, description, why, impact}`; `impact` is `saves`, `neutral` or `adds`
 - `ai`: `None` until personalized, then `{provider, fallback, cached, latency_ms, prompt_version, attempts, request, response}`
 - `personalization_pending`: `True` until the first personalization

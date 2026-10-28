@@ -169,10 +169,30 @@
         {{ csrf(csrf_token) }}
         <button type="submit" id="task-{{ t.id }}" class="toggle" aria-pressed="{{ 'true' if t.done else 'false' }}">{{ 'Done' if t.done else 'Mark done' }}<span class="sr-only">: {{ t.title }}</span></button>
       </form>
+      {% if t.own %}
+      <form method="post" action="/events/{{ event.id }}/tasks/{{ t.id }}/remove" class="no-print"
+            hx-post="/events/{{ event.id }}/tasks/{{ t.id }}/remove" hx-target="#plan-area" hx-swap="outerHTML">
+        {{ csrf(csrf_token) }}
+        <button type="submit" id="remove-task-{{ t.id }}" class="button-quiet">Remove<span class="sr-only"> task: {{ t.title }}</span></button>
+      </form>
+      {% endif %}
     </li>
     {% endfor %}
   </ol>
   {% endfor %}
+
+  <h3 id="add-task-heading" class="no-print">Add to your timeline</h3>
+  <p class="field-hint no-print">Anything you want to remember, by a date: "Collect the cake stand", "Confirm the mehendi artist".</p>
+  {% if task_form.errors %}<p class="notice notice-error no-print" role="alert">Please check the highlighted fields.</p>{% endif %}
+  <form method="post" action="/events/{{ event.id }}/tasks" aria-labelledby="add-task-heading" novalidate class="own-item-form"
+        id="add-task-form" hx-post="/events/{{ event.id }}/tasks" hx-target="#plan-area" hx-swap="outerHTML">
+    {{ csrf(csrf_token) }}
+    <div class="field-row">
+      {{ field(task_form, "title", "What to remember", prefix="t", attrs={"maxlength": "80", "required": "required", "autocomplete": "off"}) }}
+      {{ field(task_form, "due_date", "By when", type="date", prefix="t", attrs={"min": min_date, "max": max_date, "required": "required"}) }}
+    </div>
+    <button type="submit" id="add-task" class="button-primary">Add to timeline</button>
+  </form>
 </section>
 
 <section id="vendors" aria-labelledby="vendors-heading">
@@ -184,7 +204,12 @@
       {% for v in plan.vendors %}
       <tr>
         <td data-label="Priority">{{ v.priority }}</td>
-        <th scope="row">{{ v.name }}{% if v.why %}<p class="why">Why: {{ v.why }}</p>{% endif %}</th>
+        <th scope="row">{{ v.name }}{% if v.own %} <span class="badge">Added by you</span>
+          <form method="post" action="/events/{{ event.id }}/vendors/{{ v.id }}/remove" class="own-remove no-print"
+                hx-post="/events/{{ event.id }}/vendors/{{ v.id }}/remove" hx-target="#plan-area" hx-swap="outerHTML">
+            {{ csrf(csrf_token) }}
+            <button type="submit" id="remove-vendor-{{ v.id }}" class="button-quiet">Remove<span class="sr-only"> {{ v.name }}</span></button>
+          </form>{% endif %}{% if v.why %}<p class="why">Why: {{ v.why }}</p>{% endif %}</th>
         <td data-label="Book by">{{ v.book_by }}{% if v.urgent and v.status != 'booked' %} <span class="badge badge-warning">book now</span>{% endif %}</td>
         <td data-label="Status">
           <span class="print-only">{{ v.status_label }}</span>
@@ -203,5 +228,18 @@
       {% endfor %}
     </tbody>
   </table>
+
+  <h3 id="add-vendor-heading" class="no-print">Add a vendor</h3>
+  <p class="field-hint no-print">Someone the checklist doesn't include, like a magician, a dhol player or a tent house.</p>
+  {% if vendor_form.errors %}<p class="notice notice-error no-print" role="alert">Please check the highlighted fields.</p>{% endif %}
+  <form method="post" action="/events/{{ event.id }}/vendors" aria-labelledby="add-vendor-heading" novalidate class="own-item-form"
+        id="add-vendor-form" hx-post="/events/{{ event.id }}/vendors" hx-target="#plan-area" hx-swap="outerHTML">
+    {{ csrf(csrf_token) }}
+    <div class="field-row">
+      {{ field(vendor_form, "name", "Vendor or service", prefix="v", attrs={"maxlength": "80", "required": "required", "autocomplete": "off"}) }}
+      {{ field(vendor_form, "book_by", "Book by", type="date", prefix="v", attrs={"min": min_date, "max": event_day, "required": "required"}) }}
+    </div>
+    <button type="submit" id="add-vendor" class="button-primary">Add to checklist</button>
+  </form>
 </section>
 </div>

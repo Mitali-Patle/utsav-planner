@@ -8,7 +8,20 @@ from collections.abc import Iterable, Sequence
 from datetime import date, timedelta
 
 from app.domain.catalog import TaskSpec
-from app.domain.models import EventPlan, Task, TaskId, TaskSource, evolve, id_sequence
+from app.domain.errors import InvalidInputError
+from app.domain.models import (
+    MAX_DAYS_AFTER,
+    MAX_TASKS,
+    DomainModel,
+    EventPlan,
+    ShortText,
+    Task,
+    TaskId,
+    TaskSource,
+    evolve,
+    id_sequence,
+    next_id,
+)
 
 
 def deadline(event_date: date, days_before: int, today: date) -> tuple[date, bool]:
@@ -99,6 +112,67 @@ def set_task_done(plan: EventPlan, task_id: TaskId, *, done: bool) -> EventPlan:
     return plan.with_changes(
         tasks=tuple(evolve(t, done=done) if t.id == task_id else t for t in plan.tasks)
     )
+
+
+class NewTask(DomainModel):
+    """Something the user wants to remember, by a date of their choosing."""
+
+    title: ShortText
+    due_date: date
+
+
+def add_own_task(plan: EventPlan, draft: NewTask, today: date) -> tuple[EventPlan, Task]:
+    """Add the user's own task to the timeline.
+
+    Its offset from the event is kept, so it moves with the event like every other task.
+
+    Raises:
+        InvalidInputError: If the date is in the past or too long after the event, or the
+            plan already has the most tasks allowed.
+
+    Examples:
+        >>> from app.domain.models import EventType
+        >>> from app.domain.planning import EventDetails, draft_plan
+        >>> plan = draft_plan(EventDetails(event_type=EventType.BIRTHDAY, title="Aarav",
+        ...     city="Pune", event_date=date(2026, 12, 13), guest_count=30,
+        ...     total_budget_inr=40_000), today=date(2026, 10, 28))
+        >>> plan, task = add_own_task(plan, NewTask(title="Collect the cake stand",
+        ...     due_date=date(2026, 12, 12)), today=date(2026, 10, 28))
+        >>> task.offset_days, task.source.value
+        (1, 'user')
+    """
+    if len(plan.tasks) >= MAX_TASKS:
+        raise InvalidInputError(
+            f"A plan can have at most {MAX_TASKS} tasks.", code="too_many_tasks"
+        )
+    if draft.due_date < today:
+        raise InvalidInputError("Choose today or a later date.", code="date_in_past")
+    offset = (plan.event_date - draft.due_date).days
+    if offset < -MAX_DAYS_AFTER:
+        raise InvalidInputError(
+            f"Choose a date no more than {MAX_DAYS_AFTER} days after the event.",
+            code="date_too_late",
+        )
+    task = Task(
+        id=TaskId(next_id("task", (t.id for t in plan.tasks))),
+        title=draft.title,
+        offset_days=offset,
+        due_date=draft.due_date,
+        source=TaskSource.USER,
+    )
+    return plan.with_changes(tasks=(*plan.tasks, task)), task
+
+
+def remove_own_task(plan: EventPlan, task_id: TaskId) -> EventPlan:
+    """Remove a task the user added; the plan's own tasks stay.
+
+    Raises:
+        NotFoundError: If the task does not exist.
+        InvalidInputError: If the task was not added by the user.
+    """
+    if plan.task(task_id).source is not TaskSource.USER:
+        raise InvalidInputError("Only tasks you added can be removed.", code="not_removable")
+    return plan.with_changes(tasks=tuple(t for t in plan.tasks if t.id != task_id))
 
 
 def is_overdue(task: Task, today: date) -> bool:

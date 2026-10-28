@@ -4,6 +4,7 @@ All notable changes to Utsav Planner will be documented in this file.
 
 ## [Unreleased]
 ### Added
+- Add your own items: "Add to your timeline" (anything to remember, by a date) and "Add a vendor" (with a book-by date). They are marked "Added by you", move with the event date, appear in the calendar file and can be removed; the plan's own items cannot.
 - "Add to Google Calendar" on the event banner opens Google Calendar's new-event screen filled in with the event day, city and guests; "Download all dates (.ics)" keeps every task and vendor date.
 - Frontend foundational assets and base layout template (SPIKE-A01):
   - Vendored pinned htmx 2.0.4 at `public/static/vendor/htmx.min.js`.

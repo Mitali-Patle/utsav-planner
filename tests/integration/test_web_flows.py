@@ -836,6 +836,118 @@ def test_tasks_vendors_and_protection(engine: Engine) -> None:
     )
 
 
+# The user's own tasks and vendors
+
+
+def test_own_task_and_vendor_are_added_listed_exported_and_removed(engine: Engine) -> None:
+    client = client_for(engine, SUGGESTIONS)
+    csrf = token(client)
+    url = create(client, csrf)
+    due = str(TODAY + timedelta(days=10))
+    added = client.post(
+        f"{url}/tasks",
+        data={"csrf_token": csrf, "title": "Pick up the rangoli colours", "due_date": due},
+        headers=HTMX,
+    )
+    assert added.status_code == 200
+    assert "Added Pick up the rangoli colours to the timeline." in added.text
+    task_id = re.search(r'id="remove-task-(task-\d+)"', added.text)
+    assert task_id, "a task you added can be removed"
+    assert added.text.count('id="remove-task-') == 1, "the plan's own tasks cannot"
+    assert_accessible(added.text, page=False)
+
+    vendor = client.post(
+        f"{url}/vendors",
+        data={"csrf_token": csrf, "name": "Puppet show", "book_by": str(TODAY + timedelta(days=5))},
+        headers=HTMX,
+    )
+    assert 'Puppet show <span class="badge">Added by you</span>' in vendor.text
+    vendor_id = re.search(r'id="remove-vendor-(vendor-\d+)"', vendor.text)
+    assert vendor_id and vendor.text.count('id="remove-vendor-') == 1
+
+    calendar = client.get(f"{url}/calendar.ics").text
+    assert (
+        "SUMMARY:Pick up the rangoli colours" in calendar and "SUMMARY:Book Puppet show" in calendar
+    )
+
+    gone = client.post(
+        f"{url}/tasks/{task_id.group(1)}/remove", data={"csrf_token": csrf}, headers=HTMX
+    )
+    assert "Task removed." in gone.text and "Pick up the rangoli colours" not in gone.text
+    gone = client.post(
+        f"{url}/vendors/{vendor_id.group(1)}/remove", data={"csrf_token": csrf}, headers=HTMX
+    )
+    assert "Vendor removed." in gone.text and "Puppet show" not in gone.text
+
+
+def test_own_task_without_javascript_redirects_with_a_message(engine: Engine) -> None:
+    client = client_for(engine, SUGGESTIONS)
+    csrf = token(client)
+    url = create(client, csrf)
+    response = client.post(
+        f"{url}/tasks",
+        data={"csrf_token": csrf, "title": "Call the pandit", "due_date": str(TODAY)},
+        follow_redirects=False,
+    )
+    assert response.status_code == 303 and response.headers["location"] == url
+    page = client.get(url).text
+    assert "Added Call the pandit to the timeline." in page and "Call the pandit" in page
+
+
+def test_own_items_explain_bad_input_next_to_their_forms(engine: Engine) -> None:
+    client = client_for(engine, SUGGESTIONS)
+    csrf = token(client)
+    url = create(client, csrf)
+    empty = client.post(f"{url}/tasks", data={"csrf_token": csrf, "title": "", "due_date": ""})
+    assert empty.status_code == 422
+    assert 'id="t-title-error"' in empty.text and 'id="t-due_date-error"' in empty.text
+    assert_accessible(empty.text)
+    past = client.post(
+        f"{url}/tasks",
+        data={"csrf_token": csrf, "title": "Too late", "due_date": str(TODAY - timedelta(days=1))},
+        headers=HTMX,
+    )
+    assert past.status_code == 422
+    assert "Choose today or a later date." in past.text and 'value="Too late"' in past.text
+    after = client.post(
+        f"{url}/vendors",
+        data={
+            "csrf_token": csrf,
+            "name": "Tent house",
+            "book_by": str(TODAY + timedelta(days=41)),
+        },
+        headers=HTMX,
+    )
+    assert after.status_code == 422
+    assert "Choose a date on or before the event day." in after.text
+    nameless = client.post(
+        f"{url}/vendors",
+        data={"csrf_token": csrf, "name": " ", "book_by": str(TODAY)},
+        headers=HTMX,
+    )
+    assert nameless.status_code == 422 and 'id="v-name-error"' in nameless.text
+    assert_accessible(after.text, page=False)
+
+
+def test_only_your_own_items_can_be_removed(engine: Engine) -> None:
+    client = client_for(engine, SUGGESTIONS)
+    csrf = token(client)
+    url = create(client, csrf)
+    catalog = client.post(f"{url}/tasks/task-1/remove", data={"csrf_token": csrf}, headers=HTMX)
+    assert catalog.status_code == 422
+    assert "Only tasks you added can be removed." in catalog.text
+    vendor = client.post(f"{url}/vendors/vendor-1/remove", data={"csrf_token": csrf}, headers=HTMX)
+    assert "Only vendors you added can be removed." in vendor.text
+    stranger = client_for(engine)
+    stranger_csrf = token(stranger)
+    response = stranger.post(
+        f"{url}/tasks",
+        data={"csrf_token": stranger_csrf, "title": "Sneaky", "due_date": str(TODAY)},
+        headers=HTMX,
+    )
+    assert response.status_code == 404
+
+
 # Calendar export
 
 
