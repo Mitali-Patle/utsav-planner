@@ -935,6 +935,21 @@ def test_own_task_and_vendor_are_added_listed_exported_and_removed(engine: Engin
     assert "Vendor removed." in gone.text and "Puppet show" not in gone.text
 
 
+def test_own_task_added_while_personalizing_is_kept(engine: Engine) -> None:
+    """CI race (28 Oct): a task added before personalization lands must survive it."""
+    client = client_for(engine, SUGGESTIONS)
+    csrf = token(client)
+    url = create(client, csrf, personalize=False)
+    client.post(
+        f"{url}/tasks",
+        data={"csrf_token": csrf, "title": "Pick up the rangoli colours", "due_date": str(TODAY)},
+        headers=HTMX,
+    )
+    personalized = client.post(f"{url}/personalize", data={"csrf_token": csrf}, headers=HTMX)
+    assert "Rocket launch corner" in personalized.text, "personalization still applied"
+    assert "Pick up the rangoli colours" in personalized.text, "and the user's task kept"
+
+
 def test_own_task_without_javascript_redirects_with_a_message(engine: Engine) -> None:
     client = client_for(engine, SUGGESTIONS)
     csrf = token(client)

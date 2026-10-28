@@ -120,6 +120,8 @@ def test_section_menu_marks_the_section_in_view(new_page: NewPage) -> None:
 
 def test_your_own_task_and_vendor_join_the_plan_and_can_be_removed(page: Page) -> None:
     create_event(page)
+    # Personalization swaps the plan area when it lands; wait so its notice comes first.
+    expect(page.get_by_text("Suggested by AI, each with a reason.")).to_be_visible()
     timeline = page.locator("#timeline")
     timeline.get_by_label("What to remember").fill("Pick up the rangoli colours")
     timeline.get_by_label("By when").fill(EVENT_DATE)
