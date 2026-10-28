@@ -16,7 +16,7 @@ from datetime import UTC, datetime, timedelta
 from enum import StrEnum
 from typing import Any, NamedTuple
 
-from sqlalchemy import Connection, Engine, Table, delete, func, insert, select, update
+from sqlalchemy import Connection, Engine, Row, Table, delete, func, insert, select, update
 from sqlalchemy.dialects import postgresql, sqlite
 
 from app.domain.errors import NotFoundError, StaleProposalError
@@ -189,7 +189,7 @@ class EventRepository:
 _EVENT_COLUMNS = (events.c.id, events.c.version, events.c.plan, events.c.ai, events.c.updated_at)
 
 
-def _event_from_row(row: Any) -> StoredEvent:  # noqa: ANN401 - SQLAlchemy row
+def _event_from_row(row: Row[*tuple[Any, ...]]) -> StoredEvent:
     return StoredEvent(
         row.id, row.version, EventPlan.model_validate(row.plan), row.ai, _as_utc(row.updated_at)
     )
@@ -343,7 +343,7 @@ class ProposalRepository:
         return [_proposal_from_row(row) for row in rows]
 
 
-def _proposal_from_row(row: Any) -> StoredProposal:  # noqa: ANN401 - SQLAlchemy row
+def _proposal_from_row(row: Row[*tuple[Any, ...]]) -> StoredProposal:
     return StoredProposal(
         id=row.id,
         event_id=row.event_id,
@@ -499,10 +499,11 @@ def _upsert(
     *,
     keys: Sequence[str],
     increment: str | None = None,
-) -> Any:  # noqa: ANN401 - dialect-specific statement
+) -> postgresql.Insert | sqlite.Insert:
     """Insert, or on conflict update (or increment one column), in the engine's dialect."""
-    dialect = postgresql if engine.dialect.name == "postgresql" else sqlite
-    statement = dialect.insert(table).values(**values)
+    statement: postgresql.Insert | sqlite.Insert = (
+        postgresql.insert(table) if engine.dialect.name == "postgresql" else sqlite.insert(table)
+    ).values(**values)
     if increment is not None:
         updates = {increment: table.c[increment] + 1}
     else:

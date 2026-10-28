@@ -93,7 +93,7 @@ class GeminiProvider:
         return self._client
 
 
-def _map_api_error(code: int, status: str | None, details: Any) -> ProviderError:  # noqa: ANN401 - raw API JSON
+def _map_api_error(code: int, status: str | None, details: object) -> ProviderError:
     """Translate a Gemini API error into the chain's error types.
 
     Messages carry only the HTTP code and status (for example `503 UNAVAILABLE`), never keys
@@ -110,7 +110,7 @@ def _map_api_error(code: int, status: str | None, details: Any) -> ProviderError
     return ProviderUnavailableError(f"Gemini returned {label}")
 
 
-def _quota_details(details: Any) -> tuple[bool, float | None]:  # noqa: ANN401 - raw API JSON
+def _quota_details(details: object) -> tuple[bool, float | None]:
     """Read whether a 429 is a daily quota and how long to wait, from the error details.
 
     Gemini reports `QuotaFailure` violations (quota ids containing `PerDay` for daily limits)

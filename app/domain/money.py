@@ -3,6 +3,9 @@
 from collections.abc import Sequence
 from fractions import Fraction
 
+LAST_GROUP = 3
+"""Indian grouping: the last three digits together, then pairs (1,20,000)."""
+
 
 def format_inr(amount: int) -> str:
     """Format rupees with Indian digit grouping (lakh and crore).
@@ -25,9 +28,9 @@ def format_inr(amount: int) -> str:
     """
     sign = "-" if amount < 0 else ""
     digits = str(abs(amount))
-    if len(digits) <= 3:  # noqa: PLR2004 - the last group always has three digits
+    if len(digits) <= LAST_GROUP:
         return f"{sign}₹{digits}"
-    head, tail = digits[:-3], digits[-3:]
+    head, tail = digits[:-LAST_GROUP], digits[-LAST_GROUP:]
     groups: list[str] = []
     while head:
         groups.insert(0, head[-2:])

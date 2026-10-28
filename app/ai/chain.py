@@ -86,7 +86,7 @@ class FallbackChain:
         self,
         providers: Sequence[Provider],
         cache: CacheStore,
-        limits: ChainLimits = ChainLimits(),  # noqa: B008 - immutable default
+        limits: ChainLimits | None = None,
         clock: Callable[[], float] = time.monotonic,
         now: Callable[[], datetime] = lambda: datetime.now(UTC),
     ) -> None:
@@ -101,7 +101,7 @@ class FallbackChain:
         """
         self._providers = tuple(providers)
         self._cache = cache
-        self._limits = limits
+        self._limits = limits or ChainLimits()
         self._clock = clock
         self._now = now
         self._cooldowns: dict[str, datetime] = {}
@@ -157,7 +157,8 @@ class FallbackChain:
     def _try_provider[C, T: BaseModel](self, provider: Provider, run: _Run[C, T]) -> T | None:
         """Call one provider, with one repair attempt for an invalid answer."""
         messages = _conversation(run.task, run.payload)
-        for repairs_left in range(REPAIR_ATTEMPTS, -1, -1):
+        repairs_left = REPAIR_ATTEMPTS
+        while True:
             remaining = run.deadline - self._clock()
             if remaining <= 0:
                 return None
@@ -179,11 +180,11 @@ class FallbackChain:
                 )
                 if repairs_left == 0:
                     return None
+                repairs_left -= 1
                 continue
             run.attempts.append(self._attempt(provider, AttemptOutcome.OK, call_started))
             logger.info("ai %s via %s ok", run.task.name, provider.name)
             return value
-        return None  # pragma: no cover - the loop always returns
 
     def _request[C, T: BaseModel](
         self, task: AITask[C, T], messages: tuple[Message, ...], remaining_s: float

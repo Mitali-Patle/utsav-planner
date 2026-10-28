@@ -3,7 +3,7 @@
 import pytest
 from pydantic import ValidationError
 
-from app.config import DEFAULT_LLM_CHAIN, Settings
+from app.config import DEFAULT_LLM_CHAIN, Settings, get_settings
 
 STRONG_SECRET = "s" * 48
 DB_URL = "postgresql://user:pass@localhost/db"
@@ -47,3 +47,14 @@ def test_rate_limit_bounds(value: int) -> None:
 def test_secrets_are_masked_in_repr() -> None:
     settings = Settings(_env_file=None, gemini_api_key="real-key-value")
     assert "real-key-value" not in repr(settings)
+
+
+def test_settings_are_loaded_once(monkeypatch: pytest.MonkeyPatch) -> None:
+    monkeypatch.setenv("APP_ENV", "test")
+    get_settings.cache_clear()
+    try:
+        first = get_settings()
+        assert first is get_settings(), "cached for the process"
+        assert first.app_env == "test"
+    finally:
+        get_settings.cache_clear()
