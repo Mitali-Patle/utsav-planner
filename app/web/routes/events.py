@@ -14,7 +14,9 @@ from app.domain.planning import EventDetails
 from app.services.planning import IdeasOutcome
 from app.web.deps import AILimitDep, CreateLimitDep, ServicesDep, SessionDep, TodayDep
 from app.web.responses import Notice, after_post, render
-from app.web.views import FormState, dashboard_context, form_errors, landing_context
+from app.web.views.dashboard import dashboard_context
+from app.web.views.forms import FormState, form_errors
+from app.web.views.landing import landing_context
 
 router = APIRouter(tags=["events"])
 

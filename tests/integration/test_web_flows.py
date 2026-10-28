@@ -21,7 +21,8 @@ from app.main import create_app
 from app.persistence.db import make_engine
 from app.persistence.tables import metadata
 from app.services import build_services
-from app.web import views
+from app.web.views.landing import CELEBRATION_SLIDES, example_form
+from app.web.views.proposals import QUESTION_NOTE
 from tests.fakes import FixedClock, ScriptedProvider
 from tests.unit.test_services import BUDGET_CUT, DECOR_CUT, DIFFERENT, SUGGESTIONS
 
@@ -174,7 +175,7 @@ def test_each_example_fills_the_form_and_creates_a_plan(
     checked = f'id="type-{example}" name="event_type" value="{example}"[^>]* checked'
     assert re.search(checked, page.text)
     assert_accessible(page.text)
-    values = views.example_form(example, TODAY).values
+    values = example_form(example, TODAY).values
     response = client.post(
         "/events", data={"csrf_token": token(client), **values}, follow_redirects=False
     )
@@ -269,8 +270,8 @@ def test_home_page_has_no_plan_list_and_a_picture_panel(engine: Engine) -> None:
     page = client.get("/").text
     assert "Aarav&#39;s 8th birthday" not in page, "plans live on their own page"
     assert 'aria-current="page"' not in page
-    assert page.count('class="reel-slide">') == len(views.CELEBRATION_SLIDES)
-    assert page.count('class="reel-slide" aria-hidden="true"') == len(views.CELEBRATION_SLIDES)
+    assert page.count('class="reel-slide">') == len(CELEBRATION_SLIDES)
+    assert page.count('class="reel-slide" aria-hidden="true"') == len(CELEBRATION_SLIDES)
     assert '<script src="/static/js/reel.js" defer></script>' in page
 
 
@@ -278,7 +279,7 @@ def test_every_celebration_photo_exists_is_small_and_described(engine: Engine) -
     folder = Path(__file__).resolve().parents[2] / "public" / "static" / "img" / "celebrations"
     page = client_for(engine).get("/").text
     assert "<figcaption" not in page, "the photos carry no titles"
-    for slide in views.CELEBRATION_SLIDES:
+    for slide in CELEBRATION_SLIDES:
         assert (folder / slide.image).stat().st_size < 500_000, slide.image
         assert slide.alt, f"{slide.image} has alt text"
         assert f'alt="{slide.alt}"' in page
@@ -541,7 +542,7 @@ def test_a_question_says_nothing_changed_and_how_to_answer(engine: Engine) -> No
     url = create(client, csrf)
     page = client.post(f"{url}/changes", data={"csrf_token": csrf, "request": "more guests"})
     assert "How many more guests are coming?" in page.text
-    assert views.QUESTION_NOTE in page.text
+    assert QUESTION_NOTE in page.text
     assert 'href="#change-request"' in page.text
     assert 'id="change-ai-sent"' not in page.text, "nothing changed, so no generation panel"
     assert_accessible(page.text)

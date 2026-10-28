@@ -11,7 +11,7 @@ from app.domain.change_set import ChangeKind, ChangeSet
 from app.domain.changes import propose
 from app.persistence.repositories import ProposalStatus
 from app.web.templating import environment
-from app.web.views import change_summary, history_row
+from app.web.views.proposals import change_summary, history_row
 from tests.factories import make_plan
 
 

@@ -95,7 +95,8 @@ app/
     deps.py             services, session, today, AI rate limit
     guard.py            CSRF check (header or form field) and 32 KB body limit
     session.py, limits.py, errors.py   session id, CSRF token, flash messages; AI rate limit; error pages
-    views.py, responses.py   view models (all formatting in tested Python); redirect-after-POST or htmx fragment
+    views/              view models, one module per concern: formatting, forms, landing, dashboard, proposals
+    responses.py        redirect-after-POST or htmx fragment
     security.py         security headers middleware (CSP, HSTS in production)
     templating.py       Jinja2 with autoescape and StrictUndefined
     templates/          base, landing, dashboard, error and feature partials (contract: docs/UI_CONTRACT.md)

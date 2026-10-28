@@ -17,12 +17,9 @@ from app.web.deps import AILimitDep, ServicesDep, SessionDep, TodayDep
 from app.web.errors import is_htmx
 from app.web.responses import Notice, after_post, render
 from app.web.session import FlashKind
-from app.web.views import (
-    alternatives_context,
-    change_result_context,
-    dashboard_context,
-    form_errors,
-)
+from app.web.views.dashboard import dashboard_context
+from app.web.views.forms import form_errors
+from app.web.views.proposals import alternatives_context, change_result_context
 
 router = APIRouter(tags=["changes"])
 

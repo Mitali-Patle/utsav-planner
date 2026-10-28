@@ -6,7 +6,8 @@ from fastapi.responses import HTMLResponse, RedirectResponse
 from app.services import Services
 from app.web.deps import SessionDep, TodayDep
 from app.web.responses import render
-from app.web.views import example_form, landing_context, plans_context
+from app.web.views.dashboard import plans_context
+from app.web.views.landing import example_form, landing_context
 
 router = APIRouter(tags=["pages"])
 
