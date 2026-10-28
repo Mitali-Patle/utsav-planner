@@ -16,7 +16,6 @@ from app.ai.contexts import ChangeContext
 from app.ai.guardrails import MAX_REQUEST_CHARS, clean_user_text, intent_to_change_set
 from app.ai.schemas import IntentStatus
 from app.ai.tasks import INTERPRET_CHANGE
-from app.domain.budget import SavingAction, SavingLevel
 from app.domain.change_set import ChangeSet
 from app.domain.changes import accept, propose
 from app.domain.clock import Clock
@@ -29,7 +28,13 @@ from app.domain.errors import (
 )
 from app.domain.models import CategoryId
 from app.domain.proposal import Proposal
-from app.domain.savings import describe_saving, saving_change, saving_option
+from app.domain.savings import (
+    SavingAction,
+    SavingLevel,
+    describe_saving,
+    saving_change,
+    saving_option,
+)
 from app.persistence.repositories import (
     Database,
     ProposalStatus,

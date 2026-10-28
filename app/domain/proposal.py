@@ -5,10 +5,7 @@ from enum import StrEnum
 
 from pydantic import Field
 
-from app.domain.budget import (
-    BudgetSummary,
-    CategoryChange,
-)
+from app.domain.budget import BudgetSummary
 from app.domain.change_set import ChangeKind
 from app.domain.models import (
     CategoryId,
@@ -17,6 +14,7 @@ from app.domain.models import (
     ExpenseId,
     Task,
 )
+from app.domain.rebalance import CategoryChange
 
 
 class FieldChange(DomainModel):

@@ -3,9 +3,9 @@
 from hypothesis import assume, given
 from hypothesis import strategies as st
 
-from app.domain.budget import ChangeReason, Pin, rebalance
 from app.domain.errors import InfeasibleChangeError
 from app.domain.models import MIN_BUDGET_INR, CategoryId, EventPlan
+from app.domain.rebalance import ChangeReason, Pin, rebalance
 from tests.factories import make_plan
 
 TOTALS = st.integers(min_value=MIN_BUDGET_INR, max_value=20_000_000)

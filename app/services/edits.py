@@ -7,7 +7,7 @@ the plan, applies one domain function and saves the next version in a single tra
 from collections.abc import Callable
 from datetime import date
 
-from app.domain.budget import (
+from app.domain.expenses import (
     NewExpense,
     add_expense,
     remove_expense,

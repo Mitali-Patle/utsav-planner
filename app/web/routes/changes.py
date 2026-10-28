@@ -8,9 +8,9 @@ from typing import Annotated, Any
 from fastapi import APIRouter, Form, Response, status
 from pydantic import BaseModel, ValidationError
 
-from app.domain.budget import SavingAction, SavingLevel
 from app.domain.change_set import ChangeKind, ChangeOperation, ChangeSet
 from app.domain.models import CategoryId
+from app.domain.savings import SavingAction, SavingLevel
 from app.services.change_manager import ApprovalStatus, ChangeOutcome, OutcomeKind
 from app.web.deps import AILimitDep, Visit, VisitDep
 from app.web.errors import is_htmx

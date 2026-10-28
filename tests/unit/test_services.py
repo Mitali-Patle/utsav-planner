@@ -23,18 +23,13 @@ from app.ai.schemas import (
     PlanSuggestions,
 )
 from app.config import Settings
-from app.domain.budget import (
-    EmphasisDirection,
-    EmphasisStrength,
-    NewExpense,
-    SavingAction,
-    SavingLevel,
-    summarize,
-)
+from app.domain.budget import EmphasisDirection, EmphasisStrength, summarize
 from app.domain.change_set import ChangeKind, ChangeOperation, ChangeSet
 from app.domain.errors import InvalidInputError, NotFoundError, StaleProposalError
+from app.domain.expenses import NewExpense
 from app.domain.models import BudgetImpact, CategoryId, EventType, TaskId, TaskSource, VendorStatus
 from app.domain.planning import EventDetails
+from app.domain.savings import SavingAction, SavingLevel
 from app.persistence.db import make_engine
 from app.persistence.repositories import ProposalRepository, ProposalStatus, StoredEvent
 from app.persistence.tables import metadata

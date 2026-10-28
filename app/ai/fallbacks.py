@@ -9,8 +9,8 @@ from app.ai.schemas import (
     IntentStatus,
     PlanSuggestions,
 )
-from app.domain.budget import SavingAction, SavingLevel
 from app.domain.catalog import spec_for
+from app.domain.savings import SavingAction, SavingLevel
 
 NOT_AI = "not AI-generated"
 FALLBACK_ALTERNATIVES = 3

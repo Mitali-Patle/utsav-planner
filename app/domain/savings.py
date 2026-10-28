@@ -4,19 +4,57 @@ Essential lines (food, venue, cake, rituals, permits) are cut, never removed.
 """
 
 from collections.abc import Mapping
+from enum import StrEnum
 from types import MappingProxyType
 
-from app.domain.budget import (
-    SavingAction,
-    SavingLevel,
-    estimate_saving,
-)
 from app.domain.catalog import ESSENTIAL_CATEGORIES
 from app.domain.change_set import ChangeKind, ChangeOperation, ChangeSet, required
 from app.domain.models import (
     CategoryId,
     EventPlan,
 )
+
+
+class SavingAction(StrEnum):
+    """Kind of saving an alternative proposes."""
+
+    REDUCE = "reduce"
+    REPLACE = "replace"
+    REMOVE = "remove"
+
+
+class SavingLevel(StrEnum):
+    """How much of a category an alternative would free up."""
+
+    SMALL = "small"
+    MEDIUM = "medium"
+    LARGE = "large"
+
+
+SAVING_PERCENT: Mapping[SavingLevel, int] = {
+    SavingLevel.SMALL: 10,
+    SavingLevel.MEDIUM: 25,
+    SavingLevel.LARGE: 50,
+}
+
+
+_WHOLE = 100
+
+
+def estimate_saving(allocated_inr: int, action: SavingAction, level: SavingLevel) -> int:
+    """Rupees an alternative would free from a category, rounded down.
+
+    Removing a category frees all of it; reducing or replacing frees 10, 25 or 50 % for a
+    small, medium or large change.
+
+    Examples:
+        >>> estimate_saving(3_000, SavingAction.REDUCE, SavingLevel.MEDIUM)
+        750
+        >>> estimate_saving(3_000, SavingAction.REMOVE, SavingLevel.SMALL)
+        3000
+    """
+    percent = _WHOLE if action is SavingAction.REMOVE else SAVING_PERCENT[level]
+    return allocated_inr * percent // _WHOLE
 
 
 def saving_option(

@@ -5,12 +5,12 @@ from datetime import date
 from typing import Any
 
 from app.ai.client import Provenance
-from app.domain.budget import ChangeReason
 from app.domain.models import (
     EventType,
     TaskSource,
     VendorStatus,
 )
+from app.domain.rebalance import ChangeReason
 
 EVENT_TYPE_LABELS: Mapping[EventType, str] = {
     EventType.WEDDING: "Wedding",

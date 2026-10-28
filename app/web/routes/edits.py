@@ -9,8 +9,8 @@ from typing import Annotated
 from fastapi import APIRouter, Form, Response, status
 from pydantic import BaseModel, ValidationError
 
-from app.domain.budget import NewExpense
 from app.domain.errors import InvalidInputError
+from app.domain.expenses import NewExpense
 from app.domain.models import CategoryId, ExpenseId, TaskId, VendorId, VendorStatus
 from app.domain.timeline import NewTask
 from app.domain.vendors import NewVendor

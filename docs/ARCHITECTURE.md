@@ -61,7 +61,9 @@ app/
     models.py           EventPlan and parts (frozen, tuples, typed ids), limits, evolve(), id_sequence()
     catalog.py          India catalog per event type: categories, tasks, vendors, sub-events, fallback ideas (sources cited)
     baseline.py         opening budget from event type, sub-events and guest-count bands
-    budget.py           allocate, apply_emphasis, summarize, expenses, protection, rebalance() with reason codes
+    budget.py           allocate, apply_emphasis, summarize, the total-budget rule
+    expenses.py         add, update and remove expenses; protection; duplicate detection
+    rebalance.py        rebalance() to a new total with pins, protection and reason codes
     timeline.py         deadlines, compression, rescheduling
     vendors.py          book-by dates, urgency, priority, status changes
     calendar.py         plan_calendar(): event day, open tasks and vendors to book as RFC 5545 all-day entries (F14)
@@ -69,7 +71,7 @@ app/
     change_set.py       ChangeKind, ChangeOperation, ChangeSet: the language of plan changes
     proposal.py         Proposal and its parts (field, expense and schedule changes, skips)
     changes.py          propose() → Proposal, accept(): applies a ChangeSet in a fixed order
-    savings.py          saving_option(), saving_change(), freed_inr(): ways to save, priced exactly
+    savings.py          SavingAction/Level, estimate_saving, saving_change(), freed_inr(): ways to save
   ai/
     client.py           Provider protocol, typed errors, LLMRequest, AITask, Provenance, AIResult
     providers/          gemini.py (SDK loaded on first call), groq.py (httpx), build_providers()

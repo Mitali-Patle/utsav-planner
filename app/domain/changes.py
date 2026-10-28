@@ -20,24 +20,19 @@ Order of application:
 from collections.abc import Iterable, Mapping, Sequence
 from datetime import date, timedelta
 
-from app.domain.budget import (
-    CategoryChange,
-    ChangeReason,
-    NewExpense,
-    Pin,
-    Rebalance,
-    add_expense,
-    find_duplicate_expense,
-    rebalance,
-    remove_expense,
-    set_category_protection,
-    set_expense_protection,
-    summarize,
-    update_expense,
-)
+from app.domain.budget import summarize
 from app.domain.catalog import CONTINGENCY_ID, TaskSpec
 from app.domain.change_set import ChangeKind, ChangeOperation, ChangeSet, required
 from app.domain.errors import InfeasibleChangeError, InvalidInputError, StaleProposalError
+from app.domain.expenses import (
+    NewExpense,
+    add_expense,
+    find_duplicate_expense,
+    remove_expense,
+    set_category_protection,
+    set_expense_protection,
+    update_expense,
+)
 from app.domain.models import (
     MAX_BUDGET_INR,
     MAX_CUSTOM_CATEGORIES,
@@ -62,6 +57,7 @@ from app.domain.proposal import (
     SkippedOperation,
     SkipReason,
 )
+from app.domain.rebalance import CategoryChange, ChangeReason, Pin, Rebalance, rebalance
 from app.domain.text import normalize_text
 from app.domain.timeline import build_tasks, reschedule_tasks
 from app.domain.vendors import reschedule_vendors

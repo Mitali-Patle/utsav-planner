@@ -12,7 +12,7 @@ from dataclasses import dataclass, field
 from datetime import date, timedelta
 
 from app.ai.schemas import IntentStatus
-from app.domain.budget import NewExpense, add_expense, set_category_protection
+from app.domain.expenses import NewExpense, add_expense, set_category_protection
 from app.domain.models import CategoryId, EventPlan, EventType
 from app.domain.planning import EventDetails, draft_plan
 

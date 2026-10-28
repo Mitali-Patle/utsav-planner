@@ -18,9 +18,10 @@ from app.ai.schemas import (
     IntentStatus,
     PlanSuggestions,
 )
-from app.domain.budget import SavingAction, SavingLevel, summarize
+from app.domain.budget import summarize
 from app.domain.change_set import ChangeKind
 from app.domain.models import BudgetImpact
+from app.domain.savings import SavingAction, SavingLevel
 from evals.cases import (
     ALTERNATIVES_CASES,
     CHANGE_CASES,

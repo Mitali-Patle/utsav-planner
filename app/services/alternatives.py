@@ -10,12 +10,12 @@ from app.ai.client import Provenance
 from app.ai.contexts import AlternativesContext
 from app.ai.schemas import AIAlternative
 from app.ai.tasks import SUGGEST_ALTERNATIVES
-from app.domain.budget import SavingAction, SavingLevel, summarize
+from app.domain.budget import summarize
 from app.domain.changes import propose
 from app.domain.clock import Clock
 from app.domain.errors import DomainError
 from app.domain.models import CategoryId, EventPlan
-from app.domain.savings import saving_change
+from app.domain.savings import SavingAction, SavingLevel, saving_change
 from app.persistence.repositories import Database
 from app.services.planning import ai_record
 

@@ -22,8 +22,8 @@ from app.ai.schemas import (
     IntentStatus,
 )
 from app.config import Settings
-from app.domain.budget import SavingAction, SavingLevel
 from app.domain.change_set import ChangeKind
+from app.domain.savings import SavingAction, SavingLevel
 from app.main import create_app
 from app.persistence.db import make_engine
 from app.persistence.tables import metadata

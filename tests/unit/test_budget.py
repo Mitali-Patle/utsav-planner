@@ -6,28 +6,23 @@ import pytest
 from pydantic import ValidationError
 
 from app.domain.budget import (
-    CategoryChange,
-    ChangeReason,
     Emphasis,
     EmphasisDirection,
     EmphasisStrength,
-    NewExpense,
-    Pin,
-    SavingAction,
-    SavingLevel,
-    add_expense,
     allocate,
     apply_emphasis,
-    estimate_saving,
+    summarize,
+)
+from app.domain.errors import InfeasibleChangeError, InvalidInputError, NotFoundError
+from app.domain.expenses import (
+    NewExpense,
+    add_expense,
     find_duplicate_expense,
-    rebalance,
     remove_expense,
     set_category_protection,
     set_expense_protection,
-    summarize,
     update_expense,
 )
-from app.domain.errors import InfeasibleChangeError, InvalidInputError, NotFoundError
 from app.domain.models import (
     MAX_BUDGET_INR,
     MIN_BUDGET_INR,
@@ -35,6 +30,8 @@ from app.domain.models import (
     ExpenseId,
     evolve,
 )
+from app.domain.rebalance import CategoryChange, ChangeReason, Pin, rebalance
+from app.domain.savings import SavingAction, SavingLevel, estimate_saving
 from tests.factories import make_plan
 
 CATERING, DECOR, CAKE, OTHER = (CategoryId(c) for c in ("catering", "decor", "cake", "other"))
@@ -421,7 +418,7 @@ def test_a_plan_has_a_bounded_number_of_expenses(monkeypatch: pytest.MonkeyPatch
     plan, _ = add_expense(
         make_plan(), NewExpense(category_id=DECOR, label="Lights", amount_inr=500)
     )
-    monkeypatch.setattr("app.domain.budget.MAX_EXPENSES", 1)
+    monkeypatch.setattr("app.domain.expenses.MAX_EXPENSES", 1)
     with pytest.raises(InvalidInputError) as error:
         add_expense(plan, NewExpense(category_id=DECOR, label="Flowers", amount_inr=500))
     assert error.value.code == "too_many_expenses"

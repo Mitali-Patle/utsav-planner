@@ -36,20 +36,15 @@ from app.ai.schemas import (
     PlanSuggestions,
 )
 from app.ai.tasks import INTERPRET_CHANGE, PERSONALIZE, SUGGEST_ALTERNATIVES
-from app.domain.budget import (
-    EmphasisDirection,
-    EmphasisStrength,
-    NewExpense,
-    SavingAction,
-    SavingLevel,
-    add_expense,
-)
+from app.domain.budget import EmphasisDirection, EmphasisStrength
 from app.domain.change_set import _FIELDS as FIELDS
 from app.domain.change_set import ChangeKind, ChangeOperation, ChangeSet
 from app.domain.changes import propose
+from app.domain.expenses import NewExpense, add_expense
 from app.domain.models import BudgetImpact, CategoryId, EventPlan, EventType
 from app.domain.planning import EventDetails, draft_plan
 from app.domain.proposal import SkipReason
+from app.domain.savings import SavingAction, SavingLevel
 from tests.factories import BIRTHDAY_ALLOCATIONS, make_plan
 from tests.fakes import ScriptedProvider
 

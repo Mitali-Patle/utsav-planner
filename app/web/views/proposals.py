@@ -4,11 +4,12 @@ from collections.abc import Mapping, Sequence
 from datetime import date
 from typing import Any
 
-from app.domain.budget import BudgetSummary, CategoryChange, ChangeReason
+from app.domain.budget import BudgetSummary
 from app.domain.clock import INDIA_TZ
 from app.domain.models import Task
 from app.domain.money import format_inr
 from app.domain.proposal import ExpenseChange, FieldChange, Proposal, ScheduleChange
+from app.domain.rebalance import CategoryChange, ChangeReason
 from app.domain.savings import describe_saving
 from app.persistence.repositories import StoredProposal
 from app.services.alternatives import AlternativesView

@@ -7,9 +7,10 @@ from hypothesis import given
 from hypothesis import strategies as st
 from pydantic import ValidationError
 
-from app.domain.budget import Emphasis, EmphasisDirection, EmphasisStrength, NewExpense, add_expense
+from app.domain.budget import Emphasis, EmphasisDirection, EmphasisStrength
 from app.domain.catalog import IdeaSpec, TaskSpec, spec_for
 from app.domain.errors import InvalidInputError, NotFoundError
+from app.domain.expenses import NewExpense, add_expense
 from app.domain.models import (
     MAX_BUDGET_INR,
     MAX_DAYS_AHEAD,
