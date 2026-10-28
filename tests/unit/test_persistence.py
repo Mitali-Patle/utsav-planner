@@ -277,18 +277,18 @@ def test_tiered_cache_refills_the_fast_tier(engine: Engine, now: Now) -> None:
 
 def test_rate_limit_counts_per_window_and_bucket(engine: Engine, now: Now) -> None:
     limiter = RateLimiter(engine, now)
-    assert [limiter.hit("ip:a", limit=2, window_s=600) for _ in range(3)] == [True, True, False]
-    assert limiter.hit("ip:b", limit=2, window_s=600), "buckets are independent"
+    assert [limiter.hit_all([Counter("ip:a", 2, 600)]) for _ in range(3)] == [True, True, False]
+    assert limiter.hit_all([Counter("ip:b", 2, 600)]), "buckets are independent"
     now.advance(seconds=600)
-    assert limiter.hit("ip:a", limit=2, window_s=600), "a new window starts fresh"
+    assert limiter.hit_all([Counter("ip:a", 2, 600)]), "a new window starts fresh"
 
 
 def test_rate_limit_purges_old_windows(engine: Engine, now: Now) -> None:
     limiter = RateLimiter(engine, now)
-    limiter.hit("old", limit=10, window_s=60)
+    limiter.hit_all([Counter("old", 10, 60)])
     now.advance(days=3)
     for index in range(49):
-        limiter.hit(f"b{index}", limit=10, window_s=60)
+        limiter.hit_all([Counter(f"b{index}", 10, 60)])
     with engine.connect() as connection:
         buckets = set(connection.execute(select(metadata.tables["rate_limits"].c.bucket)).scalars())
     assert "old" not in buckets

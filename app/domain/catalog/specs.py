@@ -88,36 +88,48 @@ class EventTypeSpec(DomainModel):
     sub_events: tuple[SubEventSpec, ...]
     fallback_ideas: tuple[IdeaSpec, ...]
 
-    @model_validator(mode="after")
-    def check_references(self) -> Self:
-        """Ensure ids are unique and every reference points to a category of this type.
+    @property
+    def all_tasks(self) -> tuple[TaskSpec, ...]:
+        """Standard tasks plus the tasks every sub-event adds."""
+        return (*self.tasks, *(t for s in self.sub_events for t in s.tasks))
 
-        Returns:
-            The validated spec.
+    @property
+    def all_vendors(self) -> tuple[VendorSpec, ...]:
+        """Standard vendors plus the vendors every sub-event adds."""
+        return (*self.vendors, *(v for s in self.sub_events for v in s.vendors))
+
+    @model_validator(mode="after")
+    def check_unique_ids(self) -> Self:
+        """Reject a spec where two categories, tasks, vendors or sub-events share an id.
 
         Raises:
-            ValueError: On a duplicate id, an unknown category or a missing contingency line.
+            ValueError: Naming the kind of id that repeats.
         """
-        category_ids = [c.id for c in self.categories]
-        all_tasks = [*self.tasks, *(t for s in self.sub_events for t in s.tasks)]
-        all_vendors = [*self.vendors, *(v for s in self.sub_events for v in s.vendors)]
         for label, ids in (
-            ("category", category_ids),
-            ("task", [t.key for t in all_tasks]),
-            ("vendor", [v.vendor_type for v in all_vendors]),
+            ("category", [c.id for c in self.categories]),
+            ("task", [t.key for t in self.all_tasks]),
+            ("vendor", [v.vendor_type for v in self.all_vendors]),
             ("sub-event", [s.id for s in self.sub_events]),
         ):
             if len(ids) != len(set(ids)):
                 raise ValueError(f"{self.event_type}: duplicate {label} id")
+        return self
 
-        known = set(category_ids)
+    @model_validator(mode="after")
+    def check_category_references(self) -> Self:
+        """Reject a reference to a budget line this type lacks, or a missing contingency line.
+
+        Raises:
+            ValueError: Naming the first unknown category, or the missing contingency.
+        """
+        known = {c.id for c in self.categories}
         references = [
-            *(t.category_id for t in all_tasks if t.category_id is not None),
-            *(v.category_id for v in all_vendors),
+            *(t.category_id for t in self.all_tasks),
+            *(v.category_id for v in self.all_vendors),
             *(b.category_id for s in self.sub_events for b in s.weight_bonus),
-            *(i.category_id for i in self.fallback_ideas if i.category_id is not None),
+            *(i.category_id for i in self.fallback_ideas),
         ]
-        unknown = sorted(set(references) - known)
+        unknown = sorted({ref for ref in references if ref is not None} - known)
         if unknown:
             raise ValueError(f"{self.event_type}: unknown category {unknown[0]}")
         if CONTINGENCY_ID not in known:

@@ -32,19 +32,6 @@ class RateLimiter:
         self._now = now
         self._writes = 0
 
-    def hit(self, bucket: str, *, limit: int, window_s: int) -> bool:
-        """Count one request in the current window.
-
-        Args:
-            bucket: Counter name, for example a hashed client address.
-            limit: Requests allowed per window.
-            window_s: Window length in seconds.
-
-        Returns:
-            True if the request is within the limit.
-        """
-        return self.hit_all([Counter(bucket, limit, window_s)])
-
     def hit_all(self, counters: Sequence[Counter]) -> bool:
         """Count one request against several counters, in order, in one transaction.
 

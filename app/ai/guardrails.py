@@ -113,10 +113,9 @@ def check_suggestions(value: PlanSuggestions, context: PersonalizeContext) -> Pl
     Raises:
         OutputRejectedError: If no usable idea remains (and the input was on topic).
     """
+    summary_why = _fit(value.summary_why, MAX_SUMMARY_CHARS)
     if value.off_topic:
-        return PlanSuggestions(
-            off_topic=True, summary_why=_fit(value.summary_why, MAX_SUMMARY_CHARS)
-        )
+        return PlanSuggestions(off_topic=True, summary_why=summary_why)
     plan = context.plan
     categories = {c.id for c in plan.categories}
     vendor_types = {v.vendor_type for v in plan.vendors}
@@ -130,9 +129,9 @@ def check_suggestions(value: PlanSuggestions, context: PersonalizeContext) -> Pl
         unlike = ", none repeating previous_ideas" if previous else ""
         raise OutputRejectedError([f"Give 3 to 5 ideas, each with a why{unlike}."])
     if previous:
-        return PlanSuggestions(summary_why=_fit(value.summary_why, MAX_SUMMARY_CHARS), ideas=ideas)
+        return PlanSuggestions(summary_why=summary_why, ideas=ideas)
     return PlanSuggestions(
-        summary_why=_fit(value.summary_why, MAX_SUMMARY_CHARS),
+        summary_why=summary_why,
         ideas=ideas,
         budget_emphasis=_clean_emphasis(value.budget_emphasis, categories),
         extra_tasks=_clean_tasks(
@@ -284,25 +283,33 @@ def _clean_vendor_notes(items: list[AIVendorNote], vendor_types: Set[str]) -> li
 
 def _unknown_references(change_set: ChangeSet, plan: EventPlan) -> list[str]:
     categories = {c.id for c in plan.categories}
+    names = {c.name.casefold() for c in plan.categories}
     expenses = {e.id for e in plan.expenses}
-    problems: list[str] = []
-    for op in change_set.operations:
-        if op.category_id is not None and op.category_id not in categories:
-            problems.append(f"{op.kind}: unknown category_id '{op.category_id}'")
-        if op.expense_id is not None and op.expense_id not in expenses:
-            problems.append(f"{op.kind}: unknown expense_id '{op.expense_id}'")
-        if (
-            op.kind is ChangeKind.ADD_CATEGORY
-            and op.label
-            and op.label.casefold() in {c.name.casefold() for c in plan.categories}
-        ):
-            problems.append(f"add_category: '{op.label}' already exists; use its id instead")
+    problems = [
+        problem
+        for op in change_set.operations
+        for problem in _operation_problems(op, categories, names, expenses)
+    ]
     problems += [
         f"cut_priority: unknown category_id '{c}'"
         for c in change_set.cut_priority
         if c not in categories
     ]
     return problems[:MAX_PROBLEMS]
+
+
+def _operation_problems(
+    op: ChangeOperation, categories: Set[str], names: Set[str], expenses: Set[str]
+) -> list[str]:
+    """One line per id the operation uses that the plan does not have."""
+    problems: list[str] = []
+    if op.category_id is not None and op.category_id not in categories:
+        problems.append(f"{op.kind}: unknown category_id '{op.category_id}'")
+    if op.expense_id is not None and op.expense_id not in expenses:
+        problems.append(f"{op.kind}: unknown expense_id '{op.expense_id}'")
+    if op.kind is ChangeKind.ADD_CATEGORY and op.label and op.label.casefold() in names:
+        problems.append(f"add_category: '{op.label}' already exists; use its id instead")
+    return problems
 
 
 def _validation_problems(error: ValidationError) -> list[str]:

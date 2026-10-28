@@ -115,9 +115,6 @@ class ChangeOperation(DomainModel):
     def check_fields_for_kind(self) -> Self:
         """Require exactly the fields this kind uses.
 
-        Returns:
-            The validated operation.
-
         Raises:
             ValueError: If a required field is missing or an unrelated one is set.
         """
@@ -133,17 +130,22 @@ class ChangeOperation(DomainModel):
             self.expense_id is None
         ):
             raise ValueError(f"{self.kind} needs exactly one of category_id or expense_id")
+        return self
+
+    @model_validator(mode="after")
+    def check_values_for_kind(self) -> Self:
+        """Reject values that are valid numbers but mean nothing for this kind (a zero shift).
+
+        Raises:
+            ValueError: Naming the value and what it needs to be.
+        """
         if self.amount_inr == 0 and self.kind is not ChangeKind.SET_CATEGORY_BUDGET:
             raise ValueError(f"{self.kind} needs an amount of at least ₹1")
         if self.kind is ChangeKind.SHIFT_DATE_DAYS and self.days == 0:
             raise ValueError("shift_date_days needs a non-zero number of days")
         if self.kind in _ADJUST_KINDS and self.delta == 0:
             raise ValueError(f"{self.kind} needs a non-zero delta")
-        if (
-            self.kind is ChangeKind.ADD_TASK
-            and self.days is not None
-            and self.days < -MAX_DAYS_AFTER
-        ):
+        if self.kind is ChangeKind.ADD_TASK and (self.days or 0) < -MAX_DAYS_AFTER:
             raise ValueError(f"tasks can be at most {MAX_DAYS_AFTER} days after the event")
         return self
 

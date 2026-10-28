@@ -21,7 +21,7 @@ Core principle: **AI interprets, reasons and generates; code calculates and enfo
 - No plan change is saved without user approval (proposal → approve/reject).
 - Non-AI fallback output is labelled "not AI-generated". Never put an AI label on non-AI output.
 - Never claim tests passed or a deploy works unless you ran or verified it. Docs describe only what is built and tested.
-- The persona lives only in `app/content/persona.py`. Core logic must not depend on it.
+- The persona's tone lives only in `DEFAULT_TONE` (`app/ai/contexts.py`) until the planned `app/content/persona.py`. Core logic must not depend on it.
 
 ## Stack
 Python 3.12, FastAPI, Pydantic v2, pydantic-settings, Jinja2 + htmx (vendored) + hand-written CSS,

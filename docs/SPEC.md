@@ -6,9 +6,9 @@ It must cover **budgets, timelines, vendor checklists and personalized ideas**, 
 event type, budget, guest count, city, date and preferences.
 
 ## 2. Persona
-**To be confirmed after the Challenge 5 explainer (24 Oct).** The persona affects only `app/content/persona.py`, the prompts' tone and the demo story.
+**Chosen:** the family member or society volunteer who ends up holding the plan (candidates A and B below), usually on a fixed budget and without a professional planner. The persona affects only the prompts' tone (`DEFAULT_TONE` in `app/ai/contexts.py`), the landing copy and the demo story; core logic does not depend on it.
 
-Candidates:
+Candidates considered:
 - **A. Family organizer on a fixed budget.** For example, someone planning a sibling's wedding functions or a child's birthday, where every rupee and every last-minute change matters.
 - **B. Volunteer organizer.** For example, an apartment-association secretary running Ganesh Chaturthi or Diwali events with a shared budget, permits and volunteers.
 - **C. First-time host.** No planning experience; needs a checklist and a sense of "what do I do next".

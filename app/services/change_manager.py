@@ -27,7 +27,6 @@ from app.domain.errors import (
     StaleProposalError,
 )
 from app.domain.models import CategoryId
-from app.domain.proposal import Proposal
 from app.domain.savings import (
     SavingAction,
     SavingLevel,
@@ -72,7 +71,6 @@ class ChangeOutcome:
     kind: OutcomeKind
     message: str | None = None
     proposal: StoredProposal | None = None
-    unsaved: Proposal | None = None
     provenance: Provenance | None = None
     ai: Mapping[str, Any] | None = None
     event: StoredEvent | None = None
@@ -273,7 +271,6 @@ class ChangeManager:
             return ChangeOutcome(
                 OutcomeKind.NOTHING_TO_CHANGE,
                 NOTHING_TO_CHANGE_MESSAGE,
-                unsaved=proposal,
                 provenance=provenance,
                 ai=ai,
                 event=stored,

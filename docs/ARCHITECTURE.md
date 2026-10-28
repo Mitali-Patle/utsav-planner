@@ -207,7 +207,7 @@ Every flow works as a plain form submission; htmx only enhances it.
 ## 8. Algorithms (pure, in `domain/`)
 - **Allocation**: total × relative weights, **largest-remainder** rounding with a fixed tie-break, using exact fractions. O(n log n).
 - **Opening budget**: catalog weight + sub-event bonuses, × guest band (≤ 50: 90 %, ≤ 200: 100 %, ≤ 500: 110 %, more: 120 %) for guest-scaled categories.
-- **Rebalance** (`budget.rebalance`):
+- **Rebalance** (`rebalance.rebalance`):
   - Protected categories keep their allocation; pinned categories get their pin, raised to their protected-expense floor if needed.
   - No category drops below the total of its protected expenses.
   - Extra money first covers categories whose spending exceeds their allocation (in proportion

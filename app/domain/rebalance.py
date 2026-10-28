@@ -258,14 +258,21 @@ def _share_increase(
         shares = largest_remainder_split(increase, gaps) if increase else [0] * len(ids)
         return {cid: base[cid] + share for cid, share in zip(ids, shares, strict=True)}
     filled = {cid: base[cid] + gap for cid, gap in zip(ids, gaps, strict=True)}
-    increase -= sum(gaps)
-    weights = [base[c.id] for c in adjustable]
-    if sum(weights) == 0:
-        weights = [c.weight for c in adjustable]
-    if sum(weights) == 0:
-        weights = [1] * len(adjustable)
-    shares = largest_remainder_split(increase, weights)
+    shares = largest_remainder_split(increase - sum(gaps), _increase_weights(adjustable, base))
     return {c.id: filled[c.id] + share for c, share in zip(adjustable, shares, strict=True)}
+
+
+def _increase_weights(
+    adjustable: Sequence[BudgetCategory], base: Mapping[CategoryId, int]
+) -> list[int]:
+    """Share extra money by current amounts; if every line is at zero, by catalog weight.
+
+    Equal shares are the last resort, when the catalog weights are zero too.
+    """
+    for weights in ([base[c.id] for c in adjustable], [c.weight for c in adjustable]):
+        if sum(weights) > 0:
+            return weights
+    return [1] * len(adjustable)
 
 
 def _share_cut(

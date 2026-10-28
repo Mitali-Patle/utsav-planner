@@ -32,15 +32,11 @@ def proposal_view(stored: StoredProposal) -> dict[str, Any]:
         "request": stored.request_text,
         "status": stored.status.value,
         "feasible": proposal.feasible,
-        "shortfall": format_inr(proposal.shortfall_inr) if proposal.shortfall_inr else None,
+        "shortfall": _inr_if_any(proposal.shortfall_inr),
         "shortfall_inr": proposal.shortfall_inr,
         "protected_lines": [c.name for c in proposal.summary_before.categories if c.protected],
         "fields": [_field_row(f) for f in proposal.field_changes],
-        "budget": [
-            _budget_change_row(c, proposal)
-            for c in proposal.budget_changes
-            if c.delta_inr or c.reason is ChangeReason.PROTECTED
-        ],
+        "budget": _budget_rows(proposal),
         "expenses": [_expense_row(c) for c in proposal.expense_changes],
         "tasks": [_schedule_row(c) for c in proposal.task_changes],
         "vendors": [_schedule_row(c) for c in proposal.vendor_changes],
@@ -64,8 +60,8 @@ def _expense_row(change: ExpenseChange) -> dict[str, str | None]:
     return {
         "action": change.action.value,
         "label": change.label,
-        "before": format_inr(change.before_inr) if change.before_inr is not None else None,
-        "after": format_inr(change.after_inr) if change.after_inr is not None else None,
+        "before": _inr_if_any(change.before_inr),
+        "after": _inr_if_any(change.after_inr),
     }
 
 
@@ -115,18 +111,30 @@ def _summary_short(summary: BudgetSummary) -> dict[str, str | None]:
     }
 
 
-def _budget_change_row(change: CategoryChange, proposal: Proposal) -> dict[str, Any]:
+def _budget_rows(proposal: Proposal) -> list[dict[str, Any]]:
+    """Budget lines that moved, plus protected ones, so the user sees what was kept."""
     names = {c.id: c.name for c in proposal.after.categories} if proposal.after else {}
+    return [
+        _budget_change_row(change, names.get(change.category_id, change.category_id))
+        for change in proposal.budget_changes
+        if change.delta_inr or change.reason is ChangeReason.PROTECTED
+    ]
+
+
+def _budget_change_row(change: CategoryChange, name: str) -> dict[str, Any]:
     return {
-        "name": names.get(change.category_id, change.category_id),
+        "name": name,
         "before": format_inr(change.before_inr),
         "after": format_inr(change.after_inr),
         "delta": format_inr(change.delta_inr),
         "reason": REASON_LABELS[change.reason],
-        "overcommitted": format_inr(change.overcommitted_by_inr)
-        if change.overcommitted_by_inr
-        else None,
+        "overcommitted": _inr_if_any(change.overcommitted_by_inr),
     }
+
+
+def _inr_if_any(amount: int | None) -> str | None:
+    """Rupees for display, or None when there is no amount to show."""
+    return format_inr(amount) if amount else None
 
 
 def _schedule_row(change: ScheduleChange) -> dict[str, Any]:

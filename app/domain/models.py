@@ -258,15 +258,11 @@ class EventPlan(DomainModel):
     version: int = Field(default=1, ge=1)
 
     @model_validator(mode="after")
-    def check_invariants(self) -> Self:
-        """Validate cross-field rules.
-
-        Returns:
-            The validated plan.
+    def check_unique_ids(self) -> Self:
+        """Reject a plan where two items of the same kind share an id.
 
         Raises:
-            ValueError: If ids repeat, a reference points to an unknown category, or the
-                allocations do not add up to the total budget.
+            ValueError: Naming the first repeated id.
         """
         collections: dict[str, Iterable[str]] = {
             "category": (c.id for c in self.categories),
@@ -280,20 +276,34 @@ class EventPlan(DomainModel):
             duplicate = _first_duplicate(ids)
             if duplicate is not None:
                 raise ValueError(f"duplicate {name} id: {duplicate}")
+        return self
 
+    @model_validator(mode="after")
+    def check_category_references(self) -> Self:
+        """Reject an expense, task, vendor or idea that points to an unknown budget line.
+
+        Raises:
+            ValueError: Naming the first unknown category id.
+        """
         known = {c.id for c in self.categories}
-        optional_refs = [
+        references = [
+            *(e.category_id for e in self.expenses),
             *(t.category_id for t in self.tasks),
             *(v.category_id for v in self.vendors),
             *(i.category_id for i in self.ideas),
         ]
-        references = [e.category_id for e in self.expenses] + [
-            ref for ref in optional_refs if ref is not None
-        ]
-        unknown = next((ref for ref in references if ref not in known), None)
+        unknown = next((ref for ref in references if ref is not None and ref not in known), None)
         if unknown is not None:
             raise ValueError(f"unknown category id: {unknown}")
+        return self
 
+    @model_validator(mode="after")
+    def check_allocations_match_total(self) -> Self:
+        """Reject a plan whose budget lines do not add up exactly to the total budget.
+
+        Raises:
+            ValueError: With both amounts.
+        """
         allocated = sum(c.allocated_inr for c in self.categories)
         if allocated != self.total_budget_inr:
             raise ValueError(

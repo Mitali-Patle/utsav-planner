@@ -401,19 +401,7 @@ def _add_tasks(
     skipped: list[SkippedOperation],
 ) -> EventPlan:
     titles = {t.title.casefold() for t in plan.tasks}
-    specs: list[TaskSpec] = []
-    for op in change_set.of_kind(ChangeKind.ADD_TASK):
-        label, days = required(op.label), required(op.days)
-        if op.category_id is not None:
-            plan.category(op.category_id)
-        if normalize_text(label).casefold() in titles:
-            skipped.append(SkippedOperation(kind=op.kind, label=label, reason=SkipReason.DUPLICATE))
-            continue
-        titles.add(normalize_text(label).casefold())
-        specs.append(
-            TaskSpec(key="user-task", title=label, category_id=op.category_id, offset_days=days)
-        )
-
+    specs = _user_task_specs(plan, change_set, titles, skipped)
     existing = [t.id for t in plan.tasks]
     user_tasks = build_tasks(
         specs, plan.event_date, today, existing_ids=existing, source=TaskSource.USER
@@ -433,6 +421,29 @@ def _add_tasks(
             f"A plan can have at most {MAX_TASKS} tasks.", code="too_many_tasks"
         )
     return plan.with_changes(tasks=(*plan.tasks, *user_tasks, *change_tasks))
+
+
+def _user_task_specs(
+    plan: EventPlan, change_set: ChangeSet, titles: set[str], skipped: list[SkippedOperation]
+) -> list[TaskSpec]:
+    """Specs for the tasks the user asked to add, skipping titles the plan already has.
+
+    Adds each accepted title to `titles`, so later follow-ups do not repeat it.
+    """
+    specs: list[TaskSpec] = []
+    for op in change_set.of_kind(ChangeKind.ADD_TASK):
+        label, days = required(op.label), required(op.days)
+        if op.category_id is not None:
+            plan.category(op.category_id)  # raises NotFoundError for an unknown line
+        title = normalize_text(label).casefold()
+        if title in titles:
+            skipped.append(SkippedOperation(kind=op.kind, label=label, reason=SkipReason.DUPLICATE))
+            continue
+        titles.add(title)
+        specs.append(
+            TaskSpec(key="user-task", title=label, category_id=op.category_id, offset_days=days)
+        )
+    return specs
 
 
 def _booked(vendors: Iterable[VendorItem]) -> list[VendorItem]:
@@ -455,8 +466,7 @@ def _build_proposal(
     budget_changes: tuple[CategoryChange, ...],
     skipped: list[SkippedOperation],
 ) -> Proposal:
-    old_tasks = {t.id: t for t in before.tasks}
-    old_vendors = {v.id: v for v in before.vendors}
+    old_task_ids = {t.id for t in before.tasks}
     return Proposal(
         base_version=before.version,
         after=after,
@@ -464,36 +474,53 @@ def _build_proposal(
         field_changes=_field_changes(before, after),
         budget_changes=budget_changes,
         expense_changes=_expense_changes(before, after),
-        task_changes=tuple(
-            ScheduleChange(
-                item_id=t.id,
-                title=t.title,
-                before=old_tasks[t.id].due_date,
-                after=t.due_date,
-                flagged=t.compressed,
-            )
-            for t in after.tasks
-            if t.id in old_tasks and old_tasks[t.id].due_date != t.due_date
-        ),
-        vendor_changes=tuple(
-            ScheduleChange(
-                item_id=v.id,
-                title=v.name,
-                before=old_vendors[v.id].book_by,
-                after=v.book_by,
-                flagged=v.urgent,
-            )
-            for v in after.vendors
-            if old_vendors[v.id].book_by != v.book_by
-        ),
-        new_tasks=tuple(t for t in after.tasks if t.id not in old_tasks),
+        task_changes=_task_changes(before, after),
+        vendor_changes=_vendor_changes(before, after),
+        new_tasks=tuple(t for t in after.tasks if t.id not in old_task_ids),
         skipped=tuple(skipped),
-        protected_kept=tuple(
-            [c.name for c in after.categories if c.protected]
-            + [e.label for e in after.expenses if e.protected]
-        ),
+        protected_kept=_protected_names(after),
         summary_before=summarize(before),
         summary_after=summarize(after),
+    )
+
+
+def _task_changes(before: EventPlan, after: EventPlan) -> tuple[ScheduleChange, ...]:
+    """Existing tasks whose deadline moved; new tasks are listed separately."""
+    old = {t.id: t for t in before.tasks}
+    return tuple(
+        ScheduleChange(
+            item_id=t.id,
+            title=t.title,
+            before=old[t.id].due_date,
+            after=t.due_date,
+            flagged=t.compressed,
+        )
+        for t in after.tasks
+        if t.id in old and old[t.id].due_date != t.due_date
+    )
+
+
+def _vendor_changes(before: EventPlan, after: EventPlan) -> tuple[ScheduleChange, ...]:
+    """Vendors whose book-by date moved (a change never adds or removes vendors)."""
+    old = {v.id: v for v in before.vendors}
+    return tuple(
+        ScheduleChange(
+            item_id=v.id,
+            title=v.name,
+            before=old[v.id].book_by,
+            after=v.book_by,
+            flagged=v.urgent,
+        )
+        for v in after.vendors
+        if old[v.id].book_by != v.book_by
+    )
+
+
+def _protected_names(plan: EventPlan) -> tuple[str, ...]:
+    """Budget lines and expenses the change kept exactly as they were."""
+    return (
+        *(c.name for c in plan.categories if c.protected),
+        *(e.label for e in plan.expenses if e.protected),
     )
 
 
