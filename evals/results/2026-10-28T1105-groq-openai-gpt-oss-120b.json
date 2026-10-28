@@ -1,0 +1,253 @@
+{
+ "model": "groq:openai/gpt-oss-120b",
+ "run_at": "2026-10-28T11:05:26+00:00",
+ "prompt_versions": {
+  "personalize": "personalize-v3",
+  "interpret_change": "interpret-change-v7",
+  "alternatives": "alternatives-v6"
+ },
+ "results": [
+  {
+   "task": "alternatives",
+   "case_id": "b-over-cake-kept",
+   "passed": true,
+   "error": false,
+   "reasons": [],
+   "metrics": {
+    "coverage": 1.006
+   },
+   "provider": "groq:openai/gpt-oss-120b",
+   "latency_ms": 1957,
+   "first_try_valid": true,
+   "attempts": [
+    "groq:openai/gpt-oss-120b: ok"
+   ],
+   "answer": {
+    "items": [
+     {
+      "category_id": "decor",
+      "action": "remove",
+      "level": "large",
+      "title": "Drop decorative arches and premium flower installations",
+      "why": "The birthday vibe stays bright with simple balloon garlands and DIY floral rangoli."
+     },
+     {
+      "category_id": "entertainment",
+      "action": "reduce",
+      "level": "medium",
+      "title": "Swap live band for a DJ with a curated playlist",
+      "why": "A DJ still keeps the party lively for 40 guests while cutting music costs."
+     },
+     {
+      "category_id": "contingency",
+      "action": "reduce",
+      "level": "small",
+      "title": "Trim contingency reserve to essential emergencies only",
+      "why": "With a modest guest list, a smaller buffer is sufficient."
+     }
+    ],
+    "summary": "Remove the elaborate decor, tone down entertainment, and tighten the contingency to close the ₹10,000 gap."
+   }
+  },
+  {
+   "task": "alternatives",
+   "case_id": "b-far-over",
+   "passed": false,
+   "error": false,
+   "reasons": [
+    "savings cover 46% of the gap"
+   ],
+   "metrics": {
+    "coverage": 0.457
+   },
+   "provider": "groq:openai/gpt-oss-120b",
+   "latency_ms": 2658,
+   "first_try_valid": false,
+   "attempts": [
+    "groq:openai/gpt-oss-120b: invalid",
+    "groq:openai/gpt-oss-120b: ok"
+   ],
+   "answer": {
+    "items": [
+     {
+      "category_id": "decor",
+      "action": "remove",
+      "level": "large",
+      "title": "Simplify décor to essential mandap & table accents",
+      "why": "Core look stays elegant while cutting costly extra flower arches."
+     },
+     {
+      "category_id": "entertainment",
+      "action": "replace",
+      "level": "medium",
+      "title": "Swap live band for a DJ with curated playlist",
+      "why": "A DJ keeps the party vibe alive for 40 guests at a lower fee."
+     },
+     {
+      "category_id": "catering",
+      "action": "reduce",
+      "level": "medium",
+      "title": "Trim menu to popular regional dishes only",
+      "why": "Guests love familiar flavors and the bill drops without compromising taste."
+     }
+    ],
+    "summary": "Trim non‐essential décor, opt for a cost‐effective DJ, and streamline the menu to close the gap."
+   }
+  },
+  {
+   "task": "alternatives",
+   "case_id": "w-over-two-kept",
+   "passed": true,
+   "error": false,
+   "reasons": [],
+   "metrics": {
+    "coverage": 2.527
+   },
+   "provider": "groq:openai/gpt-oss-120b",
+   "latency_ms": 2040,
+   "first_try_valid": true,
+   "attempts": [
+    "groq:openai/gpt-oss-120b: ok"
+   ],
+   "answer": {
+    "items": [
+     {
+      "category_id": "decor",
+      "action": "remove",
+      "level": "large",
+      "title": "Cancel premium decor package",
+      "why": "The venue’s architecture already creates a grand backdrop, so simple floral accents suffice."
+     },
+     {
+      "category_id": "music",
+      "action": "reduce",
+      "level": "medium",
+      "title": "Opt for a DJ with a live soloist instead of a full band",
+      "why": "A DJ covers all dance numbers while a soloist adds traditional flavor."
+     },
+     {
+      "category_id": "transport",
+      "action": "reduce",
+      "level": "medium",
+      "title": "Use shared shuttle buses on a fixed schedule",
+      "why": "Coordinated shuttles move guests efficiently without multiple cabs."
+     },
+     {
+      "category_id": "rituals",
+      "action": "reduce",
+      "level": "medium",
+      "title": "Limit extra puja items to essential rites",
+      "why": "Core rituals stay intact, trimming only optional embellishments."
+     }
+    ],
+    "summary": "Prioritize removing or simplifying decor, then replace premium flowers, trim music and transport, and scale back extra ritual items to bridge the gap."
+   }
+  },
+  {
+   "task": "alternatives",
+   "case_id": "w-few-flexible",
+   "passed": true,
+   "error": false,
+   "reasons": [],
+   "metrics": {
+    "coverage": 1.057
+   },
+   "provider": "groq:openai/gpt-oss-120b",
+   "latency_ms": 2157,
+   "first_try_valid": true,
+   "attempts": [
+    "groq:openai/gpt-oss-120b: ok"
+   ],
+   "answer": {
+    "items": [
+     {
+      "category_id": "contingency",
+      "action": "reduce",
+      "level": "large",
+      "title": "Trim contingency to core emergencies only",
+      "why": "Core wedding risks are covered, leaving excess buffer unused."
+     },
+     {
+      "category_id": "gifts",
+      "action": "replace",
+      "level": "medium",
+      "title": "Switch to modest return‐gift boxes",
+      "why": "Elegant yet affordable boxes keep guests happy without overspending."
+     }
+    ],
+    "summary": "Prioritize essential safety funds and opt for simpler return gifts to close the gap."
+   }
+  },
+  {
+   "task": "alternatives",
+   "case_id": "c-over-puja-kept",
+   "passed": true,
+   "error": false,
+   "reasons": [],
+   "metrics": {
+    "coverage": 0.981
+   },
+   "provider": "groq:openai/gpt-oss-120b",
+   "latency_ms": 2960,
+   "first_try_valid": false,
+   "attempts": [
+    "groq:openai/gpt-oss-120b: invalid",
+    "groq:openai/gpt-oss-120b: ok"
+   ],
+   "answer": {
+    "items": [
+     {
+      "category_id": "decor",
+      "action": "remove",
+      "level": "large",
+      "title": "Skip elaborate decor and go minimalist",
+      "why": "A simple backdrop with local rangoli keeps the pandal festive without heavy flower costs."
+     },
+     {
+      "category_id": "sound_lighting",
+      "action": "reduce",
+      "level": "small",
+      "title": "Use basic LED lighting instead of premium rigs",
+      "why": "LED strips provide adequate ambience for a community event and are much cheaper."
+     }
+    ],
+    "summary": "Trim decor to a minimalist look and simplify lighting to free enough funds without affecting core rituals."
+   }
+  },
+  {
+   "task": "alternatives",
+   "case_id": "c-small-gap",
+   "passed": true,
+   "error": false,
+   "reasons": [],
+   "metrics": {
+    "coverage": 1.115
+   },
+   "provider": "groq:openai/gpt-oss-120b",
+   "latency_ms": 1218,
+   "first_try_valid": true,
+   "attempts": [
+    "groq:openai/gpt-oss-120b: ok"
+   ],
+   "answer": {
+    "items": [
+     {
+      "category_id": "permits",
+      "action": "reduce",
+      "level": "small",
+      "title": "Apply for combined community permit",
+      "why": "A single combined permit cuts fees without affecting legality."
+     },
+     {
+      "category_id": "puja_rituals",
+      "action": "reduce",
+      "level": "small",
+      "title": "Simplify ritual accessories",
+      "why": "Using modest items preserves sanctity while saving modestly."
+     }
+    ],
+    "summary": "Trim minor fees and streamline ritual items to bridge the small shortfall."
+   }
+  }
+ ]
+}

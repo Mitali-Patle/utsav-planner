@@ -44,7 +44,7 @@ from app.domain.budget import (
     summarize,
     update_expense,
 )
-from app.domain.catalog import CONTINGENCY_ID, TaskSpec
+from app.domain.catalog import CONTINGENCY_ID, ESSENTIAL_CATEGORIES, TaskSpec
 from app.domain.errors import InfeasibleChangeError, InvalidInputError, StaleProposalError
 from app.domain.models import (
     MAX_BUDGET_INR,
@@ -406,6 +406,55 @@ def accept(proposal: Proposal, current: EventPlan) -> EventPlan:
     return proposal.after.with_changes(version=current.version + 1)
 
 
+def saving_option(
+    category_id: str, action: SavingAction, level: SavingLevel
+) -> tuple[SavingAction, SavingLevel]:
+    """The saving that is actually offered and applied: essential lines are never removed.
+
+    Removing the food or the venue is never a sensible way to close a gap, so a removal
+    of an essential line becomes its deepest cut.
+
+    Examples:
+        >>> saving_option("catering", SavingAction.REMOVE, SavingLevel.SMALL)
+        (<SavingAction.REDUCE: 'reduce'>, <SavingLevel.LARGE: 'large'>)
+        >>> saving_option("decor", SavingAction.REMOVE, SavingLevel.SMALL)
+        (<SavingAction.REMOVE: 'remove'>, <SavingLevel.SMALL: 'small'>)
+    """
+    if action is SavingAction.REMOVE and category_id in ESSENTIAL_CATEGORIES:
+        return SavingAction.REDUCE, SavingLevel.LARGE
+    return action, level
+
+
+_SAVING_WORDS: Mapping[SavingAction, Mapping[SavingLevel, str]] = MappingProxyType(
+    {
+        SavingAction.REDUCE: {
+            SavingLevel.SMALL: "trim it a little",
+            SavingLevel.MEDIUM: "cut it back",
+            SavingLevel.LARGE: "cut it back sharply",
+        },
+        SavingAction.REPLACE: {
+            SavingLevel.SMALL: "swap for something a little cheaper",
+            SavingLevel.MEDIUM: "swap for a cheaper option",
+            SavingLevel.LARGE: "swap for a much cheaper option",
+        },
+    }
+)
+
+
+def describe_saving(action: SavingAction, level: SavingLevel) -> str:
+    """Plain words for what a saving does to its line.
+
+    Examples:
+        >>> describe_saving(SavingAction.REDUCE, SavingLevel.LARGE)
+        'cut it back sharply'
+        >>> describe_saving(SavingAction.REMOVE, SavingLevel.SMALL)
+        'drop it entirely'
+    """
+    if action is SavingAction.REMOVE:
+        return "drop it entirely"
+    return _SAVING_WORDS[action][level]
+
+
 def saving_change(
     plan: EventPlan, category_id: CategoryId, action: SavingAction, level: SavingLevel
 ) -> ChangeSet | None:
@@ -428,6 +477,7 @@ def saving_change(
         NotFoundError: If the plan has no such line.
     """
     category = plan.category(category_id)
+    action, level = saving_option(category_id, action, level)
     target = max(
         category.allocated_inr - estimate_saving(category.allocated_inr, action, level),
         plan.committed_inr(category.id),

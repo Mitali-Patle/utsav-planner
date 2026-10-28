@@ -639,3 +639,14 @@ def test_only_a_budget_line_may_be_set_to_zero() -> None:
     assert op(ChangeKind.SET_CATEGORY_BUDGET, category_id="decor", amount_inr=0).amount_inr == 0
     with pytest.raises(ValidationError, match="at least ₹1"):
         op(ChangeKind.SET_TOTAL_BUDGET, amount_inr=0)
+
+
+def test_removing_an_essential_line_cuts_it_deeply_instead() -> None:
+    """A live option titled "Trim catering" removed the food line entirely (28 Oct)."""
+    plan = make_plan()
+    removed = saving_change(plan, CategoryId("catering"), SavingAction.REMOVE, SavingLevel.SMALL)
+    deep_cut = saving_change(plan, CategoryId("catering"), SavingAction.REDUCE, SavingLevel.LARGE)
+    assert removed == deep_cut
+    assert removed is not None and (removed.operations[0].amount_inr or 0) > 0
+    decor = saving_change(plan, CategoryId("decor"), SavingAction.REMOVE, SavingLevel.SMALL)
+    assert decor is not None and decor.operations[0].amount_inr == 0, "a non-essential line can go"

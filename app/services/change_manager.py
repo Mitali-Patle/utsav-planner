@@ -17,7 +17,15 @@ from app.ai.guardrails import MAX_REQUEST_CHARS, clean_user_text, intent_to_chan
 from app.ai.schemas import IntentStatus
 from app.ai.tasks import INTERPRET_CHANGE
 from app.domain.budget import SavingAction, SavingLevel
-from app.domain.changes import ChangeSet, Proposal, accept, propose, saving_change
+from app.domain.changes import (
+    ChangeSet,
+    Proposal,
+    accept,
+    describe_saving,
+    propose,
+    saving_change,
+    saving_option,
+)
 from app.domain.clock import Clock
 from app.domain.errors import (
     DomainError,
@@ -186,7 +194,7 @@ class ChangeManager:
             return ChangeOutcome(OutcomeKind.INVALID, error.message, event=stored)
         if change_set is None:
             return ChangeOutcome(OutcomeKind.INVALID, NOTHING_TO_FREE_MESSAGE, event=stored)
-        how = "remove it" if action is SavingAction.REMOVE else f"{action.value} ({level.value})"
+        how = describe_saving(*saving_option(category.id, action, level))
         summary = f"Save on {category.name}: {how}"
         return self._propose(stored, summary, change_set, {"source": "alternative"}, None)
 

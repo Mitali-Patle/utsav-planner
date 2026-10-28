@@ -17,7 +17,7 @@ from app.ai.client import Provenance
 from app.domain.budget import BudgetSummary, CategoryChange, ChangeReason, summarize
 from app.domain.calendar import google_calendar_url
 from app.domain.catalog import CATALOG, VENDOR_QUESTIONS
-from app.domain.changes import Proposal, ScheduleChange
+from app.domain.changes import Proposal, ScheduleChange, describe_saving
 from app.domain.clock import INDIA_TZ
 from app.domain.models import (
     MAX_DAYS_AFTER,
@@ -676,6 +676,7 @@ def alternatives_context(event_id: str, view: AlternativesView) -> dict[str, Any
                 "category_id": o.category_id,
                 "action": o.action.value,
                 "level": o.level.value,
+                "how": describe_saving(o.action, o.level),
                 "applicable": o.applicable,
                 "saving": format_inr(o.saving_inr),
                 "shortfall_after": format_inr(o.shortfall_after_inr)

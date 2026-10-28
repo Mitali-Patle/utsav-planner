@@ -25,6 +25,10 @@ All notable changes to Utsav Planner will be documented in this file.
 - The new-event form reminds users that an AI model reads their preferences, so personal details should be left out.
 
 ### Changed
+- Editing the plan (adding a task, vendor or expense, ticking things off) keeps the page where it was; it used to jump to the Change section.
+- Over budget: the warning and "Suggest ways to save" appear right by the expense form; the Budget section links to them.
+- Ways to save never remove a line the celebration needs (food, venue, cake, rituals, permits); each option says in words what it does ("cut it back sharply", "drop it entirely").
+- A double click on an add form no longer adds the item twice; a field's error clears as soon as it is fixed.
 - Plans stay reachable for a year after the last visit (the session cookie was 30 days), so a wedding planned months ahead is not lost between visits.
 - Every page shares the same full-width header and page grid (up to 1920 px). The logo keeps its madder red and gains a marigold centre in both themes.
 - The header stays pinned at the top while the page scrolls (from tablet width; on phones it scrolls away). The section menu, the home page's photos and in-page links all sit below it.

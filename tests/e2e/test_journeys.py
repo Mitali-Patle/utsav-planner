@@ -140,6 +140,44 @@ def test_your_own_task_and_vendor_join_the_plan_and_can_be_removed(page: Page) -
     expect(page.locator("#vendors tbody")).not_to_contain_text("Puppet show")
 
 
+def test_editing_the_plan_keeps_your_place_on_the_page(new_page: NewPage) -> None:
+    """Each edit used to land the page on the Change section (seen in the demo recording)."""
+    page = new_page(viewport={"width": 1440, "height": 900})
+    create_event(page)
+    expect(page.get_by_text("Suggested by AI, each with a reason.")).to_be_visible()
+    timeline = page.locator("#timeline")
+    timeline.get_by_label("What to remember").fill("Collect the cake stand")
+    timeline.get_by_label("By when").fill(EVENT_DATE)
+    page.locator("#add-task").scroll_into_view_if_needed()
+    before = page.evaluate("scrollY")
+    page.locator("#add-task").click()
+    expect(page.locator("#status-region")).to_contain_text("Added Collect the cake stand")
+    assert abs(page.evaluate("scrollY") - before) < 100
+    expect(page.locator("#add-task")).to_be_in_viewport()
+
+    expenses = page.locator("#expenses")
+    expenses.get_by_label("What is it?").fill("Party hall booking")
+    expenses.get_by_label("Amount in rupees", exact=True).fill("70000")
+    page.locator("#add-expense").scroll_into_view_if_needed()
+    page.locator("#add-expense").click()
+    warning = page.locator("#over-budget")
+    expect(warning).to_contain_text("You are over budget by")
+    expect(warning).to_be_in_viewport()
+    expect(warning.get_by_role("button", name="Suggest ways to save")).to_be_in_viewport()
+
+
+def test_a_fixed_field_stops_showing_its_error(page: Page) -> None:
+    page.goto("/")
+    page.get_by_role("button", name="Create my plan").click()
+    error = page.locator("#f-city-error")
+    expect(error).to_be_visible()
+    page.get_by_label("City").fill("Pune")
+    expect(error).to_be_hidden()
+    expect(page.get_by_label("City")).not_to_have_attribute("aria-invalid", "true")
+    page.get_by_label("Birthday", exact=True).check()
+    expect(page.locator("#f-event_type-error")).to_be_hidden()
+
+
 def test_timeline_downloads_as_a_calendar_file(page: Page) -> None:
     create_event(page)
     with page.expect_download() as download:

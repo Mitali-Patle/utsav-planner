@@ -671,7 +671,7 @@ def test_an_alternative_becomes_a_proposal_that_closes_what_it_promised(engine: 
     assert option.applicable
     outcome = app.changes.propose_saving(ME, event.id, "decor", option.action, option.level)
     assert outcome.kind is OutcomeKind.PROPOSAL and outcome.proposal is not None
-    assert outcome.proposal.request_text == "Save on Decorations: reduce (medium)"
+    assert outcome.proposal.request_text == "Save on Decorations: cut it back"
     approved = app.changes.approve(ME, event.id, outcome.proposal.id)
     assert approved.event is not None
     assert summarize(approved.event.plan).shortfall_inr == option.shortfall_after_inr

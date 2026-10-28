@@ -29,7 +29,7 @@ from app.ai.schemas import (
     IntentStatus,
     PlanSuggestions,
 )
-from app.domain.changes import ChangeKind, ChangeOperation, ChangeSet
+from app.domain.changes import ChangeKind, ChangeOperation, ChangeSet, saving_option
 from app.domain.models import MAX_DAYS_AFTER, EventPlan
 from app.domain.text import normalize_text
 
@@ -186,6 +186,8 @@ def intent_to_change_set(intent: ChangeIntent) -> ChangeSet:
 def check_alternatives(value: Alternatives, context: AlternativesContext) -> Alternatives:
     """Keep alternatives that target flexible categories: unprotected, with unspent money.
 
+    A removal of an essential line (food, venue...) becomes its deepest cut instead.
+
     Raises:
         OutputRejectedError: If none remain.
     """
@@ -196,9 +198,12 @@ def check_alternatives(value: Alternatives, context: AlternativesContext) -> Alt
     for item in value.items:
         if item.category_id in flexible and item.category_id not in seen:
             seen.add(item.category_id)
+            action, level = saving_option(item.category_id, item.action, item.level)
             items.append(
                 item.model_copy(
                     update={
+                        "action": action,
+                        "level": level,
                         "title": _fit(item.title, MAX_TITLE_CHARS),
                         "why": _fit(item.why, MAX_WHY_CHARS),
                     }

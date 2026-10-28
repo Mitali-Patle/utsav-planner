@@ -147,13 +147,13 @@ Results from 22–24 Oct 2026, counted as **passed out of answered**. Cases with
 (Google's capacity problems, or Groq's free daily quota running out) are listed separately
 in the results, so they never count as wrong answers. Each figure is the latest run in
 which the model answered at least 80% of that task's cases. Columns name the prompt
-version measured; the app runs `personalize-v3`, `interpret-change-v7` and `alternatives-v5`. An
+version measured; the app runs `personalize-v3`, `interpret-change-v7` and `alternatives-v6`. An
 alternatives answer passes only if the savings the app would actually apply cover at
 least half the gap.
 
 | Model | Change requests | Personalization | Alternatives | Median time, change |
 |---|---|---|---|---|
-| Groq `openai/gpt-oss-120b` (first in the chain) | 41/41 (v7) | 15/16 (v3) | 5/6 (v5) | 1.0 s |
+| Groq `openai/gpt-oss-120b` (first in the chain) | 41/41 (v7) | 15/16 (v3) | 5/6 (v6) | 1.0 s |
 | Gemini 3.5 Flash-Lite (second) | 35/36 (v6) | 15/16 (v3) | 6/6 (v5) | 1.9 s |
 | Gemini 3.1 Flash-Lite (third) | 33/33 (v6) | 16/16 (v3) | 6/6 (v5) | 2.1 s |
 
@@ -170,10 +170,14 @@ What the evals changed:
   whose money was already paid (seen in a live test). v4 gives the model the rupees each
   option would free, computed by the app, instead of percentages it had to multiply, and
   v5 asks for at least two options: Gemini 3.5 went from 4/6 on v3 to 6/6, and Groq from
-  3/6 on v2 to 5/6 (its remaining miss covers a third of a gap of half the budget).
-  v7 turns a plain detail ("cake flavour butterscotch") into a task for the vendor
-  instead of a question the user could not answer; Groq passed all three new cases and
-  the vague requests that should still get a question. The Gemini figures are from v6.
+  3/6 on v2 to 5/6. v6 never offers removing a line the celebration needs (food, venue,
+  cake, rituals, permits): a live option titled "Trim catering" had removed the food line
+  entirely. Code turns any such removal into the deepest cut. Groq stays at 5/6 on v6; its
+  one miss covers 46% of a gap of half the budget, against the 50% needed. The Gemini
+  alternatives figures are from v5. For change requests, v7 turns a plain detail ("cake
+  flavour butterscotch") into a task for the vendor instead of a question the user could not
+  answer; Groq passed all three new cases and the vague requests that should still get a
+  question. The Gemini change figures are from v6.
 - **What approval is for.** Gemini 3.5's one v6 failure turned "₹50,000" into ₹5,00,003
   while its own summary said 50,000. The preview shows that number before anything is
   saved, which is why no change is applied without the user's approval.
@@ -270,8 +274,8 @@ the tests, the browser tests and the security checks on every push.
   (the rate-limit counters, reading the plan, saving the preview), with the AI call
   outside them. A test keeps these numbers from creeping up.
 - No JavaScript build: the page ships HTML, one stylesheet, htmx (52 KB, 17 KB
-  compressed) and four small scripts (theme switch, section menu, picture panel, print;
-  under 4 KB together), served from Vercel's CDN.
+  compressed) and six small scripts (theme switch, section menu, picture panel, print,
+  keeping your place after an edit, clearing fixed form errors; about 5 KB together), served from Vercel's CDN.
 
 ## Run it locally
 

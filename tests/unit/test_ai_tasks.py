@@ -382,6 +382,33 @@ def test_alternatives_skip_lines_whose_money_is_spent() -> None:
     assert "catering" not in SUGGEST_ALTERNATIVES.build_payload(context)["frees_inr"]
 
 
+def test_essential_lines_are_offered_cuts_never_removal() -> None:
+    """A live option titled "Trim catering" removed the food line entirely (28 Oct)."""
+    context = AlternativesContext(plan=make_plan(), shortfall_inr=5_000)
+    table = SUGGEST_ALTERNATIVES.build_payload(context)["frees_inr"]
+    assert "remove" not in table["catering"] and "remove" not in table["cake"]
+    assert "remove" in table["decor"]
+    answer = Alternatives(
+        summary="x",
+        items=[
+            AIAlternative(
+                category_id=category,
+                action=SavingAction.REMOVE,
+                level=SavingLevel.SMALL,
+                title="Trim it",
+                why="Because.",
+            )
+            for category in ("catering", "decor")
+        ],
+    )
+    assert [
+        (i.category_id, i.action, i.level) for i in check_alternatives(answer, context).items
+    ] == [
+        ("catering", SavingAction.REDUCE, SavingLevel.LARGE),
+        ("decor", SavingAction.REMOVE, SavingLevel.SMALL),
+    ]
+
+
 def test_alternatives_fallback_ranks_by_unspent_money() -> None:
     plan = make_plan(expenses=(("other", "Hall", 4_500, False),))
     options = alternatives_fallback(AlternativesContext(plan=plan, shortfall_inr=500))

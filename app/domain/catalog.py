@@ -527,6 +527,20 @@ _COMMUNITY = EventTypeSpec(
 
 CATALOG = MappingProxyType({spec.event_type: spec for spec in (_WEDDING, _BIRTHDAY, _COMMUNITY)})
 
+ESSENTIAL_CATEGORIES: frozenset[str] = frozenset(
+    {
+        "venue",
+        "catering",
+        "cake",
+        "rituals",
+        "pandal_venue",
+        "prasad_catering",
+        "puja_rituals",
+        "permits",
+    }
+)
+"""Budget lines a celebration cannot do without: a saving may cut them, never remove them."""
+
 VENDOR_QUESTIONS: Mapping[str, tuple[str, ...]] = MappingProxyType(
     {
         "venue": (

@@ -52,7 +52,7 @@ Every action must work **without JavaScript**.
 - htmx attributes (`hx-post`, `hx-target`, `hx-swap`) are added on top of a working form,
   never in place of one. No links or buttons that work only with JavaScript. The one
   exceptions are `#print-plan` and `#theme-toggle`, which carry `hidden` and are shown by
-  `print.js` and `theme.js` only when the scripts run; without JavaScript the browser's own
+  `print.js` and `theme.js` only when the scripts run; `keep-place.js` (dashboard) restores the scroll position after htmx replaces `#plan-area`, which Chrome's scroll anchoring otherwise moved to the Change section; `forms.js` (every page) clears a field's error as soon as it changes; without JavaScript the browser's own
   print gives the same printout and the theme follows the device.
 - `<body hx-headers=...>` sends the CSRF token on htmx requests. Keep it on `<body>`.
 - The `htmx-config` meta tag in `base.html` makes 404, 409 and 422 swap like 200, turns off
@@ -70,7 +70,8 @@ Every action must work **without JavaScript**.
 | `change-result` | `dashboard.html` | Target of change requests and approvals (`innerHTML`) |
 | `change-result-heading` | `change_result.html` | Heading of the answer; `tabindex="-1"` and `autofocus`, so htmx moves focus to it |
 | `change-busy` | `dashboard.html` | `hx-indicator` of the change request form |
-| `plan-alternatives` | `plan_area.html` | Target for alternatives when the plan is over budget |
+| `over-budget`, `plan-alternatives` | `plan_area.html` | When over budget: the warning, "Suggest ways to save" and its results sit in the Expenses section just above "Add an expense" (`#over-budget`); the Budget section shows a one-line `over-budget-short` notice linking to it. Each option names its action in words (`how`, from `describe_saving`); essential lines (`ESSENTIAL_CATEGORIES`) are cut, never removed |
+| `add-expense-form`, `add-task-form`, `add-vendor-form`, the suggest-savings form | `plan_area.html` | `hx-sync="this:drop"`: a second click while the first request runs is ignored, so nothing is added twice (buttons stay enabled so keyboard focus is kept) |
 | `add-expense-form` | `plan_area.html` | Carries `hx-preserve` when `keep_typed_input` is true, so an AI swap keeps what the user typed |
 | `retry-personalize` | `plan_area.html` | Asks the AI again when the ideas are standard ones |
 | `new-ideas`, `ideas-busy` | `plan_area.html` | "Suggest different ideas" button and its `hx-indicator`; shown only when the ideas came from AI |

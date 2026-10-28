@@ -7,10 +7,11 @@ from app.ai.guardrails import plan_snapshot, quote
 from app.ai.prompts import GUARDRAILS
 from app.ai.schemas import AIAlternative, Alternatives
 from app.domain.budget import SavingAction, SavingLevel
+from app.domain.catalog import ESSENTIAL_CATEGORIES
 from app.domain.changes import freed_inr
 from app.domain.models import EventPlan
 
-VERSION = "alternatives-v5"
+VERSION = "alternatives-v6"
 
 SYSTEM = f"""\
 A plan needs more money than its budget. Suggest 2 to 4 realistic ways to close the gap,
@@ -20,7 +21,9 @@ remove), a level (small, medium or large), a short title and why it suits this e
 Prefer swaps that keep the event special over simply cutting. Do not state amounts.
 frees_inr lists the only categories you may choose: unprotected lines with money not yet
 spent. For each it gives the rupees the app would free: small, medium and large are what
-reduce or replace frees at that level, and remove frees everything not yet spent.
+reduce or replace frees at that level, and remove frees everything not yet spent. Lines
+a celebration cannot do without (food, venue, cake, rituals, permits) have no remove amount:
+never suggest removing them.
 Choose options whose frees_inr amounts together reach shortfall_inr, using the gentlest
 levels that do. Always offer at least 2 options so the user has a choice, even when one
 alone would close the gap. If even every remove amount together cannot reach it, offer the biggest
@@ -48,8 +51,9 @@ def saving_table(plan: EventPlan) -> dict[str, dict[str, int]]:
             level.value: freed_inr(plan, category.id, SavingAction.REDUCE, level)
             for level in SavingLevel
         }
-        options["remove"] = freed_inr(plan, category.id, SavingAction.REMOVE, SavingLevel.LARGE)
-        if options["remove"]:
+        if category.id not in ESSENTIAL_CATEGORIES:
+            options["remove"] = freed_inr(plan, category.id, SavingAction.REMOVE, SavingLevel.LARGE)
+        if any(options.values()):
             table[category.id] = options
     return table
 

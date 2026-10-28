@@ -10,7 +10,7 @@
     <li>
       <h4>{{ o.title }}</h4>
       {% if o.applicable %}
-      <p>{{ o.category }}: frees {{ o.saving }}{% if o.shortfall_after %}, still {{ o.shortfall_after }} short{% else %}, closes the gap{% endif %}.</p>
+      <p>{{ o.category }}, {{ o.how }}: frees {{ o.saving }}{% if o.shortfall_after %}, still {{ o.shortfall_after }} short{% else %}, closes the gap{% endif %}.</p>
       {% else %}
       <p>{{ o.category }}: nothing left to free, because this line is protected or its money is already spent.</p>
       {% endif %}

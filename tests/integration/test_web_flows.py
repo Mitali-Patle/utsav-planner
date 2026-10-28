@@ -694,6 +694,9 @@ def test_over_budget_dashboard_offers_alternatives(engine: Engine) -> None:
     assert catering, "the catering line is shown"
     gap = 16_000 - int(catering.group(1).replace(",", ""))
     assert f"You are over budget by ₹{gap:,}." in page.text, "the gap is catering's overspend"
+    expenses = page.text[page.text.index('id="expenses"') : page.text.index('id="timeline"')]
+    assert 'id="over-budget"' in expenses and 'id="suggest-savings"' in expenses, "by the form"
+    assert f'Over budget by ₹{gap:,}. <a href="#over-budget">' in page.text, "and a link up top"
     assert "Food and drinks costs more than planned" in page.text
     with_options = client.post(f"{url}/alternatives", data={"csrf_token": csrf})
     assert "Fewer balloons" in with_options.text
@@ -721,7 +724,7 @@ def test_an_alternative_is_previewed_then_approved(engine: Engine) -> None:
 
     preview = client.post(f"{url}/alternatives/apply", data=apply, headers=HTMX)
     assert "Here is what would change" in preview.text
-    assert "Save on Decorations: reduce (medium)" in preview.text
+    assert "Save on Decorations: cut it back" in preview.text
     assert_accessible(preview.text, page=False)
     client.post(
         f"{url}/proposals/{proposal_id(preview.text)}/approve",
@@ -730,6 +733,10 @@ def test_an_alternative_is_previewed_then_approved(engine: Engine) -> None:
     )
     page = client.get(url).text
     assert f"You are over budget by {still_short.group(1)}." in page
+
+    tampered = {**apply, "category_id": "venue", "action": "remove"}
+    venue = client.post(f"{url}/alternatives/apply", data=tampered, headers=HTMX)
+    assert "Save on Venue: cut it back sharply" in venue.text, "the venue is never removed"
 
     no_js = client.post(f"{url}/alternatives/apply", data=apply, follow_redirects=True)
     assert "Here is what would change" in no_js.text
@@ -861,6 +868,9 @@ def test_next_up_lists_the_pressing_tasks_and_moves_on_when_one_is_done(engine: 
     moved = after.text[after.text.index('id="next-up"') : after.text.index('id="budget"')]
     assert f'<span class="next-what">{first.group(1)}</span>' not in moved
     assert '<a href="#next-up">Next up</a>' in page
+    for form in ("add-expense-form", "add-task-form", "add-vendor-form"):
+        tag = page[page.index(f'id="{form}"') :].split(">", 1)[0]
+        assert 'hx-sync="this:drop"' in tag, f"a double click must not add twice ({form})"
     assert_accessible(page)
 
 

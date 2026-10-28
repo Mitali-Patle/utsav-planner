@@ -45,15 +45,7 @@
     <progress class="meter{{ ' meter-over' if plan.summary.shortfall else '' }}" max="100" value="{{ plan.summary.spent_percent }}" aria-hidden="true"></progress>
   </div>
   {% if plan.summary.shortfall %}
-  <div class="notice notice-error" role="alert">
-    <p>You are over budget by {{ plan.summary.shortfall }}.</p>
-    <p>{{ plan.summary.over_plan | join(", ") }} {{ 'costs' if plan.summary.over_plan | length == 1 else 'cost' }} more than planned, and the other lines still need their planned amounts.</p>
-    <form method="post" action="/events/{{ event.id }}/alternatives"
-          hx-post="/events/{{ event.id }}/alternatives" hx-target="#plan-alternatives" hx-swap="innerHTML">
-      {{ csrf(csrf_token) }}<button type="submit" id="suggest-savings">Suggest ways to save</button>
-    </form>
-    <div id="plan-alternatives"></div>
-  </div>
+  <p class="notice notice-error over-budget-short">Over budget by {{ plan.summary.shortfall }}. <a href="#over-budget">See why, and ways to save</a></p>
   {% endif %}
   <table class="budget-table">
     <caption>Budget lines</caption>
@@ -145,10 +137,22 @@
   </table>
   {% else %}<p>No expenses yet.</p>{% endif %}
 
+  {% if plan.summary.shortfall %}
+  <div id="over-budget" class="notice notice-error" role="alert">
+    <p>You are over budget by {{ plan.summary.shortfall }}.</p>
+    <p>{{ plan.summary.over_plan | join(", ") }} {{ 'costs' if plan.summary.over_plan | length == 1 else 'cost' }} more than planned, and the other lines still need their planned amounts.</p>
+    <form method="post" action="/events/{{ event.id }}/alternatives"
+          hx-post="/events/{{ event.id }}/alternatives" hx-target="#plan-alternatives" hx-swap="innerHTML" hx-sync="this:drop">
+      {{ csrf(csrf_token) }}<button type="submit" id="suggest-savings">Suggest ways to save</button>
+    </form>
+    <div id="plan-alternatives"></div>
+  </div>
+  {% endif %}
+
   <h3 id="add-expense-heading">Add an expense</h3>
   {% if expense_form.errors %}<p class="notice notice-error" role="alert">Please check the highlighted fields.</p>{% endif %}
   <form method="post" action="/events/{{ event.id }}/expenses" aria-labelledby="add-expense-heading" novalidate
-        id="add-expense-form"{% if keep_typed_input %} hx-preserve{% endif %} hx-post="/events/{{ event.id }}/expenses" hx-target="#plan-area" hx-swap="outerHTML">
+        id="add-expense-form"{% if keep_typed_input %} hx-preserve{% endif %} hx-post="/events/{{ event.id }}/expenses" hx-target="#plan-area" hx-swap="outerHTML" hx-sync="this:drop">
     {{ csrf(csrf_token) }}
     <div class="field{{ ' field-invalid' if expense_form.errors.get('category_id') else '' }}">
       <label for="x-category_id">Budget line</label>
@@ -203,7 +207,7 @@
   <p class="field-hint no-print">Anything you want to remember, by a date: "Collect the cake stand", "Confirm the mehendi artist".</p>
   {% if task_form.errors %}<p class="notice notice-error no-print" role="alert">Please check the highlighted fields.</p>{% endif %}
   <form method="post" action="/events/{{ event.id }}/tasks" aria-labelledby="add-task-heading" novalidate class="own-item-form"
-        id="add-task-form" hx-post="/events/{{ event.id }}/tasks" hx-target="#plan-area" hx-swap="outerHTML">
+        id="add-task-form" hx-post="/events/{{ event.id }}/tasks" hx-target="#plan-area" hx-swap="outerHTML" hx-sync="this:drop">
     {{ csrf(csrf_token) }}
     <div class="field-row">
       {{ field(task_form, "title", "What to remember", prefix="t", attrs={"maxlength": "80", "required": "required", "autocomplete": "off"}) }}
@@ -255,7 +259,7 @@
   <p class="field-hint no-print">Someone the checklist doesn't include, like a magician, a dhol player or a tent house.</p>
   {% if vendor_form.errors %}<p class="notice notice-error no-print" role="alert">Please check the highlighted fields.</p>{% endif %}
   <form method="post" action="/events/{{ event.id }}/vendors" aria-labelledby="add-vendor-heading" novalidate class="own-item-form"
-        id="add-vendor-form" hx-post="/events/{{ event.id }}/vendors" hx-target="#plan-area" hx-swap="outerHTML">
+        id="add-vendor-form" hx-post="/events/{{ event.id }}/vendors" hx-target="#plan-area" hx-swap="outerHTML" hx-sync="this:drop">
     {{ csrf(csrf_token) }}
     <div class="field-row">
       {{ field(vendor_form, "name", "Vendor or service", prefix="v", attrs={"maxlength": "80", "required": "required", "autocomplete": "off"}) }}
