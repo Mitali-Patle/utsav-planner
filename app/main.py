@@ -59,11 +59,28 @@ def create_app(
     app.state.engine = engine
     app.state.services = services
     app.state.clock = clock
+    _attach_rate_limits(app, settings, engine, secret)
+    _add_middleware(app, settings, secret)
+    register_error_handlers(app)
+    for router in (health.router, pages.router, events.router, edits.router, changes.router):
+        app.include_router(router)
+    if settings.app_env == "development" and STATIC_DIR.is_dir():
+        # In production Vercel serves public/ from its CDN; mount it only for local runs.
+        app.mount("/static", StaticFiles(directory=STATIC_DIR), name="static")
+    return app
+
+
+def _attach_rate_limits(
+    app: FastAPI, settings: Settings, engine: Engine | None, secret: str
+) -> None:
+    """Per-client limits on AI calls and event creation, counted in the database."""
     counters = RateLimiter(engine) if engine is not None else None
     app.state.ai_limit = AIRateLimit(counters, settings, secret.encode())
     app.state.create_limit = EventCreationLimit(counters, settings, secret.encode())
 
-    # Added inner-first: the guard needs the session, and headers apply to every response.
+
+def _add_middleware(app: FastAPI, settings: Settings, secret: str) -> None:
+    """Added inner-first: the guard needs the session, and headers apply to every response."""
     app.add_middleware(RequestGuardMiddleware)
     app.add_middleware(
         SessionMiddleware,
@@ -74,14 +91,6 @@ def create_app(
         https_only=settings.is_production,
     )
     app.add_middleware(SecurityHeadersMiddleware, hsts=settings.is_production)
-    register_error_handlers(app)
-    for router in (health.router, pages.router, events.router, edits.router, changes.router):
-        app.include_router(router)
-
-    if settings.app_env == "development" and STATIC_DIR.is_dir():
-        # In production Vercel serves public/ from its CDN; mount it only for local runs.
-        app.mount("/static", StaticFiles(directory=STATIC_DIR), name="static")
-    return app
 
 
 def _session_secret(settings: Settings) -> str:

@@ -14,9 +14,16 @@ from sqlalchemy import Engine, event
 from app.ai.cache import MemoryCache
 from app.ai.chain import FallbackChain
 from app.ai.client import ProviderUnavailableError
-from app.ai.schemas import AIAlternative, Alternatives, ChangeIntent, IntentStatus
+from app.ai.schemas import (
+    AIAlternative,
+    AIChangeOperation,
+    Alternatives,
+    ChangeIntent,
+    IntentStatus,
+)
 from app.config import Settings
 from app.domain.budget import SavingAction, SavingLevel
+from app.domain.change_set import ChangeKind
 from app.main import create_app
 from app.persistence.db import make_engine
 from app.persistence.tables import metadata
@@ -24,7 +31,7 @@ from app.services import build_services
 from app.web.views.landing import CELEBRATION_SLIDES, example_form
 from app.web.views.proposals import QUESTION_NOTE
 from tests.fakes import FixedClock, ScriptedProvider
-from tests.unit.test_services import BUDGET_CUT, DECOR_CUT, DIFFERENT, SUGGESTIONS
+from tests.unit.test_services import BUDGET_CUT, DECOR_CUT, DIFFERENT, SUGGESTIONS, intent
 
 TODAY = date(2026, 10, 22)
 HTMX = {"HX-Request": "true"}
@@ -518,6 +525,26 @@ def test_rate_limited_page_without_javascript_keeps_ids_unique(engine: Engine) -
     page = client.post(f"{url}/changes", data={"csrf_token": csrf, "request": "budget 12k"})
     assert page.text.count("New number of guests") == 2
     assert_accessible(page.text)
+
+
+def test_change_preview_lists_expense_changes_and_new_tasks(engine: Engine) -> None:
+    expense_and_task = intent(
+        AIChangeOperation(
+            kind=ChangeKind.ADD_EXPENSE, category_id="cake", label="Cake advance", amount_inr=800
+        ),
+        AIChangeOperation(kind=ChangeKind.ADD_TASK, label="Collect the cake stand", days=1),
+    )
+    client = client_for(engine, SUGGESTIONS, expense_and_task)
+    csrf = token(client)
+    url = create(client, csrf)
+    page = client.post(
+        f"{url}/changes", data={"csrf_token": csrf, "request": "cake advance and a reminder"}
+    ).text
+    assert "<h4>Expenses</h4>" in page and "Cake advance: added, now ₹800" in page
+    due = (TODAY + timedelta(days=39)).strftime("%-d %b %Y")
+    assert "<h4>New tasks</h4>" in page
+    assert f"Collect the cake stand, by {due} (Added by you)" in page
+    assert_accessible(page)
 
 
 def test_change_preview_shows_how_it_was_generated(engine: Engine) -> None:

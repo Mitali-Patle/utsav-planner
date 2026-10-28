@@ -25,6 +25,7 @@ from app.domain.budget import (
     ChangeReason,
     NewExpense,
     Pin,
+    Rebalance,
     add_expense,
     find_duplicate_expense,
     rebalance,
@@ -82,16 +83,7 @@ def propose(plan: EventPlan, change_set: ChangeSet, today: date) -> Proposal:
         InvalidInputError: If a value breaks a rule (for example, a date in the past).
         InfeasibleChangeError: If extra budget has nowhere to go because everything is fixed.
     """
-    # A line set and protected in the same request is protected after the rebalance, so it
-    # keeps its new amount; protecting it first would pin the old one.
-    set_lines = {
-        required(op.category_id) for op in change_set.of_kind(ChangeKind.SET_CATEGORY_BUDGET)
-    }
-    deferred = frozenset(
-        op.category_id
-        for op in change_set.of_kind(ChangeKind.PROTECT)
-        if op.category_id is not None and op.category_id in set_lines
-    )
+    deferred = _protections_after_rebalance(change_set)
     working = _apply_protection(plan, change_set, defer=deferred)
     follow_ups: list[TaskSpec] = []
     skipped: list[SkippedOperation] = []
@@ -103,21 +95,10 @@ def propose(plan: EventPlan, change_set: ChangeSet, today: date) -> Proposal:
     pins = _apply_line_amounts(working, change_set, pins, skipped)
 
     budget_changes: tuple[CategoryChange, ...] = ()
-    target = _target_total(working, change_set)
-    if target != working.total_budget_inr or pins or change_set.cut_priority:
-        result = rebalance(
-            working, total_inr=target, pins=pins, cut_priority=change_set.cut_priority
-        )
+    result = _rebalance_if_needed(working, change_set, pins)
+    if result is not None:
         if not result.feasible:
-            return Proposal(
-                base_version=plan.version,
-                after=None,
-                shortfall_inr=result.shortfall_inr,
-                field_changes=_field_changes(plan, working),
-                skipped=tuple(skipped),
-                summary_before=summarize(plan),
-                summary_after=None,
-            )
+            return _infeasible(plan, working, result, skipped)
         working = result.apply(working)
         budget_changes = result.changes
     for category_id in deferred:
@@ -125,6 +106,47 @@ def propose(plan: EventPlan, change_set: ChangeSet, today: date) -> Proposal:
 
     working = _add_tasks(working, change_set, follow_ups, today, skipped)
     return _build_proposal(plan, working, budget_changes, skipped)
+
+
+def _protections_after_rebalance(change_set: ChangeSet) -> frozenset[CategoryId]:
+    """Lines both set and protected in one request.
+
+    They are protected after the rebalance, so they keep their new amount; protecting them
+    first would pin the old one.
+    """
+    set_lines = {
+        required(op.category_id) for op in change_set.of_kind(ChangeKind.SET_CATEGORY_BUDGET)
+    }
+    return frozenset(
+        op.category_id
+        for op in change_set.of_kind(ChangeKind.PROTECT)
+        if op.category_id is not None and op.category_id in set_lines
+    )
+
+
+def _rebalance_if_needed(
+    plan: EventPlan, change_set: ChangeSet, pins: Mapping[CategoryId, Pin]
+) -> Rebalance | None:
+    """Re-split the budget when the total, pinned lines or cut priority require it."""
+    target = _target_total(plan, change_set)
+    if target == plan.total_budget_inr and not pins and not change_set.cut_priority:
+        return None
+    return rebalance(plan, total_inr=target, pins=pins, cut_priority=change_set.cut_priority)
+
+
+def _infeasible(
+    plan: EventPlan, working: EventPlan, result: Rebalance, skipped: Sequence[SkippedOperation]
+) -> Proposal:
+    """A proposal that cannot be approved, stating the shortfall."""
+    return Proposal(
+        base_version=plan.version,
+        after=None,
+        shortfall_inr=result.shortfall_inr,
+        field_changes=_field_changes(plan, working),
+        skipped=tuple(skipped),
+        summary_before=summarize(plan),
+        summary_after=None,
+    )
 
 
 def accept(proposal: Proposal, current: EventPlan) -> EventPlan:

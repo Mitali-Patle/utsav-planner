@@ -239,14 +239,7 @@ class ProposalRepository:
         approved), and the event keeps its newest `MAX_PROPOSALS_PER_EVENT` proposals, so
         storage stays bounded however many previews are made.
         """
-        self._connection.execute(
-            update(proposals)
-            .where(
-                proposals.c.event_id == event_id,
-                proposals.c.status == ProposalStatus.PENDING.value,
-            )
-            .values(status=ProposalStatus.STALE.value, decided_at=self._now())
-        )
+        self._mark_pending_stale(event_id)
         stored = StoredProposal(
             id=uuid.uuid4().hex,
             event_id=event_id,
@@ -270,6 +263,22 @@ class ProposalRepository:
                 created_at=stored.created_at,
             )
         )
+        self._keep_newest(event_id)
+        return stored
+
+    def _mark_pending_stale(self, event_id: str) -> None:
+        """Only the newest preview can be approved, so older pending ones go stale."""
+        self._connection.execute(
+            update(proposals)
+            .where(
+                proposals.c.event_id == event_id,
+                proposals.c.status == ProposalStatus.PENDING.value,
+            )
+            .values(status=ProposalStatus.STALE.value, decided_at=self._now())
+        )
+
+    def _keep_newest(self, event_id: str) -> None:
+        """Delete all but the newest `MAX_PROPOSALS_PER_EVENT` proposals of an event."""
         newest = (
             select(proposals.c.id)
             .where(proposals.c.event_id == event_id)
@@ -279,7 +288,6 @@ class ProposalRepository:
         self._connection.execute(
             delete(proposals).where(proposals.c.event_id == event_id, proposals.c.id.not_in(newest))
         )
-        return stored
 
     def get(self, proposal_id: str, event_id: str, *, lock: bool = False) -> StoredProposal:
         """Load one proposal of an event.

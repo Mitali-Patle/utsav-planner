@@ -6,6 +6,7 @@ change with a reason code.
 """
 
 from collections.abc import Mapping, Sequence
+from dataclasses import dataclass
 from enum import StrEnum
 
 from pydantic import Field
@@ -478,10 +479,7 @@ def rebalance(
     """
     validate_total_budget(total_inr)
     pins = dict(pins or {})
-    known = {c.id for c in plan.categories}
-    unknown = (set(pins) | set(cut_priority)) - known
-    if unknown:
-        raise NotFoundError(f"No budget category '{sorted(unknown)[0]}' in this plan.")
+    _require_known(plan, set(pins) | set(cut_priority))
 
     floors = {c.id: plan.protected_floor_inr(c.id) for c in plan.categories}
     fixed = _effective_pins(plan.categories, pins, floors)
@@ -490,13 +488,7 @@ def rebalance(
     need = total_inr - sum(p.amount_inr for p in fixed.values()) - sum(base.values())
 
     if need >= 0:
-        if need > 0 and not adjustable:
-            raise InfeasibleChangeError(
-                "Every category is fixed, so the extra budget has nowhere to go.",
-                code="no_adjustable_category",
-            )
-        overspend = {c.id: max(0, plan.committed_inr(c.id) - base[c.id]) for c in adjustable}
-        after = _share_increase(adjustable, base, need, overspend)
+        after = _spread_increase(plan, adjustable, base, need)
         cut_first: set[CategoryId] = set()
     else:
         capacity = {cid: base[cid] - floors[cid] for cid in base}
@@ -505,30 +497,68 @@ def rebalance(
             return Rebalance(total_inr=total_inr, shortfall_inr=missing, changes=())
         after, cut_first = _share_cut(adjustable, base, capacity, -need, cut_priority)
 
-    changes: list[CategoryChange] = []
-    for category in plan.categories:
-        pin = fixed.get(category.id)
-        new_amount = pin.amount_inr if pin else after[category.id]
+    outcome = _Allocation(fixed=fixed, after=after, floors=floors, cut_first=frozenset(cut_first))
+    changes = tuple(outcome.change_for(plan, category) for category in plan.categories)
+    return Rebalance(total_inr=total_inr, shortfall_inr=0, changes=changes)
+
+
+def _require_known(plan: EventPlan, category_ids: set[CategoryId]) -> None:
+    """Raise NotFoundError for the first category id the plan does not have."""
+    unknown = category_ids - {c.id for c in plan.categories}
+    if unknown:
+        raise NotFoundError(f"No budget category '{sorted(unknown)[0]}' in this plan.")
+
+
+def _spread_increase(
+    plan: EventPlan,
+    adjustable: Sequence[BudgetCategory],
+    base: Mapping[CategoryId, int],
+    need: int,
+) -> dict[CategoryId, int]:
+    """Share extra money, overspent lines first.
+
+    Raises:
+        InfeasibleChangeError: If there is money to add but no line can take it.
+    """
+    if need > 0 and not adjustable:
+        raise InfeasibleChangeError(
+            "Every category is fixed, so the extra budget has nowhere to go.",
+            code="no_adjustable_category",
+        )
+    overspend = {c.id: max(0, plan.committed_inr(c.id) - base[c.id]) for c in adjustable}
+    return _share_increase(adjustable, base, need, overspend)
+
+
+@dataclass(frozen=True)
+class _Allocation:
+    """Where a rebalance put each line: pinned, shared out, held at its floor or cut first."""
+
+    fixed: Mapping[CategoryId, Pin]
+    after: Mapping[CategoryId, int]
+    floors: Mapping[CategoryId, int]
+    cut_first: frozenset[CategoryId]
+
+    def change_for(self, plan: EventPlan, category: BudgetCategory) -> CategoryChange:
+        """One line's before and after, with the reason it moved."""
+        pin = self.fixed.get(category.id)
+        new_amount = pin.amount_inr if pin else self.after[category.id]
         reason = (
             pin.reason
             if pin
             else _change_reason(
                 category.allocated_inr,
                 new_amount,
-                floor_inr=floors[category.id],
-                cut_first=category.id in cut_first,
+                floor_inr=self.floors[category.id],
+                cut_first=category.id in self.cut_first,
             )
         )
-        changes.append(
-            CategoryChange(
-                category_id=category.id,
-                before_inr=category.allocated_inr,
-                after_inr=new_amount,
-                reason=reason,
-                committed_inr=plan.committed_inr(category.id),
-            )
+        return CategoryChange(
+            category_id=category.id,
+            before_inr=category.allocated_inr,
+            after_inr=new_amount,
+            reason=reason,
+            committed_inr=plan.committed_inr(category.id),
         )
-    return Rebalance(total_inr=total_inr, shortfall_inr=0, changes=tuple(changes))
 
 
 def _effective_pins(

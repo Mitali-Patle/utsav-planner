@@ -1,9 +1,11 @@
 """Use case: create an event — a code-built draft first, then AI personalization."""
 
 import logging
-from collections.abc import Callable
+from collections.abc import Callable, Mapping
 from dataclasses import dataclass
+from datetime import date
 from enum import StrEnum
+from functools import partial
 from typing import Any
 
 from pydantic import ValidationError
@@ -122,24 +124,30 @@ class PlanningService:
         personalization = (
             Personalization() if result.value.off_topic else to_personalization(result.value)
         )
+        tailor = partial(_tailor, personalization=personalization, today=today)
+        return self._save_personalized(session_id, stored, tailor, ai_record(result))
+
+    def _save_personalized(
+        self,
+        session_id: str,
+        stored: StoredEvent,
+        tailor: Callable[[EventPlan], EventPlan],
+        ai: Mapping[str, Any],
+    ) -> StoredEvent:
+        """Save the tailored plan; if the user edited meanwhile, reload and tailor again.
+
+        Raises:
+            StaleProposalError: If the plan kept changing for every attempt.
+        """
         for _ in range(SAVE_ATTEMPTS):
-            base = _without_standard_ideas(stored)
-            plan = (
-                personalize_plan(base, personalization, today)
-                if is_untouched(base)
-                else add_ideas(base, personalization.ideas)
-            )
+            plan = tailor(_without_standard_ideas(stored))
             try:
                 with self._db.transaction() as repos:
                     return repos.events.save(
-                        event_id,
-                        session_id,
-                        plan,
-                        expected_version=stored.version,
-                        ai=ai_record(result),
+                        stored.id, session_id, plan, expected_version=stored.version, ai=ai
                     )
             except StaleProposalError:
-                stored = self.get(session_id, event_id)
+                stored = self.get(session_id, stored.id)
                 if _personalized_by_ai(stored):
                     return stored
         raise StaleProposalError("The plan kept changing while it was being personalized.")
@@ -215,6 +223,13 @@ class PlanningService:
         """This session's events, most recently updated first."""
         with self._db.transaction() as repos:
             return repos.events.list_for(session_id)
+
+
+def _tailor(base: EventPlan, *, personalization: Personalization, today: date) -> EventPlan:
+    """Apply the AI's suggestions: all of them to an untouched plan, only ideas otherwise."""
+    if is_untouched(base):
+        return personalize_plan(base, personalization, today)
+    return add_ideas(base, personalization.ideas)
 
 
 def to_personalization(suggestions: PlanSuggestions) -> Personalization:
