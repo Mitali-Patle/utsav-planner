@@ -8,7 +8,10 @@ reason for each, and keeps the whole plan consistent when something changes: des
 change in your own words, see exactly what it affects, then approve or reject it.
 
 **Live app: <https://utsav-planner.vercel.app>.** No sign-up: each browser gets its own
-private plans. **Demo video (3:36): <https://youtu.be/VepgEjOOWgQ>.**
+private plans.
+
+- **Demo video (3:36):** <https://youtu.be/VepgEjOOWgQ>
+- **LinkedIn post:** <https://www.linkedin.com/posts/activity-7521222340358139904-5bg6>
 
 ## The problem
 
