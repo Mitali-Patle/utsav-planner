@@ -8,7 +8,7 @@ from typing import Any
 import pytest
 from playwright.sync_api import ConsoleMessage, Page, expect
 
-from tests.e2e.helpers import NewPage, create_event
+from tests.e2e.helpers import NewPage, create_event, wait_for_personalization
 
 pytestmark = pytest.mark.e2e
 
@@ -27,7 +27,7 @@ def _landing_errors(page: Page) -> None:
 
 def _dashboard(page: Page) -> None:
     create_event(page)
-    expect(page.get_by_text("Suggested by AI, each with a reason.")).to_be_visible()
+    wait_for_personalization(page)
 
 
 def _change_preview(page: Page) -> None:

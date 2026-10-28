@@ -5,7 +5,7 @@ import re
 import pytest
 from playwright.sync_api import Page, Route, expect
 
-from tests.e2e.helpers import EVENT_DATE, VAGUE, NewPage, create_event
+from tests.e2e.helpers import EVENT_DATE, VAGUE, NewPage, create_event, wait_for_personalization
 
 pytestmark = pytest.mark.e2e
 
@@ -17,7 +17,7 @@ def request_change(page: Page, text: str) -> None:
 
 def test_plan_personalize_change_and_approve(page: Page) -> None:
     create_event(page)
-    expect(page.get_by_text("Suggested by AI, each with a reason.")).to_be_visible()
+    wait_for_personalization(page)
     expect(page.get_by_role("heading", name="Rocket launch corner")).to_be_visible()
     expect(page.locator("#status-region")).to_contain_text("personalized")
 
@@ -121,7 +121,7 @@ def test_section_menu_marks_the_section_in_view(new_page: NewPage) -> None:
 def test_your_own_task_and_vendor_join_the_plan_and_can_be_removed(page: Page) -> None:
     create_event(page)
     # Personalization swaps the plan area when it lands; wait so its notice comes first.
-    expect(page.get_by_text("Suggested by AI, each with a reason.")).to_be_visible()
+    wait_for_personalization(page)
     timeline = page.locator("#timeline")
     timeline.get_by_label("What to remember").fill("Pick up the rangoli colours")
     timeline.get_by_label("By when").fill(EVENT_DATE)
@@ -146,7 +146,7 @@ def test_editing_the_plan_keeps_your_place_on_the_page(new_page: NewPage) -> Non
     """Each edit used to land the page on the Change section (seen in the demo recording)."""
     page = new_page(viewport={"width": 1440, "height": 900})
     create_event(page)
-    expect(page.get_by_text("Suggested by AI, each with a reason.")).to_be_visible()
+    wait_for_personalization(page)
     timeline = page.locator("#timeline")
     timeline.get_by_label("What to remember").fill("Collect the cake stand")
     timeline.get_by_label("By when").fill(EVENT_DATE)
@@ -244,7 +244,7 @@ def test_every_step_works_without_javascript(new_page: NewPage) -> None:
     expect(page.get_by_role("button", name="Print or save as PDF")).to_be_hidden()
     expect(page.get_by_role("heading", name="Personalizing your plan")).to_be_visible()
     page.get_by_role("button", name="Personalize with AI").click()
-    expect(page.get_by_text("Suggested by AI, each with a reason.")).to_be_visible()
+    wait_for_personalization(page)
 
     page.get_by_text("Or use the change form (works without AI)").click()
     page.get_by_label("New number of guests").fill("45")
@@ -258,7 +258,7 @@ def test_every_step_works_without_javascript(new_page: NewPage) -> None:
 
 def test_vague_request_asks_first_and_reject_keeps_the_plan(page: Page) -> None:
     create_event(page)
-    expect(page.get_by_text("Suggested by AI, each with a reason.")).to_be_visible()
+    wait_for_personalization(page)
 
     request_change(page, f"{VAGUE} invite a few more people")
     expect(page.get_by_role("heading", name="One question first")).to_be_visible()
@@ -273,7 +273,7 @@ def test_vague_request_asks_first_and_reject_keeps_the_plan(page: Page) -> None:
 
 def test_over_budget_shows_the_gap_and_priced_alternatives(page: Page) -> None:
     create_event(page)
-    expect(page.get_by_text("Suggested by AI, each with a reason.")).to_be_visible()
+    wait_for_personalization(page)
 
     page.get_by_label("What is it?").fill("Party hall booking")
     page.get_by_label("Amount in rupees", exact=True).fill("70000")
