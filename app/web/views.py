@@ -229,7 +229,10 @@ class Slide:
 
 CELEBRATION_SLIDES: tuple[Slide, ...] = (
     Slide("diwali-diyas.jpg", "Clay diyas burning in a row at night for Diwali."),
-    Slide("birthday-cake.jpg", "A birthday cake covered in sprinkles, with lit birthday candles."),
+    Slide(
+        "birthday-party.jpg",
+        "A birthday cake painted in yellow and blue icing, candles lit, among yellow balloons.",
+    ),
     Slide(
         "ganeshotsav-pandal.jpg",
         "A Ganesh idol in a saffron and white pandal while a devotee offers aarti.",
