@@ -112,7 +112,7 @@ def test_section_menu_marks_the_section_in_view(new_page: NewPage) -> None:
         "aria-current", "location"
     )
     # The rail runs the height of the window and fills up to the section in view.
-    expect(page.locator(".section-nav a.is-past")).to_have_count(4)
+    expect(page.locator(".section-nav a.is-past")).to_have_count(5)
     rail = page.locator(".section-nav").bounding_box()
     assert rail is not None
     assert rail["height"] > 600, "the window less the pinned header"

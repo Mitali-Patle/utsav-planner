@@ -8,6 +8,7 @@ from pydantic import ValidationError
 from app.domain.catalog import (
     CATALOG,
     CONTINGENCY_ID,
+    VENDOR_QUESTIONS,
     EventTypeSpec,
     spec_for,
     tasks_for,
@@ -135,3 +136,13 @@ def test_spec_requires_contingency() -> None:
     data["categories"] = [c for c in data["categories"] if c["id"] != "contingency"]
     with pytest.raises(ValidationError, match="contingency"):
         EventTypeSpec.model_validate(data)
+
+
+def test_every_catalog_vendor_comes_with_questions_to_ask() -> None:
+    vendor_types = {v.vendor_type for spec in CATALOG.values() for v in spec.vendors} | {
+        v.vendor_type for spec in CATALOG.values() for sub in spec.sub_events for v in sub.vendors
+    }
+    assert vendor_types <= set(VENDOR_QUESTIONS), vendor_types - set(VENDOR_QUESTIONS)
+    for questions in VENDOR_QUESTIONS.values():
+        assert len(questions) == 3
+        assert all(q.endswith("?") and len(q) <= 90 for q in questions)

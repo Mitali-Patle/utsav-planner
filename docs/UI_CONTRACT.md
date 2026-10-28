@@ -112,7 +112,8 @@ strings such as `2 Dec 2026`. Templates never compute; ask for a new field inste
 - `plan.expenses`: `{id, label, category, amount, amount_inr, protected}`
 - `plan.tasks`: `{id, title, due, done, overdue, compressed, source, ai, own, why, category}`; `own` marks tasks the user added (they get a Remove button)
 - `task_form`, `vendor_form`: the add forms' values and errors; `min_date`, `max_date` (event day + 30), `event_day` bound their date inputs
-- `plan.vendors`: `{id, name, priority, book_by, urgent, status, status_label, next: [(value, label)], why, own}`; `own` marks vendors the user added (badge and Remove)
+- `plan.vendors`: `{id, name, priority, book_by, urgent, status, status_label, next: [(value, label)], why, own, questions}`; `own` marks vendors the user added (badge and Remove); `questions` are the catalog's questions to ask (`VENDOR_QUESTIONS`), empty for the user's own
+- `plan.next_up`: `{tasks: [task rows], vendor: vendor row or None}`: up to three unfinished tasks by deadline and the most urgent unbooked vendor not already named by those tasks (section `#next-up`, classes `next-list`, `next-what`, `next-when`)
 - `ideas`: `{title, description, why, impact}`; `impact` is `saves`, `neutral` or `adds`
 - `ai`: `None` until personalized, then `{provider, fallback, cached, latency_ms, prompt_version, attempts, request, response}`
 - `personalization_pending`: `True` until the first personalization

@@ -16,7 +16,7 @@ from pydantic import ValidationError
 from app.ai.client import Provenance
 from app.domain.budget import BudgetSummary, CategoryChange, ChangeReason, summarize
 from app.domain.calendar import google_calendar_url
-from app.domain.catalog import CATALOG
+from app.domain.catalog import CATALOG, VENDOR_QUESTIONS
 from app.domain.changes import Proposal, ScheduleChange
 from app.domain.clock import INDIA_TZ
 from app.domain.models import (
@@ -390,6 +390,29 @@ def plan_sections(plan: EventPlan, today: date) -> dict[str, Any]:
             for label, tasks in groupby(sort_tasks(plan.tasks), key=lambda t: f"{t.due_date:%B %Y}")
         ],
         "vendors": [_vendor_row(v) for v in sorted(plan.vendors, key=lambda v: v.priority)],
+        "next_up": _next_up(plan, names, today),
+    }
+
+
+NEXT_TASKS = 3
+"""How many unfinished tasks "What to do next" shows."""
+
+
+def _next_up(plan: EventPlan, names: Mapping[CategoryId, str], today: date) -> dict[str, Any]:
+    """The most pressing unfinished tasks (overdue first, then by deadline) and vendor.
+
+    A vendor already named by one of those tasks ("Book the venue...") is skipped for the
+    next one, so the list never says the same thing twice.
+    """
+    tasks = [t for t in sort_tasks(plan.tasks) if not t.done][:NEXT_TASKS]
+    titles = " ".join(t.title.casefold() for t in tasks)
+    unbooked = sorted(
+        (v for v in plan.vendors if v.status is not VendorStatus.BOOKED), key=lambda v: v.priority
+    )
+    vendor = next((v for v in unbooked if v.name.casefold() not in titles), None)
+    return {
+        "tasks": [_task_row(t, names, today) for t in tasks],
+        "vendor": _vendor_row(vendor) if vendor else None,
     }
 
 
@@ -562,6 +585,7 @@ def _vendor_row(vendor: VendorItem) -> dict[str, Any]:
         ],
         "why": vendor.why,
         "own": vendor.vendor_type == OWN_VENDOR_TYPE,
+        "questions": VENDOR_QUESTIONS.get(vendor.vendor_type, ()),
     }
 
 

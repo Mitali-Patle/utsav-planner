@@ -2151,6 +2151,63 @@ input[type="number"]::-webkit-outer-spin-button {
   padding-top: 0;
 }
 
+/* What to do next: the few things that matter now, above the detail */
+.next-list {
+  margin: var(--space-3) 0 var(--space-2);
+  padding: var(--space-4) var(--space-5) var(--space-4) var(--space-10);
+  background: var(--color-surface);
+  border: 1px solid var(--color-border-subtle);
+  border-left: 3px solid var(--color-accent);
+  border-radius: var(--radius-md);
+  max-width: 48rem;
+}
+
+.next-list li + li {
+  margin-top: var(--space-2);
+}
+
+.next-what {
+  font-weight: 600;
+}
+
+.next-when {
+  color: var(--color-text-muted);
+  font-size: var(--font-size-sm);
+  font-variant-numeric: tabular-nums;
+}
+
+.next-links {
+  font-size: var(--font-size-sm);
+  margin: 0;
+}
+
+.estimate-note {
+  margin: calc(-1 * var(--space-2)) 0 var(--space-4);
+}
+
+/* Questions to ask a vendor, folded under its name */
+.vendor-questions {
+  margin-top: var(--space-2);
+  font-family: var(--font-family-base);
+  font-size: var(--font-size-sm);
+  font-weight: 400;
+}
+
+.vendor-questions summary {
+  cursor: pointer;
+  color: var(--color-primary);
+  font-weight: 600;
+}
+
+.vendor-questions ul {
+  margin: var(--space-2) 0 0;
+  padding-left: var(--space-5);
+}
+
+.vendor-questions li + li {
+  margin-top: var(--space-1);
+}
+
 /* ========================================================================
    Budget
    ======================================================================== */

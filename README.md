@@ -17,6 +17,18 @@ change ("the budget dropped", "ten more guests", "the muhurat moved") means reca
 hand, and something always gets missed: a deadline that is now too close, a vendor who
 needed to hear about the new date, a line that was meant to stay untouched.
 
+- **Who it is for:** the family member or society volunteer who ends up holding the plan for
+  a wedding, a child's birthday or a community festival, usually on a fixed budget and
+  without a professional planner.
+- **The hardest part:** not the ideas but the changes. Ten more guests, a smaller budget or
+  an earlier date ripples through every budget line, deadline and vendor, and has to be
+  redone by hand.
+- **Where GenAI makes it better:** it understands a change said in plain words (Hinglish
+  included) and turns it into exact operations, and it tailors ideas to the city, season and
+  family. Code does every calculation and the user approves every change, so the AI never
+  invents a price or quietly rewrites the plan. Planned amounts are labelled as estimates
+  from planning guides, not vendor quotes.
+
 ## What it does
 
 1. **Start a plan.** Start from an example (a Jaipur wedding, a child's birthday in Pune, a
@@ -32,7 +44,10 @@ needed to hear about the new date, a line that was meant to stay untouched.
    from "to contact" to "booked". Add anything you want to remember to the timeline ("Collect
    the cake stand") or a vendor the checklist doesn't include (a magician, a dhol player), with
    your own date; they move with the event like everything else and can be removed again.
-   Overspending, overdue tasks and urgent bookings are flagged.
+   Overspending, overdue tasks and urgent bookings are flagged, and **What to do next** at
+   the top lists the most pressing tasks and the next vendor to book. Each vendor comes with
+   practical questions to ask before booking (for a caterer: "Are service staff, crockery and
+   GST included?").
    Add the event day to Google Calendar in one click (Google's own new-event screen opens
    filled in; nothing is sent until you save), or download every date as a calendar file
    (`.ics`): the event day, unfinished tasks and vendors still to book, as all-day entries. Print the plan or save it as a PDF: the

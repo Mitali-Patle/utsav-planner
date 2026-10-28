@@ -836,6 +836,51 @@ def test_tasks_vendors_and_protection(engine: Engine) -> None:
     )
 
 
+# What to do next, estimates and vendor questions
+
+
+def test_next_up_lists_the_pressing_tasks_and_moves_on_when_one_is_done(engine: Engine) -> None:
+    client = client_for(engine, SUGGESTIONS)
+    csrf = token(client)
+    url = create(client, csrf)
+    page = client.get(url).text
+    next_up = page[page.index('id="next-up"') : page.index('id="budget"')]
+    assert next_up.count('<span class="next-what">') == 4, "three tasks and one vendor"
+    assert "Book: " in next_up
+    first = re.search(r'<span class="next-what">([^<]+)</span>', next_up)
+    assert first
+    task = re.search(
+        rf'<span class="task-title">{re.escape(first.group(1))}</span>.*?/tasks/(task-\d+)/done',
+        page,
+        re.S,
+    )
+    assert task
+    after = client.post(
+        f"{url}/tasks/{task.group(1)}/done", data={"csrf_token": csrf}, headers=HTMX
+    )
+    moved = after.text[after.text.index('id="next-up"') : after.text.index('id="budget"')]
+    assert f'<span class="next-what">{first.group(1)}</span>' not in moved
+    assert '<a href="#next-up">Next up</a>' in page
+    assert_accessible(page)
+
+
+def test_budget_is_labelled_as_estimates_and_vendors_come_with_questions(engine: Engine) -> None:
+    client = client_for(engine, SUGGESTIONS)
+    csrf = token(client)
+    url = create(client, csrf)
+    page = client.get(url).text
+    assert "Planned amounts are estimates from Indian planning guides, not vendor quotes." in page
+    assert page.count('class="vendor-questions no-print"') >= 5
+    assert "Is the quote a hall rental or per plate, and is GST included?" in page
+    own = client.post(
+        f"{url}/vendors",
+        data={"csrf_token": csrf, "name": "Puppet show", "book_by": str(TODAY)},
+        headers=HTMX,
+    ).text
+    row = own[own.index("Puppet show") : own.index("Puppet show") + 1500]
+    assert "Questions to ask" not in row.split("</tr>")[0], "no standard questions for your own"
+
+
 # The user's own tasks and vendors
 
 

@@ -14,8 +14,26 @@
 </section>
 {% endif %}
 
+<section id="next-up" aria-labelledby="next-heading" class="next-up">
+  <h2 id="next-heading">What to do next</h2>
+  {% if plan.next_up.tasks or plan.next_up.vendor %}
+  <ol class="next-list">
+    {% for t in plan.next_up.tasks %}
+    <li><span class="next-what">{{ t.title }}</span> <span class="next-when">by {{ t.due }}</span>{% if t.overdue %} <span class="badge badge-error">overdue</span>{% elif t.compressed %} <span class="badge badge-warning">due now</span>{% endif %}</li>
+    {% endfor %}
+    {% if plan.next_up.vendor %}
+    <li><span class="next-what">Book: {{ plan.next_up.vendor.name }}</span> <span class="next-when">by {{ plan.next_up.vendor.book_by }}</span>{% if plan.next_up.vendor.urgent %} <span class="badge badge-warning">book now</span>{% endif %}</li>
+    {% endif %}
+  </ol>
+  <p class="next-links no-print"><a href="#timeline">Full timeline</a> · <a href="#vendors">Vendor checklist</a></p>
+  {% else %}
+  <p>Every task is done and every vendor is booked. Enjoy the celebration.</p>
+  {% endif %}
+</section>
+
 <section id="budget" aria-labelledby="budget-heading">
   <h2 id="budget-heading">Budget</h2>
+  <p class="field-hint estimate-note">Planned amounts are estimates from Indian planning guides, not vendor quotes. Add expenses as quotes and payments come in.</p>
   <dl class="summary">
     <div><dt>Total</dt><dd>{{ plan.summary.total }}</dd></div>
     <div><dt>Spent</dt><dd>{{ plan.summary.spent }}</dd></div>
@@ -209,7 +227,11 @@
                 hx-post="/events/{{ event.id }}/vendors/{{ v.id }}/remove" hx-target="#plan-area" hx-swap="outerHTML">
             {{ csrf(csrf_token) }}
             <button type="submit" id="remove-vendor-{{ v.id }}" class="button-quiet">Remove<span class="sr-only"> {{ v.name }}</span></button>
-          </form>{% endif %}{% if v.why %}<p class="why">Why: {{ v.why }}</p>{% endif %}</th>
+          </form>{% endif %}{% if v.why %}<p class="why">Why: {{ v.why }}</p>{% endif %}
+          {% if v.questions %}<details class="vendor-questions no-print">
+            <summary>Questions to ask<span class="sr-only">: {{ v.name }}</span></summary>
+            <ul>{% for q in v.questions %}<li>{{ q }}</li>{% endfor %}</ul>
+          </details>{% endif %}</th>
         <td data-label="Book by">{{ v.book_by }}{% if v.urgent and v.status != 'booked' %} <span class="badge badge-warning">book now</span>{% endif %}</td>
         <td data-label="Status">
           <span class="print-only">{{ v.status_label }}</span>
