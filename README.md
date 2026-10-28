@@ -11,7 +11,7 @@ change in your own words, see exactly what it affects, then approve or reject it
 private plans.
 
 - **Demo video (3:36):** <https://youtu.be/VepgEjOOWgQ>
-- **LinkedIn post:** <https://www.linkedin.com/posts/activity-7521222340358139904-5bg6>
+- **LinkedIn post:** <https://www.linkedin.com/posts/mitali-patle-18261b302_buildwithai-promptwarsvirtual-challenge5-ugcPost-7521250710865264640-AVGJ>
 
 ## The problem
 
