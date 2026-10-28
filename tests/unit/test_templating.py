@@ -7,7 +7,8 @@ from typing import Any, cast
 import pytest
 from jinja2 import UndefinedError
 
-from app.domain.changes import ChangeKind, ChangeSet, propose
+from app.domain.change_set import ChangeKind, ChangeSet
+from app.domain.changes import propose
 from app.persistence.repositories import ProposalStatus
 from app.web.templating import environment
 from app.web.views import change_summary, history_row

@@ -31,7 +31,7 @@ from app.domain.budget import (
     SavingLevel,
     summarize,
 )
-from app.domain.changes import ChangeKind, ChangeOperation, ChangeSet
+from app.domain.change_set import ChangeKind, ChangeOperation, ChangeSet
 from app.domain.errors import InvalidInputError, NotFoundError, StaleProposalError
 from app.domain.models import BudgetImpact, CategoryId, EventType, TaskId, TaskSource, VendorStatus
 from app.domain.planning import EventDetails

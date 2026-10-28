@@ -18,9 +18,11 @@ from app.ai.schemas import (
     PlanSuggestions,
 )
 from app.domain.budget import summarize
-from app.domain.changes import Proposal, freed_inr, propose
+from app.domain.changes import propose
 from app.domain.errors import DomainError
 from app.domain.models import BudgetCategory, CategoryId, EventPlan
+from app.domain.proposal import Proposal
+from app.domain.savings import freed_inr
 from evals.cases import TODAY, AlternativesCase, ChangeCase, Outcome, PersonalizeCase
 
 MIN_IDEAS = 3

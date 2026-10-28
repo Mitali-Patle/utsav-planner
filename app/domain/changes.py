@@ -17,25 +17,15 @@ Order of application:
 7. new tasks, plus follow-up tasks for vendors who are already booked.
 """
 
-from collections import Counter
 from collections.abc import Iterable, Mapping, Sequence
 from datetime import date, timedelta
-from enum import StrEnum
-from types import MappingProxyType
-from typing import Self
-
-from pydantic import Field, model_validator
 
 from app.domain.budget import (
-    BudgetSummary,
     CategoryChange,
     ChangeReason,
     NewExpense,
     Pin,
-    SavingAction,
-    SavingLevel,
     add_expense,
-    estimate_saving,
     find_duplicate_expense,
     rebalance,
     remove_expense,
@@ -44,278 +34,36 @@ from app.domain.budget import (
     summarize,
     update_expense,
 )
-from app.domain.catalog import CONTINGENCY_ID, ESSENTIAL_CATEGORIES, TaskSpec
+from app.domain.catalog import CONTINGENCY_ID, TaskSpec
+from app.domain.change_set import ChangeKind, ChangeOperation, ChangeSet, required
 from app.domain.errors import InfeasibleChangeError, InvalidInputError, StaleProposalError
 from app.domain.models import (
     MAX_BUDGET_INR,
     MAX_CUSTOM_CATEGORIES,
-    MAX_DAYS_AFTER,
-    MAX_DAYS_AHEAD,
     MAX_GUESTS,
     MAX_TASKS,
     BudgetCategory,
     CategoryId,
-    CategoryRef,
-    DomainModel,
     EventPlan,
-    ExpenseId,
-    ExpenseRef,
     ExpenseSource,
-    ShortText,
-    Task,
     TaskSource,
     VendorItem,
     VendorStatus,
     id_sequence,
     validate_event_date,
 )
+from app.domain.proposal import (
+    ExpenseAction,
+    ExpenseChange,
+    FieldChange,
+    Proposal,
+    ScheduleChange,
+    SkippedOperation,
+    SkipReason,
+)
 from app.domain.text import normalize_text
 from app.domain.timeline import build_tasks, reschedule_tasks
 from app.domain.vendors import reschedule_vendors
-
-MAX_OPERATIONS = 5
-
-
-class ChangeKind(StrEnum):
-    """The operations a change request can contain."""
-
-    SET_TOTAL_BUDGET = "set_total_budget"
-    ADJUST_TOTAL_BUDGET = "adjust_total_budget"
-    ADD_EXPENSE = "add_expense"
-    UPDATE_EXPENSE = "update_expense"
-    REMOVE_EXPENSE = "remove_expense"
-    PROTECT = "protect"
-    UNPROTECT = "unprotect"
-    SET_GUEST_COUNT = "set_guest_count"
-    ADJUST_GUEST_COUNT = "adjust_guest_count"
-    SHIFT_DATE_DAYS = "shift_date_days"
-    SET_DATE = "set_date"
-    ADD_TASK = "add_task"
-    ADD_CATEGORY = "add_category"
-    SET_CATEGORY_BUDGET = "set_category_budget"
-
-
-_PROTECTION_KINDS = frozenset({ChangeKind.PROTECT, ChangeKind.UNPROTECT})
-_ADJUST_KINDS = frozenset({ChangeKind.ADJUST_TOTAL_BUDGET, ChangeKind.ADJUST_GUEST_COUNT})
-_FIELDS: Mapping[ChangeKind, tuple[frozenset[str], frozenset[str]]] = MappingProxyType(
-    {
-        # kind: (required fields, optional fields)
-        ChangeKind.SET_TOTAL_BUDGET: (frozenset({"amount_inr"}), frozenset()),
-        ChangeKind.ADJUST_TOTAL_BUDGET: (frozenset({"delta"}), frozenset()),
-        ChangeKind.ADD_EXPENSE: (frozenset({"category_id", "label", "amount_inr"}), frozenset()),
-        ChangeKind.UPDATE_EXPENSE: (frozenset({"expense_id", "amount_inr"}), frozenset()),
-        ChangeKind.REMOVE_EXPENSE: (frozenset({"expense_id"}), frozenset()),
-        ChangeKind.PROTECT: (frozenset(), frozenset({"category_id", "expense_id"})),
-        ChangeKind.UNPROTECT: (frozenset(), frozenset({"category_id", "expense_id"})),
-        ChangeKind.SET_GUEST_COUNT: (frozenset({"guest_count"}), frozenset()),
-        ChangeKind.ADJUST_GUEST_COUNT: (frozenset({"delta"}), frozenset()),
-        ChangeKind.SHIFT_DATE_DAYS: (frozenset({"days"}), frozenset()),
-        ChangeKind.SET_DATE: (frozenset({"new_date"}), frozenset()),
-        ChangeKind.ADD_TASK: (frozenset({"label", "days"}), frozenset({"category_id"})),
-        ChangeKind.ADD_CATEGORY: (frozenset({"label", "amount_inr"}), frozenset()),
-        ChangeKind.SET_CATEGORY_BUDGET: (frozenset({"category_id", "amount_inr"}), frozenset()),
-    }
-)
-_OPTIONAL_FIELDS = (
-    "amount_inr",
-    "category_id",
-    "expense_id",
-    "label",
-    "guest_count",
-    "days",
-    "delta",
-    "new_date",
-)
-_SINGLETON_GROUPS: Mapping[str, frozenset[ChangeKind]] = MappingProxyType(
-    {
-        "budget total": frozenset({ChangeKind.SET_TOTAL_BUDGET, ChangeKind.ADJUST_TOTAL_BUDGET}),
-        "guest count": frozenset({ChangeKind.SET_GUEST_COUNT, ChangeKind.ADJUST_GUEST_COUNT}),
-        "event date": frozenset({ChangeKind.SHIFT_DATE_DAYS, ChangeKind.SET_DATE}),
-    }
-)
-
-
-class ChangeOperation(DomainModel):
-    """One structured change. Only the fields its `kind` needs may be set.
-
-    `days` means days to move the event for `shift_date_days` (negative is earlier) and days
-    before the event for `add_task` (negative is after it). `protect` and `unprotect` take
-    exactly one of `category_id` or `expense_id`, the fields models naturally use for them.
-    """
-
-    kind: ChangeKind
-    amount_inr: int | None = Field(default=None, ge=0, le=2 * MAX_BUDGET_INR)
-    category_id: CategoryRef | None = None
-    expense_id: ExpenseRef | None = None
-    label: ShortText | None = None
-    guest_count: int | None = Field(default=None, ge=1, le=MAX_GUESTS)
-    days: int | None = Field(default=None, ge=-MAX_DAYS_AHEAD, le=MAX_DAYS_AHEAD)
-    delta: int | None = Field(default=None, ge=-MAX_BUDGET_INR, le=MAX_BUDGET_INR)
-    new_date: date | None = None
-
-    @model_validator(mode="after")
-    def check_fields_for_kind(self) -> Self:
-        """Require exactly the fields this kind uses.
-
-        Returns:
-            The validated operation.
-
-        Raises:
-            ValueError: If a required field is missing or an unrelated one is set.
-        """
-        required, optional = _FIELDS[self.kind]
-        present = {name for name in _OPTIONAL_FIELDS if getattr(self, name) is not None}
-        missing = sorted(required - present)
-        if missing:
-            raise ValueError(f"{self.kind} needs {', '.join(missing)}")
-        unexpected = sorted(present - required - optional)
-        if unexpected:
-            raise ValueError(f"{self.kind} does not use {', '.join(unexpected)}")
-        if self.kind in _PROTECTION_KINDS and (self.category_id is None) == (
-            self.expense_id is None
-        ):
-            raise ValueError(f"{self.kind} needs exactly one of category_id or expense_id")
-        if self.amount_inr == 0 and self.kind is not ChangeKind.SET_CATEGORY_BUDGET:
-            raise ValueError(f"{self.kind} needs an amount of at least ₹1")
-        if self.kind is ChangeKind.SHIFT_DATE_DAYS and self.days == 0:
-            raise ValueError("shift_date_days needs a non-zero number of days")
-        if self.kind in _ADJUST_KINDS and self.delta == 0:
-            raise ValueError(f"{self.kind} needs a non-zero delta")
-        if (
-            self.kind is ChangeKind.ADD_TASK
-            and self.days is not None
-            and self.days < -MAX_DAYS_AFTER
-        ):
-            raise ValueError(f"tasks can be at most {MAX_DAYS_AFTER} days after the event")
-        return self
-
-    @property
-    def protection_target(self) -> str | None:
-        """The category or expense id a protect/unprotect operation refers to."""
-        return self.expense_id or self.category_id
-
-
-class ChangeSet(DomainModel):
-    """A complete change request: up to five operations and an optional cut order."""
-
-    operations: tuple[ChangeOperation, ...] = Field(min_length=1, max_length=MAX_OPERATIONS)
-    cut_priority: tuple[CategoryRef, ...] = Field(default=(), max_length=5)
-
-    @model_validator(mode="after")
-    def check_conflicts(self) -> Self:
-        """Reject requests that set the same thing twice or protect and unprotect one item.
-
-        Returns:
-            The validated change set.
-
-        Raises:
-            ValueError: On conflicting operations.
-        """
-        kinds = Counter(op.kind for op in self.operations)
-        for name, group in _SINGLETON_GROUPS.items():
-            if sum(kinds[kind] for kind in group) > 1:
-                raise ValueError(f"conflicting operations: the {name} is set more than once")
-        protected = {op.protection_target for op in self.of_kind(ChangeKind.PROTECT)}
-        unprotected = {op.protection_target for op in self.of_kind(ChangeKind.UNPROTECT)}
-        both = sorted(t for t in protected & unprotected if t is not None)
-        if both:
-            raise ValueError(f"conflicting operations: {both[0]} is protected and unprotected")
-        return self
-
-    def of_kind(self, *kinds: ChangeKind) -> tuple[ChangeOperation, ...]:
-        """Operations of the given kinds, in request order."""
-        return tuple(op for op in self.operations if op.kind in kinds)
-
-
-class FieldChange(DomainModel):
-    """A changed event-level value."""
-
-    field: str
-    before: int | date
-    after: int | date
-
-
-class ExpenseAction(StrEnum):
-    """What happened to an expense."""
-
-    ADDED = "added"
-    UPDATED = "updated"
-    REMOVED = "removed"
-
-
-class ExpenseChange(DomainModel):
-    """An applied expense change."""
-
-    action: ExpenseAction
-    expense_id: ExpenseId
-    label: str
-    category_id: CategoryId
-    before_inr: int | None
-    after_inr: int | None
-
-
-class SkipReason(StrEnum):
-    """Why an operation was not applied."""
-
-    DUPLICATE = "duplicate"
-    PROTECTED = "protected"
-
-
-class SkippedOperation(DomainModel):
-    """An operation left out of the proposal, with the reason."""
-
-    kind: ChangeKind
-    label: str
-    reason: SkipReason
-
-
-class ScheduleChange(DomainModel):
-    """A task deadline or vendor book-by date that moved."""
-
-    item_id: str
-    title: str
-    before: date
-    after: date
-    flagged: bool = Field(description="Compressed task or urgent vendor after the change.")
-
-
-class Proposal(DomainModel):
-    """Everything a change would do, for the user to approve or reject.
-
-    `after` is None when the change cannot fit the budget; `shortfall_inr` then says by
-    how much.
-    """
-
-    base_version: int
-    after: EventPlan | None
-    shortfall_inr: int = Field(ge=0)
-    field_changes: tuple[FieldChange, ...] = ()
-    budget_changes: tuple[CategoryChange, ...] = ()
-    expense_changes: tuple[ExpenseChange, ...] = ()
-    task_changes: tuple[ScheduleChange, ...] = ()
-    vendor_changes: tuple[ScheduleChange, ...] = ()
-    new_tasks: tuple[Task, ...] = ()
-    skipped: tuple[SkippedOperation, ...] = ()
-    protected_kept: tuple[str, ...] = ()
-    summary_before: BudgetSummary
-    summary_after: BudgetSummary | None
-
-    @property
-    def feasible(self) -> bool:
-        """Whether the change fits and can be approved."""
-        return self.after is not None
-
-    @property
-    def has_changes(self) -> bool:
-        """Whether approving would change anything."""
-        return bool(
-            self.field_changes
-            or any(c.delta_inr for c in self.budget_changes)
-            or self.expense_changes
-            or self.task_changes
-            or self.vendor_changes
-            or self.new_tasks
-        )
 
 
 def propose(plan: EventPlan, change_set: ChangeSet, today: date) -> Proposal:
@@ -337,7 +85,7 @@ def propose(plan: EventPlan, change_set: ChangeSet, today: date) -> Proposal:
     # A line set and protected in the same request is protected after the rebalance, so it
     # keeps its new amount; protecting it first would pin the old one.
     set_lines = {
-        _require(op.category_id) for op in change_set.of_kind(ChangeKind.SET_CATEGORY_BUDGET)
+        required(op.category_id) for op in change_set.of_kind(ChangeKind.SET_CATEGORY_BUDGET)
     }
     deferred = frozenset(
         op.category_id
@@ -406,111 +154,6 @@ def accept(proposal: Proposal, current: EventPlan) -> EventPlan:
     return proposal.after.with_changes(version=current.version + 1)
 
 
-def saving_option(
-    category_id: str, action: SavingAction, level: SavingLevel
-) -> tuple[SavingAction, SavingLevel]:
-    """The saving that is actually offered and applied: essential lines are never removed.
-
-    Removing the food or the venue is never a sensible way to close a gap, so a removal
-    of an essential line becomes its deepest cut.
-
-    Examples:
-        >>> saving_option("catering", SavingAction.REMOVE, SavingLevel.SMALL)
-        (<SavingAction.REDUCE: 'reduce'>, <SavingLevel.LARGE: 'large'>)
-        >>> saving_option("decor", SavingAction.REMOVE, SavingLevel.SMALL)
-        (<SavingAction.REMOVE: 'remove'>, <SavingLevel.SMALL: 'small'>)
-    """
-    if action is SavingAction.REMOVE and category_id in ESSENTIAL_CATEGORIES:
-        return SavingAction.REDUCE, SavingLevel.LARGE
-    return action, level
-
-
-_SAVING_WORDS: Mapping[SavingAction, Mapping[SavingLevel, str]] = MappingProxyType(
-    {
-        SavingAction.REDUCE: {
-            SavingLevel.SMALL: "trim it a little",
-            SavingLevel.MEDIUM: "cut it back",
-            SavingLevel.LARGE: "cut it back sharply",
-        },
-        SavingAction.REPLACE: {
-            SavingLevel.SMALL: "swap for something a little cheaper",
-            SavingLevel.MEDIUM: "swap for a cheaper option",
-            SavingLevel.LARGE: "swap for a much cheaper option",
-        },
-    }
-)
-
-
-def describe_saving(action: SavingAction, level: SavingLevel) -> str:
-    """Plain words for what a saving does to its line.
-
-    Examples:
-        >>> describe_saving(SavingAction.REDUCE, SavingLevel.LARGE)
-        'cut it back sharply'
-        >>> describe_saving(SavingAction.REMOVE, SavingLevel.SMALL)
-        'drop it entirely'
-    """
-    if action is SavingAction.REMOVE:
-        return "drop it entirely"
-    return _SAVING_WORDS[action][level]
-
-
-def saving_change(
-    plan: EventPlan, category_id: CategoryId, action: SavingAction, level: SavingLevel
-) -> ChangeSet | None:
-    """The change that frees an alternative's saving from one budget line.
-
-    The line is set to its plan minus `estimate_saving`, but never below what is already
-    spent on it: cutting the plan for money already committed frees nothing. The rebalance
-    then gives the freed money first to lines spent past their plan.
-
-    Args:
-        plan: The saved plan.
-        category_id: Line to save on.
-        action: Reduce, replace or remove.
-        level: Size of a reduction or replacement.
-
-    Returns:
-        A one-operation change set, or None if the line is protected or has nothing to free.
-
-    Raises:
-        NotFoundError: If the plan has no such line.
-    """
-    category = plan.category(category_id)
-    action, level = saving_option(category_id, action, level)
-    target = max(
-        category.allocated_inr - estimate_saving(category.allocated_inr, action, level),
-        plan.committed_inr(category.id),
-    )
-    if category.protected or target >= category.allocated_inr:
-        return None
-    operation = ChangeOperation(
-        kind=ChangeKind.SET_CATEGORY_BUDGET, category_id=category.id, amount_inr=target
-    )
-    return ChangeSet(operations=(operation,))
-
-
-def freed_inr(
-    plan: EventPlan, category_id: CategoryId, action: SavingAction, level: SavingLevel
-) -> int:
-    """Rupees `saving_change` would take from a line's plan, or 0 if it changes nothing.
-
-    Raises:
-        NotFoundError: If the plan has no such line.
-    """
-    change_set = saving_change(plan, category_id, action, level)
-    if change_set is None:
-        return 0
-    return plan.category(category_id).allocated_inr - _require(change_set.operations[0].amount_inr)
-
-
-def _require[T](value: T | None) -> T:
-    """Narrow an optional field that `ChangeOperation` validation guarantees is set."""
-    if value is None:  # pragma: no cover - unreachable after model validation
-        raise ValueError("operation is missing a required field")
-    return value
-
-
 def _apply_protection(
     plan: EventPlan, change_set: ChangeSet, *, defer: frozenset[CategoryId] = frozenset()
 ) -> EventPlan:
@@ -521,7 +164,7 @@ def _apply_protection(
         if op.expense_id is not None:
             plan = set_expense_protection(plan, op.expense_id, protected=protected)
         else:
-            plan = set_category_protection(plan, _require(op.category_id), protected=protected)
+            plan = set_category_protection(plan, required(op.category_id), protected=protected)
     return plan
 
 
@@ -591,8 +234,8 @@ def _target_total(plan: EventPlan, change_set: ChangeSet) -> int:
     """New total budget: an absolute amount, or the current total plus a stated change."""
     for op in change_set.of_kind(ChangeKind.SET_TOTAL_BUDGET, ChangeKind.ADJUST_TOTAL_BUDGET):
         if op.kind is ChangeKind.SET_TOTAL_BUDGET:
-            return _require(op.amount_inr)
-        return plan.total_budget_inr + _require(op.delta)
+            return required(op.amount_inr)
+        return plan.total_budget_inr + required(op.delta)
     return plan.total_budget_inr
 
 
@@ -604,9 +247,9 @@ def _target_guest_count(plan: EventPlan, change_set: ChangeSet) -> int:
     """
     for op in change_set.of_kind(ChangeKind.SET_GUEST_COUNT, ChangeKind.ADJUST_GUEST_COUNT):
         count = (
-            _require(op.guest_count)
+            required(op.guest_count)
             if op.kind is ChangeKind.SET_GUEST_COUNT
-            else plan.guest_count + _require(op.delta)
+            else plan.guest_count + required(op.delta)
         )
         if not 1 <= count <= MAX_GUESTS:
             raise InvalidInputError(
@@ -644,7 +287,7 @@ def _apply_expenses(
         if op.kind is ChangeKind.ADD_EXPENSE:
             plan = _add_expense(plan, op, skipped)
             continue
-        expense = plan.expense(_require(op.expense_id))
+        expense = plan.expense(required(op.expense_id))
         if expense.protected:
             skipped.append(
                 SkippedOperation(kind=op.kind, label=expense.label, reason=SkipReason.PROTECTED)
@@ -660,9 +303,9 @@ def _add_expense(
     plan: EventPlan, op: ChangeOperation, skipped: list[SkippedOperation]
 ) -> EventPlan:
     category_id, label, amount = (
-        _require(op.category_id),
-        _require(op.label),
-        _require(op.amount_inr),
+        required(op.category_id),
+        required(op.label),
+        required(op.amount_inr),
     )
     if find_duplicate_expense(plan, category_id=category_id, label=label, amount_inr=amount):
         skipped.append(SkippedOperation(kind=op.kind, label=label, reason=SkipReason.DUPLICATE))
@@ -692,7 +335,7 @@ def _apply_custom_categories(
     ids = id_sequence("custom", (c.id for c in plan.categories))
     added = []
     for op in ops:
-        label, amount = _require(op.label), _require(op.amount_inr)
+        label, amount = required(op.label), required(op.amount_inr)
         if label.casefold() in names:
             raise InvalidInputError(
                 f"There is already a budget line called '{label}'.", code="duplicate_category"
@@ -720,14 +363,14 @@ def _apply_line_amounts(
     it is" until the user removes it.
     """
     for op in change_set.of_kind(ChangeKind.SET_CATEGORY_BUDGET):
-        category = plan.category(_require(op.category_id))
+        category = plan.category(required(op.category_id))
         if category.protected:
             skipped.append(
                 SkippedOperation(kind=op.kind, label=category.name, reason=SkipReason.PROTECTED)
             )
             continue
         pins = pins | {
-            category.id: Pin(amount_inr=_require(op.amount_inr), reason=ChangeReason.SET)
+            category.id: Pin(amount_inr=required(op.amount_inr), reason=ChangeReason.SET)
         }
     return pins
 
@@ -742,7 +385,7 @@ def _add_tasks(
     titles = {t.title.casefold() for t in plan.tasks}
     specs: list[TaskSpec] = []
     for op in change_set.of_kind(ChangeKind.ADD_TASK):
-        label, days = _require(op.label), _require(op.days)
+        label, days = required(op.label), required(op.days)
         if op.category_id is not None:
             plan.category(op.category_id)
         if normalize_text(label).casefold() in titles:

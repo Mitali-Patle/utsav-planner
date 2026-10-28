@@ -8,7 +8,8 @@ from hypothesis import strategies as st
 
 from app.domain.budget import NewExpense, add_expense
 from app.domain.catalog import spec_for
-from app.domain.changes import ChangeKind, ChangeOperation, ChangeSet, accept, propose
+from app.domain.change_set import ChangeKind, ChangeOperation, ChangeSet
+from app.domain.changes import accept, propose
 from app.domain.errors import InfeasibleChangeError, StaleProposalError
 from app.domain.models import (
     MAX_DAYS_AHEAD,

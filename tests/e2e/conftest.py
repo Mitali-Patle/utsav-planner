@@ -31,7 +31,7 @@ from app.ai.schemas import (
 )
 from app.config import Settings
 from app.domain.budget import SavingAction, SavingLevel
-from app.domain.changes import ChangeKind
+from app.domain.change_set import ChangeKind
 from app.main import create_app
 from app.persistence.tables import metadata
 from app.services import build_services

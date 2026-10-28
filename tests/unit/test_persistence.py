@@ -9,8 +9,10 @@ from sqlalchemy import Engine, event, select
 from sqlalchemy.dialects import postgresql
 
 from app.ai.cache import MemoryCache, TieredCache
-from app.domain.changes import ChangeKind, ChangeOperation, ChangeSet, Proposal, propose
+from app.domain.change_set import ChangeKind, ChangeOperation, ChangeSet
+from app.domain.changes import propose
 from app.domain.errors import NotFoundError, StaleProposalError
+from app.domain.proposal import Proposal
 from app.persistence.db import make_engine
 from app.persistence.repositories import (
     Counter,

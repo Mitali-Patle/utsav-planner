@@ -7,17 +7,8 @@ import pytest
 from pydantic import ValidationError
 
 from app.domain.budget import ChangeReason, SavingAction, SavingLevel, summarize
-from app.domain.changes import (
-    ChangeKind,
-    ChangeOperation,
-    ChangeSet,
-    ExpenseAction,
-    Proposal,
-    SkipReason,
-    accept,
-    propose,
-    saving_change,
-)
+from app.domain.change_set import ChangeKind, ChangeOperation, ChangeSet
+from app.domain.changes import accept, propose
 from app.domain.errors import (
     InfeasibleChangeError,
     InvalidInputError,
@@ -26,6 +17,8 @@ from app.domain.errors import (
 )
 from app.domain.models import CategoryId, EventPlan, EventType, TaskSource, VendorStatus
 from app.domain.planning import EventDetails, draft_plan
+from app.domain.proposal import ExpenseAction, Proposal, SkipReason
+from app.domain.savings import saving_change
 from app.domain.vendors import set_vendor_status
 from tests.factories import make_plan
 

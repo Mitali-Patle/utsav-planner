@@ -19,9 +19,9 @@ from typing import Any, NamedTuple
 from sqlalchemy import Connection, Engine, Table, delete, func, insert, select, update
 from sqlalchemy.dialects import postgresql, sqlite
 
-from app.domain.changes import Proposal
 from app.domain.errors import NotFoundError, StaleProposalError
 from app.domain.models import EventPlan
+from app.domain.proposal import Proposal
 from app.persistence.tables import ai_cache, events, proposals, rate_limits
 
 Now = Callable[[], datetime]

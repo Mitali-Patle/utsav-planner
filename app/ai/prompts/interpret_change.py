@@ -6,7 +6,7 @@ from app.ai.contexts import ChangeContext
 from app.ai.guardrails import MAX_REQUEST_CHARS, plan_snapshot, quote
 from app.ai.prompts import GUARDRAILS
 from app.ai.schemas import AIChangeOperation, ChangeIntent, IntentStatus
-from app.domain.changes import ChangeKind
+from app.domain.change_set import ChangeKind
 
 VERSION = "interpret-change-v7"
 

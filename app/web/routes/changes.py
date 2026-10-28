@@ -9,7 +9,7 @@ from fastapi import APIRouter, Form, Request, Response, status
 from pydantic import ValidationError
 
 from app.domain.budget import SavingAction, SavingLevel
-from app.domain.changes import ChangeKind, ChangeOperation, ChangeSet
+from app.domain.change_set import ChangeKind, ChangeOperation, ChangeSet
 from app.domain.models import CategoryId
 from app.services import Services
 from app.services.change_manager import ApprovalStatus, ChangeOutcome, OutcomeKind

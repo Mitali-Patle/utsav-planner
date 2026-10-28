@@ -17,7 +17,6 @@ from app.ai.client import Provenance
 from app.domain.budget import BudgetSummary, CategoryChange, ChangeReason, summarize
 from app.domain.calendar import google_calendar_url
 from app.domain.catalog import CATALOG, VENDOR_QUESTIONS
-from app.domain.changes import Proposal, ScheduleChange, describe_saving
 from app.domain.clock import INDIA_TZ
 from app.domain.models import (
     MAX_DAYS_AFTER,
@@ -30,6 +29,8 @@ from app.domain.models import (
     VendorStatus,
 )
 from app.domain.money import format_inr
+from app.domain.proposal import Proposal, ScheduleChange
+from app.domain.savings import describe_saving
 from app.domain.timeline import is_overdue, sort_tasks
 from app.domain.vendors import ALLOWED_STATUS_CHANGES, OWN_VENDOR_TYPE
 from app.persistence.repositories import StoredEvent, StoredProposal

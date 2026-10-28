@@ -12,7 +12,7 @@ from typing import Any
 from pydantic import BaseModel, ConfigDict, Field
 
 from app.domain.budget import EmphasisDirection, EmphasisStrength, SavingAction, SavingLevel
-from app.domain.changes import ChangeKind
+from app.domain.change_set import ChangeKind
 from app.domain.models import BudgetImpact
 
 

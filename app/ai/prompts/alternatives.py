@@ -8,8 +8,8 @@ from app.ai.prompts import GUARDRAILS
 from app.ai.schemas import AIAlternative, Alternatives
 from app.domain.budget import SavingAction, SavingLevel
 from app.domain.catalog import ESSENTIAL_CATEGORIES
-from app.domain.changes import freed_inr
 from app.domain.models import EventPlan
+from app.domain.savings import freed_inr
 
 VERSION = "alternatives-v6"
 

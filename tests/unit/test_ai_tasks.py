@@ -44,10 +44,12 @@ from app.domain.budget import (
     SavingLevel,
     add_expense,
 )
-from app.domain.changes import _FIELDS as FIELDS
-from app.domain.changes import ChangeKind, ChangeOperation, ChangeSet, SkipReason, propose
+from app.domain.change_set import _FIELDS as FIELDS
+from app.domain.change_set import ChangeKind, ChangeOperation, ChangeSet
+from app.domain.changes import propose
 from app.domain.models import BudgetImpact, CategoryId, EventPlan, EventType
 from app.domain.planning import EventDetails, draft_plan
+from app.domain.proposal import SkipReason
 from tests.factories import BIRTHDAY_ALLOCATIONS, make_plan
 from tests.fakes import ScriptedProvider
 

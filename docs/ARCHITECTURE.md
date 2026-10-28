@@ -66,7 +66,10 @@ app/
     vendors.py          book-by dates, urgency, priority, status changes
     calendar.py         plan_calendar(): event day, open tasks and vendors to book as RFC 5545 all-day entries (F14)
     planning.py         EventDetails, draft_plan(): complete plan without AI
-    changes.py          ChangeOperation, ChangeSet, propose() → Proposal, accept()
+    change_set.py       ChangeKind, ChangeOperation, ChangeSet: the language of plan changes
+    proposal.py         Proposal and its parts (field, expense and schedule changes, skips)
+    changes.py          propose() → Proposal, accept(): applies a ChangeSet in a fixed order
+    savings.py          saving_option(), saving_change(), freed_inr(): ways to save, priced exactly
   ai/
     client.py           Provider protocol, typed errors, LLMRequest, AITask, Provenance, AIResult
     providers/          gemini.py (SDK loaded on first call), groq.py (httpx), build_providers()

@@ -29,8 +29,9 @@ from app.ai.schemas import (
     IntentStatus,
     PlanSuggestions,
 )
-from app.domain.changes import ChangeKind, ChangeOperation, ChangeSet, saving_option
+from app.domain.change_set import ChangeKind, ChangeOperation, ChangeSet
 from app.domain.models import MAX_DAYS_AFTER, EventPlan
+from app.domain.savings import saving_option
 from app.domain.text import normalize_text
 
 MAX_REQUEST_CHARS = 300
