@@ -2,9 +2,9 @@
 
 from typing import Annotated
 
-from fastapi import APIRouter, Form, Request, Response, status
+from fastapi import APIRouter, Form, Response, status
 from fastapi.responses import HTMLResponse
-from pydantic import ValidationError
+from pydantic import BaseModel, ValidationError
 
 from app.domain.calendar import plan_calendar
 from app.domain.catalog import CATALOG
@@ -12,7 +12,7 @@ from app.domain.errors import InvalidInputError
 from app.domain.models import EventType
 from app.domain.planning import EventDetails
 from app.services.planning import IdeasOutcome
-from app.web.deps import AILimitDep, CreateLimitDep, ServicesDep, SessionDep, TodayDep
+from app.web.deps import AILimitDep, CreateLimitDep, ServicesDep, SessionDep, Visit, VisitDep
 from app.web.responses import Notice, after_post, render
 from app.web.views.dashboard import dashboard_context
 from app.web.views.forms import FormState, form_errors
@@ -50,69 +50,54 @@ NEW_IDEAS = {
 }
 
 
+class EventFields(BaseModel):
+    """The new-plan form as posted: raw text, validated by `EventDetails`."""
+
+    event_type: str = ""
+    title: str = ""
+    city: str = ""
+    event_date: str = ""
+    guest_count: str = ""
+    total_budget_inr: str = ""
+    preferences: str = ""
+    sub_events: list[str] = []
+
+
 @router.post("/events", include_in_schema=False)
 def create_event(
-    request: Request,
-    services: ServicesDep,
-    session: SessionDep,
-    today: TodayDep,
-    create_limit: CreateLimitDep,
-    event_type: Annotated[str, Form()] = "",
-    title: Annotated[str, Form()] = "",
-    city: Annotated[str, Form()] = "",
-    event_date: Annotated[str, Form()] = "",
-    guest_count: Annotated[str, Form()] = "",
-    total_budget_inr: Annotated[str, Form()] = "",
-    preferences: Annotated[str, Form()] = "",
-    sub_events: Annotated[list[str] | None, Form()] = None,
+    visit: VisitDep, create_limit: CreateLimitDep, fields: Annotated[EventFields, Form()]
 ) -> Response:
     """Save the code-built draft at once and open its dashboard.
 
     The form lists functions for every event type; only those of the chosen type are kept.
     Invalid input re-renders the form with the user's values and a message per field.
     """
-    values = {
-        "event_type": event_type,
-        "title": title,
-        "city": city,
-        "event_date": event_date,
-        "guest_count": guest_count,
-        "total_budget_inr": total_budget_inr,
-        "preferences": preferences,
-        "sub_events": sub_events or [],
-    }
-    chosen = _sub_events_for(event_type, sub_events or [])
+    values = fields.model_dump()
+    chosen = _sub_events_for(fields.event_type, fields.sub_events)
     try:
         details = EventDetails.model_validate({**values, "sub_events": chosen})
-        if not create_limit.allow(request):
-            return _invalid_form(
-                request,
-                today,
-                FormState(values, {"form": TOO_MANY_EVENTS}),
-                status.HTTP_429_TOO_MANY_REQUESTS,
-            )
-        stored = services.planning.create_draft(session, details)
+        if not create_limit.allow(visit.request):
+            too_many = FormState(values, {"form": TOO_MANY_EVENTS})
+            return _invalid_form(visit, too_many, status.HTTP_429_TOO_MANY_REQUESTS)
+        stored = visit.services.planning.create_draft(visit.session, details)
     except ValidationError as error:
-        return _invalid_form(request, today, FormState(values, form_errors(error)))
+        return _invalid_form(visit, FormState(values, form_errors(error)))
     except InvalidInputError as error:
         field = "event_date" if error.code.startswith("event_date") else "form"
-        return _invalid_form(request, today, FormState(values, {field: error.message}))
+        return _invalid_form(visit, FormState(values, {field: error.message}))
     return after_post(
-        request,
+        visit.request,
         f"/events/{stored.id}",
         Notice("Your plan is ready. The AI is personalizing it now."),
     )
 
 
 @router.get("/events/{event_id}", response_class=HTMLResponse, include_in_schema=False)
-def dashboard(
-    request: Request, event_id: str, services: ServicesDep, session: SessionDep, today: TodayDep
-) -> HTMLResponse:
+def dashboard(event_id: str, visit: VisitDep) -> HTMLResponse:
     """The event dashboard."""
-    overview = services.changes.overview(session, event_id)
-    return render(
-        request, "dashboard.html", dashboard_context(overview.event, overview.history, today)
-    )
+    overview = visit.services.changes.overview(visit.session, event_id)
+    context = dashboard_context(overview.event, overview.history, visit.today)
+    return render(visit.request, "dashboard.html", context)
 
 
 @router.get("/events/{event_id}/calendar.ics", include_in_schema=False)
@@ -130,14 +115,7 @@ def calendar_file(event_id: str, services: ServicesDep, session: SessionDep) -> 
 
 
 @router.post("/events/{event_id}/personalize", include_in_schema=False)
-def personalize(
-    request: Request,
-    event_id: str,
-    services: ServicesDep,
-    session: SessionDep,
-    today: TodayDep,
-    ai_limit: AILimitDep,
-) -> Response:
+def personalize(event_id: str, visit: VisitDep, ai_limit: AILimitDep) -> Response:
     """Tailor the plan with AI, or with labelled standard ideas that can be retried later.
 
     The AI rate limit is consulted only when a model would actually be called.
@@ -145,42 +123,35 @@ def personalize(
     answers: list[bool] = []
 
     def allowed() -> bool:
-        answers.append(ai_limit.allow(request))
+        answers.append(ai_limit.allow(visit.request))
         return answers[-1]
 
-    stored = services.planning.personalize(session, event_id, ai_allowed=allowed)
+    stored = visit.services.planning.personalize(visit.session, event_id, ai_allowed=allowed)
     fallback = bool(stored.ai and stored.ai["provenance"]["fallback"])
     notice = (LIMITED if answers == [False] else FALLBACK) if fallback else PERSONALIZED
     return after_post(
-        request,
+        visit.request,
         f"/events/{event_id}",
         notice,
         "partials/plan_area.html",
         # The AI answer arrives seconds after the page; keep anything typed meanwhile.
-        {**dashboard_context(stored, [], today), "keep_typed_input": True},
+        {**dashboard_context(stored, [], visit.today), "keep_typed_input": True},
     )
 
 
 @router.post("/events/{event_id}/ideas", include_in_schema=False)
-def new_ideas(
-    request: Request,
-    event_id: str,
-    services: ServicesDep,
-    session: SessionDep,
-    today: TodayDep,
-    ai_limit: AILimitDep,
-) -> Response:
+def new_ideas(event_id: str, visit: VisitDep, ai_limit: AILimitDep) -> Response:
     """Replace the ideas with different ones from AI; nothing else in the plan changes."""
-    result = services.planning.regenerate_ideas(
-        session, event_id, ai_allowed=lambda: ai_limit.allow(request)
+    result = visit.services.planning.regenerate_ideas(
+        visit.session, event_id, ai_allowed=lambda: ai_limit.allow(visit.request)
     )
     return after_post(
-        request,
+        visit.request,
         f"/events/{event_id}#ideas",
         NEW_IDEAS[result.outcome],
         "partials/plan_area.html",
         {
-            **dashboard_context(result.event, [], today),
+            **dashboard_context(result.event, [], visit.today),
             "keep_typed_input": True,
             "focus_ideas": True,
         },
@@ -196,9 +167,7 @@ def _sub_events_for(event_type: str, submitted: list[str]) -> list[str]:
 
 
 def _invalid_form(
-    request: Request,
-    today: TodayDep,
-    form: FormState,
-    status_code: int = status.HTTP_422_UNPROCESSABLE_CONTENT,
+    visit: Visit, form: FormState, status_code: int = status.HTTP_422_UNPROCESSABLE_CONTENT
 ) -> HTMLResponse:
-    return render(request, "landing.html", landing_context(form, today), status_code)
+    context = landing_context(form, visit.today)
+    return render(visit.request, "landing.html", context, status_code)

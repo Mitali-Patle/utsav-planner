@@ -1,5 +1,6 @@
 """Request dependencies shared by route modules."""
 
+from dataclasses import dataclass
 from datetime import date
 from typing import Annotated
 
@@ -70,3 +71,23 @@ TodayDep = Annotated[date, Depends(get_today)]
 SessionDep = Annotated[str, Depends(get_session_id)]
 AILimitDep = Annotated[AIRateLimit, Depends(get_ai_limit)]
 CreateLimitDep = Annotated[EventCreationLimit, Depends(get_create_limit)]
+
+
+@dataclass(frozen=True)
+class Visit:
+    """One request's context: the request itself, the services, who is asking and today."""
+
+    request: Request
+    services: Services
+    session: str
+    today: date
+
+
+def get_visit(
+    request: Request, services: ServicesDep, session: SessionDep, today: TodayDep
+) -> Visit:
+    """Bundle what every plan route needs, so routes take only their own inputs."""
+    return Visit(request=request, services=services, session=session, today=today)
+
+
+VisitDep = Annotated[Visit, Depends(get_visit)]
