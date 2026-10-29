@@ -23,9 +23,7 @@ from app.domain.errors import (
     StaleProposalError,
 )
 from app.main import create_app
-from app.persistence.db import make_engine
 from app.persistence.rate_limits import Counter, RateLimiter
-from app.persistence.tables import metadata
 from app.services import build_services
 from app.web.guard import MAX_BODY_BYTES, RequestGuardMiddleware
 from app.web.limits import AIRateLimit, EventCreationLimit, client_ip
@@ -33,14 +31,6 @@ from app.web.session import flash
 from tests.fakes import FixedClock, ScriptedProvider
 
 TOKEN = re.compile(r'"X-CSRF-Token": "([^"]+)"')
-
-
-@pytest.fixture
-def engine() -> Iterator[Engine]:
-    engine = make_engine("sqlite://")
-    metadata.create_all(engine)
-    yield engine
-    engine.dispose()
 
 
 def build(settings: Settings, engine: Engine) -> FastAPI:

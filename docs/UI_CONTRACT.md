@@ -205,7 +205,7 @@ These labels are an honesty rule (AGENTS.md): AI output is labelled, non-AI outp
 
 | Test | Checks |
 |---|---|
-| `tests/integration/test_web_flows.py` | Every flow with and without htmx; label audit (labels, unique ids, named buttons, one `h1`) on every page and fragment |
+| `tests/integration/test_web_*.py` | Every flow with and without htmx, one file per feature (plans, ideas, changes, budget, timeline and vendors); label audit (labels, unique ids, named buttons, one `h1`, in `web.py`) on every page and fragment |
 | `tests/integration/test_pages.py` | Landmarks, skip link, description, icon, no inline script or style, htmx config fits the CSP |
 | `tests/integration/test_security_headers.py` | CSP and other headers |
 | `tests/unit/test_stylesheet.py` | WCAG contrast of every colour pair as used (4.5:1 text, 3:1 focus and borders) in both themes; busy indicator hidden by default; `.sr-only`, skip link, focus, reduced motion, dark theme |

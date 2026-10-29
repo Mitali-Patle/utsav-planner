@@ -83,20 +83,20 @@ in Chromium (`pytest -m e2e`); evals run the real models (`evals/`).
 
 | # | Scenario | Expected | Tests | Status |
 |---|---|---|---|---|
-| 1 | Add an expense within budget | Totals and remaining balance are correct | `test_budget.py`; `test_web_flows.py::test_add_expense_with_and_without_javascript` | ✅ |
-| 2 | Add an expense that exceeds the budget | Shortfall shown, alternatives available | `test_budget.py`; `test_web_flows.py::test_over_budget_dashboard_offers_alternatives`; e2e `test_over_budget_shows_the_gap_and_priced_alternatives` (applies an option and approves it); `test_web_flows.py::test_an_alternative_is_previewed_then_approved`; 6 alternatives evals | ✅ |
+| 1 | Add an expense within budget | Totals and remaining balance are correct | `test_budget.py`; `test_web_budget.py::test_add_expense_with_and_without_javascript` | ✅ |
+| 2 | Add an expense that exceeds the budget | Shortfall shown, alternatives available | `test_budget.py`; `test_web_budget.py::test_over_budget_dashboard_offers_alternatives`; e2e `test_over_budget_shows_the_gap_and_priced_alternatives` (applies an option and approves it); `test_web_budget.py::test_an_alternative_is_previewed_then_approved`; 6 alternatives evals | ✅ |
 | 3 | Reduce the budget while protecting the cake | Cake unchanged; sum equals the new total | `test_budget.py`, `test_changes.py`, property tests; evals `b-multi`, `w-cut-keep-two` | ✅ |
 | 4 | Increase the guest count | Guest-scaled categories scaled and flagged | `test_changes.py`; e2e `test_plan_personalize_change_and_approve`; guest evals | ✅ |
-| 5 | Move the event date | Deadlines recalculated; compression flagged | `test_timeline_vendors.py`, `test_changes.py`; `test_web_flows.py::test_date_change_preview_shows_moved_deadlines`; date evals | ✅ |
-| 6 | Reject a proposal | Saved plan unchanged; history shows rejected | `test_changes.py`; `test_web_flows.py::test_reject_leaves_the_plan_unchanged`; e2e `test_vague_request_asks_first_and_reject_keeps_the_plan` | ✅ |
-| 7 | Approve a proposal | Version + 1; history logged; approving twice refused | `test_changes.py`; `test_web_flows.py::test_change_preview_then_approve`, `::test_approving_twice_or_stale_is_refused`; e2e journeys | ✅ |
-| 8 | AI API fails (timeout, 429, malformed, outage) | Next provider or a labelled fallback; data intact | `test_ai_chain.py`, `test_ai_providers.py`, `test_ai_tasks.py`; `test_web_flows.py::test_ai_outage_shows_labelled_standard_ideas`, `::test_alternatives_fall_back_honestly` | ✅ |
-| 9 | Invalid amount (0, negative, too large, text) | Rejected with a clear message; input kept | `test_budget.py`, `test_models.py`; `test_web_flows.py::test_invalid_expense_is_shown_next_to_the_form` | ✅ |
+| 5 | Move the event date | Deadlines recalculated; compression flagged | `test_timeline_vendors.py`, `test_changes.py`; `test_web_changes.py::test_date_change_preview_shows_moved_deadlines`; date evals | ✅ |
+| 6 | Reject a proposal | Saved plan unchanged; history shows rejected | `test_changes.py`; `test_web_changes.py::test_reject_leaves_the_plan_unchanged`; e2e `test_vague_request_asks_first_and_reject_keeps_the_plan` | ✅ |
+| 7 | Approve a proposal | Version + 1; history logged; approving twice refused | `test_changes.py`; `test_web_changes.py::test_change_preview_then_approve`, `::test_approving_twice_or_stale_is_refused`; e2e journeys | ✅ |
+| 8 | AI API fails (timeout, 429, malformed, outage) | Next provider or a labelled fallback; data intact | `test_ai_chain.py`, `test_ai_providers.py`, `test_ai_tasks.py`; `test_web_ideas.py::test_ai_outage_shows_labelled_standard_ideas`, `test_web_budget.py::test_alternatives_fall_back_honestly` | ✅ |
+| 9 | Invalid amount (0, negative, too large, text) | Rejected with a clear message; input kept | `test_budget.py`, `test_models.py`; `test_web_budget.py::test_invalid_expense_is_shown_next_to_the_form` | ✅ |
 | 10 | Same request repeated | No duplicate expense or task | `test_budget.py`, `test_changes.py` | ✅ |
 | 11 | Prompt injection in request text | Off-topic or ignored; protected items untouched | `test_ai_tasks.py`; evals `b-injection`, `b-fake-delimiters`, `w-injection` | ✅ |
-| 12 | Another session opens my event | 404 | `test_web_flows.py::test_another_session_cannot_see_or_change_my_event`; verified on the live site | ✅ |
-| 13 | Stale proposal (plan changed after preview) | Approval refused, user asked to retry | `test_changes.py`; `test_web_flows.py::test_approving_twice_or_stale_is_refused` | ✅ |
-| 14 | Keyboard and screen reader basics | axe has no serious violations; flows work by keyboard | label audit in `test_web_flows.py`; e2e `test_accessibility.py` (axe WCAG 2.2 A/AA, skip link, 320 px) | ✅ |
+| 12 | Another session opens my event | 404 | `test_web_plans.py::test_another_session_cannot_see_or_change_my_event`; verified on the live site | ✅ |
+| 13 | Stale proposal (plan changed after preview) | Approval refused, user asked to retry | `test_changes.py`; `test_web_changes.py::test_approving_twice_or_stale_is_refused` | ✅ |
+| 14 | Keyboard and screen reader basics | axe has no serious violations; flows work by keyboard | label audit in `tests/integration/web.py`; e2e `test_accessibility.py` (axe WCAG 2.2 A/AA, skip link, 320 px) | ✅ |
 
 ## 8. Non-functional requirements
 - AI response < 15 s typical. Pages render < 1 s when warm. Core pages are readable without JS.
