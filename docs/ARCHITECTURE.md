@@ -70,7 +70,8 @@ app/
     planning.py         EventDetails, draft_plan(): complete plan without AI
     change_set.py       ChangeKind, ChangeOperation, ChangeSet: the language of plan changes
     proposal.py         Proposal and its parts (field, expense and schedule changes, skips)
-    changes.py          propose() → Proposal, accept(): applies a ChangeSet in a fixed order
+    changes.py          propose() → Proposal, accept(): runs the steps in a fixed order, describes the result
+    change_steps.py     the steps: protection, date, guests, expenses, custom lines, line amounts, tasks
     savings.py          SavingAction/Level, estimate_saving, saving_change(), freed_inr(): ways to save
   ai/
     client.py           Provider protocol, typed errors, LLMRequest, AITask, Provenance, AIResult

@@ -555,7 +555,7 @@ def test_setting_an_unknown_line_is_refused() -> None:
 
 
 def test_a_plan_has_a_bounded_number_of_tasks(monkeypatch: pytest.MonkeyPatch) -> None:
-    monkeypatch.setattr("app.domain.changes.MAX_TASKS", 0)
+    monkeypatch.setattr("app.domain.change_steps.MAX_TASKS", 0)
     with pytest.raises(InvalidInputError) as error:
         propose(make_plan(), changes(op(ChangeKind.ADD_TASK, label="Buy candles", days=3)), TODAY)
     assert error.value.code == "too_many_tasks"

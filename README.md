@@ -306,7 +306,7 @@ uv run playwright install chromium && uv run pytest -m e2e
 app/
   domain/        pure logic, no I/O: catalog/ (one module per event type), budget, expenses,
                  rebalance, savings, timeline, vendors, planning, calendar, and the change
-                 engine (change_set -> changes.propose -> proposal)
+                 engine (change_set -> changes.propose, which runs change_steps -> proposal)
   ai/            providers, fallback chain, cache, prompts, schemas, guardrails, fallbacks
   services/      use cases: planning, change manager, edits, alternatives
   persistence/   one module per store (events, proposals, cache, rate limits) and the
