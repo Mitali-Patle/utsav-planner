@@ -1,6 +1,8 @@
 """Application factory: the single place where dependencies are wired together."""
 
 import secrets
+from collections.abc import AsyncIterator
+from contextlib import asynccontextmanager
 from pathlib import Path
 
 from fastapi import FastAPI
@@ -51,6 +53,7 @@ def create_app(
         docs_url=None if settings.is_production else "/docs",
         redoc_url=None,
         openapi_url=None if settings.is_production else "/openapi.json",
+        lifespan=_lifespan,
     )
     if services is None and engine is not None:
         services = build_services(settings, engine, clock)
@@ -68,6 +71,14 @@ def create_app(
         # In production Vercel serves public/ from its CDN; mount it only for local runs.
         app.mount("/static", StaticFiles(directory=STATIC_DIR), name="static")
     return app
+
+
+@asynccontextmanager
+async def _lifespan(app: FastAPI) -> AsyncIterator[None]:
+    """Close the AI providers' network clients when the server shuts down."""
+    yield
+    if app.state.services is not None:
+        app.state.services.close()
 
 
 def _attach_rate_limits(

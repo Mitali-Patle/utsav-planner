@@ -158,6 +158,18 @@ def groq(
     return GroqProvider(model, KEY, http_client=client)
 
 
+def test_groq_closes_only_the_client_it_created(monkeypatch: pytest.MonkeyPatch) -> None:
+    given = httpx.Client()
+    GroqProvider("openai/gpt-oss-120b", KEY, http_client=given).close()
+    assert not given.is_closed, "a client passed in belongs to the caller"
+    given.close()
+
+    created = httpx.Client()
+    monkeypatch.setattr(httpx, "Client", lambda: created)
+    GroqProvider("openai/gpt-oss-120b", KEY).close()
+    assert created.is_closed
+
+
 def answer(content: str) -> httpx.Response:
     return httpx.Response(200, json={"choices": [{"message": {"content": content}}]})
 

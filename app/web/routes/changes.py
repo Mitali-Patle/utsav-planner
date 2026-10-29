@@ -100,7 +100,7 @@ def change_form(
 def approve(event_id: str, proposal_id: str, visit: VisitDep) -> Response:
     """Apply a pending change: new plan version and history entry, together."""
     outcome = visit.services.changes.approve(visit.session, event_id, proposal_id)
-    if outcome.status is ApprovalStatus.APPROVED and outcome.event is not None:
+    if outcome.event is not None:  # only an approval carries the saved plan
         message = f"Change approved. Your plan is now version {outcome.event.version}."
         return after_post(visit.request, f"/events/{event_id}", Notice(message))
     result = ChangeOutcome(OutcomeKind.INVALID, outcome.message)

@@ -35,7 +35,13 @@ class GroqProvider:
         """
         self._model = model
         self._api_key = api_key
+        self._owns_http = http_client is None
         self._http = http_client or httpx.Client()
+
+    def close(self) -> None:
+        """Close the HTTP client if this provider created it."""
+        if self._owns_http:
+            self._http.close()
 
     @property
     def name(self) -> str:

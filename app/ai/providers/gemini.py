@@ -5,6 +5,7 @@ fast cold start.
 """
 
 import re
+import threading
 from typing import Any
 
 import httpx
@@ -39,6 +40,7 @@ class GeminiProvider:
         self._model = model
         self._api_key = api_key
         self._client = client
+        self._client_lock = threading.Lock()
 
     @property
     def name(self) -> str:
@@ -86,11 +88,13 @@ class GeminiProvider:
         return text
 
     def _sdk_client(self) -> Any:  # noqa: ANN401 - SDK client
-        if self._client is None:
-            from google import genai  # noqa: PLC0415 - lazy import for cold starts
+        # Requests run on a thread pool, so two may ask for the client at once.
+        with self._client_lock:
+            if self._client is None:
+                from google import genai  # noqa: PLC0415 - lazy import for cold starts
 
-            self._client = genai.Client(api_key=self._api_key.get_secret_value())
-        return self._client
+                self._client = genai.Client(api_key=self._api_key.get_secret_value())
+            return self._client
 
 
 def _map_api_error(code: int, status: str | None, details: object) -> ProviderError:

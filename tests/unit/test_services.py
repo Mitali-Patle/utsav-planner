@@ -36,7 +36,12 @@ from app.persistence.proposals import ProposalRepository, ProposalStatus
 from app.persistence.tables import metadata
 from app.services import Services, build_services
 from app.services.alternatives import _price
-from app.services.change_manager import NOTHING_TO_FREE_MESSAGE, ApprovalStatus, OutcomeKind
+from app.services.change_manager import (
+    NOTHING_TO_FREE_MESSAGE,
+    ApprovalOutcome,
+    ApprovalStatus,
+    OutcomeKind,
+)
 from app.services.planning import IdeasOutcome, PlanningService, to_personalization
 from tests.factories import make_plan
 from tests.fakes import FixedClock, ScriptedProvider
@@ -786,3 +791,13 @@ def test_different_ideas_give_up_if_the_plan_keeps_changing(
     monkeypatch.setattr(PlanningService, "get", get_and_edit)
     with pytest.raises(StaleProposalError, match="new ideas"):
         app.planning.regenerate_ideas(ME, event.id)
+
+
+@pytest.mark.parametrize("status", list(ApprovalStatus))
+def test_only_an_approval_carries_the_saved_plan(status: ApprovalStatus) -> None:
+    """The approve route relies on this: a saved plan means approved, and nothing else."""
+    if status is ApprovalStatus.APPROVED:
+        with pytest.raises(ValueError, match="carries the saved plan"):
+            ApprovalOutcome(status)
+    else:
+        assert ApprovalOutcome(status, message="Not saved.").event is None

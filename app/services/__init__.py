@@ -25,6 +25,11 @@ class Services:
     changes: ChangeManager
     edits: PlanEditor
     alternatives: AlternativesService
+    ai: FallbackChain
+
+    def close(self) -> None:
+        """Release what the services hold open (the AI providers' network clients)."""
+        self.ai.close()
 
 
 def build_services(
@@ -50,4 +55,5 @@ def build_services(
         changes=ChangeManager(db, chain, clock),
         edits=PlanEditor(db),
         alternatives=AlternativesService(db, chain, clock),
+        ai=chain,
     )

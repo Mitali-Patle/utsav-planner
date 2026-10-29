@@ -304,3 +304,15 @@ def test_slow_vendor_is_only_skipped_for_that_request() -> None:
     chain = make_chain(first, other)
     chain.run(TASK, "first")
     assert chain.run(TASK, "second").provenance.provider == "gemini:a"
+
+
+def test_close_releases_only_providers_that_hold_a_client() -> None:
+    class ClientHolder(ScriptedProvider):
+        closed = False
+
+        def close(self) -> None:
+            self.closed = True
+
+    holder = ClientHolder("groq:fake", [])
+    make_chain(ScriptedProvider("gemini:fake", []), holder).close()
+    assert holder.closed

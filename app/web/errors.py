@@ -4,13 +4,20 @@ from fastapi import FastAPI, Request
 from fastapi.responses import HTMLResponse
 from starlette.exceptions import HTTPException
 
-from app.domain.errors import DomainError, InvalidInputError, NotFoundError, StaleProposalError
+from app.domain.errors import (
+    DomainError,
+    InfeasibleChangeError,
+    InvalidInputError,
+    NotFoundError,
+    StaleProposalError,
+)
 from app.web.templating import templates
 
 STATUS_BY_ERROR: tuple[tuple[type[DomainError], int], ...] = (
     (NotFoundError, 404),
     (StaleProposalError, 409),
     (InvalidInputError, 422),
+    (InfeasibleChangeError, 422),
 )
 DEFAULT_STATUS = 400
 NOT_FOUND = 404

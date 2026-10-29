@@ -3,6 +3,7 @@
 import asyncio
 import re
 from collections.abc import Iterator, Sequence
+from datetime import date
 
 import pytest
 from fastapi import FastAPI, Request
@@ -12,15 +13,24 @@ from sqlalchemy import Engine
 from sqlalchemy.exc import OperationalError
 from starlette.types import Message, Receive, Scope, Send
 
+from app.ai.cache import MemoryCache
+from app.ai.chain import FallbackChain
 from app.config import Settings
-from app.domain.errors import InvalidInputError, NotFoundError, StaleProposalError
+from app.domain.errors import (
+    InfeasibleChangeError,
+    InvalidInputError,
+    NotFoundError,
+    StaleProposalError,
+)
 from app.main import create_app
 from app.persistence.db import make_engine
 from app.persistence.rate_limits import Counter, RateLimiter
 from app.persistence.tables import metadata
+from app.services import build_services
 from app.web.guard import MAX_BODY_BYTES, RequestGuardMiddleware
 from app.web.limits import AIRateLimit, EventCreationLimit, client_ip
 from app.web.session import flash
+from tests.fakes import FixedClock, ScriptedProvider
 
 TOKEN = re.compile(r'"X-CSRF-Token": "([^"]+)"')
 
@@ -45,6 +55,7 @@ def build(settings: Settings, engine: Engine) -> FastAPI:
             "missing": NotFoundError("No such event."),
             "stale": StaleProposalError("Reload."),
             "bad": InvalidInputError("Bad amount."),
+            "short": InfeasibleChangeError("This change doesn't fit the budget."),
         }
         raise errors[kind]
 
@@ -157,7 +168,12 @@ def test_status_messages_show_once(client: TestClient) -> None:
 
 @pytest.mark.parametrize(
     ("kind", "status", "message"),
-    [("missing", 404, "No such event."), ("stale", 409, "Reload."), ("bad", 422, "Bad amount.")],
+    [
+        ("missing", 404, "No such event."),
+        ("stale", 409, "Reload."),
+        ("bad", 422, "Bad amount."),
+        ("short", 422, "This change doesn&#39;t fit the budget."),
+    ],
 )
 def test_domain_errors_become_friendly_pages(
     client: TestClient, kind: str, status: int, message: str
@@ -170,6 +186,24 @@ def test_domain_errors_become_friendly_pages(
     assert fragment.status_code == status
     assert "<main" not in fragment.text, "a fragment for htmx"
     assert 'role="alert"' in fragment.text
+
+
+def test_shutting_down_closes_the_ai_clients(settings: Settings, engine: Engine) -> None:
+    class ClientHolder(ScriptedProvider):
+        closed = False
+
+        def close(self) -> None:
+            self.closed = True
+
+    holder = ClientHolder("groq:fake", [])
+    services = build_services(
+        settings, engine, FixedClock(date(2026, 10, 22)), ai=FallbackChain([holder], MemoryCache())
+    )
+    with TestClient(create_app(settings, engine=engine, services=services)):
+        while_running = holder.closed
+    assert (while_running, holder.closed) == (False, True)
+    with TestClient(create_app(settings)):
+        pass  # no database, so no services to close
 
 
 def test_routes_need_a_database(settings: Settings) -> None:

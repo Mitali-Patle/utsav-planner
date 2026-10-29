@@ -9,7 +9,7 @@ schema, checks against the plan, and a deterministic fallback. Every result carr
 from collections.abc import Callable, Mapping
 from dataclasses import dataclass
 from enum import StrEnum
-from typing import Any, Protocol
+from typing import Any, Protocol, runtime_checkable
 
 from pydantic import BaseModel, ConfigDict
 
@@ -80,6 +80,15 @@ class Provider(Protocol):
         Raises:
             ProviderError: A typed failure the chain knows how to handle.
         """
+        ...
+
+
+@runtime_checkable
+class Closable(Protocol):
+    """A provider that holds a network client to release when the app shuts down."""
+
+    def close(self) -> None:
+        """Release the client."""
         ...
 
 

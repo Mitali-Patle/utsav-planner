@@ -992,6 +992,36 @@ def test_own_task_without_javascript_redirects_with_a_message(engine: Engine) ->
     assert "Added Call the pandit to the timeline." in page and "Call the pandit" in page
 
 
+@pytest.mark.parametrize(
+    ("limit", "path", "form"),
+    [
+        (
+            "app.domain.expenses.MAX_EXPENSES",
+            "expenses",
+            {"category_id": "venue", "label": "Hall", "amount_inr": "500"},
+        ),
+        ("app.domain.timeline.MAX_TASKS", "tasks", {"title": "Call the pandit", "due_date": ""}),
+        ("app.domain.vendors.MAX_PRIORITY", "vendors", {"name": "Puppet show", "book_by": ""}),
+    ],
+)
+def test_a_full_plan_is_a_notice_not_an_error_under_a_field(
+    engine: Engine, monkeypatch: pytest.MonkeyPatch, limit: str, path: str, form: dict[str, str]
+) -> None:
+    """Review, 29 Oct: "at most 200 tasks" used to appear under the task's date field."""
+    client = client_for(engine, SUGGESTIONS)
+    csrf = token(client)
+    url = create(client, csrf)
+    monkeypatch.setattr(limit, 0)
+    dated = {key: value or str(TODAY) for key, value in form.items()}
+    full = client.post(f"{url}/{path}", data={"csrf_token": csrf, **dated}, headers=HTMX)
+    assert full.status_code == 422
+    assert full.headers["HX-Retarget"] == "#status-region"
+    assert "at most 0" in full.text and "field-error" not in full.text
+
+    page = client.post(f"{url}/{path}", data={"csrf_token": csrf, **dated})
+    assert page.status_code == 422 and "at most 0" in page.text, "and without JavaScript"
+
+
 def test_own_items_explain_bad_input_next_to_their_forms(engine: Engine) -> None:
     client = client_for(engine, SUGGESTIONS)
     csrf = token(client)

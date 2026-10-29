@@ -125,8 +125,8 @@ def plan_sections(plan: EventPlan, today: date) -> dict[str, Any]:
             for e in plan.expenses
         ],
         "task_months": [
-            {"label": label, "tasks": [_task_row(t, names, today) for t in tasks]}
-            for label, tasks in groupby(sort_tasks(plan.tasks), key=lambda t: f"{t.due_date:%B %Y}")
+            _task_month(list(tasks), names, today)
+            for _, tasks in groupby(sort_tasks(plan.tasks), key=_year_month)
         ],
         "vendors": [_vendor_row(v) for v in sorted(plan.vendors, key=lambda v: v.priority)],
         "next_up": _next_up(plan, names, today),
@@ -181,6 +181,20 @@ def _summary(summary: BudgetSummary, plan: EventPlan) -> dict[str, Any]:
         "per_guest": format_inr(summary.per_guest_inr),
         "guests": plan.guest_count,
         "spent_percent": percent_of(summary.spent_inr, summary.total_inr),
+    }
+
+
+def _year_month(task: Task) -> tuple[int, int]:
+    return task.due_date.year, task.due_date.month
+
+
+def _task_month(
+    tasks: Sequence[Task], names: Mapping[CategoryId, str], today: date
+) -> dict[str, Any]:
+    """One month of the timeline: its heading and its tasks, already in date order."""
+    return {
+        "label": f"{tasks[0].due_date:%B %Y}",
+        "tasks": [_task_row(t, names, today) for t in tasks],
     }
 
 

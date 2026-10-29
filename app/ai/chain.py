@@ -6,6 +6,10 @@ briefly, invalid answers get one repair attempt on the same model, and the whole
 capped in time. After a timeout, other models from the same vendor are skipped for that
 request: a slow vendor is usually slow for all its models, so the next vendor gets the time.
 The result always says which provider (if any) produced it.
+
+Cool-downs and failure counts live in memory, so each serverless instance learns about an
+outage on its own. That is deliberate: sharing them through the database would add a round
+trip to every AI call to save, at most, one wasted call per instance.
 """
 
 import json
@@ -25,6 +29,7 @@ from app.ai.client import (
     AITask,
     Attempt,
     AttemptOutcome,
+    Closable,
     LLMRequest,
     Message,
     OutputRejectedError,
@@ -143,6 +148,12 @@ class FallbackChain:
 
         logger.warning("ai %s: all providers failed, using fallback", task.name)
         return AIResult(task.fallback(context), self._provenance(run, None, fallback=True))
+
+    def close(self) -> None:
+        """Release the network clients the providers hold (called when the app shuts down)."""
+        for provider in self._providers:
+            if isinstance(provider, Closable):
+                provider.close()
 
     def offline[C, T: BaseModel](self, task: AITask[C, T], context: C) -> AIResult[T]:
         """The task's labelled fallback, without calling any provider.

@@ -25,6 +25,12 @@ router = APIRouter(tags=["edits"])
 
 PLAN_AREA = "partials/plan_area.html"
 
+# Errors about the value typed into one field are shown under that field. Anything else, such
+# as a plan that already has the maximum number of items, goes to the domain error handler,
+# which shows it in the page's status region.
+AMOUNT_ERRORS = frozenset({"expense_amount_out_of_range"})
+DATE_ERRORS = frozenset({"date_in_past", "date_too_late", "after_event", "date_too_early"})
+
 
 class ExpenseFields(BaseModel):
     """The add-expense form as posted: raw text, validated by `NewExpense`."""
@@ -62,7 +68,7 @@ def add_expense(
         rejected = FormState(values, form_errors(error))
         return _invalid_form(visit, event_id, PlanForms(expense=rejected))
     except InvalidInputError as error:
-        rejected = FormState(values, {"amount_inr": error.message})
+        rejected = FormState(values, _field_error(error, "amount_inr", AMOUNT_ERRORS))
         return _invalid_form(visit, event_id, PlanForms(expense=rejected))
     return _plan_updated(visit, stored, Notice(f"Added {draft.label}."))
 
@@ -78,7 +84,7 @@ def add_task(event_id: str, visit: VisitDep, fields: Annotated[TaskFields, Form(
         rejected = FormState(values, form_errors(error))
         return _invalid_form(visit, event_id, PlanForms(task=rejected))
     except InvalidInputError as error:
-        rejected = FormState(values, {"due_date": error.message})
+        rejected = FormState(values, _field_error(error, "due_date", DATE_ERRORS))
         return _invalid_form(visit, event_id, PlanForms(task=rejected))
     return _plan_updated(visit, stored, Notice(f"Added {draft.title} to the timeline."))
 
@@ -94,7 +100,7 @@ def add_vendor(event_id: str, visit: VisitDep, fields: Annotated[VendorFields, F
         rejected = FormState(values, form_errors(error))
         return _invalid_form(visit, event_id, PlanForms(vendor=rejected))
     except InvalidInputError as error:
-        rejected = FormState(values, {"book_by": error.message})
+        rejected = FormState(values, _field_error(error, "book_by", DATE_ERRORS))
         return _invalid_form(visit, event_id, PlanForms(vendor=rejected))
     return _plan_updated(visit, stored, Notice(f"Added {draft.name} to the checklist."))
 
@@ -179,6 +185,17 @@ def set_vendor(
         visit.session, event_id, VendorId(vendor_id), new_status
     )
     return _plan_updated(visit, stored, Notice("Vendor status updated."))
+
+
+def _field_error(error: InvalidInputError, field: str, codes: frozenset[str]) -> dict[str, str]:
+    """The message under `field` when the error is about that value; otherwise raise it again.
+
+    Raises:
+        InvalidInputError: When the error is not about the field (for example, a full plan).
+    """
+    if error.code not in codes:
+        raise error
+    return {field: error.message}
 
 
 def _plan_updated(visit: Visit, stored: StoredEvent, notice: Notice) -> Response:

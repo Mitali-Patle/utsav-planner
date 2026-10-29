@@ -101,6 +101,15 @@ class ApprovalOutcome:
     event: StoredEvent | None = None
     message: str | None = None
 
+    def __post_init__(self) -> None:
+        """Keep the invariant the web layer relies on.
+
+        Raises:
+            ValueError: Unless the saved plan is present exactly when the status is approved.
+        """
+        if (self.status is ApprovalStatus.APPROVED) != (self.event is not None):
+            raise ValueError("only an approval, and every approval, carries the saved plan")
+
 
 class ChangeManager:
     """Turns change requests into approved plan versions."""
