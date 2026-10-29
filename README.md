@@ -343,3 +343,7 @@ docs/            architecture, spec, UI contract
 Built with Google Antigravity and Claude Code working in separate lanes under one rules
 file, [`AGENTS.md`](AGENTS.md). [`PROMPTS.md`](PROMPTS.md) records the prompts, outcomes and
 corrections of each step; [`CHANGELOG.md`](CHANGELOG.md) lists user-visible changes.
+
+## License
+
+[MIT](LICENSE). The photos are from Pexels and follow the Pexels licence (see [Design](#design)).
