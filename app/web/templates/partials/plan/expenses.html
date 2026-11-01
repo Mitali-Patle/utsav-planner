@@ -1,0 +1,74 @@
+{% from "macros.html" import field, csrf -%}
+<section id="expenses" aria-labelledby="expenses-heading">
+  <h2 id="expenses-heading">Expenses</h2>
+  {% if plan.expenses %}
+  <table>
+    <caption>Committed and paid amounts</caption>
+    <thead><tr><th scope="col">Expense</th><th scope="col">Line</th><th scope="col">Amount</th><th scope="col" class="no-print">Actions</th></tr></thead>
+    <tbody>
+      {% for e in plan.expenses %}
+      <tr>
+        <th scope="row">{{ e.label }}{% if e.protected %} <span class="badge">protected</span>{% endif %}</th>
+        <td data-label="Line">{{ e.category }}</td>
+        <td data-label="Amount">{{ e.amount }}</td>
+        <td data-label="Actions" class="actions no-print">
+          {% if not e.protected %}
+          <form method="post" action="/events/{{ event.id }}/expenses/{{ e.id }}/update"
+                hx-post="/events/{{ event.id }}/expenses/{{ e.id }}/update" hx-target="#plan-area" hx-swap="outerHTML">
+            {{ csrf(csrf_token) }}
+            <label for="amount-{{ e.id }}">New amount for {{ e.label }}</label>
+            <input id="amount-{{ e.id }}" name="amount_inr" type="number" min="1" inputmode="numeric" value="{{ e.amount_inr }}">
+            <button type="submit" id="update-{{ e.id }}">Update<span class="sr-only"> {{ e.label }}</span></button>
+          </form>
+          <form method="post" action="/events/{{ event.id }}/expenses/{{ e.id }}/delete"
+                hx-post="/events/{{ event.id }}/expenses/{{ e.id }}/delete" hx-target="#plan-area" hx-swap="outerHTML">
+            {{ csrf(csrf_token) }}<button type="submit">Remove<span class="sr-only"> {{ e.label }}</span></button>
+          </form>
+          {% endif %}
+          <form method="post" action="/events/{{ event.id }}/expenses/{{ e.id }}/{{ 'unprotect' if e.protected else 'protect' }}"
+                hx-post="/events/{{ event.id }}/expenses/{{ e.id }}/{{ 'unprotect' if e.protected else 'protect' }}" hx-target="#plan-area" hx-swap="outerHTML">
+            {{ csrf(csrf_token) }}
+            <button type="submit" id="protect-expense-{{ e.id }}" class="toggle" aria-pressed="{{ 'true' if e.protected else 'false' }}">{{ 'Unprotect' if e.protected else 'Protect' }}<span class="sr-only"> {{ e.label }}</span></button>
+          </form>
+        </td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+  {% else %}<p>No expenses yet.</p>{% endif %}
+
+  {% if plan.summary.shortfall %}
+  <div id="over-budget" class="notice notice-error" role="alert">
+    <p>You are over budget by {{ plan.summary.shortfall }}.</p>
+    <p>{{ plan.summary.over_plan | join(", ") }} {{ 'costs' if plan.summary.over_plan | length == 1 else 'cost' }} more than planned, and the other lines still need their planned amounts.</p>
+    <form method="post" action="/events/{{ event.id }}/alternatives"
+          hx-post="/events/{{ event.id }}/alternatives" hx-target="#plan-alternatives" hx-swap="innerHTML" hx-sync="this:drop">
+      {{ csrf(csrf_token) }}<button type="submit" id="suggest-savings">Suggest ways to save</button>
+    </form>
+    <div id="plan-alternatives"></div>
+  </div>
+  {% endif %}
+
+  <h3 id="add-expense-heading">Add an expense</h3>
+  {% if expense_form.errors %}<p class="notice notice-error" role="alert">Please check the highlighted fields.</p>{% endif %}
+  <form method="post" action="/events/{{ event.id }}/expenses" aria-labelledby="add-expense-heading" novalidate
+        id="add-expense-form"{% if keep_typed_input %} hx-preserve{% endif %} hx-post="/events/{{ event.id }}/expenses" hx-target="#plan-area" hx-swap="outerHTML" hx-sync="this:drop">
+    {{ csrf(csrf_token) }}
+    <div class="field{{ ' field-invalid' if expense_form.errors.get('category_id') else '' }}">
+      <label for="x-category_id">Budget line</label>
+      <select id="x-category_id" name="category_id"{% if expense_form.errors.get('category_id') %} aria-invalid="true" aria-describedby="x-category_id-error"{% endif %}>
+        {% for value, label in categories_for_select %}
+        <option value="{{ value }}"{% if expense_form.values.get('category_id') == value %} selected{% endif %}>{{ label }}</option>
+        {% endfor %}
+      </select>
+      {% if expense_form.errors.get('category_id') %}<p id="x-category_id-error" class="field-error">{{ expense_form.errors['category_id'] }}</p>{% endif %}
+    </div>
+    {{ field(expense_form, "label", "What is it?", prefix="x", attrs={"maxlength": "80", "required": "required"}) }}
+    {{ field(expense_form, "amount_inr", "Amount in rupees", type="number", prefix="x", attrs={"min": "1", "inputmode": "numeric", "required": "required"}) }}
+    <div class="choice">
+      <input type="checkbox" id="x-protected" name="protected" value="on"{% if expense_form.values.get('protected') %} checked{% endif %}>
+      <label for="x-protected">Protect this expense (changes will keep it as it is)</label>
+    </div>
+    <button type="submit" id="add-expense" class="button-primary">Add expense</button>
+  </form>
+</section>

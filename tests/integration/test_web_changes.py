@@ -12,6 +12,8 @@ from app.ai.schemas import (
     IntentStatus,
 )
 from app.domain.change_set import ChangeKind
+from app.services.change_manager import ApprovalStatus
+from app.web.routes.changes import APPROVAL_STATUS_CODES
 from app.web.views.proposals import QUESTION_NOTE
 from tests.integration.web import (
     HTMX,
@@ -86,6 +88,11 @@ def test_approving_twice_or_stale_is_refused(engine: Engine) -> None:
     )
     assert stale.status_code == 409
     assert "changed after this preview" in stale.text
+
+
+def test_every_refused_approval_has_a_status_code() -> None:
+    """The approve route looks up every outcome but an approval, so none may be missing."""
+    assert set(APPROVAL_STATUS_CODES) == set(ApprovalStatus) - {ApprovalStatus.APPROVED}
 
 
 def test_only_the_newest_preview_can_be_approved(engine: Engine) -> None:

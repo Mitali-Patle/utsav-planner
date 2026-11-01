@@ -1,0 +1,10 @@
+{% from "macros.html" import csrf -%}
+<section id="personalization" aria-labelledby="personalize-heading"
+         hx-post="/events/{{ event.id }}/personalize" hx-trigger="load" hx-target="#plan-area" hx-swap="outerHTML">
+  <h2 id="personalize-heading">Personalizing your plan</h2>
+  <p>Your plan below is already complete. The AI is now tailoring it to your event; this can take up to 10 seconds.</p>
+  <form method="post" action="/events/{{ event.id }}/personalize">
+    {{ csrf(csrf_token) }}
+    <button type="submit" class="button-primary">Personalize with AI</button>
+  </form>
+</section>

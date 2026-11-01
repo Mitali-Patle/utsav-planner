@@ -65,24 +65,24 @@ Every action must work **without JavaScript**.
 |---|---|---|
 | `main` | `<main>` | Skip link target |
 | `status-region` | `base.html`, outside `<main>` | `aria-live` region; flashes, out-of-band notices and htmx errors land here |
-| `plan-area` | Root of `plan_area.html` | Target of every plan edit (`outerHTML`) |
-| `personalization` | `plan_area.html` | Fires `hx-trigger="load"` once to personalize |
+| `plan-area` | Root of `plan_area.html`, which includes one partial per section from `partials/plan/` | Target of every plan edit (`outerHTML`) |
+| `personalization` | `plan/personalization.html` | Fires `hx-trigger="load"` once to personalize |
 | `change-result` | `dashboard.html` | Target of change requests and approvals (`innerHTML`) |
 | `change-result-heading` | `change_result.html` | Heading of the answer; `tabindex="-1"` and `autofocus`, so htmx moves focus to it |
 | `change-busy` | `dashboard.html` | `hx-indicator` of the change request form |
-| `over-budget`, `plan-alternatives` | `plan_area.html` | When over budget: the warning, "Suggest ways to save" and its results sit in the Expenses section just above "Add an expense" (`#over-budget`); the Budget section shows a one-line `over-budget-short` notice linking to it. Each option names its action in words (`how`, from `describe_saving`); essential lines (`ESSENTIAL_CATEGORIES`) are cut, never removed |
-| `add-expense-form`, `add-task-form`, `add-vendor-form`, the suggest-savings form | `plan_area.html` | `hx-sync="this:drop"`: a second click while the first request runs is ignored, so nothing is added twice (buttons stay enabled so keyboard focus is kept) |
-| `add-expense-form` | `plan_area.html` | Carries `hx-preserve` when `keep_typed_input` is true, so an AI swap keeps what the user typed |
-| `retry-personalize` | `plan_area.html` | Asks the AI again when the ideas are standard ones |
-| `new-ideas`, `ideas-busy` | `plan_area.html` | "Suggest different ideas" button and its `hx-indicator`; shown only when the ideas came from AI |
+| `over-budget`, `plan-alternatives` | `plan/expenses.html` | When over budget: the warning, "Suggest ways to save" and its results sit in the Expenses section just above "Add an expense" (`#over-budget`); the Budget section shows a one-line `over-budget-short` notice linking to it. Each option names its action in words (`how`, from `describe_saving`); essential lines (`ESSENTIAL_CATEGORIES`) are cut, never removed |
+| `add-expense-form`, `add-task-form`, `add-vendor-form`, the suggest-savings form | `plan/expenses.html`, `plan/timeline.html`, `plan/vendors.html` | `hx-sync="this:drop"`: a second click while the first request runs is ignored, so nothing is added twice (buttons stay enabled so keyboard focus is kept) |
+| `add-expense-form` | `plan/expenses.html` | Carries `hx-preserve` when `keep_typed_input` is true, so an AI swap keeps what the user typed |
+| `retry-personalize` | `plan/ideas.html` | Asks the AI again when the ideas are standard ones |
+| `new-ideas`, `ideas-busy` | `plan/ideas.html` | "Suggest different ideas" button and its `hx-indicator`; shown only when the ideas came from AI |
 | `print-plan` | `dashboard.html` | "Print or save as PDF"; `hidden` until `/static/js/print.js` shows it and calls `window.print()` |
 | `google-calendar`, `calendar-export` | `dashboard.html` | "Add to Google Calendar" (`event.google_calendar`, from `google_calendar_url()`; new tab, `noopener noreferrer`) and "Download all dates (.ics)", in the event banner |
 | `theme-toggle` | `base.html` | Header switch cycling Auto, Light and Dark; `theme.js` (loaded in `<head>`, no `defer`) applies the saved choice before paint as `data-theme` on `<html>` |
 | `add-plan` | `plans.html` | "+ New plan": the only new-plan button; links to the form on the home page |
 | `type-{type}`, `type-{type}-hint` | `landing.html` | Event type cards (radio plus description); a "Fill in a sample …" link for the chosen type appears below them through CSS |
-| `ideas-heading` | `plan_area.html` | Gets `tabindex="-1"` and `autofocus` when `focus_ideas` is true, so focus lands on the new ideas |
+| `ideas-heading` | `plan/ideas.html` | Gets `tabindex="-1"` and `autofocus` when `focus_ideas` is true, so focus lands on the new ideas |
 | `{panel}-sent`, `{panel}-answer` | `ai_panel.html` | Headings naming the panel's data regions; `{panel}` is `plan-ai`, `change-ai` or `alternatives-ai`, so several panels can share a page |
-| `protect-line-{id}`, `protect-expense-{id}`, `update-{id}`, `task-{id}`, `save-{id}`, `add-expense`, `suggest-savings` | `plan_area.html` | Stable button ids: htmx returns keyboard focus to the same button after the plan area is swapped |
+| `protect-line-{id}`, `protect-expense-{id}`, `update-{id}`, `task-{id}`, `save-{id}`, `add-expense`, `suggest-savings` | the `plan/` sections | Stable button ids: htmx returns keyboard focus to the same button after the plan area is swapped |
 
 Form field names are fixed: they are the server's API. Field ids follow
 `{prefix}-{name}` from the `field` macro (`f-` on the landing page, `x-` for expenses). The

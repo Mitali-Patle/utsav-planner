@@ -30,6 +30,7 @@ RATE_LIMITED = (
 EMPTY_FORM = "Fill in at least one change."
 SET_LINE_INCOMPLETE = "To set a budget line, choose the line and enter its new amount."
 UNKNOWN_OPTION = "That suggestion is no longer available. Ask for suggestions again."
+# Every outcome but an approval, which always carries the saved plan (see `ApprovalOutcome`).
 APPROVAL_STATUS_CODES = {
     ApprovalStatus.STALE: status.HTTP_409_CONFLICT,
     ApprovalStatus.ALREADY_DECIDED: status.HTTP_409_CONFLICT,

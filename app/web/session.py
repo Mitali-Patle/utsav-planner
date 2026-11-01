@@ -14,7 +14,10 @@ from app.web.guard import CSRF_SESSION_KEY
 SESSION_ID_KEY = "sid"
 FLASH_KEY = "flash"
 SESSION_MAX_AGE_S = 365 * 24 * 3600
-"""A year, renewed on every visit: weddings are often planned many months ahead."""
+"""A year: weddings are often planned many months ahead.
+
+Starlette re-sends the cookie, restarting the year, only on responses that change the session.
+"""
 FlashKind = Literal["info", "success", "error"]
 
 

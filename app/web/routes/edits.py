@@ -32,6 +32,8 @@ AMOUNT_ERRORS = frozenset({"expense_amount_out_of_range"})
 DATE_ERRORS = frozenset({"date_in_past", "date_too_late", "after_event", "date_too_early"})
 
 
+# Every field defaults to "", so a missing field is validated like an empty one and its message
+# appears under that field, instead of FastAPI's JSON error.
 class ExpenseFields(BaseModel):
     """The add-expense form as posted: raw text, validated by `NewExpense`."""
 

@@ -1,0 +1,16 @@
+<section id="next-up" aria-labelledby="next-heading" class="next-up">
+  <h2 id="next-heading">What to do next</h2>
+  {% if plan.next_up.tasks or plan.next_up.vendor %}
+  <ol class="next-list">
+    {% for t in plan.next_up.tasks %}
+    <li><span class="next-what">{{ t.title }}</span> <span class="next-when">by {{ t.due }}</span>{% if t.overdue %} <span class="badge badge-error">overdue</span>{% elif t.compressed %} <span class="badge badge-warning">due now</span>{% endif %}</li>
+    {% endfor %}
+    {% if plan.next_up.vendor %}
+    <li><span class="next-what">Book: {{ plan.next_up.vendor.name }}</span> <span class="next-when">by {{ plan.next_up.vendor.book_by }}</span>{% if plan.next_up.vendor.urgent %} <span class="badge badge-warning">book now</span>{% endif %}</li>
+    {% endif %}
+  </ol>
+  <p class="next-links no-print"><a href="#timeline">Full timeline</a> · <a href="#vendors">Vendor checklist</a></p>
+  {% else %}
+  <p>Every task is done and every vendor is booked. Enjoy the celebration.</p>
+  {% endif %}
+</section>
