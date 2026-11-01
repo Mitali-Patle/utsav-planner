@@ -12,6 +12,7 @@ private plans.
 
 - **Demo video (3:36):** <https://youtu.be/VepgEjOOWgQ>
 - **LinkedIn post:** <https://lnkd.in/p/g_rgv6bC>
+- **Blog post (how it was built):** <https://dev.to/mitalipatle/shaadi-maths-is-hard-so-i-banned-the-ai-from-doing-it-1pke>
 
 ## The problem
 
